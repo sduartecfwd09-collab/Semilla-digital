@@ -1,0 +1,59 @@
+.features-section {
+    padding: 90px 60px;
+    background: var(--crema);
+}
+
+.features-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--verde-claro);
+    margin-bottom: 12px;
+}
+
+.features-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    color: var(--fondo);
+    margin-bottom: 50px;
+    max-width: 500px;
+    line-height: 1.2;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.features-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.features-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.features-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.features-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--fondo);
+    margin-bottom: 10px;
+}
+
+.features-card-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #777;
+}

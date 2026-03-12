@@ -1,0 +1,96 @@
+.hero-section {
+    background: var(--fondo);
+    padding: 100px 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-tag {
+    display: inline-block;
+    background: rgba(140, 198, 63, 0.15);
+    border: 1px solid rgba(140, 198, 63, 0.4);
+    color: var(--lima);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    borderRadius: 20px;
+    margin-bottom: 24px;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 58px;
+    line-height: 1.1;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.hero-title em {
+    font-style: normal;
+    color: var(--lima);
+}
+
+.hero-description {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 17px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 480px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.hero-btn-primary {
+    background: var(--lima);
+    color: var(--fondo);
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(140, 198, 63, 0.4);
+    display: inline-block;
+}
+
+.hero-btn-secondary {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero-btn-secondary span {
+    color: var(--lima);
+    font-size: 18px;
+}
+
+.hero-search-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(140, 198, 63, 0.12) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+    border-radius: 50%;
+    pointer-events: none;
+}
