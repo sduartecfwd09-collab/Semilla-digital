@@ -6,6 +6,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Colores del sistema */
+  --fondo: #0f2c16;
+  --lima: #8cc63f;
+  --tierra: #b8471b;
 }
 
 body {
