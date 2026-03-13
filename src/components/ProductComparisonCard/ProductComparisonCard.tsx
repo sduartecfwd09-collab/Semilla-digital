@@ -46,7 +46,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
         <div className="product-comp-table-header">
           <span>Feria</span>
           <span>Precio Aproximado</span>
-          <span>Diferencia</span>
+          <span>Diferencias</span>
           
         </div>
 
