@@ -1,33 +1,46 @@
-:root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
-  /* Colores del sistema */
-  --fondo: #0f2c16;
+:root {
+  --verde: #1a5c2a;
+  --verde-claro: #2d8a42;
   --lima: #8cc63f;
-  --tierra: #b8471b;
+  --tierra: #c4813a;
+  --rojo: #e05252;
+  --crema: #f7f2e8;
+  --blanco: #ffffff;
+  --gris: #4a4a4a;
+  --fondo: #0f3318;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #ffffff;
-  color: #111827;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--crema);
+  color: var(--gris);
+  overflow-x: hidden;
 }
 
 a {
-  color: inherit;
   text-decoration: none;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+select {
+  font-family: 'DM Sans', sans-serif;
+}
+
+input {
+  font-family: 'DM Sans', sans-serif;
 }

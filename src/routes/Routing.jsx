@@ -6,10 +6,10 @@ import Compare from '../pages/Compare/Compare';
 const Routing = () => {
   return (
     <Router>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/comparar" element={<Compare />} />
-    </Routes>
+      <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/comparar" element={<Compare />} />
+      </Routes>
     </Router>
   );
 };

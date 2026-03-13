@@ -16,7 +16,6 @@ const Home = () => {
       <FeaturesSection />
       <FeriasGrid />
       <Footer />
-      <Compare /> 
     </div>
   )
 }
