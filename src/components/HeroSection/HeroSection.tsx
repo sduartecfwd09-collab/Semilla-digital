@@ -18,7 +18,7 @@ const HeroSection: React.FC = () => {
           <em>comprá mejor.</em>
         </h1>
         <p className="hero-description">
-          Consultá y comparé los precios de frutas, verduras y más en las diferentes
+          Consultá y compará los precios de frutas, verduras y más en las diferentes
           ferias del agricultor de tu región antes de salir de casa.
         </p>
         <div className="hero-buttons">
