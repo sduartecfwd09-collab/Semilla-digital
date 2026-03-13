@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/Navbar'
 import SidebarFilters from '../../components/SidebarFilters'
-import ProductComparisonCard, {
-  ProductComparisonData,
-} from '../../components/ProductComparisonCard'
+import ProductComparisonCard from '../../components/ProductComparisonCard'
 import Footer from '../../components/Footer'
 import './Compare.css'
 
 // ----- Static sample data (replace with API call to db.json later) -----
-const allProducts: ProductComparisonData[] = [
+const allProducts = [
   {
     emoji: '🍅',
     name: 'Tomate',
@@ -44,10 +42,10 @@ const allProducts: ProductComparisonData[] = [
 ]
 // -----------------------------------------------------------------------
 
-const Compare: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [selectedProvince, setSelectedProvince] = useState<string>('Todas las provincias')
-  const [sortOrder, setSortOrder] = useState<string>('menor')
+const Compare = () => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedProvince, setSelectedProvince] = useState('Todas las provincias')
+  const [sortOrder, setSortOrder] = useState('menor')
 
   // Filter products by search query
   const filteredProducts = allProducts
