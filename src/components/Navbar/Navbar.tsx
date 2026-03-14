@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link to="/comparar" className={`navbar-link ${isActive('/comparar') ? 'active' : ''}`}>
-            Productos
+            {/*Productos*/}
           </Link>
         </li>
         <li>
