@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Navbar from '../../components/Navbar'
-import SidebarFilters from '../../components/SidebarFilters'
-import ProductComparisonCard from '../../components/ProductComparisonCard'
-import Footer from '../../components/Footer'
+import Navbar from '../Navbar'
+import SidebarFilters from '../SidebarFilters'
+import ProductComparisonCard from '../ProductComparisonCard'
+import Footer from '../Footer'
 import './Compare.css'
 
 // ----- Static sample data (replace with API call to db.json later) -----
