@@ -1,0 +1,50 @@
+.config-container {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.config-section {
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.config-section h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--bg-color);
+    border-radius: var(--radius-sm);
+}
+
+.toggle-info h4 {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.toggle-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
