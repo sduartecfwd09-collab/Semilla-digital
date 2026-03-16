@@ -5,7 +5,6 @@ import StatsBar from '../components/StatsBar'
 import FeaturesSection from '../components/FeaturesSection'
 import FeriasGrid from '../components/FeriasGrid'
 import Footer from '../components/Footer'
-import Compare from './Compare/Compare'
 
 const Home = () => {
   return (
