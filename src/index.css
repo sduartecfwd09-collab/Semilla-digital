@@ -63,6 +63,52 @@ h1, h2, h3 {
 a {
   text-decoration: none;
   color: inherit;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --verde: #1a5c2a;
+  --verde-claro: #2d8a42;
+  --lima: #8cc63f;
+  --tierra: #c4813a;
+  --rojo: #e05252;
+  --crema: #f7f2e8;
+  --blanco: #ffffff;
+  --gris: #4a4a4a;
+  --fondo: #0f3318;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--crema);
+  color: var(--gris);
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+select {
+  font-family: 'DM Sans', sans-serif;
+}
+
+input {
+  font-family: 'DM Sans', sans-serif;
 }
 
 button {

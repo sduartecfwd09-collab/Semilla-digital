@@ -1,6 +1,9 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 
+import Home from '../pages/Home';
+import Comparar from '../pages/Comparar';
+
 // Páginas de Administración
 import AdminDashboard from '../pages/Admin/AdminDashboard';
 import AdminUsuarios from '../pages/Admin/AdminUsuarios';
@@ -18,12 +21,14 @@ const Routing = () => {
     <Router>
       <Routes>
         {/* Redireccionar raíz al admin directamente */}
-        <Route path="/" element={<Navigate to="/admin" replace />} />
+        {/*<Route path="/" element={<Navigate to="/admin" replace />} />*/}
+        <Route path="/" element={<Home />} />
+        <Route path="/comparar" element={<Comparar />} />
 
         {/* Panel Admin como estructura principal */}
         <Route path="/admin" element={<AdminLayout><Outlet /></AdminLayout>}>
           <Route index element={<AdminDashboard />} />
-          <Route path="home" element={<Navigate to="/admin" replace />} />
+          {/*<Route path="home" element={<Navigate to="/admin" replace />} />*/}
           <Route path="usuarios" element={<AdminUsuarios />} />
           <Route path="ferias" element={<AdminFerias />} />
           <Route path="productos" element={<AdminProductos />} />
