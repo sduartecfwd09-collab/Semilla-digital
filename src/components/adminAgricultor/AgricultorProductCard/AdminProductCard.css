@@ -1,0 +1,192 @@
+.admin-product-card {
+  background: var(--blanco);
+  border-radius: 12px;
+  border: 2px solid #e5e5e5;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.admin-product-card:hover {
+  border-color: var(--verde);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.admin-product-card.inactive {
+  opacity: 0.6;
+  background: #f9f9f9;
+}
+
+.admin-product-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-product-card-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.admin-product-card-info {
+  flex: 1;
+}
+
+.admin-product-card-name {
+  font-size: 1.25rem;
+  color: var(--gris);
+  margin: 0 0 0.5rem 0;
+}
+
+.admin-product-card-desc {
+  font-size: 0.9rem;
+  color: #999;
+  margin: 0;
+}
+
+.admin-product-card-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.admin-product-card-status-text {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* Toggle Switch */
+.admin-product-card-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.admin-product-card-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.admin-product-card-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.admin-product-card-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.admin-product-card-toggle input:checked + .admin-product-card-toggle-slider {
+  background-color: var(--lima);
+}
+
+.admin-product-card-toggle input:checked + .admin-product-card-toggle-slider:before {
+  transform: translateX(24px);
+}
+
+.admin-product-card-body {
+  padding: 1.5rem;
+}
+
+.admin-product-card-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-product-card-category,
+.admin-product-card-ferias {
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.admin-product-card-category {
+  background: var(--crema);
+  color: var(--verde);
+}
+
+.admin-product-card-ferias {
+  background: #e8f5e9;
+  color: var(--verde-claro);
+}
+
+.admin-product-card-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.admin-product-card-price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-product-card-price-label {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.admin-product-card-price-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--verde);
+}
+
+.admin-product-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.admin-product-card-btn {
+  padding: 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-product-card-btn-edit {
+  color: var(--verde);
+  border-right: 1px solid #e5e5e5;
+}
+
+.admin-product-card-btn-edit:hover {
+  background: var(--crema);
+}
+
+.admin-product-card-btn-delete {
+  color: var(--rojo);
+}
+
+.admin-product-card-btn-delete:hover {
+  background: #fee;
+}

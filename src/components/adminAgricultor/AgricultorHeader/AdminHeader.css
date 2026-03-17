@@ -1,0 +1,46 @@
+.admin-header {
+  background: var(--blanco);
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1.5rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header-text {
+  flex: 1;
+}
+
+.admin-header-title {
+  font-size: 1.75rem;
+  color: var(--gris);
+  margin: 0;
+}
+
+.admin-header-subtitle {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 0.25rem 0 0 0;
+}
+
+.admin-header-logout {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid var(--rojo);
+  color: var(--rojo);
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-header-logout:hover {
+  background: var(--rojo);
+  color: var(--blanco);
+}

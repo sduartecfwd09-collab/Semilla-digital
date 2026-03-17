@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
 
 const Navbar: React.FC = () => {
   const location = useLocation()
-  const [user, setUser] = useState<{name: string} | null>(null)
-
-  useEffect(() => {
-    const userStr = localStorage.getItem('user')
-    if (userStr) {
-      setUser(JSON.parse(userStr))
-    }
-  }, [])
+  const navigate = useNavigate()
+  const { isAuthenticated, user, logout } = useAuth()
 
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    setUser(null)
-    window.location.reload()
+    logout()
+    navigate('/')
   }
 
   const isActive = (path: string) => location.pathname === path
@@ -49,12 +43,12 @@ const Navbar: React.FC = () => {
           </Link>
         </li>
         <li>
-          {user ? (
+          {isAuthenticated ? (
             <button className="navbar-cta-logout" onClick={handleLogout}>
-              Cerrar sesión
+              Cerrar sesión ({user?.nombre})
             </button>
           ) : (
-            <Link to="/auth" className="navbar-cta">
+            <Link to="/login" className="navbar-cta">
               Iniciar sesión
             </Link>
           )}
