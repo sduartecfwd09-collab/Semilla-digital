@@ -5,6 +5,7 @@ import './Navbar.css'
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
+
   const [user, setUser] = useState<{name: string} | null>(null)
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const Navbar: React.FC = () => {
           </Link>
         </li>
         <li>
+
           <Link to="/recetas" className={`navbar-link ${isActive('/recetas') ? 'active' : ''}`}>
             Recetas
           </Link>
@@ -73,11 +75,12 @@ const Navbar: React.FC = () => {
         )}
         <li>
           {user ? (
+
             <button className="navbar-cta-logout" onClick={handleLogout}>
-              Cerrar sesión
+              Cerrar sesión ({user?.name})
             </button>
           ) : (
-            <Link to="/auth" className="navbar-cta">
+            <Link to="/login" className="navbar-cta">
               Iniciar sesión
             </Link>
           )}

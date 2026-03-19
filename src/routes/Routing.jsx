@@ -13,6 +13,15 @@ import AdminPrecios from '../pages/Admin/AdminPrecios';
 import AdminRecetas from '../pages/Admin/AdminRecetas';
 import AdminConfiguracion from '../pages/Admin/AdminConfiguracion';
 
+// Páginas de Agricultor
+import LoginYRegistroPage from '../pages/LoginYRegistro';
+import Dashboard from '../components/Agricultor/Dashboard/Dashboard'
+import MisProductos from '../components/Agricultor/MisProductos/index'
+import MisFerias from '../components/Agricultor/MisFerias/index'
+import Configuracion from '../components/Agricultor/Configuracion/index'
+import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
+import RegisterForm from '../components/auth/RegisterFormAgricultor'  
+
 // Componentes de Administración
 import AdminLayout from '../components/admin/AdminLayout';
 
@@ -39,6 +48,45 @@ const Routing = () => {
 
         {/* Catch all - fallback al admin */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+
+      <Routes>
+        <Route path="/login" element={<LoginYRegistroPage />} />
+        <Route path="/register" element={<RegisterForm />} />
+
+        {/* Rutas protegidas - Agricultor */}
+        <Route
+          path="/agricultor"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agricultor/productos"
+          element={
+            <ProtectedRoute>
+              <MisProductos />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agricultor/ferias"
+          element={
+            <ProtectedRoute>
+              <MisFerias />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agricultor/config"
+          element={
+            <ProtectedRoute>
+              <Configuracion />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
