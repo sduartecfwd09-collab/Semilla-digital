@@ -1,0 +1,118 @@
+.recipes-section {
+  padding: 4rem 10%;
+  background-color: var(--crema);
+}
+
+.section-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.section-tag {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background-color: rgba(122, 181, 54, 0.1);
+  color: #2d8a42;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.recipe-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #11361c;
+  margin-bottom: 0.8rem;
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.recipe-card {
+  background: var(--blanco);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.recipe-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(122, 181, 54, 0.1);
+  border-color: rgba(122, 181, 54, 0.2);
+}
+
+.recipe-badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background-color: #2d8a42;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.recipe-description {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-info {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #444;
+  font-weight: 600;
+}
+
+.recipe-ingredients-preview {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: transparent ;
+  border: 2px solid #2d8a42;
+  color: #2d8a42;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recipe-btn:hover {
+  background-color: #2d8a42;
+  color: white;
+}
+
+.loading-recipes {
+  padding: 4rem;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+@media (max-width: 768px) {
+  .recipes-section {
+    padding: 3rem 5%;
+  }
+}

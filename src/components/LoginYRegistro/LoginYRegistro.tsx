@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { validateEmail } from '../../utils/validation'
+import { ENDPOINTS } from '../../services/api.config'
 
-const Auth = () => {
+const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
 
@@ -16,10 +18,15 @@ const Auth = () => {
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
   const [regConfirm, setRegConfirm] = useState('')
+  // Estado de visibilidad de contraseñas
+  const [showLoginPass, setShowLoginPass] = useState(false)
+  const [showRegPass, setShowRegPass] = useState(false)
+  const [showRegConfirm, setShowRegConfirm] = useState(false)
+
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!loginEmail || !loginPassword) {
+    if (!loginEmail.trim() || !loginPassword.trim()) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
@@ -41,7 +48,7 @@ const Auth = () => {
     
     try {
       // Verificamos si el usuario existe en db.json
-      const response = await fetch(`http://localhost:3001/usuarios?email=${loginEmail}`)
+      const response = await fetch(`${ENDPOINTS.usuarios}?email=${loginEmail}`)
       const users = await response.json()
 
       if (users && users.length > 0 && users[0].password === loginPassword) {
@@ -76,7 +83,12 @@ const Auth = () => {
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!regName || !regEmail || !regPassword || !regConfirm) {
+    const trimmedName = regName.trim()
+    const trimmedEmail = regEmail.trim()
+    const trimmedPassword = regPassword.trim()
+    const trimmedConfirm = regConfirm.trim()
+
+    if (!trimmedName || !trimmedEmail || !trimmedPassword || !trimmedConfirm) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
@@ -86,7 +98,7 @@ const Auth = () => {
       return
     }
 
-    if (regPassword.length <= 6) {
+    if (trimmedPassword.length <= 6) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña insegura',
@@ -96,7 +108,7 @@ const Auth = () => {
       return
     }
 
-    if (regPassword !== regConfirm) {
+    if (trimmedPassword !== trimmedConfirm) {
       Swal.fire({
         icon: 'error',
         title: 'Error de contraseña',
@@ -106,12 +118,24 @@ const Auth = () => {
       return
     }
 
-    try {
-      // Primero revisamos que no exista ya un registro con ese correo
-      const checkResponse = await fetch(`http://localhost:3001/usuarios?email=${regEmail}`)
-      const existingUsers = await checkResponse.json()
+    const emailValidation = validateEmail(trimmedEmail);
+    if (!emailValidation.valid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Correo inválido',
+        text: emailValidation.message,
+        confirmButtonColor: 'var(--verde-claro)',
+      })
+      return
+    }
 
-      if (existingUsers && existingUsers.length > 0) {
+    try {
+      // Verificamos si el correo ya existe (para evitar duplicados)
+      const resCheck = await fetch(`${ENDPOINTS.usuarios}`)
+      const allUsers = await resCheck.json()
+      
+      const emailExists = allUsers.some((u: any) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
+      if (emailExists) {
         Swal.fire({
           icon: 'error',
           title: 'Correo en uso',
@@ -122,13 +146,15 @@ const Auth = () => {
       }
 
       // Creamos el nuevo usuario
-      const response = await fetch('http://localhost:3001/usuarios', {
+      const response = await fetch(`${ENDPOINTS.usuarios}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: regName,
-          email: regEmail,
-          password: regPassword
+          name: trimmedName,
+          email: trimmedEmail,
+          password: trimmedPassword,
+          role: 'Cliente',
+          status: 'Activo'
         })
       })
 
@@ -156,13 +182,30 @@ const Auth = () => {
     }
   }
 
+  // Iconos SVG para el ojo (mostrar/ocultar contraseña)
+  const EyeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  )
+
+  const EyeOffIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+  )
+
   return (
     <div className="auth-container">
       {/* SECCIÓN IZQUIERDA */}
       <div className="auth-left">
-        <div className="auth-logo">
-          <span className="logo-agro">Agro</span><span className="logo-map">Map</span>
-        </div>
+        <Link to="/" className="auth-logo-link">
+          <div className="auth-logo">
+            <span className="logo-agro">Agro</span><span className="logo-map">Map</span>
+          </div>
+        </Link>
 
         <h1 className="auth-title">
           Comprá con <span className="highlight-green">inteligencia</span><br />
@@ -234,6 +277,7 @@ const Auth = () => {
                       placeholder="ejemplo@correo.com" 
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
+                      autoComplete="username"
                     />
                   </div>
                 </div>
@@ -243,11 +287,19 @@ const Auth = () => {
                   <div className="input-box">
                     <span className="input-icon">🔒</span>
                     <input 
-                      type="password" 
+                      type={showLoginPass ? "text" : "password"} 
                       placeholder="••••••••" 
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
+                      autoComplete="current-password"
                     />
+                    <button 
+                      type="button" 
+                      className="password-toggle"
+                      onClick={() => setShowLoginPass(!showLoginPass)}
+                    >
+                      {showLoginPass ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
                   </div>
                 </div>
 
@@ -283,6 +335,7 @@ const Auth = () => {
                       placeholder="Juan Pérez" 
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
+                      autoComplete="name"
                     />
                   </div>
                 </div>
@@ -296,6 +349,7 @@ const Auth = () => {
                       placeholder="ejemplo@correo.com" 
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
+                      autoComplete="email"
                     />
                   </div>
                 </div>
@@ -305,11 +359,19 @@ const Auth = () => {
                   <div className="input-box">
                     <span className="input-icon">🔒</span>
                     <input 
-                      type="password" 
+                      type={showRegPass ? "text" : "password"} 
                       placeholder="••••••••" 
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
+                      autoComplete="new-password"
                     />
+                    <button 
+                      type="button" 
+                      className="password-toggle"
+                      onClick={() => setShowRegPass(!showRegPass)}
+                    >
+                      {showRegPass ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
                   </div>
                 </div>
 
@@ -318,11 +380,19 @@ const Auth = () => {
                   <div className="input-box">
                     <span className="input-icon">🔒</span>
                     <input 
-                      type="password" 
+                      type={showRegConfirm ? "text" : "password"} 
                       placeholder="••••••••" 
                       value={regConfirm}
                       onChange={(e) => setRegConfirm(e.target.value)}
+                      autoComplete="new-password"
                     />
+                    <button 
+                      type="button" 
+                      className="password-toggle"
+                      onClick={() => setShowRegConfirm(!showRegConfirm)}
+                    >
+                      {showRegConfirm ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
                   </div>
                 </div>
 

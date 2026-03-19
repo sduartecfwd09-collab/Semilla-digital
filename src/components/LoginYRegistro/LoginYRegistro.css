@@ -18,6 +18,12 @@
   justify-content: center;
 }
 
+.auth-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
 .auth-logo {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
@@ -190,10 +196,43 @@
 .input-box input {
   border: none;
   background: transparent;
-  width: 100%;
+  flex: 1;
   font-size: 0.95rem;
   outline: none;
   color: #333;
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #aaa;
+}
+
+.password-toggle:hover {
+  color: #7ab536;
+  transform: scale(1.1);
+}
+
+/* Ocultar el ojito por defecto de los navegadores (Edge, Chrome, etc) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 }
 
 .input-box input::placeholder {

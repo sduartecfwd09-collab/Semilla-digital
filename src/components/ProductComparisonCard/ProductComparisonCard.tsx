@@ -11,6 +11,7 @@ export interface ComparisonRow {
 }
 
 export interface ProductComparisonData {
+  category: string
   emoji: string
   name: string
   description: string
@@ -23,8 +24,8 @@ interface ProductComparisonCardProps {
 }
 
 const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }) => {
-  const lowestPriceNumeric = Math.min(...product.rows.map((r) => r.priceNumeric))
-  const maxPrice = Math.max(...product.rows.map((r) => r.priceNumeric))
+  const lowestPriceNumeric = Math.min(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
+  const maxPrice = Math.max(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
 
   return (
     <div className="product-comp-card">

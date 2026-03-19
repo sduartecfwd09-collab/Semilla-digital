@@ -1,0 +1,322 @@
+.ferias-by-province-section {
+  padding: 80px 5%;
+  background-color: var(--crema);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 400px;
+}
+
+.ferias-header {
+  margin-bottom: 50px;
+  max-width: 600px;
+}
+
+.ferias-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--verde-claro);
+  margin-bottom: 12px;
+}
+
+.ferias-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  color: var(--fondo);
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+.ferias-description {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Loading State */
+.loading-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0,0,0,0.1);
+  border-left-color: var(--verde-claro);
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Provinces Grid */
+.provinces-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Province Card */
+.province-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.province-card.expanded {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  border-color: var(--lima);
+}
+
+.province-card-header {
+  padding: 24px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.province-card-header:hover {
+  background: #fcfcfc;
+}
+
+.province-card-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.province-emoji {
+  font-size: 32px;
+  width: 50px;
+  height: 50px;
+  background: var(--crema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.province-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--fondo);
+  margin: 0;
+}
+
+.province-card-count {
+  font-size: 14px;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.province-expand-btn {
+  background: none;
+  border: 2px solid #ddd;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.province-card.expanded .province-expand-btn {
+  background: var(--lima);
+  color: white;
+  border-color: var(--lima);
+}
+
+/* Province content */
+.province-card-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fafafa;
+}
+
+.province-card-content.open {
+  max-height: 2000px; /* Suficientemente grande para el contenido */
+  border-top: 1px solid #eee;
+}
+
+.feria-list {
+  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.province-empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Feria Item */
+.feria-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #edf2f7;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: transform 0.2s;
+}
+
+.feria-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.feria-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.feria-item-name {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 16px;
+  margin: 0;
+}
+
+.feria-item-source-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.feria-item-source-badge.google {
+  background: #e6f6ff;
+  color: #3182ce;
+}
+
+.feria-item-source-badge.fallback {
+  background: #f7fafc;
+  color: #718096;
+}
+
+.feria-item-source-badge.merged {
+  background: #f0fff4;
+  color: #38a169;
+}
+
+.feria-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feria-item-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.feria-item-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 5px;
+  padding-top: 10px;
+  border-top: 1px dashed #edf2f7;
+}
+
+.feria-item-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.feria-item-text {
+  font-size: 13px;
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.feria-item-map-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--verde-claro);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.feria-item-map-btn:hover {
+  background: var(--lima);
+  transform: scale(1.02);
+}
+
+.feria-item-map-btn:active {
+  transform: scale(0.98);
+}
+
+.feria-item-map-btn::before {
+  content: '🗺️';
+  font-size: 14px;
+}
+
+/* Map Modal Styles */
+.map-modal-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.map-modal-address {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+.swal2-map-popup {
+  border-radius: 20px !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.swal2-map-title {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 24px !important;
+  color: var(--fondo) !important;
+  padding-top: 20px !important;
+}
+
+@media (max-width: 768px) {
+  .feria-list {
+    grid-template-columns: 1fr;
+  }
+}

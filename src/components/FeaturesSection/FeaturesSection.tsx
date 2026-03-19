@@ -24,7 +24,7 @@ const features: Feature[] = [
     icon: '🔍',
     title: 'Buscador rápido',
     description:
-      'Buscá cualquier producto agrícola y encontrá en qué ferias está disponible y a qué precio se vende.',
+      'Buscá cualquier producto agrícola y encontrá en qué ferias está disponible y a qué precio aproximado se vende.',
   },
 ]
 

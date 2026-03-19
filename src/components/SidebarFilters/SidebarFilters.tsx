@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './SidebarFilters.css'
+import { ENDPOINTS } from '../../services/api.config'
 
 interface Category {
   emoji: string
@@ -7,58 +8,45 @@ interface Category {
   count: number
 }
 
-interface FeriaFilter {
-  name: string
-  defaultChecked: boolean
-}
-
-// Actualizado en base a nuestros datos de muestra estáticos
-const categories: Category[] = [
-  { emoji: '🍅', name: 'Verduras', count: 7 },
-  { emoji: '🍎', name: 'Frutas', count: 8 },
-  { emoji: '🌿', name: 'Hierbas', count: 1 },
-  { emoji: '🥔', name: 'Tubérculos', count: 1 },
-  { emoji: '🥚', name: 'Proteína', count: 1 },
-]
-
-const feriaFilters: FeriaFilter[] = [
-  { name: 'Feria de Pavas', defaultChecked: true },
-  { name: 'Feria de Cartago', defaultChecked: true },
-  { name: 'Feria de Heredia', defaultChecked: true },
-  { name: 'Feria de Alajuela', defaultChecked: true },
-  { name: 'Feria de Desamparados', defaultChecked: false },
-  { name: 'Feria de Tibás', defaultChecked: false },
-]
-
 interface SidebarFiltersProps {
   activeCategory?: string
   onCategoryChange?: (category: string) => void
-  onFeriaChange?: (feria: string, checked: boolean) => void
-  onInitialFerias?: (ferias: string[]) => void
-  onMassFeriaChange?: (ferias: string[]) => void
 }
 
 const SidebarFilters: React.FC<SidebarFiltersProps> = ({
-  activeCategory = 'Verduras',
-  onCategoryChange,
-  onFeriaChange,
-  onInitialFerias,
-  onMassFeriaChange
+  activeCategory = 'Todos',
+  onCategoryChange
 }) => {
   const [selected, setSelected] = useState<string>(activeCategory)
-  const [checkedFerias, setCheckedFerias] = useState<Record<string, boolean>>(
-    Object.fromEntries(feriaFilters.map((f) => [f.name, f.defaultChecked]))
-  )
+  const [totalCount, setTotalCount] = useState<number>(0)
+  const [categories, setCategories] = useState<Category[]>([
+    { emoji: '🍅', name: 'Verduras', count: 0 },
+    { emoji: '🍎', name: 'Frutas', count: 0 },
+    { emoji: '🌿', name: 'Hierbas', count: 0 },
+    { emoji: '🥔', name: 'Tubérculos', count: 0 },
+    { emoji: '🥚', name: 'Proteína', count: 0 },
+  ])
 
-  // Pasar ferias iniciales de vuelta al componente padre al montar
   useEffect(() => {
-    if (onInitialFerias) {
-      const initialChecked = feriaFilters
-        .filter(f => f.defaultChecked)
-        .map(f => f.name);
-      onInitialFerias(initialChecked);
-    }
-  }, [])
+    // Cargar productos para actualizar los conteos de categorías
+    fetch(ENDPOINTS.productos)
+      .then(res => res.json())
+      .then((productosData: any[]) => {
+        const counts: Record<string, number> = {};
+        productosData.forEach((p: { category: string }) => {
+          counts[p.category] = (counts[p.category] || 0) + 1;
+        });
+
+        setTotalCount(productosData.length);
+        setCategories((prev) => prev.map((cat) => ({
+          ...cat,
+          count: counts[cat.name] || 0
+        })));
+      })
+      .catch(err => {
+        console.error('Error loading products for category counts:', err);
+      });
+  }, []);
 
   // Sincronizar cambios en las props
   useEffect(() => {
@@ -70,76 +58,30 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
     if (onCategoryChange) onCategoryChange(name)
   }
 
-  const handleFeriaCheck = (name: string, checked: boolean) => {
-    setCheckedFerias((prev) => ({ ...prev, [name]: checked }))
-    if (onFeriaChange) onFeriaChange(name, checked)
-  }
-
-  const isAllChecked = feriaFilters.every(f => checkedFerias[f.name]);
-
-  const handleToggleAll = (checked: boolean) => {
-    const newCheckedState = Object.fromEntries(feriaFilters.map(f => [f.name, checked]));
-    setCheckedFerias(newCheckedState);
-    if (onMassFeriaChange) {
-      onMassFeriaChange(checked ? feriaFilters.map(f => f.name) : []);
-    }
-  }
-
   return (
     <aside className="sidebar-filters">
       {/* Categorías */}
       <div className="sidebar-card">
         <h3 className="sidebar-card-title">Categorías</h3>
         <ul className="category-list">
+          <li
+            className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('Todos')}
+          >
+            <span>🛒 Todos</span>
+            <span className="category-item-badge">{totalCount}</span>
+          </li>
           {categories.map((cat) => (
             <li
               key={cat.name}
               className={`category-item ${selected === cat.name ? 'active' : ''}`}
               onClick={() => handleCategoryClick(cat.name)}
             >
-              <span>
-                {cat.emoji} {cat.name}
-              </span>
+              <span>{cat.emoji} {cat.name}</span>
               <span className="category-item-badge">{cat.count}</span>
             </li>
           ))}
-          <li
-            className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('Todos')}
-          >
-            <span>
-              🛒 Todos
-            </span>
-            <span className="category-item-badge">18</span>
-          </li>
         </ul>
-      </div>
-
-      {/* Filtro de ferias */}
-      <div className="sidebar-card">
-        <h3 className="sidebar-card-title">Filtrar por feria</h3>
-        <div className="feria-filter-list">
-          <label className="feria-filter-label" style={{ fontWeight: '600', paddingBottom: '0.4rem', borderBottom: '1px solid #ebebeb', marginBottom: '0.4rem' }}>
-            <input
-              type="checkbox"
-              checked={isAllChecked}
-              onChange={(e) => handleToggleAll(e.target.checked)}
-              className="feria-filter-checkbox"
-            />
-            Todas las ferias
-          </label>
-          {feriaFilters.map((feria) => (
-            <label key={feria.name} className="feria-filter-label">
-              <input
-                type="checkbox"
-                checked={checkedFerias[feria.name]}
-                onChange={(e) => handleFeriaCheck(feria.name, e.target.checked)}
-                className="feria-filter-checkbox"
-              />
-              {feria.name}
-            </label>
-          ))}
-        </div>
       </div>
     </aside>
   )

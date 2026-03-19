@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import SearchBar from '../SearchBar'
-import ProductMiniList from '../ProductMiniList'
+import ActiveFeriasCard from '../ActiveFeriasCard/ActiveFeriasCard'
 import './HeroSection.css'
 
 const HeroSection: React.FC = () => {
@@ -25,17 +24,12 @@ const HeroSection: React.FC = () => {
           <Link to="/comparar" className="hero-btn-primary">
             Explorar productos
           </Link>
-          <a href="#ferias" className="hero-btn-secondary">
-            <span>→</span>
-            Ver ferias cercanas
-          </a>
         </div>
       </div>
 
-      {/* Right column – search card */}
+      {/* Right column – active ferias card */}
       <div className="hero-search-card">
-        <SearchBar />
-        <ProductMiniList />
+        <ActiveFeriasCard />
       </div>
     </section>
   )
