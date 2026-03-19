@@ -2,6 +2,10 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Comparar from '../pages/Comparar';
+
+
+
+
 import LoginYRegistroPage from '../pages/LoginYRegistro';
 import Dashboard from '../components/Agricultor/Dashboard/Dashboard'
 import MisProductos from '../components/Agricultor/MisProductos/index'
