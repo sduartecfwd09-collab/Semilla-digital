@@ -76,7 +76,13 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          navigate('/')
+          if (users[0].role === 'Admin') {
+            navigate('/admin')
+          } else if (users[0].role === 'Agricultor') {
+            navigate('/agricultor')
+          } else {
+            navigate('/')
+          }
         })
       } else {
         Swal.fire({

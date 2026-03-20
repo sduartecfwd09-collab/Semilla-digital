@@ -6,7 +6,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [user, setUser] = useState<{name: string} | null>(() => {
+  const [user, setUser] = useState<{name?: string; nombre?: string; role?: string} | null>(() => {
     const userStr = localStorage.getItem('user')
     if (userStr) {
       try {
@@ -74,11 +74,25 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
         )}
+        {user?.role === 'Admin' && (
+          <li>
+            <Link to="/admin" className={`navbar-link ${isActive('/admin') ? 'active' : ''}`}>
+              Panel Admin
+            </Link>
+          </li>
+        )}
+        {user?.role === 'Agricultor' && (
+          <li>
+            <Link to="/agricultor" className={`navbar-link ${isActive('/agricultor') ? 'active' : ''}`}>
+              Panel Agricultor
+            </Link>
+          </li>
+        )}
         <li>
           {user ? (
 
             <button className="navbar-cta-logout" onClick={handleLogout}>
-              Cerrar sesión ({user?.name})
+              Cerrar sesión ({user?.nombre || user?.name || ''})
             </button>
           ) : (
             <Link to="/login" className="navbar-cta">

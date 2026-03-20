@@ -5,10 +5,11 @@ import './ProtectedRoute.css'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
+  allowedRoles?: string[]
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth()
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
+  const { isAuthenticated, isLoading, user } = useAuth()
 
   if (isLoading) {
     return (
@@ -20,6 +21,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
+  }
+
+  // Si hay roles permitidos, verificar que el usuario tenga uno de ellos
+  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>

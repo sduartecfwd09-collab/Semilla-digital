@@ -1,6 +1,14 @@
 {
   "usuarios": [
     {
+      "id": "admin_test",
+      "name": "Administrador",
+      "email": "admin@agromap.com",
+      "password": "admin",
+      "role": "Admin",
+      "status": "Activo"
+    },
+    {
       "id": "a599",
       "name": "maria",
       "email": "test@test.com",

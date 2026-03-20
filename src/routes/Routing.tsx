@@ -46,7 +46,14 @@ const Routing: React.FC = () => {
         <Route path="/registro-agricultor" element={<RegistroAgricultorPage />} />
 
         {/* Panel Admin */}
-        <Route path="/admin" element={<AdminLayout><Outlet /></AdminLayout>}>
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute allowedRoles={['Admin']}>
+              <AdminLayout><Outlet /></AdminLayout>
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<AdminDashboard />} />
           <Route path="usuarios" element={<AdminUsuarios />} />
           <Route path="ferias" element={<AdminFerias />} />
@@ -60,7 +67,7 @@ const Routing: React.FC = () => {
         <Route
           path="/agricultor"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['Agricultor']}>
               <Dashboard />
             </ProtectedRoute>
           }
@@ -68,7 +75,7 @@ const Routing: React.FC = () => {
         <Route
           path="/agricultor/productos"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['Agricultor']}>
               <MisProductos />
             </ProtectedRoute>
           }
@@ -76,7 +83,7 @@ const Routing: React.FC = () => {
         <Route
           path="/agricultor/ferias"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['Agricultor']}>
               <MisFerias />
             </ProtectedRoute>
           }
@@ -84,7 +91,7 @@ const Routing: React.FC = () => {
         <Route
           path="/agricultor/config"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['Agricultor']}>
               <Configuracion />
             </ProtectedRoute>
           }
