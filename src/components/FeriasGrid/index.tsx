@@ -1,1 +1,1 @@
-export { default } from './FeriasGrid';
+export { default } from './FeriasByProvinceList';

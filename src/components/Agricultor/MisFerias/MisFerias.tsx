@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
-import { getFeriaById } from '../../../servers/AgricultorServices'
-import { getProductos } from '../../../servers/AgricultorServices'
+import { getFeriaById, getProductos } from '../../../servers/AgricultorServices'
+import { Producto } from '../../../servers/ProductService'
 import { updateUser } from '../../../servers/AuthService'
 import './MisFerias.css'
 
@@ -20,7 +20,7 @@ interface Feria {
 const MisFerias: React.FC = () => {
   const { user } = useAuth()
   const [feria, setFeria] = useState<Feria | null>(null)
-  const [productosFeria, setProductosFeria] = useState<any[]>([])
+  const [productosFeria, setProductosFeria] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
   const [editingPuesto, setEditingPuesto] = useState(false)
   const [puestoData, setPuestoData] = useState({
@@ -41,8 +41,8 @@ const MisFerias: React.FC = () => {
 
         // Obtener todos los productos y filtrar por feria
         const allProductos = await getProductos()
-        const productosDeFeria = allProductos.filter((p: any) =>
-          p.precios.some((precio: any) => precio.feriaId === user.feriaId)
+        const productosDeFeria = allProductos.filter((p: Producto) =>
+          p.precios.some((precio: { feriaId: number }) => precio.feriaId === user.feriaId)
         )
         setProductosFeria(productosDeFeria)
       } catch (error) {
@@ -205,7 +205,7 @@ const MisFerias: React.FC = () => {
                 <div className="mis-ferias-productos-grid">
                   {productosFeria.slice(0, 12).map((producto) => {
                     const precioEnFeria = producto.precios.find(
-                      (p: any) => p.feriaId === user?.feriaId
+                      (p: { feriaId: number }) => p.feriaId === user?.feriaId
                     )
                     return (
                       <div key={producto.id} className="mis-ferias-producto-item">

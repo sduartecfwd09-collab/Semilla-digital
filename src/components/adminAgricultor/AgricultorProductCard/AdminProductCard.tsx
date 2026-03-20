@@ -2,6 +2,7 @@ import React from 'react'
 import { Producto } from '../../../servers/ProductService'
 import './AdminProductCard.css'
 
+// eslint-disable-next-line no-unused-vars
 interface AdminProductCardProps {
   producto: Producto
   onEdit: (producto: Producto) => void

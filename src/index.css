@@ -1,5 +1,70 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import './admin-ui.css';
 
+:root {
+  /* Colors - Premium Nature Palette */
+  --primary-color: #0d2818; 
+  --primary-light: #1b4332;
+  --accent-color: #52b788;  
+  --accent-glow: rgba(82, 183, 136, 0.3);
+  
+  --bg-color: #f4f7f5;
+  --surface-color: #ffffff;
+  
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  
+  --border-color: #e5e7eb;
+  --success: #10b981;
+
+  --fondo: #0d2818;
+  --lima: #d9ed92;
+  --tierra: #b08968;
+  --blanco: #ffffff;
+
+  /* Layout */
+  --sidebar-width: 280px;
+  --header-height: 72px;
+
+  /* Shadows - Modern & Soft */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-accent: 0 4px 14px 0 rgba(82, 183, 136, 0.3);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* Transitions */
+  --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  color: var(--primary-color);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+}
 :root {
   --verde: #1a5c2a;
   --verde-claro: #2d8a42;
@@ -44,4 +109,12 @@ select {
 
 input {
   font-family: 'DM Sans', sans-serif;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  font-family: inherit;
 }

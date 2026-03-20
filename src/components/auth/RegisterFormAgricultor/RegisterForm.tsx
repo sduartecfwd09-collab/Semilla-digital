@@ -96,7 +96,7 @@ const RegisterForm: React.FC = () => {
         // Si por alguna razón falla el login automático, redirigir al login
         navigate('/login', { state: { message: 'Registro exitoso. Inicia sesión para continuar.' } })
       }
-    } catch (err) {
+    } catch {
       setError('Error al registrar usuario. Intenta nuevamente.')
     } finally {
       setLoading(false)

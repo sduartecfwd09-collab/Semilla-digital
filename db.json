@@ -1,0 +1,911 @@
+{
+  "usuarios": [
+    {
+      "id": "a599",
+      "name": "maria",
+      "email": "test@test.com",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "a057",
+      "name": "Pablo Perez",
+      "email": "pbl36@gmail.com",
+      "password": "pablo123",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "3998",
+      "name": "Sara",
+      "email": "saracm@gmail.com",
+      "password": "sara12345",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "2010",
+      "name": "Juan Perez Carmona",
+      "email": "perezj@gmail.com",
+      "password": "perezjuan111",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "10c8",
+      "name": "Mariel",
+      "email": "mariel@gmail.com",
+      "password": "|123456",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "e455",
+      "name": "Steven Salas",
+      "email": "salas@gmail.com",
+      "password": "qwert1234",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "3100",
+      "name": "Rosío",
+      "email": "ross@gmail.com",
+      "password": "qwert1234",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "0fbd",
+      "name": "Megan",
+      "email": "meg@gmail.com",
+      "password": "megan1234",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "0a16",
+      "name": "SAMIR",
+      "email": "samir@gmail.com",
+      "password": "12345678",
+      "role": "Cliente",
+      "status": "Activo"
+    },
+    {
+      "id": "aa30",
+      "name": "Samir García González",
+      "email": "ygarciafwd@gmail.com",
+      "password": "12345678",
+      "role": "Cliente",
+      "status": "Activo"
+    }
+  ],
+  "ferias": [
+    {
+      "id": "3",
+      "name": "Feria de Heredia",
+      "province": "Heredia",
+      "location": "Plaza de Ferias",
+      "schedule": "Sábados, 5:00 AM - 12:00 PM"
+    },
+    {
+      "id": "4",
+      "name": "Feria de Alajuela",
+      "province": "Alajuela",
+      "location": "Campo Ferial",
+      "schedule": "Jueves y Viernes"
+    },
+    {
+      "id": "5",
+      "name": "Feria de Cartago",
+      "province": "Cartago",
+      "location": "Campo Ferial",
+      "schedule": "Viernes y Sábados"
+    },
+    {
+      "id": "6",
+      "name": "Feria Guápiles",
+      "province": "Limón",
+      "location": "Campo Ferial",
+      "schedule": "Sábados, 5:00 AM - 1:00 PM"
+    },
+    {
+      "id": "7",
+      "name": "Feria Esparza",
+      "province": "Puntarenas",
+      "location": "Centro de Esparza",
+      "schedule": "Sábados"
+    },
+    {
+      "id": "8",
+      "name": "Feria Liberia",
+      "province": "Guanacaste",
+      "location": "Campo Ferial",
+      "schedule": "Jueves"
+    },
+    {
+      "id": "9",
+      "name": "Feria de Pavas",
+      "province": "San José",
+      "location": "Sector Oeste",
+      "schedule": "Sábados, 5:00 AM - 1:00 PM"
+    },
+    {
+      "id": "5c08",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "aec9",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "e919",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6ce0",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "0829",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "52ed",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "701b",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "d295",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "8836",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "5fcd",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "4951",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "a9a1",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "ba74",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6938",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "abae",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6b5a",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "84ee",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "f209",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "49ac",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "c86f",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "0864",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "8752",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "0e0a",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "5b90",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    }
+  ],
+  "recetas": [
+    {
+      "id": "rec-1",
+      "title": "Ensalada de Tomate y Albahaca",
+      "description": "Una receta fresca y sencilla utilizando tomates cherry de la feria.",
+      "ingredients": [
+        "Tomates cherry",
+        "Albahaca fresca",
+        "Aceite de oliva",
+        "Sal y pimienta"
+      ],
+      "steps": [
+        "Lavá y cortá los tomates cherry a la mitad.",
+        "Deshojá la albahaca y cortala en trozos grandes.",
+        "Mezclá los tomates y la albahaca en un tazón.",
+        "Aliñá con abundante aceite de oliva extra virgen.",
+        "Añadí sal y pimienta al gusto antes de servir.",
+        "Sal"
+      ],
+      "difficulty": "Fácil",
+      "time": "10 min"
+    },
+    {
+      "id": "rec-2",
+      "title": "Brócoli Salteado con Ajo",
+      "description": "Brócoli crujiente salteado con ajo picado y un toque de limón.",
+      "ingredients": [
+        "Brócoli fresco",
+        "Ajos (3 dientes)",
+        "Limón de la feria",
+        "Pimienta negra"
+      ],
+      "steps": [
+        "Cortá el brócoli en ramilletes pequeños y lavalo bien.",
+        "Picá los ajos finamente.",
+        "En una sartén caliente con aceite, dorá los ajos por 1 minuto.",
+        "Agregá el brócoli y salteá a fuego medio-alto por 5-7 minutos.",
+        "Terminá con un chorrito de jugo de limón fresco y pimienta."
+      ],
+      "difficulty": "Fácil",
+      "time": "15 min"
+    }
+  ],
+  "productos": [
+    {
+      "category": "Frutas",
+      "emoji": "🥑",
+      "name": "Aguacate Hass",
+      "description": "Aguacate Hass importado/nacional · Por kilogramo",
+      "lowestPrice": "₡2387/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Cartago",
+          "feriaLocation": "Cartago",
+          "price": "₡2387/kg",
+          "priceNumeric": 2387,
+          "barWidth": 75
+        },
+        {
+          "feriaName": "Feria de Alajuela",
+          "feriaLocation": "Alajuela",
+          "price": "₡2390/kg",
+          "priceNumeric": 2390,
+          "barWidth": 75
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡2950/kg",
+          "priceNumeric": 2950,
+          "barWidth": 90
+        }
+      ],
+      "id": "3e52"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🥑",
+      "name": "Aguacate Criollo",
+      "description": "Aguacate Criollo · Por unidad",
+      "lowestPrice": "₡500 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡500/un",
+          "priceNumeric": 500,
+          "barWidth": 50
+        }
+      ],
+      "id": "f426"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍌",
+      "name": "Banano",
+      "description": "Banano criollo · Por unidad",
+      "lowestPrice": "₡35 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡35/un",
+          "priceNumeric": 35,
+          "barWidth": 20
+        },
+        {
+          "feriaName": "Feria de Heredia",
+          "feriaLocation": "Heredia",
+          "price": "₡40/un",
+          "priceNumeric": 40,
+          "barWidth": 25
+        }
+      ],
+      "id": "908c"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🧅",
+      "name": "Cebolla seca",
+      "description": "Cebolla seca amarilla/trenza · Por kilogramo",
+      "lowestPrice": "₡970/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Cartago",
+          "feriaLocation": "Cartago",
+          "price": "₡970/kg",
+          "priceNumeric": 970,
+          "barWidth": 60
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡1100/kg",
+          "priceNumeric": 1100,
+          "barWidth": 68
+        }
+      ],
+      "id": "810b"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🌶️",
+      "name": "Chile dulce",
+      "description": "Chile dulce primera · Por unidad",
+      "lowestPrice": "₡290 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Heredia",
+          "feriaLocation": "Heredia",
+          "price": "₡290/un",
+          "priceNumeric": 290,
+          "barWidth": 45
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡341/un",
+          "priceNumeric": 341,
+          "barWidth": 50
+        }
+      ],
+      "id": "d339"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🥬",
+      "name": "Lechuga americana",
+      "description": "Lechuga americana · Por unidad",
+      "lowestPrice": "₡285 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Alajuela",
+          "feriaLocation": "Alajuela",
+          "price": "₡285/un",
+          "priceNumeric": 285,
+          "barWidth": 35
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡323/un",
+          "priceNumeric": 323,
+          "barWidth": 40
+        }
+      ],
+      "id": "3e49"
+    },
+    {
+      "category": "Tubérculos",
+      "emoji": "🥔",
+      "name": "Papa blanca",
+      "description": "Papa blanca · Por kilogramo",
+      "lowestPrice": "₡615/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Cartago",
+          "feriaLocation": "Cartago",
+          "price": "₡615/kg",
+          "priceNumeric": 615,
+          "barWidth": 50
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡900/kg",
+          "priceNumeric": 900,
+          "barWidth": 70
+        }
+      ],
+      "id": "ac7c"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍍",
+      "name": "Piña grande",
+      "description": "Piña grande · Por unidad",
+      "lowestPrice": "₡1355 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Heredia",
+          "feriaLocation": "Heredia",
+          "price": "₡1355/un",
+          "priceNumeric": 1355,
+          "barWidth": 75
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡1390/un",
+          "priceNumeric": 1390,
+          "barWidth": 80
+        }
+      ],
+      "id": "005e"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍌",
+      "name": "Plátano",
+      "description": "Plátano · Por unidad",
+      "lowestPrice": "₡250 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Alajuela",
+          "feriaLocation": "Alajuela",
+          "price": "₡250/un",
+          "priceNumeric": 250,
+          "barWidth": 35
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡268/un",
+          "priceNumeric": 268,
+          "barWidth": 40
+        }
+      ],
+      "id": "0389"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🥬",
+      "name": "Repollo verde",
+      "description": "Repollo verde · Por kilogramo",
+      "lowestPrice": "₡383/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Heredia",
+          "feriaLocation": "Heredia",
+          "price": "₡383/kg",
+          "priceNumeric": 383,
+          "barWidth": 40
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡425/kg",
+          "priceNumeric": 425,
+          "barWidth": 45
+        }
+      ],
+      "id": "c59d"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🍅",
+      "name": "Tomate",
+      "description": "Tomate primera · Por kilogramo",
+      "lowestPrice": "₡795/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡795/kg",
+          "priceNumeric": 795,
+          "barWidth": 55
+        },
+        {
+          "feriaName": "Feria de Heredia",
+          "feriaLocation": "Heredia",
+          "price": "₡913/kg",
+          "priceNumeric": 913,
+          "barWidth": 65
+        }
+      ],
+      "id": "348a"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🥕",
+      "name": "Zanahoria",
+      "description": "Zanahoria fresca · Por kilogramo",
+      "lowestPrice": "₡450/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Cartago",
+          "feriaLocation": "Cartago",
+          "price": "₡450/kg",
+          "priceNumeric": 450,
+          "barWidth": 40
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡683/kg",
+          "priceNumeric": 683,
+          "barWidth": 60
+        }
+      ],
+      "id": "9887"
+    },
+    {
+      "category": "Proteína",
+      "emoji": "🥚",
+      "name": "Huevos",
+      "description": "Huevos frescos · Por kilogramo",
+      "lowestPrice": "₡1450/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Alajuela",
+          "feriaLocation": "Alajuela",
+          "price": "₡1450/kg",
+          "priceNumeric": 1450,
+          "barWidth": 65
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡1543/kg",
+          "priceNumeric": 1543,
+          "barWidth": 70
+        }
+      ],
+      "id": "f31a"
+    },
+    {
+      "category": "Verduras",
+      "emoji": "🥦",
+      "name": "Brócoli",
+      "description": "Brócoli fresco · Por kilogramo",
+      "lowestPrice": "₡975/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡975/kg",
+          "priceNumeric": 975,
+          "barWidth": 65
+        }
+      ],
+      "id": "311f"
+    },
+    {
+      "category": "Hierbas",
+      "emoji": "🌿",
+      "name": "Culantro castilla",
+      "description": "Culantro castilla · Por rollito",
+      "lowestPrice": "₡210/rollito",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡210/rollito",
+          "priceNumeric": 210,
+          "barWidth": 25
+        }
+      ],
+      "id": "dc24"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍋",
+      "name": "Limón",
+      "description": "Limón mandarino/mesino · Por unidad",
+      "lowestPrice": "₡140 c/u",
+      "rows": [
+        {
+          "feriaName": "Feria de Alajuela",
+          "feriaLocation": "Alajuela",
+          "price": "₡140/un",
+          "priceNumeric": 140,
+          "barWidth": 14
+        },
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡185/un",
+          "priceNumeric": 185,
+          "barWidth": 18
+        }
+      ],
+      "id": "0ced"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍓",
+      "name": "Fresa",
+      "description": "Fresa fresca · Por kilogramo",
+      "lowestPrice": "₡2815/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡2815/kg",
+          "priceNumeric": 2815,
+          "barWidth": 75
+        }
+      ],
+      "id": "50b4"
+    },
+    {
+      "category": "Frutas",
+      "emoji": "🍉",
+      "name": "Sandía",
+      "description": "Sandía dulce · Por kilogramo",
+      "lowestPrice": "₡560/kg",
+      "rows": [
+        {
+          "feriaName": "Feria de Pavas",
+          "feriaLocation": "San José",
+          "price": "₡560/kg",
+          "priceNumeric": 560,
+          "barWidth": 50
+        }
+      ],
+      "id": "4fba"
+    }
+  ],
+  "solicitudesCambioRol": [
+    {
+      "id": "05ef",
+      "usuarioId": "e455",
+      "nombreUsuario": "Steven Salas",
+      "correoUsuario": "salas@gamil.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Pendiente",
+      "motivoRespuesta": "",
+      "fechaSolicitud": "2026-03-19T16:24:44.727Z"
+    },
+    {
+      "id": "487d",
+      "usuarioId": "0fbd",
+      "nombreUsuario": "Megan",
+      "correoUsuario": "meg@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Registro completado por el usuario.",
+      "fechaSolicitud": "2026-03-19T16:31:40.129Z"
+    },
+    {
+      "id": "f094",
+      "usuarioId": "3100",
+      "nombreUsuario": "Carlos D",
+      "correoUsuario": "oskar@hotmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Pendiente",
+      "motivoRespuesta": "",
+      "fechaSolicitud": "2026-03-19T17:27:04.007Z"
+    },
+    {
+      "id": "f772",
+      "usuarioId": "3100",
+      "nombreUsuario": "Carlos D",
+      "correoUsuario": "ross@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Pendiente",
+      "motivoRespuesta": "",
+      "fechaSolicitud": "2026-03-19T17:33:16.619Z"
+    },
+    {
+      "id": "3af9",
+      "usuarioId": "3100",
+      "nombreUsuario": "Carlos D",
+      "correoUsuario": "ross@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Pendiente",
+      "motivoRespuesta": "",
+      "fechaSolicitud": "2026-03-19T17:33:56.723Z"
+    },
+    {
+      "id": "55d9",
+      "usuarioId": "0a16",
+      "nombreUsuario": "Samiron",
+      "correoUsuario": "samir@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Pendiente",
+      "motivoRespuesta": "",
+      "fechaSolicitud": "2026-03-19T17:46:02.835Z"
+    }
+  ],
+  "puestosAgricultor": [
+    {
+      "id": "44a1",
+      "usuarioId": "0fbd",
+      "nombrePuesto": "Quesitos",
+      "descripcion": "i,mukjnyhbtgrvfcedxwsa",
+      "ubicacion": "yntrvcewq",
+      "tiposProducto": [
+        "Huevos"
+      ],
+      "logoNombre": "semilla_digital_transparente (1).png",
+      "telefono": "88888888",
+      "email": "meg@gmail.com",
+      "horarios": "Sabados de 5:00 am a 9:pm",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:06:54.208Z"
+    },
+    {
+      "id": "93f6",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "tyjhvrfrecsdc",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "astro.jpg"
+      ],
+      "telefono": "88888888",
+      "email": "oskar@hotmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:27:03.971Z"
+    },
+    {
+      "id": "4e87",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "zxsdfgrthyulomnhg",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Proteínas",
+        "Hierbas"
+      ],
+      "fotosNombres": [
+        "astro.jpg"
+      ],
+      "telefono": "88888888",
+      "email": "ross@gmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:33:16.598Z"
+    },
+    {
+      "id": "a2cc",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "ilkujytrgfecdx8jt7hytgrfe",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Verduras",
+        "Proteínas"
+      ],
+      "fotosNombres": [
+        "ChatGPT Image 16 mar 2026, 15_11_52.png"
+      ],
+      "telefono": "88888888",
+      "email": "ross@gmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:33:56.701Z"
+    },
+    {
+      "usuarioId": "0a16",
+      "nombrePuesto": "Samiron",
+      "descripcion": "callense todos vrgas",
+      "ubicacion": "Tres leches",
+      "tiposProducto": [
+        "Frutas"
+      ],
+      "fotosNombres": [
+        "WhatsApp Image 2026-03-18 at 11.57.19 AM.jpeg"
+      ],
+      "telefono": "88888888",
+      "email": "samir@gmail.com",
+      "horarios": "sabados",
+      "metodosCultivo": "cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T19:14:58.242Z",
+      "id": "81b2"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

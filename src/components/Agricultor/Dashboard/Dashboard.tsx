@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import AdminStats from '../../adminAgricultor/AgricultorStats'
-import { getProductosByUser } from '../../../servers/ProductService'
+import { getProductosByUser, Producto } from '../../../servers/ProductService'
 import { getFeriaById } from '../../../servers/AgricultorServices'
 import './Dashboard.css'
 
@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
     feriaNombre: '',
     puestoNumero: '',
   })
-  const [recentProducts, setRecentProducts] = useState<any[]>([])
+  const [recentProducts, setRecentProducts] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
         const productos = await getProductosByUser(user.id)
         
         // Obtener información de la feria
-        const feria = await getFeriaById(user.feriaId)
+        const feria: any = await getFeriaById(user.feriaId)
 
         // Calcular estadísticas
         const activos = productos.filter((p) => p.disponible).length

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, ReactNode } from 'react'
 
 interface User {
   id: number
@@ -35,22 +35,21 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  // Cargar usuario desde localStorage al iniciar
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem('auth_user')
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser))
-      } catch (error) {
-        console.error('Error al parsear usuario:', error)
+        return JSON.parse(storedUser)
+      } catch {
         localStorage.removeItem('auth_user')
+        return null
       }
     }
-    setIsLoading(false)
-  }, [])
+    return null
+  })
+  const [isLoading, setIsLoading] = useState(false)
+
+
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {

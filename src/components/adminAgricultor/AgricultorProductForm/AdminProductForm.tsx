@@ -69,6 +69,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     fetchFerias()
 
     if (producto) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(producto)
     }
   }, [producto, userId])
@@ -104,7 +105,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     e.preventDefault()
 
     const precios = Object.entries(selectedFerias)
-      .filter(([_, data]) => data.selected && data.precio)
+      .filter(([, data]) => data.selected && data.precio)
       .map(([feriaId, data]) => {
         const feria = ferias.find((f) => f.id === parseInt(feriaId))
         return {

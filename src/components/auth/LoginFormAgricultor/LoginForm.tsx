@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
       } else {
         setError('Email o contraseña incorrectos')
       }
-    } catch (err) {
+    } catch {
       setError('Error al iniciar sesión. Intenta nuevamente.')
     } finally {
       setLoading(false)

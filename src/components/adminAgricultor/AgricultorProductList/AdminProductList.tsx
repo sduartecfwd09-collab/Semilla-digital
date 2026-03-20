@@ -3,6 +3,7 @@ import { Producto } from '../../../servers/ProductService'
 import AdminProductCard from '../../adminAgricultor/AgricultorProductCard'
 import './AdminProductList.css'
 
+// eslint-disable-next-line no-unused-vars
 interface AdminProductListProps {
   productos: Producto[]
   loading: boolean

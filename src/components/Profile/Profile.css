@@ -1,0 +1,312 @@
+.profile-page {
+  min-height: 100vh;
+  background: var(--fondo-claro, #f8fcf9);
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef2ef;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.profile-avatar {
+  background: var(--verde-claro, #2d8a42);
+  color: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 auto 20px;
+  box-shadow: 0 5px 15px rgba(45, 138, 66, 0.2);
+}
+
+.profile-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--fondo, #1a3621);
+  margin-bottom: 10px;
+}
+
+.profile-status {
+  font-size: 14px;
+  color: #718096;
+}
+
+.profile-status span {
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.profile-status span.activo {
+  background: #e6fffa;
+  color: #319795;
+}
+
+/* Form Styles similar to Auth */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  background: #fcfcfc;
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-box:focus-within {
+  border-color: var(--verde-claro, #2d8a42);
+  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+}
+
+.input-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.input-box input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 16px;
+  color: #2d3748;
+  outline: none;
+}
+
+.input-box.disabled {
+  background: #f7fafc;
+  opacity: 0.7;
+}
+
+.password-toggle-profile {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #aaa;
+}
+
+.password-toggle-profile:hover {
+  color: var(--verde-claro, #2d8a42);
+  transform: scale(1.1);
+}
+
+.password-toggle-profile svg {
+  display: block;
+}
+
+/* Ocultar el ojito por defecto de los navegadores */
+.input-box input::-ms-reveal,
+.input-box input::-ms-clear {
+  display: none;
+}
+
+.input-box input::-webkit-contacts-auto-fill-button,
+.input-box input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+/* Actions */
+.profile-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.save-btn {
+  flex: 2;
+  background: var(--verde-claro, #2d8a42);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.save-btn:hover {
+  background: var(--verde, #1a5c2a);
+  transform: translateY(-2px);
+}
+
+.edit-btn {
+  flex: 2;
+  background: white;
+  color: var(--verde-claro, #2d8a42);
+  border: 2px solid var(--verde-claro, #2d8a42);
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: var(--verde-claro, #2d8a42);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.cancel-btn {
+  flex: 1;
+  background: #edf2f7;
+  color: #4a5568;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Animations */
+.animate-fade {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-page-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: var(--verde-claro, #2d8a42);
+}
+
+/* Role Request Section */
+.role-request-section {
+  margin-top: 30px;
+}
+
+.role-request-section .separator {
+  height: 1px;
+  background: #edf2f7;
+  margin-bottom: 30px;
+}
+
+.role-request-content {
+  text-align: center;
+  background: #f7fafc;
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px dashed #cbd5e0;
+}
+
+.role-request-content h3 {
+  font-size: 18px;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.role-request-content p {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.role-request-btn {
+  background: white;
+  color: var(--verde-claro, #2d8a42);
+  border: 2px solid var(--verde-claro, #2d8a42);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-request-btn:hover {
+  background: var(--verde-claro, #2d8a42);
+  color: white;
+}
+
+.request-status-badge {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.request-status-badge.pending {
+  background: #fffaf0;
+  color: #dd6b20;
+  border: 1px solid #fbd38d;
+  margin-bottom: 20px;
+  display: block;
+}

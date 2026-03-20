@@ -16,6 +16,12 @@
     color: var(--lima);
     letter-spacing: -1px;
     text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.navbar-logo:hover {
+    opacity: 0.8;
 }
 
 .navbar-logo span {
