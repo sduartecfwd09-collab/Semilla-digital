@@ -906,6 +906,5 @@
       "fechaRegistro": "2026-03-19T19:14:58.242Z",
       "id": "81b2"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }
