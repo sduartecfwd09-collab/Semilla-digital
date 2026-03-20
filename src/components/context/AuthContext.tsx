@@ -14,7 +14,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<{ success: boolean; role?: string }>
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
     try {
       // Buscar usuario en la API
       const response = await fetch(`http://localhost:3001/usuarios?email=${email}&password=${password}`)
@@ -70,12 +70,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userWithoutPassword)
         localStorage.setItem('auth_user', JSON.stringify(userWithoutPassword))
-        return true
+        return { success: true, role: userWithoutPassword.role }
       }
-      return false
+      return { success: false }
     } catch (error) {
       console.error('Error en login:', error)
-      return false
+      return { success: false }
     }
   }
 

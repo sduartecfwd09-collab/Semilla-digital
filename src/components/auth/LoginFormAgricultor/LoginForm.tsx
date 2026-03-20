@@ -18,8 +18,8 @@ const LoginForm: React.FC = () => {
     setLoading(true)
 
     try {
-      const success = await login(email, password)
-      if (success) {
+      const result = await login(email, password)
+      if (result.success) {
         navigate('/admin')
       } else {
         setError('Email o contraseña incorrectos')

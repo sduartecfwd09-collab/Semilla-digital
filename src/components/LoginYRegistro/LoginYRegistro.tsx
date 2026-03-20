@@ -4,6 +4,7 @@ import './LoginYRegistro.css'
 import { useNavigate, Link } from 'react-router-dom'
 import { validateEmail } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
+import { useAuth } from '../context/AuthContext'
 
 // Iconos SVG para el ojo (mostrar/ocultar contraseña)
 const EyeIcon = () => (
@@ -23,6 +24,7 @@ const EyeOffIcon = () => (
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   // Estado del formulario de inicio de sesión
   const [loginEmail, setLoginEmail] = useState('')
@@ -62,12 +64,10 @@ const Auth: React.FC = () => {
     }
     
     try {
-      // Verificamos si el usuario existe en db.json
-      const response = await fetch(`${ENDPOINTS.usuarios}?email=${loginEmail}`)
-      const users = await response.json()
+      // Usar la función login desde el contexto de autenticación
+      const result = await login(loginEmail, loginPassword)
 
-      if (users && users.length > 0 && users[0].password === loginPassword) {
-        localStorage.setItem('user', JSON.stringify(users[0]))
+      if (result.success) {
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido a AgroMap!',
@@ -76,9 +76,9 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          if (users[0].role === 'Admin') {
+          if (result.role === 'Admin') {
             navigate('/admin')
-          } else if (users[0].role === 'Agricultor') {
+          } else if (result.role === 'Agricultor') {
             navigate('/agricultor')
           } else {
             navigate('/')
