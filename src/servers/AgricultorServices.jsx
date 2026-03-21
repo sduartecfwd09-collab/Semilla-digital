@@ -4,14 +4,14 @@
 //
 // PARA EJECUTAR:
 //   1. npm install json-server --save-dev
-//   2. En una terminal:  npx json-server --watch db.json --port 3001
+//   2. En una terminal:  npx json-server --watch db.json --port 3002
 //   3. En otra terminal: npm run dev
 //
 //   O con el script combinado:
 //   npm run dev:full   (requiere: npm install concurrently --save-dev)
 // ─────────────────────────────────────────────────────────────────
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = 'http://localhost:3002'
 
 // ─── HELPERS ─────────────────────────────────────────────────────
 
@@ -164,3 +164,35 @@ export const deleteFeria = async (id) => {
   return handleResponse(res)
 }
 
+// ─── PUESTOS ─────────────────────────────────────────────────────
+
+/**
+ * Obtiene el puesto de un agricultor por su ID de usuario.
+ * @param {number|string} userId
+ * @returns {Promise<Object>} puesto encontrado o null
+ */
+export const getPuestoByUserId = async (userId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/puestosAgricultor?usuarioId=${userId}`)
+    const posts = await handleResponse(res)
+    return posts.length > 0 ? posts[0] : null
+  } catch (error) {
+    console.error('Error fetching puesto:', error)
+    return null
+  }
+}
+
+/**
+ * Actualiza la información de un puesto.
+ * @param {number|string} id
+ * @param {Object} puestoData
+ * @returns {Promise<Object>} puesto actualizado
+ */
+export const updatePuesto = async (id, puestoData) => {
+  const res = await fetch(`${BASE_URL}/puestosAgricultor/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(puestoData),
+  })
+  return handleResponse(res)
+}

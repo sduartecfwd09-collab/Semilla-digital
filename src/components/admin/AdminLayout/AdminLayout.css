@@ -6,7 +6,7 @@
 
 .admin-main {
     flex: 1;
-    padding: 2rem 3rem;
+    padding: 0 2rem;
     overflow-y: auto;
     max-height: 100vh;
 }

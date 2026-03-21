@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user, logout } = useAuth()
 
-  const [user, setUser] = useState<{name: string} | null>(null)
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro de que deseas salir de tu cuenta?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#2d8a42',
+      cancelButtonColor: '#718096',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    })
 
-  useEffect(() => {
-    const userStr = localStorage.getItem('user')
-    if (userStr) {
-      setUser(JSON.parse(userStr))
-    } else {
-      setUser(null)
+    if (result.isConfirmed) {
+      navigate('/')
+      Promise.resolve().then(() => logout())
     }
-  }, [location.pathname]) // Atualizar quando mudamos de página ou logout
-
-  const handleLogout = () => {
-    localStorage.removeItem('user')
-    setUser(null)
-    navigate('/')
   }
 
   const isActive = (path: string) => location.pathname === path
@@ -61,11 +65,28 @@ const Navbar: React.FC = () => {
           </Link>
         </li>
         <li>
-
           <Link to="/recetas" className={`navbar-link ${isActive('/recetas') ? 'active' : ''}`}>
             Recetas
           </Link>
         </li>
+
+        {/* Enlaces dinámicos según el rol */}
+        {user?.role === 'Administrador' && (
+          <li>
+            <Link to="/admin" className={`navbar-link ${location.pathname.startsWith('/admin') ? 'active' : ''}`}>
+              Panel Admin
+            </Link>
+          </li>
+        )}
+
+        {user?.role === 'Agricultor' && (
+          <li>
+            <Link to="/agricultor" className={`navbar-link ${location.pathname.startsWith('/agricultor') ? 'active' : ''}`}>
+              Panel Mi Feria
+            </Link>
+          </li>
+        )}
+
         {user && (
           <li>
             <Link to="/perfil" className={`navbar-link ${isActive('/perfil') ? 'active' : ''}`}>
@@ -73,14 +94,14 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
         )}
+
         <li>
           {user ? (
-
             <button className="navbar-cta-logout" onClick={handleLogout}>
-              Cerrar sesión ({user?.name})
+              Cerrar sesión
             </button>
           ) : (
-            <Link to="/login" className="navbar-cta">
+            <Link to="/auth" className="navbar-cta">
               Iniciar sesión
             </Link>
           )}

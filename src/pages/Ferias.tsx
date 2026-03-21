@@ -8,12 +8,7 @@ const FeriasPage: React.FC = () => {
   return (
     <div className="ferias-page page-container">
       <Navbar />
-      <div className="page-header">
-        <h1 className="page-title">Nuestras Ferias</h1>
-        <p className="page-subtitle">
-          Encontrá la feria más cercana a vos y disfrutá de los mejores productos frescos de Costa Rica.
-        </p>
-      </div>
+      <div style={{ marginTop: '80px' }}></div> {/* Espacio para el Navbar */}
       <FeriasGrid />
       <Footer />
     </div>

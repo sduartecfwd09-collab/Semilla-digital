@@ -90,6 +90,16 @@
   border-bottom: 1px solid #edf2f7;
 }
 
+.form-section-title2 {
+  grid-column: 1 / -1;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: var(--fondo, #1a3621);
+  padding-bottom: 8px;
+  margin-top: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+
 /* Multi-select de productos */
 .productos-grid {
   display: grid;
