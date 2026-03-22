@@ -49,8 +49,8 @@ const MisFerias: React.FC = () => {
         // 1. Obtener información del puesto
         const dataPuesto = await getPuestoByUserId(user.id)
         if (dataPuesto) {
-          setPuesto(dataPuesto)
-          setPuestoData(dataPuesto)
+          setPuesto(dataPuesto as any)
+          setPuestoData(dataPuesto as any)
         }
 
         // 2. Obtener información de la feria si tiene vinculada una

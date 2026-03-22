@@ -37,6 +37,7 @@ export interface Recipe {
   ingredients: string[];
   difficulty: string;
   time: string;
+  steps: string[];
 }
 
 export interface PuestoAgricultor {

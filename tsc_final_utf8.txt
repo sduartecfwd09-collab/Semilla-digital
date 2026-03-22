@@ -1,0 +1,12 @@
+﻿src/components/adminAgricultor/AgricultorProductList/AdminProductList.tsx(48,11): error TS2322: Type '(id: number) => void' is not assignable to type '(id: string | number) => void'.
+  Types of parameters 'id' and 'id' are incompatible.
+    Type 'string | number' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.
+src/components/adminAgricultor/AgricultorProductList/AdminProductList.tsx(49,11): error TS2322: Type '(id: number, disponible: boolean) => void' is not assignable to type '(id: string | number, disponible: boolean) => void'.
+  Types of parameters 'id' and 'id' are incompatible.
+    Type 'string | number' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.
+src/components/Agricultor/MisFerias/MisFerias.tsx(52,21): error TS2345: Argument of type 'Object' is not assignable to parameter of type 'SetStateAction<Puesto | null>'.
+  The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
+src/components/Agricultor/MisProductos/MisProductos.tsx(186,15): error TS2322: Type 'string' is not assignable to type 'number'.
+src/pages/Admin/AdminProductos/AdminProductos.tsx(216,21): error TS2322: Type 'string' is not assignable to type 'number'.

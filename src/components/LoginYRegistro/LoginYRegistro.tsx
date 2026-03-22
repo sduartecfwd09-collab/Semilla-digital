@@ -49,9 +49,9 @@ const Auth: React.FC = () => {
     }
     
     try {
-      const success = await login(loginEmail, loginPassword)
+      const authResult = await login(loginEmail, loginPassword)
 
-      if (success) {
+      if (authResult.success) {
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido a AgroMap!',
@@ -60,9 +60,9 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          if (result.role === 'Admin') {
+          if (authResult.role === 'Administrador' || authResult.role === 'Admin') {
             navigate('/admin')
-          } else if (result.role === 'Agricultor') {
+          } else if (authResult.role === 'Agricultor' || authResult.role === 'Vendedor') {
             navigate('/agricultor')
           } else {
             navigate('/')
@@ -290,7 +290,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowLoginPass(!showLoginPass)}
                     >
-                      {showLoginPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showLoginPass ? '👁️‍🗨️' : '👁️'}
                     </button>
                   </div>
                 </div>
@@ -364,7 +364,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegPass(!showRegPass)}
                     >
-                      {showRegPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegPass ? '👁️‍🗨️' : '👁️'}
                     </button>
                   </div>
                 </div>
@@ -385,7 +385,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegConfirm(!showRegConfirm)}
                     >
-                      {showRegConfirm ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegConfirm ? '👁️‍🗨️' : '👁️'}
                     </button>
                   </div>
                 </div>

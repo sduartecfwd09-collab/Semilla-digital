@@ -14,6 +14,19 @@ const PROVINCIAS_COSTA_RICA = [
   "Limón",
 ];
 
+const mergeFeriasData = (google: any[], fallback: any[]): Feria[] => {
+  const combined = [...google, ...fallback];
+  return combined.map((f, index) => ({
+    id: f.id || `f-${index}`,
+    nombre: f.nombre || f.name || "Feria sin nombre",
+    direccion: f.direccion || f.location || "Ubicación no especificada",
+    provincia: f.provincia || f.province || "Otras",
+    dias: f.dias || (f.schedule && f.schedule.split(',')[0]) || "Sábados",
+    horario: f.horario || (f.schedule && f.schedule.split(',')[1]) || "Mañana",
+    source: f.source || "merged"
+  }));
+};
+
 /**
  * Hook para obtener y combinar todas las ferias del agricultor de Google Maps y el fallback.
  * Orquesta la búsqueda por provincia.

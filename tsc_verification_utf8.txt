@@ -1,0 +1,22 @@
+﻿src/components/adminAgricultor/AgricultorProductList/AdminProductList.tsx(48,11): error TS2322: Type '(id: number) => void' is not assignable to type '(id: string | number) => void'.
+  Types of parameters 'id' and 'id' are incompatible.
+    Type 'string | number' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.
+src/components/adminAgricultor/AgricultorProductList/AdminProductList.tsx(49,11): error TS2322: Type '(id: number, disponible: boolean) => void' is not assignable to type '(id: string | number, disponible: boolean) => void'.
+  Types of parameters 'id' and 'id' are incompatible.
+    Type 'string | number' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.
+src/components/Agricultor/Dashboard/Dashboard.tsx(37,24): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'string | number'.
+  Type 'undefined' is not assignable to type 'string | number'.
+src/components/Agricultor/Dashboard/Dashboard.tsx(48,33): error TS2339: Property 'nombrePuesto' does not exist on type 'Object'.
+src/components/Agricultor/Dashboard/Dashboard.tsx(49,38): error TS2339: Property 'descripcion' does not exist on type 'Object'.
+src/components/Agricultor/Dashboard/Dashboard.tsx(50,36): error TS2339: Property 'ubicacion' does not exist on type 'Object'.
+src/components/Agricultor/MisFerias/MisFerias.tsx(52,21): error TS2345: Argument of type 'Object' is not assignable to parameter of type 'SetStateAction<Puesto | null>'.
+  The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
+src/components/Agricultor/MisProductos/MisProductos.tsx(186,15): error TS2322: Type 'string' is not assignable to type 'number'.
+src/hooks/useFerias.ts(42,28): error TS2304: Cannot find name 'mergeFeriasData'.
+src/hooks/useFerias.ts(47,28): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useGroupedFerias.ts(14,9): error TS2740: Type 'Record<string, { province: string; }[]>' is missing the following properties from type 'Provincia[]': length, pop, push, concat, and 35 more.
+src/hooks/useGroupedFerias.ts(15,28): error TS2345: Argument of type 'Feria[]' is not assignable to parameter of type '{ province: string; }[]'.
+  Property 'province' is missing in type 'Feria' but required in type '{ province: string; }'.
+src/pages/Admin/AdminProductos/AdminProductos.tsx(216,21): error TS2322: Type 'string' is not assignable to type 'number'.
