@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
 import Swal from 'sweetalert2'
 import './AdminFerias.css'
+import { Fair } from '../../../types'
 
 const AdminFerias = () => {
     const [fairs, setFairs] = useState<Fair[]>([])

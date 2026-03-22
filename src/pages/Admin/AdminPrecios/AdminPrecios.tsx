@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
 import Swal from 'sweetalert2'
 import './AdminPrecios.css'
+import { Price, Product } from '../../../types'
 
 interface MergedPrice extends Price {
     productName?: string
@@ -29,8 +30,8 @@ const AdminPrecios = () => {
             ])
 
             // Combinar datos del producto (icono, nombre, unidad) en los registros de precios
-            const mergedPrices = pricesData.map((p: any) => {
-                const product = productsData.find((prod: any) => prod.id === p.productId) as any
+            const mergedPrices = pricesData.map((p: Price) => {
+                const product = productsData.find((prod: Product) => prod.id === p.productId)
                 return {
                     ...p,
                     productName: product?.nombre || 'Producto desconocido',

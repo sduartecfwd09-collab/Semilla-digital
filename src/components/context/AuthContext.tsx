@@ -52,9 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('user')
       }
     }
-    return null
-  })
-  const [isLoading, setIsLoading] = useState(false)
+  }, [])
 
 
 
@@ -79,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userToStore)
         localStorage.setItem('user', JSON.stringify(userToStore))
-        return true
+        return { success: true, role: authenticatedUser.role }
       }
       return { success: false }
     } catch (error) {

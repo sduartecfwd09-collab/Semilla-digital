@@ -35,6 +35,7 @@ export interface Recipe {
   title: string;
   description: string;
   ingredients: string[];
+  steps: string[];
   difficulty: string;
   time: string;
 }

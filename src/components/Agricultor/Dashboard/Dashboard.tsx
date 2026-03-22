@@ -5,7 +5,7 @@ import Navbar from '../../Navbar/Navbar'
 import AgricultorSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import AdminStats from '../../adminAgricultor/AgricultorStats'
-import { getProductosByUser } from '../../../servers/ProductService'
+import { getProductosByUser, Producto } from '../../../servers/ProductService'
 import { getFeriaById, getPuestoByUserId } from '../../../servers/AgricultorServices'
 import './Dashboard.css'
 
