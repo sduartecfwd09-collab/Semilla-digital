@@ -3,10 +3,10 @@
 // Servicio para autenticación y gestión de usuarios
 // ─────────────────────────────────────────────────────────────────
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = 'http://localhost:3002'
 
 interface User {
-  id: number
+  id: string | number
   email: string
   password: string
   role: string
@@ -68,7 +68,7 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
 /**
  * Actualiza información del usuario
  */
-export const updateUser = async (userId: number, updates: Partial<User>): Promise<User> => {
+export const updateUser = async (userId: string | number, updates: Partial<User>): Promise<User> => {
   const response = await fetch(`${BASE_URL}/usuarios/${userId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,7 @@ export const updateUser = async (userId: number, updates: Partial<User>): Promis
 /**
  * Obtiene información de un usuario por ID
  */
-export const getUserById = async (userId: number): Promise<User> => {
+export const getUserById = async (userId: string | number): Promise<User> => {
   const response = await fetch(`${BASE_URL}/usuarios/${userId}`)
   
   if (!response.ok) {

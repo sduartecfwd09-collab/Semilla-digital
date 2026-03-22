@@ -156,12 +156,34 @@
   cursor: pointer;
 }
 
-.admin-product-form-precio-input {
-  width: 150px;
-  padding: 0.5rem;
+.admin-product-form-precio-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fcfcfc;
   border: 2px solid #e5e5e5;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  padding: 0 12px;
+  width: 150px;
+  transition: all 0.2s ease;
+}
+
+.admin-product-form-precio-wrapper:focus-within {
+  border-color: var(--verde-claro, #2d8a42);
+  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+}
+
+.precio-prefix {
+  font-weight: 700;
+  color: var(--verde-claro, #2d8a42);
+  margin-right: 4px;
+}
+
+.admin-product-form-precio-wrapper .admin-product-form-precio-input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0 !important;
+  width: 100%;
 }
 
 .admin-product-form-actions {

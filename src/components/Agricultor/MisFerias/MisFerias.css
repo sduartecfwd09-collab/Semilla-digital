@@ -181,6 +181,39 @@
   font-weight: 600;
 }
 
+.mis-ferias-info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.mis-ferias-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.mis-feria-tag {
+  background: var(--verde-claro);
+  color: var(--verde);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mis-ferias-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .mis-ferias-form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 .mis-ferias-empty {
   text-align: center;
   color: #999;

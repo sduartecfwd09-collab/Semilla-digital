@@ -25,6 +25,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
     { emoji: '🍎', name: 'Frutas', count: 0 },
     { emoji: '🌿', name: 'Hierbas', count: 0 },
     { emoji: '🥔', name: 'Tubérculos', count: 0 },
+    { emoji: '🌾', name: 'Granos', count: 0 },
     { emoji: '🥚', name: 'Proteína', count: 0 },
   ])
 
@@ -34,8 +35,9 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
       .then(res => res.json())
       .then((productosData: { category: string }[]) => {
         const counts: Record<string, number> = {};
-        productosData.forEach((p: { category: string }) => {
-          counts[p.category] = (counts[p.category] || 0) + 1;
+        productosData.forEach((p: any) => {
+          const cName = p.categoria || p.category || 'Otros';
+          counts[cName] = (counts[cName] || 0) + 1;
         });
 
         setTotalCount(productosData.length);

@@ -19,8 +19,32 @@ const Compare: React.FC = () => {
   useEffect(() => {
     fetch(ENDPOINTS.productos)
       .then(res => res.json())
-      .then((data: ProductComparisonData[]) => {
-        setAllProducts(data)
+      .then((data: any[]) => {
+        // Mapeamos los productos de la API a la estructura que espera la UI
+        const mappedData: ProductComparisonData[] = data.map(p => {
+          const prices = p.precios || [];
+          const minPrice = prices.length > 0 
+            ? Math.min(...prices.map((pr: any) => pr.precio)) 
+            : 0;
+
+          return {
+            category: p.categoria || p.category || 'Otros',
+            emoji: p.emoji || '📦',
+            name: p.nombre || p.name || 'Producto sin nombre',
+            description: p.descripcion || p.description || '',
+            unit: p.unidad || 'Unidad',
+            lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
+            rows: p.rows ? p.rows : prices.map((pr: any) => ({
+              feriaName: pr.feriaNombre,
+              feriaLocation: `${pr.provincia}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+              province: pr.provincia,
+              price: `₡${pr.precio.toLocaleString()}`,
+              priceNumeric: pr.precio,
+              barWidth: 100 // El ancho se recalcula en el componente Card
+            }))
+          }
+        });
+        setAllProducts(mappedData)
         setLoading(false)
       })
       .catch(err => {
@@ -54,7 +78,7 @@ const Compare: React.FC = () => {
   const filteredProducts = allProducts
     .map((product: ProductComparisonData) => {
       const filteredRows = product.rows.filter((row: ComparisonRow) => {
-        const matchesProvince = selectedProvince === 'Todas las provincias' || row.feriaLocation === selectedProvince;
+        const matchesProvince = selectedProvince === 'Todas las provincias' || row.province === selectedProvince;
         return matchesProvince;
       });
       
@@ -141,9 +165,12 @@ const Compare: React.FC = () => {
           >
             <option>Todas las provincias</option>
             <option>San José</option>
+            <option>Alajuela</option>
             <option>Cartago</option>
             <option>Heredia</option>
-            <option>Alajuela</option>
+            <option>Guanacaste</option>
+            <option>Puntarenas</option>
+            <option>Limón</option>
           </select>
         </div>
       </div>

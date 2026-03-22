@@ -5,7 +5,7 @@ import './AdminProductForm.css'
 
 interface AdminProductFormProps {
   producto?: Producto
-  userId: number
+  userId: string | number
   onSubmit: (producto: Producto) => void
   onCancel: () => void
 }
