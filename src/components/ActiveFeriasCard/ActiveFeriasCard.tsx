@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFerias } from '../../hooks/useFerias';
 import './ActiveFeriasCard.css';
 
@@ -24,11 +25,10 @@ const ActiveFeriasCard: React.FC = () => {
     return (filtered.length > 0 ? filtered : allFerias).slice(0, 3);
   }, [allFerias, todayName]);
 
-  const scrollToFerias = () => {
-    const element = document.getElementById('ferias');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const navigate = useNavigate();
+  
+  const goToFerias = () => {
+    navigate('/ferias');
   };
 
   if (loading) {
@@ -81,7 +81,7 @@ const ActiveFeriasCard: React.FC = () => {
           <span className="tip-icon">💡</span>
           <p className="tip-text">Tip: Las mejores horas para comprar son temprano en la mañana.</p>
         </div>
-        <button onClick={scrollToFerias} className="see-all-btn">
+        <button onClick={goToFerias} className="see-all-btn">
           Ver todas las ferias →
         </button>
       </div>

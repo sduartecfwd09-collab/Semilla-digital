@@ -5,21 +5,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { validateEmail } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
-
-// Iconos SVG para el ojo (mostrar/ocultar contraseña)
-const EyeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>
-)
-
-const EyeOffIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-  </svg>
-)
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -64,7 +50,6 @@ const Auth: React.FC = () => {
     }
     
     try {
-      // Usar la función login desde el contexto de autenticación
       const result = await login(loginEmail, loginPassword)
 
       if (result.success) {
@@ -96,7 +81,7 @@ const Auth: React.FC = () => {
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
-        text: 'Debes de registrarte primero.',
+        text: 'Hubo un problema al conectar con el servidor.',
         confirmButtonColor: 'var(--verde-claro)',
       })
     }
@@ -174,7 +159,7 @@ const Auth: React.FC = () => {
           name: trimmedName,
           email: trimmedEmail,
           password: trimmedPassword,
-          role: 'Cliente',
+          role: 'Usuario',
           status: 'Activo'
         })
       })
@@ -183,14 +168,13 @@ const Auth: React.FC = () => {
         Swal.fire({
           icon: 'success',
           title: '¡Cuenta creada!',
-          text: 'Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión.',
+          text: 'Tu cuenta ha sido creada exitosamente. Ahora podés iniciar sesión.',
           confirmButtonColor: 'var(--verde-claro)',
+          timer: 2500,
+          showConfirmButton: false,
         }).then(() => {
-          setRegName('')
-          setRegEmail('')
-          setRegPassword('')
-          setRegConfirm('')
-          setIsLogin(true) // Cambiar a la vista de inicio de sesión
+          // Redirigir al formulario de login (cambiando el estado isLogin a true)
+          setIsLogin(true)
         })
       }
     } catch {
@@ -283,8 +267,9 @@ const Auth: React.FC = () => {
                       type="email" 
                       placeholder="ejemplo@correo.com" 
                       value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
+                      onChange={(e) => setLoginEmail(e.target.value.trim())}
                       autoComplete="username"
+                      required
                     />
                   </div>
                 </div>
@@ -297,8 +282,9 @@ const Auth: React.FC = () => {
                       type={showLoginPass ? "text" : "password"} 
                       placeholder="••••••••" 
                       value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
+                      onChange={(e) => setLoginPassword(e.target.value.trim())}
                       autoComplete="current-password"
+                      required
                     />
                     <button 
                       type="button" 
@@ -343,6 +329,7 @@ const Auth: React.FC = () => {
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
                       autoComplete="name"
+                      required
                     />
                   </div>
                 </div>
@@ -355,8 +342,9 @@ const Auth: React.FC = () => {
                       type="email" 
                       placeholder="ejemplo@correo.com" 
                       value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
+                      onChange={(e) => setRegEmail(e.target.value.trim())}
                       autoComplete="email"
+                      required
                     />
                   </div>
                 </div>

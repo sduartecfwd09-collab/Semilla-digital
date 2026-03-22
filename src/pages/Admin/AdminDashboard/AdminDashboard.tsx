@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../../services/api'
+import { ENDPOINTS } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
 import './AdminDashboard.css'
 
@@ -8,12 +9,12 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState({
         users: 0,
         products: 0,
-        prices: 0,
-        fairs: 0,
+        agricultores: 0,
+        recipes: 0,
+        pendingRequests: 0,
         queries: 340 
     })
     const [loading, setLoading] = useState(true)
-    const [showUserModal, setShowUserModal] = useState(false)
 
     useEffect(() => {
         fetchStats()
@@ -22,17 +23,32 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             setLoading(true)
-            const [users, products, prices, fairs] = await Promise.all([
-                api.getUsers(),
-                api.getProducts(),
-                api.getPrices(),
-                api.getFairs()
+            const [users, products, recipes] = await Promise.all([
+                api.getUsers().catch(() => []),
+                api.getProducts().catch(() => []),
+                api.request<any[]>('/recetas').catch(() => [])
             ])
+
+            // Obtener solicitudes reales para el contador de pendientes
+            let pendingCount = 0;
+            try {
+                const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
+                if (solRes.ok) {
+                    const solicitudes = await solRes.json();
+                    pendingCount = solicitudes.filter((s: any) => s.estado === 'Pendiente').length;
+                }
+            } catch (e) {
+                console.warn('Error fetching solicitudes:', e);
+            }
+
+            const agricultoresCount = users.filter((u: any) => u.role === 'Agricultor').length;
+
             setStats({
                 users: users.length,
                 products: products.length,
-                prices: prices.length,
-                fairs: fairs.length,
+                agricultores: agricultoresCount,
+                recipes: recipes.length,
+                pendingRequests: pendingCount,
                 queries: 340
             })
         } catch (error) {
@@ -44,20 +60,16 @@ const AdminDashboard = () => {
 
     const statCards = [
         { title: 'Usuarios registrados', value: loading ? '...' : stats.users, icon: '👥', trend: '+3 esta semana', color: '#6c5ce7', bgColor: '#f3f0ff', path: '/admin/usuarios' },
-        { title: 'Ferias activas', value: loading ? '...' : stats.fairs, icon: '🏪', trend: '+2', color: '#00cec9', bgColor: '#e0f9f8', path: '/admin/ferias' },
+        { title: 'Solicitudes pendientes', value: loading ? '...' : stats.pendingRequests, icon: '📝', trend: 'Revisión', color: '#fa8231', bgColor: '#fff4e6', path: '/admin/solicitudes' },
+        { title: 'Agricultores activos', value: loading ? '...' : stats.agricultores, icon: '👨‍🌾', trend: '+2', color: '#00cec9', bgColor: '#e0f9f8', path: '/admin/agricultores' },
         { title: 'Productos en catálogo', value: loading ? '...' : stats.products, icon: '🥦', trend: '+8', color: '#00b894', bgColor: '#e6fffb', path: '/admin/productos' },
-        { title: 'Consultas realizadas', value: stats.queries, icon: '🔍', trend: 'Hoy', color: '#fab1a0', bgColor: '#fff2ef', path: '/admin' },
+        { title: 'Recetas publicadas', value: loading ? '...' : stats.recipes, icon: '🍃', trend: '+5', color: '#ff9f43', bgColor: '#fff8e1', path: '/admin/recetas' },
     ]
 
     return (
         <div className="dashboard-container">
             <header className="dashboard-header">
                 <h1>Panel de Administración</h1>
-                <div className="header-actions">
-                    <button className="btn-new" onClick={() => setShowUserModal(true)}>
-                        + Nuevo usuario
-                    </button>
-                </div>
             </header>
 
             <div className="stats-grid">
@@ -67,8 +79,8 @@ const AdminDashboard = () => {
                             <div className="card-icon" style={{ backgroundColor: card.bgColor, color: card.color }}>
                                 {card.icon}
                             </div>
-                            <span className="trend" style={{ color: '#10b981' }}>{card.trend}</span>
                         </div>
+                        <span className="trend">{card.trend}</span>
                         <div className="card-content">
                             <h3>{card.value}</h3>
                             <p>{card.title}</p>
@@ -76,12 +88,6 @@ const AdminDashboard = () => {
                     </Link>
                 ))}
             </div>
-
-            <UserModal 
-                isOpen={showUserModal} 
-                onClose={() => setShowUserModal(false)} 
-                onSuccess={() => fetchStats()} 
-            />
         </div>
     )
 }

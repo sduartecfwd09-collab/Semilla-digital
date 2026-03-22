@@ -1,0 +1,198 @@
+.agricultores-page {
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+    gap: 2.5rem;
+}
+
+.header-info h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.header-info p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-light));
+    color: white;
+    padding: 0.9rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-accent);
+    transition: var(--transition-base);
+}
+
+.btn-add:hover {
+    box-shadow: 0 8px 20px rgba(82, 183, 136, 0.4);
+}
+
+.filters-bar {
+    margin-bottom: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    background: white;
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.search-control {
+    width: 100%;
+    max-width: 450px;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: #fdfdfd;
+    font-size: 1rem;
+    transition: var(--transition-base);
+}
+
+.search-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(82, 183, 136, 0.1);
+    outline: none;
+    background: white;
+}
+
+.loading-state {
+    padding: 5rem;
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+}
+
+.agricultores-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.agro-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.75rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.agro-card:hover {
+    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.08);
+}
+
+.agro-card-header {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.agro-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.agro-main-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.agro-main-info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.agro-main-info span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.agro-puesto-info {
+    background: #f9fafb;
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.agro-puesto-info p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.puesto-title {
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-size: 1.05rem !important;
+}
+
+.agro-card-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.agro-card-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #bfdbfe;
+}
+
+.btn-edit:hover {
+    background: #dbeafe;
+}
+
+.btn-delete {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+}
+
+.btn-delete:hover {
+    background: #fee2e2;
+}
+
+/* Los estilos de modales ahora son globales en admin-ui.css */

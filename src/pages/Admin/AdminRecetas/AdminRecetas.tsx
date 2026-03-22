@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
-import { Recipe } from '../../../types'
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal'
-import AlertModal from '../../../components/admin/AlertModal/AlertModal'
+import Swal from 'sweetalert2'
 import './AdminRecetas.css'
+import { Recipe } from '../../../types'
 
 // Este componente gestiona las recetas de temporada, permitiendo CRUD (Crear, Leer, Actualizar, Borrar)
 const AdminRecetas = () => {
@@ -11,13 +10,12 @@ const AdminRecetas = () => {
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
-    const [showConfirm, setShowConfirm] = useState(false)
-    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
-    const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: '', title: '' })
+    const [selectedRecipe, setSelectedRecipe] = useState<any>(null)
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         ingredients: '',
+        steps: '',
         difficulty: 'Fácil',
         time: ''
     })
@@ -31,7 +29,7 @@ const AdminRecetas = () => {
     const fetchRecipes = async () => {
         try {
             setLoading(true)
-            const data = await api.request<Recipe[]>('/recipes')
+            const data = await api.request<any[]>('/recetas')
             setRecipes(data)
         } catch (error) {
             console.error('Error al obtener recetas:', error)
@@ -45,27 +43,36 @@ const AdminRecetas = () => {
         setSelectedRecipe(recipe)
         setFormData({
             ...recipe,
-            ingredients: recipe.ingredients.join(', ')
+            time: recipe.time ? recipe.time.replace(' min', '') : '',
+            steps: recipe.steps ? recipe.steps.join('\n') : '',
+            ingredients: recipe.ingredients ? recipe.ingredients.join(', ') : ''
         })
         setIsEditing(true)
         setShowModal(true)
     }
 
     // Mostrar confirmación para eliminar una receta
-    const handleDeleteClick = (recipe: Recipe) => {
-        setSelectedRecipe(recipe)
-        setShowConfirm(true)
-    }
-
-    // Ejecutar la eliminación de la receta tras confirmar
-    const handleConfirmDelete = async () => {
-        if (!selectedRecipe) return
-        try {
-            await api.request<void>(`/recipes/${selectedRecipe.id}`, { method: 'DELETE' })
-            setRecipes(recipes.filter(r => r.id !== selectedRecipe.id))
-            setShowConfirm(false)
-        } catch {
-            setAlertConfig({ isOpen: true, message: 'Error al eliminar receta', title: 'Error' })
+    const handleDeleteClick = async (recipe: any) => {
+        const result = await Swal.fire({
+            title: '¿Eliminar Receta?',
+            text: `¿Estás seguro de que deseas eliminar la receta "${recipe.title}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        })
+        
+        if (result.isConfirmed) {
+            try {
+                await api.request(`/recetas/${recipe.id}`, { method: 'DELETE' })
+                setRecipes(prev => prev.filter(r => r.id !== recipe.id))
+                Swal.fire('Eliminada', 'La receta fue borrada con éxito.', 'success')
+            } catch (error) {
+                console.error('Error al eliminar:', error)
+                Swal.fire('Error', 'No se pudo eliminar la receta.', 'error')
+            }
         }
     }
 
@@ -74,37 +81,37 @@ const AdminRecetas = () => {
         e.preventDefault()
 
         // Validación: No permitir campos vacíos o que solo contengan espacios
-        if (!formData.title.trim() || !formData.description.trim() || !formData.ingredients.trim() || !formData.time.trim()) {
-            setAlertConfig({
-                isOpen: true,
-                message: 'Todos los campos son obligatorios. Por favor, evita dejar solo espacios en blanco.',
-                title: 'Información Faltante'
-            })
+        if (!formData.title.trim() || !formData.description.trim() || !formData.ingredients.trim() || !formData.steps.trim() || !formData.time.trim()) {
+            Swal.fire('Información Faltante', 'Todos los campos son obligatorios. Por favor, evita dejar vacíos.', 'warning')
             return
         }
 
         const recipeData = {
             ...formData,
-            ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(i => i !== '')
+            time: `${formData.time} min`, // Siempre guardar con ' min'
+            ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(i => i !== ''),
+            steps: formData.steps.split('\n').map(s => s.trim()).filter(s => s !== '')
         }
 
         try {
             if (isEditing && selectedRecipe) {
-                const updated = await api.request<Recipe>(`/recipes/${selectedRecipe.id}`, {
+                const updated = await api.request<any>(`/recetas/${selectedRecipe.id}`, {
                     method: 'PUT',
                     body: JSON.stringify(recipeData)
                 })
                 setRecipes(recipes.map(r => r.id === selectedRecipe.id ? updated : r))
             } else {
-                const created = await api.request<Recipe>('/recipes', {
+                const created = await api.request<any>('/recetas', {
                     method: 'POST',
                     body: JSON.stringify(recipeData)
                 })
                 setRecipes([...recipes, created])
             }
             closeModal()
-        } catch {
-            setAlertConfig({ isOpen: true, message: 'Error al guardar la receta', title: 'Error' })
+            Swal.fire('Éxito', `Receta ${isEditing ? 'actualizada' : 'creada'} correctamente.`, 'success')
+        } catch (error) {
+            console.error(error)
+            Swal.fire('Error', 'Hubo un error al guardar la receta', 'error')
         }
     }
 
@@ -113,7 +120,7 @@ const AdminRecetas = () => {
         setShowModal(false)
         setIsEditing(false)
         setSelectedRecipe(null)
-        setFormData({ title: '', description: '', ingredients: '', difficulty: 'Fácil', time: '' })
+        setFormData({ title: '', description: '', ingredients: '', steps: '', difficulty: 'Fácil', time: '' })
     }
 
     return (
@@ -139,13 +146,25 @@ const AdminRecetas = () => {
                                 <h3>{recipe.title}</h3>
                                 <p>{recipe.description}</p>
                                 <div className="recipe-ingredients">
-                                    {recipe.ingredients.map((ing: string, i: number) => (
+                                    {recipe.ingredients && recipe.ingredients.map((ing: string, i: number) => (
                                         <span className="ingredient-tag" key={i}>{ing}</span>
                                     ))}
                                 </div>
-                                <div className="price-actions" style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
-                                    <button className="btn-icon" onClick={() => handleEditClick(recipe)}>✏️</button>
-                                    <button className="btn-icon" onClick={() => handleDeleteClick(recipe)}>🗑️</button>
+                                <div className="recipe-steps" style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#4b5563', maxHeight: '100px', overflowY: 'auto' }}>
+                                    <strong>Paso a paso:</strong>
+                                    <ol style={{ paddingLeft: '1.2rem', marginTop: '0.5rem', marginBottom: 0 }}>
+                                        {recipe.steps && recipe.steps.map((step: string, i: number) => (
+                                            <li key={i} style={{ marginBottom: '0.25rem' }}>{step}</li>
+                                        ))}
+                                    </ol>
+                                </div>
+                                <div className="recipe-card-actions">
+                                    <button className="btn-recipe-action btn-edit-recipe" onClick={() => handleEditClick(recipe)}>
+                                        <span>✏️</span> Editar
+                                    </button>
+                                    <button className="btn-recipe-action btn-delete-recipe" onClick={() => handleDeleteClick(recipe)}>
+                                        <span>🗑️</span> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -154,69 +173,95 @@ const AdminRecetas = () => {
             )}
 
             {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
+                <div className="modal-backdrop">
+                    <div className="admin-modal">
                         <div className="modal-header">
                             <h2>{isEditing ? 'Editar Receta' : 'Nueva Receta'}</h2>
-                            <button className="btn-icon" onClick={closeModal}>✕</button>
+                            <button className="close-btn" onClick={closeModal}>✕</button>
                         </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Título de la Receta</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Descripción</label>
-                                <textarea
-                                    className="form-control"
-                                    rows={3}
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    style={{ resize: 'none' }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Ingredientes (separados por coma)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Ej: Tomate, Albahaca, Aceite"
-                                    value={formData.ingredients}
-                                    onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
-                                />
-                            </div>
-                            <div className="config-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div className="form-group">
-                                    <label>Dificultad</label>
-                                    <select
-                                        className="form-control"
-                                        value={formData.difficulty}
-                                        onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                                    >
-                                        <option value="Fácil">Fácil</option>
-                                        <option value="Media">Media</option>
-                                        <option value="Difícil">Difícil</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Tiempo</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Ej: 20 min"
-                                        value={formData.time}
-                                        onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                                    />
+                        <form onSubmit={handleSubmit} className="modal-form">
+                            <div className="form-section">
+                                <h3>Información Básica</h3>
+                                <div className="form-grid">
+                                    <div className="form-field full-width">
+                                        <label>Título de la Receta</label>
+                                        <input
+                                            type="text"
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                            placeholder="Ej: Ensalada de Temporada"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Descripción</label>
+                                        <textarea
+                                            className="form-control"
+                                            rows={2}
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                            style={{ resize: 'none', borderRadius: '10px', padding: '0.85rem 1rem', border: '1px solid #e5e7eb', background: '#f9fafb', fontFamily: 'inherit' }}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn-ghost" onClick={closeModal}>Cancelar</button>
-                                <button type="submit" className="btn-primary">
+
+                            <div className="form-section">
+                                <h3>Detalles de Preparación</h3>
+                                <div className="form-grid">
+                                    <div className="form-field full-width">
+                                        <label>Ingredientes (separados por coma)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Ej: Tomate, Albahaca, Aceite"
+                                            value={formData.ingredients}
+                                            onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Paso a paso (un paso por línea)</label>
+                                        <textarea
+                                            className="form-control"
+                                            rows={3}
+                                            placeholder="Paso 1...&#10;Paso 2..."
+                                            value={formData.steps}
+                                            onChange={(e) => setFormData({ ...formData, steps: e.target.value })}
+                                            style={{ resize: 'vertical', borderRadius: '10px', padding: '0.85rem 1rem', border: '1px solid #e5e7eb', background: '#f9fafb', fontFamily: 'inherit' }}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Dificultad</label>
+                                        <select
+                                            className="form-control"
+                                            value={formData.difficulty}
+                                            onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                                            style={{ borderRadius: '10px', padding: '0.85rem 1rem', border: '1px solid #e5e7eb', background: '#f9fafb', appearance: 'none' }}
+                                        >
+                                            <option value="Fácil">Fácil</option>
+                                            <option value="Media">Media</option>
+                                            <option value="Difícil">Difícil</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Tiempo (Minutos)</label>
+                                        <input
+                                            type="number"
+                                            placeholder="Ej: 20"
+                                            value={formData.time}
+                                            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                                            min="1"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                                <button type="button" className="btn-cancel" onClick={closeModal}>Cancelar</button>
+                                <button type="submit" className="btn-save">
                                     {isEditing ? 'Guardar Cambios' : 'Crear Receta'}
                                 </button>
                             </div>
@@ -224,22 +269,6 @@ const AdminRecetas = () => {
                     </div>
                 </div>
             )}
-
-            <ConfirmModal
-                isOpen={showConfirm}
-                title="Eliminar Receta"
-                message={`¿Estás seguro de que deseas eliminar la receta "${selectedRecipe?.title}"?`}
-                type="danger"
-                onConfirm={handleConfirmDelete}
-                onCancel={() => setShowConfirm(false)}
-            />
-
-            <AlertModal
-                isOpen={alertConfig.isOpen}
-                title={alertConfig.title}
-                message={alertConfig.message}
-                onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
-            />
         </div>
     )
 }

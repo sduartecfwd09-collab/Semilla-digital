@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
+import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import AdminProductList from '../../adminAgricultor/AgricultorProductList'
@@ -52,17 +54,31 @@ const MisProductos: React.FC = () => {
     setShowForm(true)
   }
 
-  const handleDeleteProduct = async (id: number) => {
-    try {
-      await deleteProducto(id)
-      setProductos(productos.filter((p) => p.id !== id))
-    } catch (error) {
-      console.error('Error al eliminar producto:', error)
-      alert('Error al eliminar el producto')
+  const handleDeleteProduct = async (id: string | number) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción eliminará el producto permanentemente",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2d8a42',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      try {
+        await deleteProducto(id)
+        setProductos(productos.filter((p) => p.id !== id))
+        Swal.fire('¡Eliminado!', 'El producto ha sido eliminado correctamente.', 'success')
+      } catch (error) {
+        console.error('Error al eliminar producto:', error)
+        Swal.fire('Error', 'No se pudo eliminar el producto', 'error')
+      }
     }
   }
 
-  const handleToggleDisponibilidad = async (id: number, disponible: boolean) => {
+  const handleToggleDisponibilidad = async (id: string | number, disponible: boolean) => {
     try {
       await patchProducto(id, { disponible })
       setProductos(
@@ -70,7 +86,7 @@ const MisProductos: React.FC = () => {
       )
     } catch (error) {
       console.error('Error al actualizar disponibilidad:', error)
-      alert('Error al actualizar disponibilidad')
+      Swal.fire('Error', 'No se pudo actualizar la disponibilidad', 'error')
     }
   }
 
@@ -89,7 +105,8 @@ const MisProductos: React.FC = () => {
       setEditingProduct(undefined)
     } catch (error) {
       console.error('Error al guardar producto:', error)
-      alert('Error al guardar el producto')
+      Swal.fire('Error', 'No se pudo guardar el producto', 'error')
+      throw error // Re-lanzar para que el form sepa que falló
     }
   }
 
@@ -108,8 +125,10 @@ const MisProductos: React.FC = () => {
   const categorias = ['Todas', ...Array.from(new Set(productos.map((p) => p.categoria)))]
 
   return (
-    <div className="admin-layout">
-      <AdminSidebar />
+    <>
+      <Navbar />
+      <div className="admin-layout">
+        <AdminSidebar />
       <div className="admin-main">
         <AdminHeader
           title="Mis Productos"
@@ -171,7 +190,8 @@ const MisProductos: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

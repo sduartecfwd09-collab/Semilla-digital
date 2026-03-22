@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
+import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import { updateUser } from '../../../servers/AuthService'
@@ -11,7 +13,7 @@ const Configuracion: React.FC = () => {
   const navigate = useNavigate()
   const [editingProfile, setEditingProfile] = useState(false)
   const [profileData, setProfileData] = useState({
-    nombre: user?.nombre || '',
+    nombre: user?.nombre || user?.name || '',
     email: user?.email || '',
   })
 
@@ -31,24 +33,42 @@ const Configuracion: React.FC = () => {
       localStorage.setItem('auth_user', JSON.stringify(storedUser))
 
       setEditingProfile(false)
-      alert('Perfil actualizado correctamente')
-      window.location.reload() // Recargar para actualizar el contexto
+      await Swal.fire({
+        title: '¡Perfil actualizado!',
+        text: 'Los cambios se han guardado correctamente.',
+        icon: 'success',
+        confirmButtonColor: '#2d8a42'
+      })
+      window.location.reload()
     } catch (error) {
       console.error('Error al actualizar perfil:', error)
-      alert('Error al actualizar el perfil')
+      Swal.fire('Error', 'No se pudo actualizar el perfil', 'error')
     }
   }
 
-  const handleLogout = () => {
-    if (window.confirm('¿Estás seguro de cerrar sesión?')) {
-      logout()
-      navigate('/login')
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: "¿Estás seguro de que deseas salir?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#2d8a42',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, salir',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      navigate('/')
+      Promise.resolve().then(() => logout())
     }
   }
 
   return (
-    <div className="admin-layout">
-      <AdminSidebar />
+    <>
+      <Navbar />
+      <div className="admin-layout">
+        <AdminSidebar />
       <div className="admin-main">
         <AdminHeader title="Configuración" subtitle="Administra tu cuenta y preferencias" />
         <div className="admin-content">
@@ -155,7 +175,8 @@ const Configuracion: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

@@ -1,118 +1,125 @@
 import React, { useEffect, useState } from 'react'
-import { api } from '../../../services/api'
-import { Product } from '../../../types'
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal'
-import AlertModal from '../../../components/admin/AlertModal/AlertModal'
+import Swal from 'sweetalert2'
+import { useAuth } from '../../../components/context/AuthContext'
+import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm'
+import {
+  Producto,
+  createProducto,
+  updateProducto,
+  deleteProducto,
+} from '../../../servers/ProductService'
+import { API_BASE_URL } from '../../../services/api.config'
 import './AdminProductos.css'
+import { Product } from '../../../types'
+
 
 const AdminProductos = () => {
-    // Estados para gestionar los datos de los productos, carga, búsqueda y modales
-    const [products, setProducts] = useState<Product[]>([])
+    const { user } = useAuth()
+    const [products, setProducts] = useState<Producto[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
-    const [showModal, setShowModal] = useState(false) // Controla la visibilidad del modal de creación/edición
-    const [isEditing, setIsEditing] = useState(false) // Indica si el modal está en modo edición
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false) // Controla la visibilidad del modal de confirmación
-    const [selectedProductId, setSelectedProductId] = useState<string | null>(null) // ID del producto seleccionado para eliminar/editar
-    const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: '' }) // Configuración para el modal de alerta
-    const [formData, setFormData] = useState({ name: '', category: 'Verduras', unit: 'kg', image: '📦' }) // Datos del formulario para crear/editar
+    const [showForm, setShowForm] = useState(false)
+    const [editingProduct, setEditingProduct] = useState<Producto | undefined>(undefined)
 
-    // Efecto para cargar los productos al montar el componente
     useEffect(() => {
         fetchProducts()
     }, [])
 
-    // Función para obtener los productos de la API
+    // Obtener TODOS los productos (sin filtrar por usuario, ya que es admin)
     const fetchProducts = async () => {
         try {
             setLoading(true)
-            const data = await api.getProducts()
+            const res = await fetch(`${API_BASE_URL}/productos`)
+            const data = await res.json()
             setProducts(data)
         } catch (error) {
             console.error('Error fetching products:', error)
-            // Podrías mostrar un mensaje de error al usuario aquí
+            Swal.fire('Error', 'No se pudieron cargar los productos.', 'error')
         } finally {
             setLoading(false)
         }
     }
 
-    // Manejador para el clic en el botón de eliminar
-    const handleDeleteClick = (id: string) => {
-        setSelectedProductId(id)
-        setIsConfirmOpen(true)
+    const handleCreateProduct = () => {
+        setEditingProduct(undefined)
+        setShowForm(true)
     }
 
-    // Manejador para el clic en el botón de editar
-    const handleEditClick = (product: Product) => {
-        setFormData({ ...product, image: product.image || '📦' }) // Carga los datos del producto en el formulario
-        setIsEditing(true)
-        setShowModal(true)
+    const handleEditClick = (product: Producto) => {
+        setEditingProduct(product)
+        setShowForm(true)
     }
 
-    // Función para confirmar la eliminación de un producto
-    const handleConfirmDelete = async () => {
-        if (selectedProductId) {
+    const handleDeleteClick = async (id: string | number) => {
+        const result = await Swal.fire({
+            title: '¿Eliminar Producto?',
+            text: "Esta acción borrará el producto permanentemente de la base de datos.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        })
+
+        if (result.isConfirmed) {
             try {
-                await api.deleteProduct(selectedProductId)
-                setProducts(products.filter(p => p.id !== selectedProductId)) // Actualiza la lista de productos
-                setIsConfirmOpen(false)
-                setSelectedProductId(null)
+                await deleteProducto(id)
+                setProducts(prev => prev.filter(p => p.id !== id))
+                Swal.fire('Eliminado', 'Producto borrado con éxito.', 'success')
             } catch (error) {
                 console.error('Error deleting product:', error)
-                setAlertConfig({ isOpen: true, message: 'Error al eliminar producto' })
+                Swal.fire('Error', 'No se pudo eliminar el producto.', 'error')
             }
         }
     }
 
-    // Manejador para el envío del formulario (crear o actualizar producto)
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        // Validación: No permitir campos vacíos o que solo contengan espacios
-        if (!formData.name.trim() || !formData.image.trim()) {
-            setAlertConfig({
-                isOpen: true,
-                message: 'Por favor, ingresa un nombre y un icono válido para el producto.'
-            })
-            return
-        }
-
+    const handleSubmitForm = async (producto: Producto) => {
         try {
-            if (isEditing && selectedProductId) {
-                // Si estamos editando, actualizamos el producto existente
-                const updatedProduct = await api.updateProduct(selectedProductId, formData)
-                setProducts(products.map(p => p.id === selectedProductId ? updatedProduct : p))
+            if (editingProduct) {
+                const updated = await updateProducto(editingProduct.id!, producto)
+                setProducts(products.map((p) => (p.id === updated.id ? updated : p)))
             } else {
-                // Si no estamos editando, creamos un nuevo producto
-                const newProduct = await api.createProduct(formData)
-                setProducts([...products, newProduct])
+                const created = await createProducto(producto)
+                setProducts([...products, created])
             }
-            closeModal() // Cierra el modal después de la operación exitosa
+            setShowForm(false)
+            setEditingProduct(undefined)
         } catch (error) {
-            console.error(`Error al ${isEditing ? 'actualizar' : 'crear'} producto:`, error)
-            setAlertConfig({ isOpen: true, message: `Error al ${isEditing ? 'actualizar' : 'crear'} producto` })
+            console.error('Error al guardar producto:', error)
+            Swal.fire('Error', 'No se pudo guardar el producto', 'error')
+            throw error
         }
     }
 
-    // Función para cerrar el modal y resetear los estados relacionados
-    const closeModal = () => {
-        setShowModal(false)
-        setIsEditing(false)
-        setSelectedProductId(null)
-        setFormData({ name: '', category: 'Verduras', unit: 'kg', image: '📦' }) // Resetea el formulario
+    const handleCancelForm = () => {
+        setShowForm(false)
+        setEditingProduct(undefined)
     }
 
     // Filtra los productos basándose en el término de búsqueda
     const filteredProducts = products.filter(product =>
-        product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+        product.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.categoria?.toLowerCase().includes(searchTerm.toLowerCase())
     )
+
+    // Función auxiliar para mostrar la unidad de forma legible
+    const getUnidadLabel = (unidad?: string) => {
+        switch (unidad) {
+            case 'Kilogramo': return 'kg'
+            case 'Docena': return 'doc'
+            case 'Mano': return 'mano'
+            case 'Caja': return 'cj'
+            case 'Unidad': return 'un'
+            default: return unidad || 'un'
+        }
+    }
 
     return (
         <div className="products-container">
             <header className="products-header">
                 <h1>Gestión de Productos</h1>
-                <button className="btn-new" onClick={() => setShowModal(true)}>
+                <button className="btn-new" onClick={handleCreateProduct}>
                     <span>+</span> Nuevo Producto
                 </button>
             </header>
@@ -137,126 +144,82 @@ const AdminProductos = () => {
                                 <th>Producto</th>
                                 <th>Categoría</th>
                                 <th>Unidad</th>
+                                <th>Precio</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map(product => (
-                                <tr key={product.id}>
-                                    <td>
-                                        <div className="product-info">
-                                            <div className="product-icon">{product.image}</div>
-                                            <span className="product-name">{product.name}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className="category-badge">{product.category}</span>
-                                    </td>
-                                    <td>{product.unit}</td>
-                                    <td>
-                                        <div className="action-buttons">
-                                            <button
-                                                className="btn-icon"
-                                                title="Editar"
-                                                onClick={() => {
-                                                    setSelectedProductId(product.id)
-                                                    handleEditClick(product)
-                                                }}
-                                            >
-                                                ✏️
-                                            </button>
-                                            <button
-                                                className="btn-icon"
-                                                title="Eliminar"
-                                                onClick={() => handleDeleteClick(product.id)}
-                                            >
-                                                🗑️
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                            {filteredProducts.map(product => {
+                                const precios = product.precios || []
+                                const precioDisplay = precios.length > 0
+                                    ? `₡${precios[0].precio.toLocaleString('es-CR')}`
+                                    : '—'
+
+                                return (
+                                    <tr key={product.id}>
+                                        <td>
+                                            <div className="product-info">
+                                                <div className="product-icon">{product.emoji}</div>
+                                                <span className="product-name">{product.nombre}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="category-badge">{product.categoria}</span>
+                                        </td>
+                                        <td>
+                                            <span style={{
+                                                backgroundColor: '#f0f9ff',
+                                                color: '#0369a1',
+                                                padding: '3px 10px',
+                                                borderRadius: '12px',
+                                                fontSize: '0.8rem',
+                                                fontWeight: 600
+                                            }}>
+                                                Por {product.unidad || 'Unidad'} ({getUnidadLabel(product.unidad)})
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span style={{ fontWeight: 600, color: '#166534' }}>
+                                                {precioDisplay}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div className="action-buttons">
+                                                <button
+                                                    className="btn-text"
+                                                    title="Editar"
+                                                    onClick={() => handleEditClick(product)}
+                                                    style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    className="btn-text"
+                                                    title="Eliminar"
+                                                    onClick={() => handleDeleteClick(product.id!)}
+                                                    style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
                 )}
             </div>
 
-            {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h2>{isEditing ? 'Editar Producto' : 'Nuevo Producto'}</h2>
-                            <button className="btn-icon" onClick={closeModal}>✕</button>
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Nombre del Producto</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Categoría</label>
-                                <select
-                                    className="form-control"
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                >
-                                    <option value="Verduras">Verduras</option>
-                                    <option value="Frutas">Frutas</option>
-                                    <option value="Granos">Granos</option>
-                                    <option value="Tubérculos">Tubérculos</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Unidad de Medida</label>
-                                <select
-                                    className="form-control"
-                                    value={formData.unit}
-                                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                                >
-                                    <option value="kg">Por kilogramo (kg)</option>
-                                    <option value="un">Por unidad (un)</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Icono (Emoji)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={formData.image}
-                                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                />
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn-ghost" onClick={closeModal}>Cancelar</button>
-                                <button type="submit" className="btn-primary">
-                                    {isEditing ? 'Guardar Cambios' : 'Guardar Producto'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+            {/* Formulario modal - mismo que el del agricultor */}
+            {showForm && (
+                <AdminProductForm
+                    producto={editingProduct}
+                    userId={user?.id || 'admin'}
+                    onSubmit={handleSubmitForm}
+                    onCancel={handleCancelForm}
+                />
             )}
-
-            <ConfirmModal
-                isOpen={isConfirmOpen}
-                title="Eliminar Producto"
-                message="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer."
-                type="danger"
-                onConfirm={handleConfirmDelete}
-                onCancel={() => setIsConfirmOpen(false)}
-            />
-
-            <AlertModal
-                isOpen={alertConfig.isOpen}
-                title="Información Faltante"
-                message={alertConfig.message}
-                onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
-            />
         </div>
     )
 }

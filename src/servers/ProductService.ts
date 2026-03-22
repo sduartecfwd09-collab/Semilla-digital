@@ -3,17 +3,20 @@
 // Servicio para gestión de productos por usuario administrador
 // ─────────────────────────────────────────────────────────────────
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = 'http://localhost:3002'
 
 export interface Producto {
-  id?: number
-  userId: number
+  id?: string | number
+  userId: string | number
   nombre: string
   emoji: string
   descripcion: string
   categoria: string
   imagen: string
   disponible: boolean
+  provincia?: string
+  direccionPuesto?: string
+  unidad?: string
   precios: {
     feriaId: number
     feriaNombre: string
@@ -25,7 +28,7 @@ export interface Producto {
 /**
  * Obtiene todos los productos de un usuario específico
  */
-export const getProductosByUser = async (userId: number): Promise<Producto[]> => {
+export const getProductosByUser = async (userId: string | number): Promise<Producto[]> => {
   const response = await fetch(`${BASE_URL}/productos?userId=${userId}`)
   if (!response.ok) {
     throw new Error('Error al obtener productos')
@@ -53,7 +56,7 @@ export const createProducto = async (producto: Producto): Promise<Producto> => {
 /**
  * Actualiza un producto existente
  */
-export const updateProducto = async (id: number, producto: Producto): Promise<Producto> => {
+export const updateProducto = async (id: string | number, producto: Producto): Promise<Producto> => {
   const response = await fetch(`${BASE_URL}/productos/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -70,7 +73,7 @@ export const updateProducto = async (id: number, producto: Producto): Promise<Pr
 /**
  * Actualiza parcialmente un producto
  */
-export const patchProducto = async (id: number, updates: Partial<Producto>): Promise<Producto> => {
+export const patchProducto = async (id: string | number, updates: Partial<Producto>): Promise<Producto> => {
   const response = await fetch(`${BASE_URL}/productos/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -87,7 +90,7 @@ export const patchProducto = async (id: number, updates: Partial<Producto>): Pro
 /**
  * Elimina un producto
  */
-export const deleteProducto = async (id: number): Promise<void> => {
+export const deleteProducto = async (id: string | number): Promise<void> => {
   const response = await fetch(`${BASE_URL}/productos/${id}`, {
     method: 'DELETE',
   })

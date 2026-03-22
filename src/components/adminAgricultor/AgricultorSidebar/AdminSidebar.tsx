@@ -3,17 +3,16 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import './AdminSidebar.css'
 
-const AdminSidebar: React.FC = () => {
+const AgricultorSidebar: React.FC = () => {
   const location = useLocation()
   const { user } = useAuth()
 
   const isActive = (path: string) => location.pathname === path
 
   const menuItems = [
-    { path: '/admin', icon: '📊', label: 'Dashboard' },
-    { path: '/admin/productos', icon: '🛒', label: 'Mis Productos' },
-    { path: '/admin/ferias', icon: '🏪', label: 'Mi Feria' },
-    { path: '/admin/config', icon: '⚙️', label: 'Configuración' },
+    { path: '/agricultor', icon: '📊', label: 'Dashboard' },
+    { path: '/agricultor/productos', icon: '🛒', label: 'Mis Productos' },
+    { path: '/agricultor/ferias', icon: '🏪', label: 'Mi Feria' },
   ]
 
   return (
@@ -27,10 +26,10 @@ const AdminSidebar: React.FC = () => {
 
       <div className="admin-sidebar-user">
         <div className="admin-sidebar-user-avatar">
-          {user?.nombre.charAt(0).toUpperCase() || 'A'}
+          {user?.name?.charAt(0).toUpperCase() || 'A'}
         </div>
         <div className="admin-sidebar-user-info">
-          <div className="admin-sidebar-user-name">{user?.nombre}</div>
+          <div className="admin-sidebar-user-name">{user?.name}</div>
           <div className="admin-sidebar-user-role">Agricultor</div>
         </div>
       </div>
@@ -57,4 +56,4 @@ const AdminSidebar: React.FC = () => {
   )
 }
 
-export default AdminSidebar
+export default AgricultorSidebar
