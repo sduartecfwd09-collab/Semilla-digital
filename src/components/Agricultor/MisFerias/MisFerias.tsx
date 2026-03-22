@@ -4,7 +4,8 @@ import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
-import { getFeriaById, getProductos, Producto, getPuestoByUserId, updatePuesto } from '../../../servers/ProductService'
+import { Producto } from '../../../servers/ProductService'
+import { getFeriaById, getProductos, getPuestoByUserId, updatePuesto } from '../../../servers/AgricultorServices'
 import './MisFerias.css'
 
 interface Feria {
@@ -34,7 +35,7 @@ const MisFerias: React.FC = () => {
   const { user } = useAuth()
   const [feria, setFeria] = useState<Feria | null>(null)
   const [puesto, setPuesto] = useState<Puesto | null>(null)
-  const [productosFeria, setProductosFeria] = useState<any[]>([])
+  const [productosFeria, setProductosFeria] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
   const [editingPuesto, setEditingPuesto] = useState(false)
   const [puestoData, setPuestoData] = useState<Partial<Puesto>>({})
@@ -47,7 +48,7 @@ const MisFerias: React.FC = () => {
         setLoading(true)
         
         // 1. Obtener información del puesto
-        const dataPuesto = await getPuestoByUserId(user.id)
+        const dataPuesto = await getPuestoByUserId(user.id) as Puesto
         if (dataPuesto) {
           setPuesto(dataPuesto)
           setPuestoData(dataPuesto)
@@ -59,9 +60,9 @@ const MisFerias: React.FC = () => {
           setFeria(feriaData as Feria)
 
           // 3. Obtener productos de esta feria
-          const allProductos = await getProductos()
-          const productosDeFeria = allProductos.filter((p: any) =>
-            p.precios?.some((precio: any) => precio.feriaId === user.feriaId)
+          const allProductos = await getProductos() as Producto[]
+          const productosDeFeria = allProductos.filter((p: Producto) =>
+            p.precios?.some((precio) => precio.feriaId === user.feriaId)
           )
           setProductosFeria(productosDeFeria)
         }
