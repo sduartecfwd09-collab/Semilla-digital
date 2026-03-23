@@ -178,16 +178,14 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               <div style={{ display: 'flex', gap: '10px' }}>
                 <div className="admin-product-form-precio-wrapper" style={{ flex: 1 }}>
                   <span className="precio-prefix">₡</span>
-                  <input
-                    type="number"
-                    placeholder="0.00"
-                    value={precio}
-                    onChange={(e) => setPrecio(e.target.value)}
-                    className="admin-product-form-precio-input"
-                    min="0"
-                    step="50"
-                    required
-                  />
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      value={precio}
+                      onChange={(e) => setPrecio(e.target.value)}
+                      className="admin-product-form-precio-input"
+                      required
+                    />
                 </div>
                 <select 
                   name="unidad" 

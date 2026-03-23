@@ -14,7 +14,6 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState({
     totalProductos: 0,
     productosActivos: 0,
-    feriaNombre: '',
     puestoNombre: '',
     puestoDescripcion: '',
     puestoUbicacion: '',
@@ -50,7 +49,6 @@ const Dashboard: React.FC = () => {
         setStats({
           totalProductos: productos.length,
           productosActivos: activos,
-          feriaNombre: (feria as any)?.name || (feria as any)?.nombre || 'Sin feria asignada',
           puestoNombre: puesto?.nombrePuesto || 'N/A',
           puestoDescripcion: puesto?.descripcion || 'No especificada',
           puestoUbicacion: puesto?.ubicacion || 'N/A',
@@ -81,8 +79,7 @@ const Dashboard: React.FC = () => {
             <AdminStats stats={{
                 totalProductos: stats.totalProductos,
                 productosActivos: stats.productosActivos,
-                feriaNombre: stats.feriaNombre,
-                puestoNumero: stats.puestoUbicacion // Usamos ubicación como "número/detalle"
+                puestoNumero: stats.puestoUbicacion
             }} />
 
             <div className="dashboard-grid">
@@ -148,10 +145,7 @@ const Dashboard: React.FC = () => {
                         <span className="dashboard-feria-label">Ubicación:</span>
                         <span className="dashboard-feria-value">{stats.puestoUbicacion}</span>
                       </div>
-                      <div className="dashboard-feria-item">
-                        <span className="dashboard-feria-label">Feria:</span>
-                        <span className="dashboard-feria-value">{stats.feriaNombre}</span>
-                      </div>
+
                       <div className="dashboard-feria-item">
                         <span className="dashboard-feria-label">Descripción:</span>
                         <span className="dashboard-feria-value">

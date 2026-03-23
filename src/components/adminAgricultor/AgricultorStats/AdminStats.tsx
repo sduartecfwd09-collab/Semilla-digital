@@ -26,7 +26,6 @@ interface AdminStatsProps {
   stats: {
     totalProductos: number
     productosActivos: number
-    feriaNombre: string
     puestoNumero: string
   }
 }
@@ -46,12 +45,7 @@ const AdminStats: React.FC<AdminStatsProps> = ({ stats }) => {
         value={stats.productosActivos}
         color="var(--lima)"
       />
-      <StatCard
-        icon="🏪"
-        label="Feria"
-        value={stats.feriaNombre}
-        color="var(--tierra)"
-      />
+
       <StatCard
         icon="📍"
         label="Puesto"

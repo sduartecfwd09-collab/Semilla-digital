@@ -28,6 +28,13 @@ interface Puesto {
   metodosCultivo?: string
   redesSociales?: string
   tiposProducto?: string[]
+  fotosNombres?: string[]
+  fotosBase64?: string[]
+}
+
+interface FotoPreview {
+  file: File;
+  preview: string;
 }
 
 const MisFerias: React.FC = () => {
@@ -38,6 +45,9 @@ const MisFerias: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [editingPuesto, setEditingPuesto] = useState(false)
   const [puestoData, setPuestoData] = useState<Partial<Puesto>>({})
+  const [fotos, setFotos] = useState<FotoPreview[]>([])
+  const [fotosExistentes, setFotosExistentes] = useState<string[]>([])
+  const [fotosExistentesB64, setFotosExistentesB64] = useState<string[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,8 +59,10 @@ const MisFerias: React.FC = () => {
         // 1. Obtener información del puesto
         const dataPuesto = await getPuestoByUserId(user.id)
         if (dataPuesto) {
-          setPuesto(dataPuesto)
-          setPuestoData(dataPuesto)
+          setPuesto(dataPuesto as Puesto)
+          setPuestoData(dataPuesto as Partial<Puesto>)
+          setFotosExistentes((dataPuesto as any).fotosNombres || [])
+          setFotosExistentesB64((dataPuesto as any).fotosBase64 || [])
         }
 
         // 2. Obtener información de la feria si tiene vinculada una
@@ -75,6 +87,82 @@ const MisFerias: React.FC = () => {
     fetchData()
   }, [user])
 
+  const handleFotosChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const disponibles = 6 - fotos.length - fotosExistentes.length;
+
+    const archivosValidos: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      if (!validFormats.includes(files[i].type)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Formato no válido',
+          text: `"${files[i].name}" no es válido. Solo JPG, PNG o WebP.`,
+          confirmButtonColor: '#2d8a42',
+        });
+      } else {
+        archivosValidos.push(files[i]);
+      }
+    }
+
+    const archivosASubir = archivosValidos.slice(0, disponibles);
+
+    const leerArchivo = (file: File): Promise<FotoPreview> => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const MAX_WIDTH = 300;
+            const MAX_HEIGHT = 300;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.1);
+            resolve({ file, preview: compressedBase64 });
+          };
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      });
+    };
+
+    const nuevasFotos = await Promise.all(archivosASubir.map(leerArchivo));
+    setFotos(prev => [...prev, ...nuevasFotos]);
+
+    e.target.value = '';
+  };
+
+  const handleRemoveFoto = (index: number) => {
+    setFotos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveFotoExistente = (index: number) => {
+    setFotosExistentes(prev => prev.filter((_, i) => i !== index));
+    setFotosExistentesB64(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSavePuesto = async () => {
     if (!puesto || !puesto.id) return
 
@@ -85,6 +173,16 @@ const MisFerias: React.FC = () => {
     }
 
     try {
+      const fotosNombres = [
+        ...fotosExistentes,
+        ...fotos.map(f => f.file.name)
+      ];
+      
+      const fotosBase64Array = [
+        ...fotosExistentesB64,
+        ...fotos.map(f => f.preview)
+      ];
+
       const updatedData = {
         ...puestoData,
         nombrePuesto: puestoData.nombrePuesto.trim(),
@@ -95,6 +193,8 @@ const MisFerias: React.FC = () => {
         horarios: puestoData.horarios?.trim(),
         metodosCultivo: puestoData.metodosCultivo?.trim(),
         redesSociales: puestoData.redesSociales?.trim(),
+        fotosNombres,
+        fotosBase64: fotosBase64Array,
       }
 
       await updatePuesto(puesto.id, updatedData)
@@ -240,6 +340,47 @@ const MisFerias: React.FC = () => {
                       />
                     </div>
 
+                    <div className="mis-ferias-form-group full-width">
+                      <label style={{ fontWeight: 600, display: 'block', marginBottom: '10px' }}>Fotos del puesto y productos (JPG, PNG o WebP · Máx 6 fotos)</label>
+                      
+                      {fotosExistentesB64.length > 0 && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px', marginBottom: '10px' }}>
+                          {fotosExistentesB64.map((b64, i) => (
+                            <div key={`exist-${i}`} style={{position: 'relative'}}>
+                              <img src={b64} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                              <button type="button" onClick={() => handleRemoveFotoExistente(i)} style={{position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', borderRadius: '50%', width: '25px', height: '25px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>✕</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {fotos.length > 0 && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px', marginBottom: '10px' }}>
+                          {fotos.map((foto, i) => (
+                            <div key={`new-${i}`} style={{position: 'relative'}}>
+                              <img src={foto.preview} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                              <button type="button" onClick={() => handleRemoveFoto(i)} style={{position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', borderRadius: '50%', width: '25px', height: '25px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>✕</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {(fotos.length + fotosExistentes.length) < 6 && (
+                        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', padding: '20px', borderRadius: '8px', background: '#f8fafc', cursor: 'pointer', textAlign: 'center' }}>
+                          <input
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            multiple
+                            onChange={handleFotosChange}
+                            style={{ display: 'none' }}
+                          />
+                          <span style={{ fontSize: '24px', marginBottom: '8px' }}>📷</span>
+                          <strong style={{ color: '#0f172a', fontSize: '14px' }}>Hacé clic para seleccionar imágenes</strong>
+                          <span style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>JPG, PNG o WebP · {6 - fotos.length - fotosExistentes.length} foto(s) restante(s)</span>
+                        </label>
+                      )}
+                    </div>
+
                     <div className="mis-ferias-form-actions">
                       <button onClick={() => setEditingPuesto(false)} className="mis-ferias-btn-cancel">
                         Cancelar
@@ -285,6 +426,16 @@ const MisFerias: React.FC = () => {
                         <div className="mis-ferias-tags">
                           {puesto.tiposProducto.map(tipo => (
                             <span key={tipo} className="mis-feria-tag">{tipo}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {puesto.fotosBase64 && puesto.fotosBase64.length > 0 && (
+                      <div className="mis-ferias-info-item full-width">
+                        <span className="mis-ferias-info-label">Fotos del puesto:</span>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px', marginTop: '10px' }}>
+                          {puesto.fotosBase64.map((foto, index) => (
+                            <img key={index} src={foto} alt={`Foto ${index + 1}`} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                           ))}
                         </div>
                       </div>

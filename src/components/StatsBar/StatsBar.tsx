@@ -19,7 +19,8 @@ const StatsBar: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setProductCount(data.length)
+          const availableCount = data.filter((p: any) => p.disponible !== false).length;
+          setProductCount(availableCount)
         }
         setLoadingProducts(false)
       })

@@ -34,12 +34,13 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
       .then(res => res.json())
       .then((productosData: any[]) => {
         const counts: Record<string, number> = {};
-        productosData.forEach((p: any) => {
+        const availableProducts = productosData.filter((p: any) => p.disponible !== false);
+        availableProducts.forEach((p: any) => {
           const cName = p.categoria || p.category || 'Otros';
           counts[cName] = (counts[cName] || 0) + 1;
         });
 
-        setTotalCount(productosData.length);
+        setTotalCount(availableProducts.length);
         setCategories((prev) => prev.map((cat) => ({
           ...cat,
           count: counts[cat.name] || 0

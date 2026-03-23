@@ -29,7 +29,7 @@
       "name": "juan",
       "email": "juan1@gmail.com",
       "password": "juan123",
-      "role": "Agricultor",
+      "role": "Agricultor", 
       "status": "Activo"
     },
     {
@@ -45,6 +45,54 @@
       "name": "Steward",
       "email": "steward@gmail.com",
       "password": "123-stew",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "ee20",
+      "name": "María",
+      "email": "maria67@gmail.com",
+      "password": "maria123",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5029",
+      "name": "Maria Calderon Mora",
+      "email": "calderon@gmail.com",
+      "password": "calderon123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "18fb",
+      "name": "Maria Mora",
+      "email": "mora@gmail.com",
+      "password": "mora123",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5062",
+      "name": "María Mora",
+      "email": "duarte@gmail.com",
+      "password": "duarte123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "8867",
+      "name": "Pablo Mora",
+      "email": "pablo@gmail.com",
+      "password": "pablo123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "0cf7",
+      "name": "Juan",
+      "email": "juan01@gmail.com",
+      "password": "juan123",
       "role": "Usuario",
       "status": "Activo"
     }
@@ -761,6 +809,90 @@
           "precio": 150
         }
       ]
+    },
+    {
+      "id": "9a44",
+      "userId": "8867",
+      "nombre": "Elotes",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 100
+        }
+      ]
+    },
+    {
+      "id": "cd6f",
+      "userId": "8867",
+      "nombre": "Elotes",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 100
+        }
+      ]
+    },
+    {
+      "id": "fa65",
+      "userId": "admin-main",
+      "nombre": "Brocoli",
+      "emoji": "🥦",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Cartago",
+      "direccionPuesto": "Cartago, Tres Rios ",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 1200
+        }
+      ]
+    },
+    {
+      "id": "95be",
+      "userId": "62fa",
+      "nombre": "Pepino",
+      "emoji": "🥒",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": false,
+      "provincia": "San José",
+      "direccionPuesto": "San José",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 100
+        }
+      ]
     }
   ],
   "solicitudesCambioRol": [
@@ -807,6 +939,50 @@
       "motivoRespuesta": "Poca información",
       "fechaSolicitud": "2026-03-21T04:34:34.976Z",
       "fechaRespuesta": "2026-03-21T04:35:50.615Z"
+    },
+    {
+      "id": "3380",
+      "usuarioId": "5029",
+      "nombreDelPuesto": "Maria Verduras",
+      "correoUsuario": "calderon@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Muy buen negocio.\n¡Bienvenida!",
+      "fechaSolicitud": "2026-03-21T05:23:17.543Z",
+      "fechaRespuesta": "2026-03-21T05:26:02.677Z"
+    },
+    {
+      "id": "b24b",
+      "usuarioId": "5062",
+      "nombreDelPuesto": "Compre con María",
+      "correoUsuario": "duarte@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "¡Bienvenida!",
+      "fechaSolicitud": "2026-03-21T06:09:34.697Z",
+      "fechaRespuesta": "2026-03-21T06:11:53.135Z"
+    },
+    {
+      "id": "3648",
+      "usuarioId": "8867",
+      "nombreDelPuesto": "Pablo verduras",
+      "correoUsuario": "pablo@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "¡Bienvenido!",
+      "fechaSolicitud": "2026-03-21T06:22:15.699Z",
+      "fechaRespuesta": "2026-03-21T06:24:31.422Z"
+    },
+    {
+      "id": "4b27",
+      "usuarioId": "0cf7",
+      "nombreDelPuesto": "Juan",
+      "correoUsuario": "juan01@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Rechazada",
+      "motivoRespuesta": "Poca información",
+      "fechaSolicitud": "2026-03-21T06:29:35.853Z",
+      "fechaRespuesta": "2026-03-21T06:30:23.108Z"
     }
   ],
   "puestosAgricultor": [
@@ -1007,7 +1183,126 @@
       "metodosCultivo": "",
       "redesSociales": "",
       "fechaRegistro": "2026-03-21T04:34:34.947Z"
+    },
+    {
+      "id": "fb38",
+      "usuarioId": "5029",
+      "nombrePuesto": "Maria Verduras",
+      "descripcion": "Las mejores verduras de Puntarenas",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "87654321",
+      "email": "calderon@gmail.com",
+      "horarios": "Sábado: 5:00 AM - 9:00 PM, Domingo: 5:00 AM - 12:30 PM",
+      "horariosList": [
+        {
+          "dia": "Sábado",
+          "ralgo": "5:00 AM - 9:00 PM"
+        },
+        {
+          "dia": "Domingo",
+          "ralgo": "5:00 AM - 12:30 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T05:23:17.525Z"
+    },
+    {
+      "id": "668a",
+      "usuarioId": "5062",
+      "nombrePuesto": "Compre con María",
+      "descripcion": "Las mejores verduras",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2sWy6iln/ALM5ASjwJfvf8IooxWIxSDXt0jKUemgAoxTulf4C/wDgzkl3bEcm3fQDp/Rr9E3yesiuTe3SGiraXYvnF+2T8or7NcmnJLBBS/oZRk9ukJxyWHtj8nIoJt//AKUMqWgN39IgpcvJTvxXVFFBqrk/wBnLpG8ZPqvyOqjpUByJgSfEpRpyJS/x1Xxlb+yxrSLo43CSdNUzKL7OpyViTkmq76Log0zDPKAUaHilnDDPwdZQk92KAXV4ZgUX4/8AGnPL+KAlHsrxcDmm3cUdEOGHHmrftjSkTRJf40FuTZlxwTqMLZRRby8IZekiCb428toHglu2Wwt5N91/ACQUmvSGpJhb67EbSWMgFyQvlQs8K+x+OMUk3lkBi5PNUhtZA2/y/QMt4Vv2UbLYySX2wZXQAE5k5Zi8/Rz1ONWmjrtIW0svJNEFJ6bA50XfH+plKvsZcHHFZXkyjk/UZvJs63xcdZikc8uNZUQK8fEvFSnl+g8ksV/wLxz8eNRe9Gr9zeyBE3ldBm/OMU9DR4nht0anB00VR45pKtD+VE6VrNMLxl5CDbegNpdiS5HrRNyIKvkEcxMvSN4SYQXIW7YfCQGmsM1FZv0wW/ZjZKFHhwy5HhUvY/HwSbTlFqJ1pJLWPRAnHxR41hW/Y0p1pUaRLxlKV9ECzc5uk/8A4D9b9NJJeTWGyz421VpITwhCXlt/YDwcpR8prxNLlSxFEZ8jY/FH/aWfQFo4VvZm/wCwX/ZGU2pUgKt9LQGLlW5P+Aq6yQLyZorHCSX9kJO5fReIDJJbM5Jbx9CuXrLEft7KHbvL/oVyE8mCNzdRVkDWPDjbdyePQYQUVbyxfL/yLpDBRy6QspeP2wXeEC1HWWUZq8yePQuK9GlrLEm6ikiDLEm37Ghm39i/uV/Q0f2YAsvoXk/aFasMknZRzt2vtDxppZ2Ko5YFJpuJFbk4ndrXYI8aReMrVizjtoqUiiEXyBZEO2Lh7BYAA+NPMcE3adFLtiOWSxXX4pfubb9IZJvH7UFKg5AHil9iuVAnyJY2RlNyAefL0iLk3s2W6WWVh/jt5m6QRFZa7Z0QjL0OlDjXxROfI32FaUnpbZox8fuQYR8Vb2UhGsvf/RBlBLMssXklS1kdtb6JyhKTVKyicVckiqt4RlwpZbyNiKwArwqROVt/QXNJW2CC8nhY9kVoxcngo2oRqOH2w4SaSJyfk/pZAaErT8noXkfzTYsHTcmwSbk79FFYttUsIDaWhbx9CynX5Ihm7ZlFydsWLtP7OmMfGKQVGqbQOPEWn7KTVSvoVqm/TApF31g3SBF/FB1aKFdedk+SPaKSVwT7M1hkE4S7/st+NEJYafTKcb3FlCcsa+S12TOp09nPOElKkghRW7dIouNvbGXHFdWyCN067FtHT+nHuKZv0of+qNaKSdbwTlyXjSFcmzRhKbwjKFbHjwyl+74otDjjGqVv2M8byyqEYxgqSr7FnP0aUu2Sk/ZAJysPHC/k/wCAccXJ29IutpdgGK7ezN3joL9f2Ze3/BQPHt6GujN1vYjdfkAt9InN4pDPGOyUpbfS0Ar+U1FaRWOFSJcabeDpUVFJdgI3SaZPSd7Y7y7euhJvbIBxx8pa0WfGug8UPGH2M+iiEotJo56cjsnom0gBxQrxX1Z09MnBD9MANWkT9rtFf9USkvm2BoPaH7TJxdSofp+0QGtoCyv+A3hNGKqUlhpgVtfaKTXZP9srWuyCsZ+SszVrAn7Xf+rKLDooQ2AzT2idkQ1gsWzWA8OK/lLCK4qlhGyw3WEUbCVCSdBk6JSkS0ZyEScpUjN2VhHxX2whkkkl0NVflgSrLwuhku2VWWMmbrO2FuvyK8ZewA3WXsX7ew6+TEckk2wBKXS2xH8moozdL7K8EGvk9vRBTjgoRA3f8jPLroSWyhZMRZnFfYZM3Dnkb9Ig6APYewPs0JvKoSeFEs+iPIsL6JRSGkynsnxr4Ip7AVftEmvkmU0mLLSAlLDTKR3a7Jz0GL+Kfogou1s14+wX8grbKM8ku2mVJ8ip2QaOfixoNtOL2hPTQ0upIKfZHkXi/orh5BOPlFrsqIGsKg+9j+JBfeELOXjhbNKVKkT2KA7A2FsEYucvogPHH/ZlUr3oCV0lof6WijbyFukD/oG8so11l7F3l6M7k/oEneEAG++ibeba/AZP1oR23jLIG44+c/rs6cJWxeOHjGu+xuygN0ibeG2PJ9EeR9IUJ5Xkr/jrDfsg/R08SqKQFe2B6Zu2B346KB6JzKPZOeiUPxvCKeyXF0U9iAdMEtIK0wP9qAnIEO0GZNOqZBbPgHKpix3T7GWmnsoL3/8AQSVpm6tf9BYEYvpjxdY6Jz+MkxtogaOG4vXQ6E2k+xl08soEl2Cxmtom1kAt2AwGZAforFeKrsSCv5MrH2UMlSrs30ja/IG6VLZRnnCFbt0gv4quxNK+yAyaiqQjb0b8itkGbxQ3DG35PXRPMmkjqjFRSRYC3SBpB27Fk6KElKvyRkO2tk2QCOZHXDSObhzb+zqiigrsD/aHoDXxKA9iSHe/4EkSg8ekUWmR42VTxtEgy0D/AFyZVXQOvRQkycO0UmR4382vsgssJP0Ov3aeRI4dezNNS7oB12jLQHW8GTy0v+CheWNppbJ8crwWeqIuLU21rYFUwrtCRd5GvskDfZgfkFv2ULGLeW6BKPSdkXyO8FeGTk3fQwV0kkUWF7RNZl+Cl4sDYW9g+3sCzl6Fk7/AGb7FMBsyAxZOgtiwXnP6QFeGOPJ7LPCMkkqQHl/SNDP4ojN2PKVkmyBW+kFQc00nTB2LDk8eVPrRRTii4pJ4Z0LbFw8jLtgH/UD0jPQG/igM9iSHe/RKbpChYOkWjJvCOeDpFFV3ogpe4vQOhPOsG8k1so0mc0XXJ/JacjmvNiDsu8ht3WEmS45WkUpNkBTuNYwHLrP9AV7oCpNu9lDdN6A2lFtm8msJE+SfxaYCQlRaLs5U6ZWEhYLJ9PBr+yflWTef0Bzo6OH48dvtkVCR0qKpR6SLRTjwr9heXQMJJWa03og0n1QrNJ9CtkGbA2ZsRsgE5UsF+CHhH7OfjXnyX0jsXSNA9aEY0nkmyUBsm2NJiMgEnSZHsbkfQhuDtg8FE6zZz8csIqmQO3jFgbWFYHL2BtLNgFtXslyy+IbuyXK8MDRwkxk29PBNfLjRThXx/kAuN9gulvI9KmST/c2sEC8kuiYXK2A0HhKmXjK0co8ZtYsWDo8qxQPISP2x4rBBnPrNkeWSdey0o2zmLBhosQwHRGSewkFNob9VkwbjuXIk8nSt2YwoKywt0YxAjYGzGIFbJTl0jGLBf/HjUF7ZezGKEbFbMYyEkybZjFglJ2wGMbFeJ4osmYxmgu32DxZjEGbpEOVmMIBxtJtPTLcVNNrTMY1QZ6fSISnapaMYkCGMY0MYxgDbXZbinaoxiUPKXxaujmqtsxhBjYMYCj4ko25E2km0soxgP//Z"
+      ],
+      "telefono": "78563421",
+      "email": "duarte@gmail.com",
+      "horarios": "S-D: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "S-D",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:09:34.676Z"
+    },
+    {
+      "id": "edec",
+      "usuarioId": "8867",
+      "nombrePuesto": "Pablo verduras",
+      "descripcion": "Verduras de Don Pablo",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "86754321",
+      "email": "pablo@gmail.com",
+      "horarios": "S-D: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "S-D",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:22:15.686Z"
+    },
+    {
+      "id": "2482",
+      "usuarioId": "0cf7",
+      "nombrePuesto": "Juan",
+      "descripcion": "Compra con Juan",
+      "ubicacion": "San José",
+      "productosAOfrecer": "Papa y tomates",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "verduras.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQF/8QAKxAAAgICAgICAgIBBAMAAAAAAAECEQMhEjFBUSJhBBMycYEjM5GxQlKh/8QAFwEBAQEBAAAAAAAAAAAAAAAAAQACA//EAB8RAQEBAAMBAQADAQAAAAAAAAABEQIhMRJBAyJRMv/aAAwDAQACEQMRAD8AkpNGcvYs4yhtk22zGa7XnisJW6DJ1IWCpWbJad2OOPHlnLVscr15Nyd67IxUntJlYJyyW/8AIO1ovI0uzYnblL6BKMb5JOV+B8bbW1x+gFuzICi61SY++NPY6j1YXFDlZyJKLohmjx2jpkmiOXen5BuOVts6sUqiiMYLz2OqjpM1WOHLb26Yyb2mHlenshCTul2Zze689mW7BbVpxVMWUvAjk6ArlJL7HD1BzvdUSLZ9yv6JUacWQ8RBoklUMmhExtPsyToZa6ET8DEgnJJNs5G+Tv2UzT5PiuiS7NQHQ6EQYuwKqDQqYwIJdUgxjSMl3Yy7JBQJQUu0OYk5p4pR2toEVo6qFcI3/EdQyjr6OdQfOktHU1WiU7Uu6RmHn4R+mqMop0316GlFpJ80xVLfYsfxzeS8Va9I0sUk7FjdFEpVq6B2pIwTTu00aLoE3Kmr2Ipf8keMXcmwqX2SjkM5CvlWU7Rz5ZUk/sLkTyu0l9h7RZkPersnkbUvQyTeo1RRYk3bVsXDjxtShzbuK6LTTc1JLtbH4tAkn/knazYhOCi7b16QrbjSS4/fkpHGuXKUrfoeeNSTLcZy31Ge4RfsQpL/AGt9pkxjIGujWAUdSHTvyTirLRggpFOjSbapaGUUHiCcso0KdOSOjnZqAV0NHQkfQ4FRBu0JFjLrQI0RhEHpkjBFsZEhQQIJIrZPI06GbJzd0g/W+X/INprcbryaCV66Cm26Wx1B+WNc/wCOd6pjaS2UjkSTRGqA7QbjrZKfIk4WjllplnIlx5SoWsyApWOlJ+CuPEktIr+tL+TIfWOZwkK4aSZ2cYPpkZqi8G/XTYo1pFrUGRjKlrs1sl8qPJu6M58tNUTduLa0CK+NKSte2TFslN/CW+hsklxpKkT4uKtybf8A8Gg1JcXsGretRyf7b/shZ0Z0l8EtEXjfhmoxyu9lsBmmuwGmVYdnRE54F8bM1pRGrYY0NRJOatUcs402dklRDLEk5+mOnYjMr8CFE9jokn7VMogJzAsyBCtDRlYthjpEjhFGJIcgpJ99EkW1GCXlssdvT4oelQ/KMMiT2n/2KpUqQsvkq7Jiw+WaUbrygyiqtbRJ3XFva9lFJxfy6flCzOXaMkotPxZbI4pJyQmRXaXkP5DqKSCNcu7DfscYp8HX9CSzQyQknfRNNyXbsWUfYj5v+nxTfnaXn0NklZJUk0mZv4pIKeEUjJXYXJNko3LSRRYn5ZN9GjtumScbbcXXspwcU0mTlyiq/wChlc7xlumcnDp69dophadtKmcy26fR04attdEOU66JkTeTl4MkNSTfyt2FIEm4JkZ43Hfg66BKPgpQ5cbLR7slOP65Wuhoy8jVHTFjWRjIfloEMmRyT8AnkJrbtimUbeysYpGiikQTPGmtolLG49dHQarJOXkunpjIfLiUlo5blF1Y5qXQ6ZzrJ7Q6mn5DEsmMTi78jq6JOZ/GTQynb2LP+bDCDfQum9qwkr2Ge+ugLEvLC4V02GtXKST5JJr5LyNH4wtMDuLtoSU27QsfMi2OXKaTSv2L+VfKPqg/jdSkw8uS+XGSJj96Sx7TNLl5RaoyjS+IMnGUYbq3smpyxBtICuTSL5caf0yWNNSd+A1p0YoUqRXjFRTfZOMuK12Fy1bIWUHKKyq9x4iYoucpSevCNJ0lOrB+9uq0Lnt0mbHxtpf2V/GX+k2/Ykskval/aGxybxulSXoo1ytJjk3KtUVSIYHc/wDB0P6CqnURJIaDbBMgjlimmjmTaOqfVs5pdsYDKdBeQmAcRrtlIkolYhUoikRYjxAmQTIJItHJ+TGpJnYzn/JVxX9lPU5oqysIWCKorEbUpCCRRLQkaHMpxqClK2zphDX0QxnVFpRqxjpevB4xUfslmlw1Hb+ys6cE0rZCTcYq1texY7wZxuSSTarbrRz5YOO10VhknJqNbv2Nkbg9pNfaJS/gRTh+P6bLY0lGLa00TzP/AE02bHN8PpAeM/qTLB3atBx0ofJ68FpTjNU9AhGCVXoheJZaxRt26Ip7Y+WSt10Rb2XrrOotFoaWiCkNyZJRS0k1YJJOV0InbM5utEzZJdDI9lMFfqd9NkG+To6FFLBXsWefZMeNQlakmWTQksbhHk69CrIFZdCa8CS27JrICWREmySOZjTnyf0IakDGMZdiDxWisUJFFYozWjJFIipDoEYxgEmZz53dL7OhnLld5EvRIEGLNVjRiRUgt9lVFexIRSKEHFjeiqtnPF0UjOidvYqm4htT/mTlks3Klvv0OCqT4unHTXRNyc5JMWWTwN+Orm2+kgF6hvyb4xa6QmKVRmgKU+brcbKRjBX4vwLG2QqfK68Ac6GaUU1FdiTxtdMK6TlpJSFVydLsDddlMHmX+B8Zt24rDEor2UoMI2rHcfjaDFqLim1r+xZQi/imPO0iUYqTck7fplGOWhGEYu2nJ/8ACKc3JXVJAl+yS6TX0bGrxyVUxXnZsk3PHx+yHFlIO9eRuPmtg1y9R4sWSpF5IhP0LJKs1DAEAaKMGJJWCLRRGJePRkmSGSFQyJCCQTEivSONPlOT+zpzS445P6OfGqRE6RWCEii0UCMkE3QBDzlvorHHJq3ofHBLwUp+CtdJMTjHim+5eAKEncnrfkZuUJJoWT5O0u+yjF3SvH/7TSK43GMXx6JSk1HjScfVFMaS/HkxFl/TcpNeyX8G20XjJRSpDv8AXP6Bqyf45lK69le0O4410aXFRu9lhmTxyZo3tBw/wNN7BD4ovxrO9XUn0g8mvJJSobk5dIliymmqkiU4RabQttNWmNekvvZM3qp07pFIrjF/K5Gk6j8VsXAvlvfkYxyumg+Tul/aGb8E4Q4SbDKVf0GqzAmyDdyGyTromuxkBgMIBQBQDIktAvDo54MtFmaTtbtDRFsZEjAMZskh+Q7Sj7Yq0LknyyunpaGTIqRKx0SgUsgZsFgByJExtLbKLKr60c6ZSlVpjNdbIo+MgPHqyV0Hk0rsPRmEyJUPcY41jbq0IvnkS+9i/kSvLQxnn7IdJx1IavKdkoZPEtxNzVuui6al1RSsEpCcqFlKwaCTGW40TbGT0OM72pjjydvoul4RPHqKKqddGVW4SYHGu0FZGhlNN7LodufImk32hI2+ns6ZpdojKKi7Q6pIaVrG3J2QnN1opJ3Bok0MZ5epmDJASbNMGTCZR9jpAU+L9B4S9F4xKKKYaccsbTqSaKJtP2i7iK8a7jpgiKSvsdMnL4vaoP7YpdkVFJ3TRPPl4rjHv/oV5XLUdL2KsV92UCcXTKxYHg9Myi4fyWvY1LQY1oipLw7DyXsCpKRJ5FYs530KuhwGjJdMaMmpJP2Rjb66HTUtXtdMsa+jq5SaSthaf/lKkBVG3dSFaTdyf+F2Q+rVMc4p1BO/Zz5N5JX3ZbHOKmlGFX5b2JPHuXu7Fn9TTDZqrwAmpbDWBsUeELI7aWmxqcey36+KuhZLT9hqzo0HpDpk4XGKTGsz+tTuKtKrFW2JyCpUPWo0rROT0zSlZOcqRZ2fIyegMVMI458rtbsyCkFImWSHigIZATxHXTommUTJGivYHKnXkZdAStgiZYc4/Zxpbpo9Cq0c+aK/Za8oUWESi0LEd9MCKQ1CxGskjlwp/KOmRSO3wc+SNT10OhFhXQGFdCghDk99HTDGvETGL2tyZDLFa6QrhXgxiwykaXT6YZXFJvTXnwzGKMcyT3TW14DHDe5Mxgta49wXgiug40o2Ywa1isskZQryc8/oxhqkTcny9Dp9GMNc+Ny4NmsxgdCuRNuzGNRz5VkOjGJkyRjGAmVmujGBGTsZMxiSkWOnRjEgbOfJK8j+jGIgikWYwI6DRjEBqlsjmXRjCnPIy6MYYn//2Q=="
+      ],
+      "telefono": "67853421",
+      "email": "juan01@gmail.com",
+      "horarios": "L-V: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "L-V",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Sin pesticida",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:29:35.840Z"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }
