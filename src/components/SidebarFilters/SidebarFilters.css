@@ -55,6 +55,12 @@
     font-weight: 400;
 }
 
+.category-item-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .feria-filter-list {
     display: flex;
     flex-direction: column;

@@ -3,7 +3,7 @@
 // Servicio para autenticación y gestión de usuarios
 // ─────────────────────────────────────────────────────────────────
 
-const BASE_URL = 'http://localhost:3002'
+const BASE_URL = 'http://localhost:3001'
 
 interface User {
   id: string | number

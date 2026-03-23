@@ -16,7 +16,10 @@
 }
 
 .product-comp-emoji {
-    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .product-comp-name {

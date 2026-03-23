@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { X } from 'lucide-react'
 import { Producto, CATEGORIAS, EMOJIS_POR_CATEGORIA } from '../../../servers/ProductService'
 import { getFerias } from '../../../servers/AgricultorServices'
+import ProductIcon, { EMOJI_ICON_MAP } from '../../../utils/productIcons'
 import './AdminProductForm.css'
 
 interface AdminProductFormProps {
@@ -11,7 +13,7 @@ interface AdminProductFormProps {
 }
 
 interface Feria {
-  id: number
+  id: string | number
   nombre: string
   provincia: string
 }
@@ -35,7 +37,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   })
 
   const [selectedFerias, setSelectedFerias] = useState<{
-    [key: number]: { selected: boolean; precio: string }
+    [key: string | number]: { selected: boolean; precio: string }
   }>({})
 
   useEffect(() => {
@@ -45,19 +47,19 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         setFerias(data)
 
         if (producto) {
-          const feriasMap: { [key: number]: { selected: boolean; precio: string } } = {}
+          const feriasMap: { [key: string | number]: { selected: boolean; precio: string } } = {}
           data.forEach((feria: Feria) => {
-            const precioEnFeria = producto.precios.find((p) => p.feriaId === feria.id)
-            feriasMap[feria.id] = {
+            const precioEnFeria = producto.precios.find((p) => String(p.feriaId) === String(feria.id))
+            feriasMap[String(feria.id)] = {
               selected: !!precioEnFeria,
               precio: precioEnFeria ? precioEnFeria.precio.toString() : '',
             }
           })
           setSelectedFerias(feriasMap)
         } else {
-          const feriasMap: { [key: number]: { selected: boolean; precio: string } } = {}
+          const feriasMap: { [key: string | number]: { selected: boolean; precio: string } } = {}
           data.forEach((feria: Feria) => {
-            feriasMap[feria.id] = { selected: false, precio: '' }
+            feriasMap[String(feria.id)] = { selected: false, precio: '' }
           })
           setSelectedFerias(feriasMap)
         }
@@ -81,7 +83,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleFeriaToggle = (feriaId: number) => {
+  const handleFeriaToggle = (feriaId: string | number) => {
     setSelectedFerias({
       ...selectedFerias,
       [feriaId]: {
@@ -91,7 +93,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     })
   }
 
-  const handlePrecioChange = (feriaId: number, precio: string) => {
+  const handlePrecioChange = (feriaId: string | number, precio: string) => {
     setSelectedFerias({
       ...selectedFerias,
       [feriaId]: {
@@ -107,9 +109,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     const precios = Object.entries(selectedFerias)
       .filter(([, data]) => data.selected && data.precio)
       .map(([feriaId, data]) => {
-        const feria = ferias.find((f) => f.id === parseInt(feriaId))
+        const feria = ferias.find((f) => String(f.id) === String(feriaId))
         return {
-          feriaId: parseInt(feriaId),
+          feriaId: feriaId,
           feriaNombre: feria?.nombre || '',
           provincia: feria?.provincia || '',
           precio: parseFloat(data.precio),
@@ -132,7 +134,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         <div className="admin-product-form-header">
           <h2>{producto ? 'Editar Producto' : 'Nuevo Producto'}</h2>
           <button onClick={onCancel} className="admin-product-form-close">
-            ✕
+            <X size={18} strokeWidth={2} />
           </button>
         </div>
 
@@ -163,20 +165,24 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           </div>
 
           <div className="admin-product-form-group">
-            <label>Emoji</label>
+            <label>Ícono del Producto</label>
             <div className="admin-product-form-emoji-picker">
-              {emojisDisponibles.map((emoji) => (
-                <button
-                  key={emoji}
-                  type="button"
-                  className={`admin-product-form-emoji-btn ${
-                    formData.emoji === emoji ? 'active' : ''
-                  }`}
-                  onClick={() => setFormData({ ...formData, emoji })}
-                >
-                  {emoji}
-                </button>
-              ))}
+              {emojisDisponibles.map((emoji) => {
+                const def = EMOJI_ICON_MAP[emoji]
+                const isActive = formData.emoji === emoji
+                return (
+                  <button
+                    key={emoji}
+                    type="button"
+                    title={def?.label ?? emoji}
+                    className={`admin-product-form-emoji-btn ${isActive ? 'active' : ''}`}
+                    style={isActive ? { background: def?.bg, borderColor: def?.color } : {}}
+                    onClick={() => setFormData({ ...formData, emoji })}
+                  >
+                    <ProductIcon emoji={emoji} size={22} />
+                  </button>
+                )
+              })}
             </div>
           </div>
 

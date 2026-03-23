@@ -785,6 +785,24 @@
           "precio": 150
         }
       ]
+    },
+    {
+      "id": "56fa",
+      "userId": "62fa",
+      "nombre": "Test Tomato",
+      "emoji": "🍅",
+      "descripcion": "Organic test tomato",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 3,
+          "feriaNombre": "",
+          "provincia": "",
+          "precio": 1500
+        }
+      ]
     }
   ],
   "solicitudesCambioRol": [

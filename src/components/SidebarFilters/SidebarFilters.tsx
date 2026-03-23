@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { ShoppingBasket } from 'lucide-react'
+import ProductIcon from '../../utils/productIcons'
 import './SidebarFilters.css'
 import { ENDPOINTS } from '../../services/api.config'
 
@@ -25,7 +27,6 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
     { emoji: '🍎', name: 'Frutas', count: 0 },
     { emoji: '🌿', name: 'Hierbas', count: 0 },
     { emoji: '🥔', name: 'Tubérculos', count: 0 },
-    { emoji: '🌾', name: 'Granos', count: 0 },
     { emoji: '🥚', name: 'Proteína', count: 0 },
   ])
 
@@ -35,9 +36,8 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
       .then(res => res.json())
       .then((productosData: { category: string }[]) => {
         const counts: Record<string, number> = {};
-        productosData.forEach((p: any) => {
-          const cName = p.categoria || p.category || 'Otros';
-          counts[cName] = (counts[cName] || 0) + 1;
+        productosData.forEach((p: { category: string }) => {
+          counts[p.category] = (counts[p.category] || 0) + 1;
         });
 
         setTotalCount(productosData.length);
@@ -71,7 +71,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
             className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
             onClick={() => handleCategoryClick('Todos')}
           >
-            <span>🛒 Todos</span>
+            <span className="category-item-label">
+              <ShoppingBasket size={16} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+              Todos
+            </span>
             <span className="category-item-badge">{totalCount}</span>
           </li>
           {categories.map((cat) => (
@@ -80,7 +83,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
               className={`category-item ${selected === cat.name ? 'active' : ''}`}
               onClick={() => handleCategoryClick(cat.name)}
             >
-              <span>{cat.emoji} {cat.name}</span>
+              <span className="category-item-label">
+                <ProductIcon emoji={cat.emoji} categoria={cat.name} size={16} />
+                {cat.name}
+              </span>
               <span className="category-item-badge">{cat.count}</span>
             </li>
           ))}

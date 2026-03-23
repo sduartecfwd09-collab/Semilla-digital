@@ -1,6 +1,6 @@
 import React from 'react'
 import { Producto } from '../../../servers/ProductService'
-import AdminProductCard from '../../adminAgricultor/AgricultorProductCard'
+import AdminProductCard from '../AgricultorProductCard/AdminProductCard'
 import './AdminProductList.css'
 
 // eslint-disable-next-line no-unused-vars
