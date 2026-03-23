@@ -229,6 +229,10 @@ const Auth: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <Link to="/" className="auth-back-btn">
+          <span>←</span> Volver al inicio
+        </Link>
       </div>
 
       {/* SECCIÓN DERECHA */}

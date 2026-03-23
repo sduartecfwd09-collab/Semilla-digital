@@ -23,7 +23,6 @@ const MisProductos: React.FC = () => {
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Producto | undefined>(undefined)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterCategory, setFilterCategory] = useState('Todas')
 
   useEffect(() => {
     fetchProductos()
@@ -120,9 +119,6 @@ const MisProductos: React.FC = () => {
     .filter((p) =>
       p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((p) => filterCategory === 'Todas' || p.categoria === filterCategory)
-
-  const categorias = ['Todas', ...Array.from(new Set(productos.map((p) => p.categoria)))]
 
   return (
     <>
@@ -145,17 +141,6 @@ const MisProductos: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="mis-productos-search"
               />
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="mis-productos-category-filter"
-              >
-                {categorias.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
             </div>
             <button onClick={handleCreateProduct} className="mis-productos-add-btn">
               ➕ Nuevo Producto
