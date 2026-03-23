@@ -8,10 +8,11 @@ export interface User {
 
 export interface Product {
   id: string;
-  name: string;
-  category: string;
-  unit: string;
-  image?: string;
+  nombre: string;
+  categoria: string;
+  emoji?: string;
+  descripcion?: string;
+  disponible?: boolean;
 }
 
 export interface Fair {
@@ -36,4 +37,18 @@ export interface Recipe {
   ingredients: string[];
   difficulty: string;
   time: string;
+  steps: string[];
+}
+
+export interface PuestoAgricultor {
+  id: string;
+  usuarioId: string;
+  nombrePuesto: string;
+  descripcion: string;
+  ubicacion: string;
+  telefono: string;
+  email: string;
+  horarios: string;
+  tiposProducto: string[];
+  fechaRegistro: string;
 }

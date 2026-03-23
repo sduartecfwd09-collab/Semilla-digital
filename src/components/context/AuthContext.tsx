@@ -1,12 +1,15 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { ENDPOINTS } from '../../services/api.config'
 
 interface User {
-  id: number
+  id: string
   email: string
   role: string
-  nombre: string
-  feriaId: number
-  puestoInfo: {
+  name: string
+  nombre?: string
+  status: string
+  feriaId?: number
+  puestoInfo?: {
     numero: string
     descripcion: string
   }
@@ -35,42 +38,46 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('auth_user')
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Cargar usuario desde localStorage al iniciar
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
     if (storedUser) {
       try {
-        return JSON.parse(storedUser)
-      } catch {
-        localStorage.removeItem('auth_user')
-        return null
+        setUser(JSON.parse(storedUser))
+      } catch (error) {
+        console.error('Error al parsear usuario:', error)
+        localStorage.removeItem('user')
       }
     }
-    return null
-  })
-  const [isLoading, setIsLoading] = useState(false)
+  }, [])
 
 
 
   const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
     try {
-      // Buscar usuario en la API
-      const response = await fetch(`http://localhost:3001/usuarios?email=${email}&password=${password}`)
+      // Buscar usuario en la API usando ENDPOINTS centralizados
+      const response = await fetch(`${ENDPOINTS.usuarios}?email=${email}&password=${password}`)
       const users = await response.json()
 
       if (users.length > 0) {
         const authenticatedUser = users[0]
-        // Guardar en estado y localStorage (sin password)
-        const userWithoutPassword = {
-          id: authenticatedUser.id,
+        // Guardar en estado y localStorage (sin password por seguridad)
+        const userToStore: User = {
+          id: String(authenticatedUser.id),
           email: authenticatedUser.email,
           role: authenticatedUser.role,
-          nombre: authenticatedUser.nombre || authenticatedUser.name, // Handle both name/nombre
+          name: authenticatedUser.name || authenticatedUser.nombre,
+          nombre: authenticatedUser.nombre || authenticatedUser.name,
+          status: authenticatedUser.status || 'Activo',
           feriaId: authenticatedUser.feriaId,
           puestoInfo: authenticatedUser.puestoInfo,
         }
-        setUser(userWithoutPassword)
-        localStorage.setItem('auth_user', JSON.stringify(userWithoutPassword))
-        return { success: true, role: userWithoutPassword.role }
+        setUser(userToStore)
+        localStorage.setItem('user', JSON.stringify(userToStore))
+        return { success: true, role: userToStore.role }
       }
       return { success: false }
     } catch (error) {
@@ -81,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem('auth_user')
+    localStorage.removeItem('user')
   }
 
   const value = {

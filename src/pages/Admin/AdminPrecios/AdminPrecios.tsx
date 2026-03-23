@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
-import { Price, Product } from '../../../types'
-import AlertModal from '../../../components/admin/AlertModal/AlertModal'
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal'
+import Swal from 'sweetalert2'
 import './AdminPrecios.css'
+import { Price } from '../../../types'
 
 interface MergedPrice extends Price {
     productName?: string
@@ -17,9 +16,6 @@ const AdminPrecios = () => {
     const [showEditModal, setShowEditModal] = useState(false)
     const [selectedPrice, setSelectedPrice] = useState<MergedPrice | null>(null)
     const [newPriceValue, setNewPriceValue] = useState<string>('')
-    const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: '', title: '' })
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-    const [priceToDelete, setPriceToDelete] = useState<MergedPrice | null>(null)
 
     useEffect(() => {
         fetchPrices()
@@ -34,19 +30,20 @@ const AdminPrecios = () => {
             ])
 
             // Combinar datos del producto (icono, nombre, unidad) en los registros de precios
-            const mergedPrices: MergedPrice[] = pricesData.map((p: Price) => {
-                const product = productsData.find((prod: Product) => prod.id === p.productId)
+            const mergedPrices = pricesData.map((p: any) => {
+                const product = productsData.find((prod: any) => prod.id === p.productId) as any
                 return {
                     ...p,
-                    productName: product?.name || 'Producto desconocido',
-                    productIcon: product?.image || '📦',
-                    unit: product?.unit || 'un'
+                    productName: product?.nombre || 'Producto desconocido',
+                    productIcon: product?.emoji || '📦',
+                    unit: 'unidad'
                 }
             })
 
             setPrices(mergedPrices)
         } catch (error) {
             console.error('Error fetching prices:', error)
+            Swal.fire('Error', 'No se pudieron cargar los precios.', 'error')
         } finally {
             setLoading(false)
         }
@@ -62,13 +59,8 @@ const AdminPrecios = () => {
         e.preventDefault()
         if (!selectedPrice) return
 
-        // Validación: No permitir precios vacíos o inválidos
         if (newPriceValue === '' || isNaN(Number(newPriceValue)) || Number(newPriceValue) < 0) {
-            setAlertConfig({
-                isOpen: true,
-                title: 'Precio Inválido',
-                message: 'Por favor, ingresa un precio válido mayor o igual a cero.'
-            })
+            Swal.fire('Precio Inválido', 'Ingresa un precio válido mayor o igual a cero.', 'warning')
             return
         }
 
@@ -77,39 +69,32 @@ const AdminPrecios = () => {
             setPrices(prices.map(p => p.id === selectedPrice.id ? { ...p, price: updatedPrice.price } : p))
             setShowEditModal(false)
             setSelectedPrice(null)
-        } catch {
-            setAlertConfig({
-                isOpen: true,
-                title: 'Error',
-                message: 'Error al actualizar el precio'
-            })
+            Swal.fire('Éxito', 'Precio actualizado correctamente.', 'success')
+        } catch (error) {
+            Swal.fire('Error', 'Error al actualizar el precio', 'error')
         }
     }
 
-    const handleDeleteClick = (priceItem: MergedPrice) => {
-        setPriceToDelete(priceItem)
-        setShowDeleteConfirm(true)
-    }
+    const handleDeleteClick = async (priceItem: any) => {
+        const result = await Swal.fire({
+            title: 'Confirmar Eliminación',
+            text: `¿Estás seguro de que deseas eliminar el precio de ${priceItem.productName} en ${priceItem.fair}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
 
-    const handleConfirmDelete = async () => {
-        if (!priceToDelete) return
-
-        try {
-            await api.deletePrice(priceToDelete.id)
-            setPrices(prices.filter(p => p.id !== priceToDelete.id))
-            setShowDeleteConfirm(false)
-            setPriceToDelete(null)
-            setAlertConfig({
-                isOpen: true,
-                title: 'Éxito',
-                message: 'El precio ha sido eliminado correctamente.'
-            })
-        } catch {
-            setAlertConfig({
-                isOpen: true,
-                title: 'Error',
-                message: 'No se pudo eliminar el precio. Por favor intenta de nuevo.'
-            })
+        if (result.isConfirmed) {
+            try {
+                await api.deletePrice(priceItem.id)
+                setPrices(prices.filter(p => p.id !== priceItem.id))
+                Swal.fire('Éxito', 'El precio ha sido eliminado correctamente.', 'success')
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo eliminar el precio. Intenta de nuevo.', 'error')
+            }
         }
     }
 
@@ -117,7 +102,7 @@ const AdminPrecios = () => {
         <div className="prices-container">
             <header className="prices-header">
                 <h1>Gestión de Precios</h1>
-                <button className="btn-new" onClick={() => alert('Próximamente: Vincular nuevo producto a feria')}>
+                <button className="btn-new" onClick={() => Swal.fire('Información', 'Próximamente: Vincular nuevo producto a feria', 'info')}>
                     <span>+</span> Actualizar Precios
                 </button>
             </header>
@@ -196,22 +181,6 @@ const AdminPrecios = () => {
                     </div>
                 </div>
             )}
-
-            <AlertModal
-                isOpen={alertConfig.isOpen}
-                title={alertConfig.title}
-                message={alertConfig.message}
-                onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
-            />
-
-            <ConfirmModal
-                isOpen={showDeleteConfirm}
-                title="Confirmar Eliminación"
-                message={`¿Estás seguro de que deseas eliminar el precio de ${priceToDelete?.productName} en ${priceToDelete?.fair}?`}
-                onConfirm={handleConfirmDelete}
-                onCancel={() => setShowDeleteConfirm(false)}
-                type="danger"
-            />
         </div>
     )
 }

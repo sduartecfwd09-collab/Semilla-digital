@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 // Este componente gestiona la lista de usuarios del sistema
 import { api } from '../../../services/api'
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal'
 import UserModal from '../../../components/admin/UserModal/UserModal'
-import AlertModal from '../../../components/admin/AlertModal/AlertModal'
+import Swal from 'sweetalert2'
 import { User } from '../../../types'
 import './AdminUsuarios.css'
 
@@ -12,9 +11,6 @@ const AdminUsuarios = () => {
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [showModal, setShowModal] = useState(false)
-    const [showConfirm, setShowConfirm] = useState(false)
-    const [showAlert, setShowAlert] = useState(false)
-    const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as 'error' | 'success' | 'warning' })
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
     useEffect(() => {
@@ -25,55 +21,44 @@ const AdminUsuarios = () => {
         try {
             setLoading(true)
             const data = await api.getUsers()
-            setUsers(data)
+            setUsers(data.filter((u: User) => u.role !== 'Administrador'))
         } catch (error) {
             console.error('Error al obtener usuarios:', error)
-            setAlertConfig({
-                title: 'Error de Conexión',
-                message: 'No se pudieron cargar los usuarios. Por favor, verifica tu conexión.',
-                type: 'error'
-            })
-            setShowAlert(true)
+            Swal.fire('Error', 'No se pudieron cargar los usuarios. Verifica tu conexión.', 'error')
         } finally {
             setLoading(false)
         }
     }
 
-    const handleDeleteClick = (id: string) => {
+    const handleDeleteClick = async (id: string) => {
         const user = users.find(u => u.id === id)
-        if (user) {
-            setSelectedUser(user)
-            setShowConfirm(true)
+        if (!user) return;
+
+        const result = await Swal.fire({
+            title: '¿Eliminar Usuario?',
+            text: `¿Estás seguro de que deseas eliminar a ${user.name}? Esta acción no se puede deshacer.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await api.deleteUser(id)
+                setUsers(users.filter(u => u.id !== id))
+                Swal.fire('Eliminado', 'El usuario ha sido eliminado correctamente.', 'success')
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un problema al intentar eliminar al usuario.', 'error')
+            }
         }
     }
 
     const handleEditClick = (user: User) => {
         setSelectedUser(user)
         setShowModal(true)
-    }
-
-    const handleConfirmDelete = async () => {
-        if (selectedUser?.id) {
-            try {
-                await api.deleteUser(selectedUser.id)
-                setUsers(users.filter(u => u.id !== selectedUser.id))
-                setShowConfirm(false)
-                setSelectedUser(null)
-                setAlertConfig({
-                    title: 'Usuario Eliminado',
-                    message: 'El usuario ha sido eliminado correctamente.',
-                    type: 'success'
-                })
-                setShowAlert(true)
-            } catch {
-                setAlertConfig({
-                    title: 'Error',
-                    message: 'Hubo un problema al intentar eliminar al usuario.',
-                    type: 'error'
-                })
-                setShowAlert(true)
-            }
-        }
     }
 
     const handleSuccess = () => {
@@ -149,18 +134,20 @@ const AdminUsuarios = () => {
                                     <td>
                                         <div className="action-buttons">
                                             <button
-                                                className="btn-icon btn-edit"
+                                                className="btn-text"
+                                                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
                                                 title="Editar"
                                                 onClick={() => handleEditClick(user)}
                                             >
-                                                ✏️
+                                                Editar
                                             </button>
                                             <button
-                                                className="btn-icon btn-delete"
+                                                className="btn-text"
+                                                style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
                                                 title="Eliminar"
                                                 onClick={() => handleDeleteClick(user.id)}
                                             >
-                                                🗑️
+                                                Eliminar
                                             </button>
                                         </div>
                                     </td>
@@ -179,23 +166,6 @@ const AdminUsuarios = () => {
                     userToEdit={selectedUser}
                 />
             )}
-
-            <ConfirmModal
-                isOpen={showConfirm}
-                title="Eliminar Usuario"
-                message="¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
-                type="danger"
-                onConfirm={handleConfirmDelete}
-                onCancel={() => setShowConfirm(false)}
-            />
-
-            <AlertModal
-                isOpen={showAlert}
-                onClose={() => setShowAlert(false)}
-                title={alertConfig.title}
-                message={alertConfig.message}
-                type={alertConfig.type}
-            />
         </div>
     )
 }

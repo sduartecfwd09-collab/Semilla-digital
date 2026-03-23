@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
-import { Fair } from '../../../types'
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal'
-import AlertModal from '../../../components/admin/AlertModal/AlertModal'
+import Swal from 'sweetalert2'
 import './AdminFerias.css'
+import { Fair } from '../../../types'
 
 const AdminFerias = () => {
     const [fairs, setFairs] = useState<Fair[]>([])
@@ -13,9 +12,7 @@ const AdminFerias = () => {
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [selectedFeria, setSelectedFeria] = useState<Fair | null>(null)
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const [formData, setFormData] = useState({ name: '', province: 'San José', location: '', schedule: '' })
-    const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: '' })
 
     const provinces = ["Todas", "San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"]
 
@@ -26,11 +23,11 @@ const AdminFerias = () => {
     const fetchFairs = async () => {
         try {
             setLoading(true)
-            const data = await api.request<Fair[]>('/fairs')
+            const data: any = await api.request('/ferias')
             setFairs(data)
         } catch (error) {
             console.error('Error fetching fairs:', error)
-            setAlertConfig({ isOpen: true, message: 'Error al cargar las ferias.' })
+            Swal.fire('Error', 'Error al cargar las ferias.', 'error')
         } finally {
             setLoading(false)
         }
@@ -43,51 +40,55 @@ const AdminFerias = () => {
         setShowModal(true)
     }
 
-    const handleDeleteClick = (feria: Fair) => {
-        setSelectedFeria(feria)
-        setIsConfirmOpen(true)
-    }
+    const handleDeleteClick = async (feria: any) => {
+        const result = await Swal.fire({
+            title: 'Eliminar Feria',
+            text: `¿Estás seguro de que deseas eliminar la ${feria.name}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
 
-    const handleConfirmDelete = async () => {
-        if (!selectedFeria) return
-        try {
-            await api.request(`/fairs/${selectedFeria.id}`, { method: 'DELETE' })
-            setFairs(fairs.filter(f => f.id !== selectedFeria.id))
-            setIsConfirmOpen(false)
-        } catch {
-            setAlertConfig({ isOpen: true, message: 'Error al eliminar feria' })
+        if (result.isConfirmed) {
+            try {
+                await api.request(`/ferias/${feria.id}`, { method: 'DELETE' })
+                setFairs(fairs.filter(f => f.id !== feria.id))
+                Swal.fire('Eliminada', 'La feria ha sido eliminada.', 'success')
+            } catch (error) {
+                Swal.fire('Error', 'Error al eliminar feria', 'error')
+            }
         }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Validación: No permitir campos vacíos o que solo contengan espacios
         if (!formData.name.trim() || !formData.location.trim() || !formData.schedule.trim()) {
-            setAlertConfig({
-                isOpen: true,
-                message: 'Por favor, completa todos los campos requeridos y evita dejar solo espacios en blanco.'
-            })
+            Swal.fire('Información Faltante', 'Completa todos los campos requeridos.', 'warning')
             return
         }
 
         try {
             if (isEditing && selectedFeria) {
-                const updated = await api.request<Fair>(`/fairs/${selectedFeria.id}`, {
+                const updated: any = await api.request(`/ferias/${selectedFeria.id}`, {
                     method: 'PUT',
                     body: JSON.stringify(formData)
                 })
                 setFairs(fairs.map(f => f.id === selectedFeria.id ? updated : f))
             } else {
-                const created = await api.request<Fair>('/fairs', {
+                const created: any = await api.request('/ferias', {
                     method: 'POST',
                     body: JSON.stringify(formData)
                 })
                 setFairs([...fairs, created])
             }
             closeModal()
-        } catch {
-            setAlertConfig({ isOpen: true, message: 'Error al guardar feria' })
+            Swal.fire('Éxito', `Feria ${isEditing ? 'actualizada' : 'creada'} correctamente.`, 'success')
+        } catch (error) {
+            Swal.fire('Error', 'Error al guardar feria', 'error')
         }
     }
 
@@ -146,8 +147,20 @@ const AdminFerias = () => {
                                 ⏰ {feria.schedule}
                             </div>
                             <div className="feria-actions">
-                                <button className="btn-icon" onClick={() => handleEditClick(feria)}>✏️</button>
-                                <button className="btn-icon" onClick={() => handleDeleteClick(feria)}>🗑️</button>
+                                <button
+                                    className="btn-text"
+                                    onClick={() => handleEditClick(feria)}
+                                    style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                                >
+                                    Editar
+                                </button>
+                                <button
+                                    className="btn-text"
+                                    onClick={() => handleDeleteClick(feria)}
+                                    style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                                >
+                                    Eliminar
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -210,22 +223,6 @@ const AdminFerias = () => {
                     </div>
                 </div>
             )}
-
-            <ConfirmModal
-                isOpen={isConfirmOpen}
-                title="Eliminar Feria"
-                message={`¿Estás seguro de que deseas eliminar la ${selectedFeria?.name}?`}
-                type="danger"
-                onConfirm={handleConfirmDelete}
-                onCancel={() => setIsConfirmOpen(false)}
-            />
-
-            <AlertModal
-                isOpen={alertConfig.isOpen}
-                title="Información Faltante"
-                message={alertConfig.message}
-                onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
-            />
         </div>
     )
 }

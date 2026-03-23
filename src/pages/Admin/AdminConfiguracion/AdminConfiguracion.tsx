@@ -5,7 +5,7 @@ const AdminConfiguracion = () => {
     // Componente para la configuración general del sistema Semillitas
     return (
         <div className="config-container">
-            <header>
+            <header className="config-header">
                 <h1>Configuración del Sistema</h1>
             </header>
 

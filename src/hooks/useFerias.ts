@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Feria } from "../types/feria.types";
 import { searchFeriasInGoogle } from "../services/googleMapsService";
 import { fetchFeriasFallback } from "../services/feriasFallbackService";
-import { mergeFeriasData } from "../utils/mergeFeriasData";
 import { ENDPOINTS } from "../services/api.config";
 
 const PROVINCIAS_COSTA_RICA = [
@@ -14,6 +13,19 @@ const PROVINCIAS_COSTA_RICA = [
   "Puntarenas",
   "Limón",
 ];
+
+const mergeFeriasData = (google: any[], fallback: any[]): Feria[] => {
+  const combined = [...google, ...fallback];
+  return combined.map((f, index) => ({
+    id: f.id || `f-${index}`,
+    nombre: f.nombre || f.name || "Feria sin nombre",
+    direccion: f.direccion || f.location || "Ubicación no especificada",
+    provincia: f.provincia || f.province || "Otras",
+    dias: f.dias || (f.schedule && f.schedule.split(',')[0]) || "Sábados",
+    horario: f.horario || (f.schedule && f.schedule.split(',')[1]) || "Mañana",
+    source: f.source || "merged"
+  }));
+};
 
 /**
  * Hook para obtener y combinar todas las ferias del agricultor de Google Maps y el fallback.
@@ -42,7 +54,7 @@ export const useFerias = () => {
         // Mezclar y enriquecer datos
         const mergedData = mergeFeriasData(googleDataFlat, fallbackResults);
         
-        // Deduplicar por nombre para evitar que duplicados en db.json afecten el conteo global
+        // Deduplicar por nombre para evitar que duplicados en db.json afecten el reporte
         const uniqueMergedData: Feria[] = [];
         const seenNames = new Set();
         mergedData.forEach(f => {
@@ -55,15 +67,13 @@ export const useFerias = () => {
 
         setAllFerias(uniqueMergedData);
 
-        // Sincronización: Registrar nuevas ferias encontradas por Google en el db.json
-        // Solo las que no estén ya en el fallback (db.json) con un nombre similar
-        const newFerias = mergedData.filter(m => 
+        // Sincronización: Registrar nuevas ferias en db.json
+        // Solo si el nombre no existe EXACTAMENTE (para evitar duplicados infinitos)
+        const newFerias = uniqueMergedData.filter(m => 
+          m.source === "google" &&
           !fallbackResults.some(f => 
-            f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim() ||
-            m.nombre.toLowerCase().includes(f.nombre.toLowerCase().trim()) ||
-            f.nombre.toLowerCase().includes(m.nombre.toLowerCase().trim())
-          ) &&
-          m.source === "google"
+            f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim()
+          )
         );
 
         const syncNewFerias = async () => {
