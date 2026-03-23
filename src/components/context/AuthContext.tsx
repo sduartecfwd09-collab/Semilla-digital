@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('user')
       }
     }
+    setIsLoading(false)
   }, [])
 
 
