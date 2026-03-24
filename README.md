@@ -1,6 +1,6 @@
-# 🌱 AgroMap – Semilla Digital
+#  AgroMap – Semilla Digital
 
-## 📌 Descripción
+##  Descripción
 
 **AgroMap – Semilla Digital** es una aplicación web desarrollada con **React y Vite** que permite gestionar y visualizar información relacionada con el sector agrícola. El proyecto integra una API simulada mediante **json-server**, facilitando el manejo de datos de forma sencilla durante el desarrollo.
 
@@ -14,19 +14,19 @@ Actualmente incluye:
 
 ---
 
-## 🚀 Tecnologías utilizadas
+##  Tecnologías utilizadas
 
-* ⚛️ React 19
-* ⚡ Vite
-* 🧭 React Router DOM
-* 🎨 React Icons / Lucide React
-* 🔔 SweetAlert2
-* 🗄️ JSON Server (API simulada)
-* 🧹 ESLint
+*  React 19
+*  Vite
+*  React Router DOM
+*  React Icons / Lucide React
+*  SweetAlert2
+*  JSON Server (API simulada)
+*  ESLint
 
 ---
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 Semilla-digital/
 ├── public/             # Archivos estáticos públicos
@@ -46,13 +46,13 @@ Semilla-digital/
 
 ---
 
-## ⚙️ Instalación
+## Instalación
 
 Sigue estos pasos para ejecutar el proyecto localmente:
 
 ```bash
 # 1. Clonar el repositorio
-git clone <URL_DEL_REPOSITORIO>
+git clone <https://github.com/sduartecfwd09-collab/Semilla-digital.git>
 
 # 2. Entrar al proyecto
 cd Semilla-digital
@@ -82,17 +82,15 @@ npm run server
 
 ---
 
-## 💡 Uso
+## Uso
 
 1. Ejecuta el frontend y el servidor
 2. Accede desde el navegador
 3. Interactúa con la interfaz para visualizar o gestionar datos
 
-Este proyecto está diseñado para ser intuitivo y fácil de usar.
-
 ---
 
-## 🧪 Scripts disponibles
+## Scripts disponibles
 
 ```bash
 npm run dev       # Ejecuta la app en modo desarrollo
@@ -104,7 +102,7 @@ npm run lint      # Analiza el código con ESLint
 
 ---
 
-## 📈 Buenas prácticas implementadas
+## Buenas prácticas implementadas
 
 * Uso de **componentes reutilizables en React**
 * Separación entre frontend y API simulada
@@ -114,7 +112,7 @@ npm run lint      # Analiza el código con ESLint
 
 ---
 
-## 🤝 Contribución
+## Contribución
 
 Las contribuciones son bienvenidas. Para colaborar:
 
@@ -127,19 +125,19 @@ Las contribuciones son bienvenidas. Para colaborar:
 
 ---
 
-## 📜 Licencia
+## Licencia
 
 Puedes usarlo, modificarlo y distribuirlo libremente.
 
 ---
 
-## 👨‍💻 Autor
+## Autor
 
 Desarrollado por: *Yerik Samir García González* *Saraí Duarte Centeno* *Mariel Lefebre López*
 
 ---
 
-## 📌 Notas adicionales
+## Notas adicionales
 
 * Este proyecto utiliza una API simulada, por lo que no requiere backend real
 * Ideal para aprendizaje, prototipos o pruebas de concepto
@@ -152,4 +150,9 @@ Desarrollado por: *Yerik Samir García González* *Saraí Duarte Centeno* *Marie
 En desarrollo activo. Últimas mejoras incluyen estructura de carpetas, implementación de servidores agrícolas y funcionalidad de comparación.
 ¿Ideas, bugs o sugerencias? ¡Abre un issue!
 
-# ¡Gracias por visitar Semilla Digital! 🌾
+# ¡Gracias por visitar AgroMap! 
+
+
+
+
+
