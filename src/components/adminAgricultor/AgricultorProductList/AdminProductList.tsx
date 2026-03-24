@@ -8,8 +8,8 @@ interface AdminProductListProps {
   productos: Producto[]
   loading: boolean
   onEdit: (producto: Producto) => void
-  onDelete: (id: number) => void
-  onToggleDisponibilidad: (id: number, disponible: boolean) => void
+  onDelete: (id: string | number) => void
+  onToggleDisponibilidad: (id: string | number, disponible: boolean) => void
 }
 
 const AdminProductList: React.FC<AdminProductListProps> = ({

@@ -901,6 +901,48 @@
           "precio": 100
         }
       ]
+    },
+    {
+      "id": "6f96",
+      "userId": "62fa",
+      "nombre": "Frijoles",
+      "emoji": "🫘",
+      "descripcion": "",
+      "categoria": "Granos",
+      "imagen": "",
+      "disponible": false,
+      "provincia": "Cartago",
+      "direccionPuesto": "efsdfsfsf",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 15
+        }
+      ]
+    },
+    {
+      "id": "91bc",
+      "userId": "62fa",
+      "nombre": "chile dulce",
+      "emoji": "🫑",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "eeff",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 31
+        }
+      ]
     }
   ],
   "solicitudesCambioRol": [
@@ -998,9 +1040,10 @@
       "nombreDelPuesto": "dada",
       "correoUsuario": "ygarc@gmail.com",
       "rolSolicitado": "Agricultor",
-      "estado": "Pendiente",
-      "motivoRespuesta": "",
-      "fechaSolicitud": "2026-03-23T19:29:20.707Z"
+      "estado": "Aprobada",
+      "motivoRespuesta": "sdvxv",
+      "fechaSolicitud": "2026-03-23T19:29:20.707Z",
+      "fechaRespuesta": "2026-03-23T19:48:35.487Z"
     }
   ],
   "puestosAgricultor": [
