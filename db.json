@@ -1,0 +1,147 @@
+{
+  "fairs": [
+    {
+      "id": "3",
+      "name": "Feria Santo Domingo",
+      "province": "Heredia",
+      "location": "Plaza de Ferias",
+      "schedule": "Sábados, 5:00 AM - 12:00 PM"
+    },
+    {
+      "id": "4",
+      "name": "Feria Ciudad Quesada",
+      "province": "Alajuela",
+      "location": "Campo Ferial",
+      "schedule": "Jueves y Viernes"
+    },
+    {
+      "id": "5",
+      "name": "Feria Turrialba",
+      "province": "Cartago",
+      "location": "Campo Ferial",
+      "schedule": "Viernes y Sábados"
+    },
+    {
+      "id": "6",
+      "name": "Feria Guápiles",
+      "province": "Limón",
+      "location": "Campo Ferial",
+      "schedule": "Sábados, 5:00 AM - 1:00 PM"
+    },
+    {
+      "id": "7",
+      "name": "Feria Esparza",
+      "province": "Puntarenas",
+      "location": "Centro de Esparza",
+      "schedule": "Sábados"
+    },
+    {
+      "id": "8",
+      "name": "Feria Liberia",
+      "province": "Guanacaste",
+      "location": "Campo Ferial",
+      "schedule": "Jueves"
+    },
+    {
+      "id": "9",
+      "name": "Feria Pavas",
+      "province": "San José",
+      "location": "Sector Oeste",
+      "schedule": "Sábados, 5:00 AM - 1:00 PM"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "1",
+      "title": "Ensalada de Tomate y Albahaca",
+      "description": "Una receta fresca y sencilla utilizando tomates cherry de la feria.",
+      "ingredients": [
+        "Tomates cherry",
+        "Albahaca fresca",
+        "Aceite de oliva",
+        "Sal"
+      ],
+      "difficulty": "Fácil",
+      "time": "10 min"
+    },
+    {
+      "id": "2",
+      "title": "Brócoli Salteado con Ajo",
+      "description": "Brócoli crujiente salteado con ajo picado y un toque de limón.",
+      "ingredients": [
+        "Brócoli",
+        "Ajo",
+        "Limón",
+        "Pimienta"
+      ],
+      "difficulty": "Fácil",
+      "time": "15 min"
+    }
+  ],
+  "users": [
+    {
+      "id": "2",
+      "name": "María García",
+      "email": "m.garcia@example.com",
+      "role": "Vendedor",
+      "status": "Activo"
+    },
+    {
+      "id": "a599",
+      "name": "maria",
+      "email": "test@test.com",
+      "role": "Vendedor",
+      "status": "Activo"
+    }
+  ],
+  "products": [
+    {
+      "id": "3",
+      "name": "Maíz Tierno",
+      "category": "Granos",
+      "unit": "un",
+      "image": "🌽"
+    },
+    {
+      "id": "4",
+      "name": "Zanahoria",
+      "category": "Verduras",
+      "unit": "kg",
+      "image": "🥕"
+    },
+    {
+      "id": "5",
+      "name": "Papa",
+      "category": "Tubérculos",
+      "unit": "kg",
+      "image": "🥔"
+    }
+  ],
+  "prices": [
+    {
+      "id": "1",
+      "productId": "3",
+      "fair": "Feria Zapote",
+      "price": 599
+    },
+    {
+      "id": "2",
+      "productId": "4",
+      "fair": "Feria Heredia",
+      "price": 950
+    },
+    {
+      "id": "3",
+      "productId": "5",
+      "fair": "Feria Zapote",
+      "price": 450
+    },
+    {
+      "id": "4",
+      "productId": "3",
+      "fair": "Feria Heredia",
+      "price": 700
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
