@@ -1,4 +1,5 @@
 import React from 'react'
+import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './ProductComparisonCard.css'
 
 export interface ComparisonRow {
@@ -33,7 +34,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
     <div className="product-comp-card">
       {/* Card header */}
       <div className="product-comp-header">
-        <span className="product-comp-emoji">{product.emoji}</span>
+        <span className="product-comp-emoji"><CategoryIcon categoria={product.category} size={24} /></span>
         <div>
           <div className="product-comp-name">
             {product.name}

@@ -29,7 +29,7 @@
       "name": "juan",
       "email": "juan1@gmail.com",
       "password": "juan123",
-      "role": "Agricultor", 
+      "role": "Agricultor",
       "status": "Activo"
     },
     {
@@ -93,6 +93,14 @@
       "name": "Juan",
       "email": "juan01@gmail.com",
       "password": "juan123",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "6680",
+      "name": "sara",
+      "email": "sara11@gmail.com",
+      "password": "sara12345",
       "role": "Usuario",
       "status": "Activo"
     }
@@ -1304,5 +1312,19 @@
       "redesSociales": "",
       "fechaRegistro": "2026-03-21T06:29:35.840Z"
     }
-  ]
+  ],
+  "contactMessages": [
+    {
+      "id": "9dcd",
+      "nombre": "sara",
+      "correo": "sara11@gmail.com",
+      "telefono": "12345678",
+      "mensaje": "esxrdctfvgbjkmlñ",
+      "respuesta": "holas",
+      "fechaEnvio": "2026-03-24T21:54:49.910Z",
+      "fechaRespuesta": "2026-03-24T22:17:45.751Z",
+      "estado": "Respondido"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

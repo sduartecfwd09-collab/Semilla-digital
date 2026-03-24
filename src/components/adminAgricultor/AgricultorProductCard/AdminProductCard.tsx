@@ -1,5 +1,6 @@
 import React from 'react'
 import { Producto } from '../../../servers/ProductService'
+import CategoryIcon from '../../CategoryIcon/CategoryIcon'
 import './AdminProductCard.css'
 
 interface AdminProductCardProps {
@@ -22,7 +23,8 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
   return (
     <div className={`admin-product-card ${!producto.disponible ? 'inactive' : ''}`}>
       <div className="admin-product-card-header">
-        <div className="admin-product-card-emoji">{producto.emoji}</div>
+        <div className="admin-product-card-emoji"><CategoryIcon categoria={producto.categoria} size={24} /></div>
+
         <div className="admin-product-card-info">
           <h3 className="admin-product-card-name">{producto.nombre}</h3>
           <p className="admin-product-card-desc">{producto.descripcion}</p>
