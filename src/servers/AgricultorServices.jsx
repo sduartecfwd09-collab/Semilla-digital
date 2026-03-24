@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const AgricultorServices = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default AgricultorServices
-=======
 // ─────────────────────────────────────────────────────────────────
 // AgricultorServices.jsx
 // Servicio CRUD para productos y ferias usando json-server.
@@ -209,4 +196,3 @@ export const updatePuesto = async (id, puestoData) => {
   })
   return handleResponse(res)
 }
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
