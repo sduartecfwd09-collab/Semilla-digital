@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://localhost:3002';
+export const API_BASE_URL = '/api';
 
 export const ENDPOINTS = {
   usuarios: `${API_BASE_URL}/usuarios`,

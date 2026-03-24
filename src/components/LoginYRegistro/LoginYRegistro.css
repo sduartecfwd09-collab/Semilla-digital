@@ -147,11 +147,11 @@
 }
 
 /* Estilos de formulario */
-.auth-form-wrapper h2 {
+.auth-form-wrapper .auth-title {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  color: #11361c;
-  margin-bottom: 0.5rem;
+  font-size: 28px;
+  color: var(--primary-color);
+  margin-bottom: 8px;
 }
 
 .auth-subtitle {

@@ -1,16 +1,16 @@
-import Routing from './routes/Routing'
-import './App.css'
+import Routing from './routes/Routing.jsx'
+
 
 function App() {
 
   return (
     <>
-    <div>
+    <div className="app-container">
       <Routing/>
+      
     </div>
-
     </>
   )
 }
 
-export default App
+export default App  
