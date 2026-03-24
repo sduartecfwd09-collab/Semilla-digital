@@ -64,8 +64,8 @@ h1, h2, h3 {
 a {
   text-decoration: none;
   color: inherit;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
 }
-
 :root {
   --verde: #1a5c2a;
   --verde-claro: #2d8a42;

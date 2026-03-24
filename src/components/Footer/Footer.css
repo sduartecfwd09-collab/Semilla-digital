@@ -11,6 +11,12 @@
     font-size: 22px;
     color: var(--lima);
     text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.footer-logo:hover {
+    opacity: 0.8;
 }
 
 .footer-logo span {

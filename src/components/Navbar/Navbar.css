@@ -16,6 +16,12 @@
     color: var(--lima);
     letter-spacing: -1px;
     text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.navbar-logo:hover {
+    opacity: 0.8;
 }
 
 .navbar-logo span {
@@ -49,4 +55,23 @@
     font-weight: 700;
     text-decoration: none;
     font-size: 14px;
+}
+
+.navbar-cta-logout {
+    background: transparent;
+    color: var(--lima);
+    padding: 8px 18px;
+    border: 2px solid var(--lima);
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.navbar-cta-logout:hover {
+    background: var(--rojo, #e05252);
+    border-color: var(--rojo, #e05252);
+    color: var(--blanco, #fff);
 }

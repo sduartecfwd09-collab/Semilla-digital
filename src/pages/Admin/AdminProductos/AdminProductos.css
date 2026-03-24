@@ -1,29 +1,44 @@
 .products-container {
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 2.5rem;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .products-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 1rem;
+    gap: 2rem;
 }
 
 .products-header h1 {
-    font-size: 2rem;
-    letter-spacing: -0.5px;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 0;
+    flex-shrink: 0;
 }
 
 .products-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    background-color: var(--surface-color);
-    padding: 1rem;
-    border-radius: var(--radius-md);
+    background-color: white;
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border-color);
+    gap: 1.5rem;
 }
 
 .search-input {
@@ -107,7 +122,6 @@ td {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
     background-color: transparent;
 }
 

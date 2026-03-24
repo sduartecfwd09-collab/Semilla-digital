@@ -1,7 +1,7 @@
+import React from 'react'
 import Routing from './routes/Routing'
 
-
-function App() {
+const App: React.FC = () => {
 
   return (
     <>

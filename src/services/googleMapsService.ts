@@ -35,7 +35,11 @@ export const searchFeriasInGoogle = async (provincia: string): Promise<Feria[]> 
     }
 
     const ferias: Feria[] = await Promise.all(
+<<<<<<< HEAD
       (data.results || []).map(async (result: { place_id: string; name: string; formatted_address?: string; vicinity?: string; opening_hours?: { open_now?: boolean } }) => {
+=======
+      (data.results || []).map(async (result: any) => {
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
         // Obtenemos dirección formateada y provincia mediante Geocoding
         const geocodeUrl = `${BASE_URL}/geocode/json?place_id=${result.place_id}&key=${GOOGLE_MAPS_API_KEY}`;
         const geoResponse = await fetch(geocodeUrl);
@@ -45,7 +49,11 @@ export const searchFeriasInGoogle = async (provincia: string): Promise<Feria[]> 
         let provinciaDetectada = provincia;
         if (geoData.status === "OK") {
           const addressComponents = geoData.results[0]?.address_components || [];
+<<<<<<< HEAD
           const provinceComp = addressComponents.find((comp: { types: string[]; long_name: string }) =>
+=======
+          const provinceComp = addressComponents.find((comp: any) =>
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
             comp.types.includes("administrative_area_level_1")
           );
           if (provinceComp) {

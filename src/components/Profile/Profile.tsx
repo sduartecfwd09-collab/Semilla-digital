@@ -8,6 +8,7 @@ import { ENDPOINTS } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import './Profile.css';
 
+<<<<<<< HEAD
 // Iconos SVG para el ojo (mostrar/ocultar contraseña)
 const EyeIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,6 +25,8 @@ const EyeOffIcon = () => (
 );
 
 
+=======
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -180,7 +183,11 @@ const Profile: React.FC = () => {
       // Verificar si el correo ya está en uso por OTRO usuario
       const usersRes = await fetch(ENDPOINTS.usuarios);
       const allUsers = await usersRes.json();
+<<<<<<< HEAD
       const emailExists = allUsers.some((u: { email: string; id: string }) => u.email === userData.email && u.id !== userData.id);
+=======
+      const emailExists = allUsers.some((u: any) => u.email === userData.email && u.id !== userData.id);
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 
       if (emailExists) {
         Swal.fire({
@@ -223,7 +230,11 @@ const Profile: React.FC = () => {
           showConfirmButton: false
         });
       }
+<<<<<<< HEAD
     } catch {
+=======
+    } catch (error) {
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -277,7 +288,11 @@ const Profile: React.FC = () => {
           throw new Error('Error al enviar la solicitud');
         }
       }
+<<<<<<< HEAD
     } catch {
+=======
+    } catch (error) {
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       Swal.fire({
         icon: 'error',
         title: 'Error',

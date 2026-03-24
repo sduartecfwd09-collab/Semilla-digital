@@ -51,7 +51,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
 
   useEffect(() => {
     if (producto) {
+<<<<<<< HEAD
       // eslint-disable-next-line react-hooks/set-state-in-effect
+=======
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       setFormData(producto)
       if (producto.precios && producto.precios.length > 0) {
         setPrecio(producto.precios[0].precio.toString())

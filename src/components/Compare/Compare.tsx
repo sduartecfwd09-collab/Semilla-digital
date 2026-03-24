@@ -1,73 +1,132 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from '../Navbar'
 import SidebarFilters from '../SidebarFilters'
 import ProductComparisonCard from '../ProductComparisonCard'
+import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/ProductComparisonCard'
 import Footer from '../Footer'
 import './Compare.css'
+import { ENDPOINTS } from '../../services/api.config'
 
-// ----- Static sample data (replace with API call to db.json later) -----
-const allProducts = [
-  {
-    emoji: '🍅',
-    name: 'Tomate',
-    description: 'Tomate maduro · Por kilogramo',
-    lowestPrice: '₡550/kg',
-    rows: [
-      { feriaName: 'Feria de Pavas', feriaLocation: 'San José', price: '₡550/kg', priceNumeric: 550, barWidth: 55 },
-      { feriaName: 'Feria de Heredia', feriaLocation: 'Heredia', price: '₡700/kg', priceNumeric: 700, barWidth: 70 },
-      { feriaName: 'Feria de Alajuela', feriaLocation: 'Alajuela', price: '₡850/kg', priceNumeric: 850, barWidth: 85 },
-    ],
-  },
-  {
-    emoji: '🥦',
-    name: 'Brócoli',
-    description: 'Brócoli fresco · Por unidad',
-    lowestPrice: '₡400/un',
-    rows: [
-      { feriaName: 'Feria de Cartago', feriaLocation: 'Cartago', price: '₡400/un', priceNumeric: 400, barWidth: 40 },
-      { feriaName: 'Feria de Pavas', feriaLocation: 'San José', price: '₡600/un', priceNumeric: 600, barWidth: 60 },
-      { feriaName: 'Feria de Alajuela', feriaLocation: 'Alajuela', price: '₡750/un', priceNumeric: 750, barWidth: 75 },
-    ],
-  },
-  {
-    emoji: '🥕',
-    name: 'Zanahoria',
-    description: 'Zanahoria fresca · Por kilogramo',
-    lowestPrice: '₡320/kg',
-    rows: [
-      { feriaName: 'Feria de Heredia', feriaLocation: 'Heredia', price: '₡320/kg', priceNumeric: 320, barWidth: 32 },
-      { feriaName: 'Feria de Cartago', feriaLocation: 'Cartago', price: '₡480/kg', priceNumeric: 480, barWidth: 48 },
-    ],
-  },
-]
-// -----------------------------------------------------------------------
-
-const Compare = () => {
+const Compare: React.FC = () => {
+  const [allProducts, setAllProducts] = useState<ProductComparisonData[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProvince, setSelectedProvince] = useState('Todas las provincias')
   const [sortOrder, setSortOrder] = useState('menor')
+  
+  const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
-  // Filter products by search query
-  const filteredProducts = allProducts
-    .filter((p) =>
-      searchQuery === '' || p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    fetch(ENDPOINTS.productos)
+      .then(res => res.json())
+      .then((data: any[]) => {
+        const availableData = data.filter((p: any) => p.disponible !== false);
+        // Mapeamos los productos de la API a la estructura que espera la UI
+        const mappedData: ProductComparisonData[] = availableData.map(p => {
+          const prices = p.precios || [];
+          const minPrice = prices.length > 0 
+            ? Math.min(...prices.map((pr: any) => pr.precio)) 
+            : 0;
+
+          return {
+            category: p.categoria || p.category || 'Otros',
+            emoji: p.emoji || '📦',
+            name: p.nombre || p.name || 'Producto sin nombre',
+            description: p.descripcion || p.description || '',
+            unit: p.unidad || 'Unidad',
+            lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
+            rows: p.rows ? p.rows : prices.map((pr: any) => ({
+              feriaName: pr.feriaNombre,
+              feriaLocation: `${pr.provincia}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+              province: pr.provincia,
+              price: `₡${pr.precio.toLocaleString()}`,
+              priceNumeric: pr.precio,
+              barWidth: 100 // El ancho se recalcula en el componente Card
+            }))
+          }
+        });
+        setAllProducts(mappedData)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching products:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+    setSearchQuery(query)
+
+    if (query.trim() === '') return
+
+    // Búsqueda inteligente: si no hay resultados en la categoría actual, 
+    // pero sí en otra, cambiamos de categoría automáticamente
+    const matchingProducts = allProducts.filter((p: ProductComparisonData) => 
+      p.name.toLowerCase().includes(query.toLowerCase())
     )
-    .sort((a, b) => {
+
+    if (matchingProducts.length > 0) {
+      const currentCategoryHasMatches = matchingProducts.some((p: ProductComparisonData) => p.category === activeCategory)
+      if (!currentCategoryHasMatches && activeCategory !== 'Todos') {
+        const firstMatchCategory = matchingProducts[0].category
+        setActiveCategory(firstMatchCategory)
+      }
+    }
+  }
+
+  // Filtrar productos por todos los criterios activos
+  const filteredProducts = allProducts
+    .map((product: ProductComparisonData) => {
+      const filteredRows = product.rows.filter((row: ComparisonRow) => {
+        const matchesProvince = selectedProvince === 'Todas las provincias' || row.province === selectedProvince;
+        return matchesProvince;
+      });
+      
+      const lowestNumeric = filteredRows.length > 0 ? Math.min(...filteredRows.map((r: ComparisonRow) => r.priceNumeric)) : 0;
+      const activeLowestRow = filteredRows.find((r: ComparisonRow) => r.priceNumeric === lowestNumeric);
+
+      return { 
+        ...product, 
+        rows: filteredRows,
+        lowestPrice: activeLowestRow ? activeLowestRow.price : product.lowestPrice
+      } as ProductComparisonData;
+    })
+    .filter((p: ProductComparisonData) => {
+      if (p.rows.length === 0) return false;
+      if (activeCategory !== 'Todos' && p.category !== activeCategory) return false;
+      if (searchQuery !== '' && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a: ProductComparisonData, b: ProductComparisonData) => {
       if (sortOrder === 'menor') {
-        return (
-          Math.min(...a.rows.map((r) => r.priceNumeric)) -
-          Math.min(...b.rows.map((r) => r.priceNumeric))
-        )
+        const minA = Math.min(...a.rows.map((r: ComparisonRow) => r.priceNumeric))
+        const minB = Math.min(...b.rows.map((r: ComparisonRow) => r.priceNumeric))
+        return minA - minB
+      }
+      if (sortOrder === 'mayor') {
+        const maxA = Math.max(...a.rows.map((r: ComparisonRow) => r.priceNumeric))
+        const maxB = Math.max(...b.rows.map((r: ComparisonRow) => r.priceNumeric))
+        return maxB - maxA
       }
       if (sortOrder === 'az') return a.name.localeCompare(b.name)
       return 0
     })
 
+  const resultsTitle = activeCategory === 'Todos' ? (searchQuery ? `Resultados para "${searchQuery}"` : "Todos los productos") : `Resultados en ${activeCategory}`
+
+  if (loading) {
+    return (
+      <div className="compare-loading-container">
+        <p>Cargando comparador de precios...</p>
+      </div>
+    )
+  }
+
   return (
     <div>
       <Navbar />
 
-      {/* Page header */}
       <div className="compare-page-header">
         <div className="compare-breadcrumb">
           Inicio ›{' '}
@@ -79,48 +138,61 @@ const Compare = () => {
         </p>
       </div>
 
-      {/* Search bar */}
       <div className="compare-search-bar-full">
         <div className="compare-search-input-wrap">
           <span>🔍</span>
           <input
             type="text"
-            placeholder="Buscar producto..."
+            placeholder="Buscar por nombre de producto..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="compare-input"
           />
+          {searchQuery && (
+            <button 
+              className="clear-search-btn" 
+              onClick={() => setSearchQuery('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#999', padding: '0 10px' }}
+            >
+              ✕
+            </button>
+          )}
         </div>
-        <select
-          value={selectedProvince}
-          onChange={(e) => setSelectedProvince(e.target.value)}
-          className="compare-filter-select"
-        >
-          <option>Todas las provincias</option>
-          <option>San José</option>
-          <option>Cartago</option>
-          <option>Heredia</option>
-          <option>Alajuela</option>
-        </select>
-        <button className="compare-search-go-btn">Buscar y comparar</button>
+        <div className="compare-filter-wrap">
+          <select
+            value={selectedProvince}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedProvince(e.target.value)}
+            className="compare-filter-select"
+          >
+            <option>Todas las provincias</option>
+            <option>San José</option>
+            <option>Alajuela</option>
+            <option>Cartago</option>
+            <option>Heredia</option>
+            <option>Guanacaste</option>
+            <option>Puntarenas</option>
+            <option>Limón</option>
+          </select>
+        </div>
       </div>
 
-      {/* Main grid: sidebar + products */}
       <div className="compare-main">
-        <SidebarFilters />
+        <SidebarFilters 
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
 
-        <div>
-          {/* Products header */}
+        <div className="compare-results">
           <div className="compare-products-header">
             <div>
-              <h2 className="compare-results-title">Resultados para "verduras"</h2>
+              <h2 className="compare-results-title">{resultsTitle}</h2>
               <span className="compare-results-count">
                 {filteredProducts.length} productos encontrados
               </span>
             </div>
             <select
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortOrder(e.target.value)}
               className="compare-sort-select"
             >
               <option value="menor">Ordenar: Menor precio</option>
@@ -129,11 +201,12 @@ const Compare = () => {
             </select>
           </div>
 
-          {/* Product comparison cards */}
           {filteredProducts.length > 0 ? (
-            filteredProducts.map((product, index) => (
-              <ProductComparisonCard key={index} product={product} />
-            ))
+            <div className="filtered-products-list">
+              {filteredProducts.map((product: ProductComparisonData, index: number) => (
+                <ProductComparisonCard key={product.name + index} product={product} />
+              ))}
+            </div>
           ) : (
             <div className="compare-no-results">
               <div className="compare-no-results-icon">🔍</div>

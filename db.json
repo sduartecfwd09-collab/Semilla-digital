@@ -1,22 +1,120 @@
 {
-  "fairs": [
+  "usuarios": [
+    {
+      "id": "admin-main",
+      "name": "Admin",
+      "email": "admin@gmail.com",
+      "password": "admin321",
+      "role": "Administrador",
+      "status": "Activo"
+    },
+    {
+      "id": "62fa",
+      "name": "Estela",
+      "email": "estela@gmail.com",
+      "password": "est1234",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "9630",
+      "name": "Juan Martinez",
+      "email": "menchx@gmail.com",
+      "password": "12345678",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "3f16",
+      "name": "juan",
+      "email": "juan1@gmail.com",
+      "password": "juan123",
+      "role": "Agricultor", 
+      "status": "Activo"
+    },
+    {
+      "id": "73ca",
+      "name": "Camila Duarte",
+      "email": "cami73@gmail.com",
+      "password": "cami-123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "bb9a",
+      "name": "Steward",
+      "email": "steward@gmail.com",
+      "password": "123-stew",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "ee20",
+      "name": "María",
+      "email": "maria67@gmail.com",
+      "password": "maria123",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5029",
+      "name": "Maria Calderon Mora",
+      "email": "calderon@gmail.com",
+      "password": "calderon123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "18fb",
+      "name": "Maria Mora",
+      "email": "mora@gmail.com",
+      "password": "mora123",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5062",
+      "name": "María Mora",
+      "email": "duarte@gmail.com",
+      "password": "duarte123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "8867",
+      "name": "Pablo Mora",
+      "email": "pablo@gmail.com",
+      "password": "pablo123",
+      "role": "Agricultor",
+      "status": "Activo"
+    },
+    {
+      "id": "0cf7",
+      "name": "Juan",
+      "email": "juan01@gmail.com",
+      "password": "juan123",
+      "role": "Usuario",
+      "status": "Activo"
+    }
+  ],
+  "ferias": [
     {
       "id": "3",
-      "name": "Feria Santo Domingo",
+      "name": "Feria de Heredia",
       "province": "Heredia",
       "location": "Plaza de Ferias",
       "schedule": "Sábados, 5:00 AM - 12:00 PM"
     },
     {
       "id": "4",
-      "name": "Feria Ciudad Quesada",
+      "name": "Feria de Alajuela",
       "province": "Alajuela",
       "location": "Campo Ferial",
       "schedule": "Jueves y Viernes"
     },
     {
       "id": "5",
-      "name": "Feria Turrialba",
+      "name": "Feria de Cartago",
       "province": "Cartago",
       "location": "Campo Ferial",
       "schedule": "Viernes y Sábados"
@@ -44,104 +142,1167 @@
     },
     {
       "id": "9",
-      "name": "Feria Pavas",
+      "name": "Feria de Pavas",
       "province": "San José",
       "location": "Sector Oeste",
       "schedule": "Sábados, 5:00 AM - 1:00 PM"
+    },
+    {
+      "id": "5c08",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6ce0",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "52ed",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "701b",
+      "name": "Feria de San José centro",
+      "province": "San José",
+      "location": "Distrito Central, San José",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "d295",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "8836",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "5fcd",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "4951",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "a9a1",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "ba74",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6938",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "abae",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6b5a",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "84ee",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "f209",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "49ac",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "c86f",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "0864",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "8752",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "0e0a",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "5b90",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "aee5",
+      "name": "Feria de Alajuela centro",
+      "province": "Alajuela",
+      "location": "Distrito Central, Alajuela",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "19dc",
+      "name": "Feria de Alajuela centro",
+      "province": "Alajuela",
+      "location": "Distrito Central, Alajuela",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "f139",
+      "name": "Feria de Cartago centro",
+      "province": "Cartago",
+      "location": "Distrito Central, Cartago",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "d919",
+      "name": "Feria de Cartago centro",
+      "province": "Cartago",
+      "location": "Distrito Central, Cartago",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "5c6b",
+      "name": "Feria de Heredia centro",
+      "province": "Heredia",
+      "location": "Distrito Central, Heredia",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "9fba",
+      "name": "Feria de Heredia centro",
+      "province": "Heredia",
+      "location": "Distrito Central, Heredia",
+      "schedule": "Sábados, 05:00 - 13:00"
     }
   ],
-  "recipes": [
+  "recetas": [
     {
-      "id": "1",
+      "id": "rec-1",
       "title": "Ensalada de Tomate y Albahaca",
       "description": "Una receta fresca y sencilla utilizando tomates cherry de la feria.",
       "ingredients": [
         "Tomates cherry",
         "Albahaca fresca",
         "Aceite de oliva",
+        "Sal y pimienta"
+      ],
+      "steps": [
+        "Lavá y cortá los tomates cherry a la mitad.",
+        "Deshojá la albahaca y cortala en trozos grandes.",
+        "Mezclá los tomates y la albahaca en un tazón.",
+        "Aliñá con abundante aceite de oliva extra virgen.",
+        "Añadí sal y pimienta al gusto antes de servir.",
         "Sal"
       ],
       "difficulty": "Fácil",
       "time": "10 min"
     },
     {
-      "id": "2",
+      "id": "rec-2",
       "title": "Brócoli Salteado con Ajo",
       "description": "Brócoli crujiente salteado con ajo picado y un toque de limón.",
       "ingredients": [
-        "Brócoli",
-        "Ajo",
-        "Limón",
-        "Pimienta"
+        "Brócoli fresco",
+        "Ajos (3 dientes)",
+        "Limón de la feria",
+        "Pimienta negra"
+      ],
+      "steps": [
+        "Cortá el brócoli en ramilletes pequeños y lavalo bien.",
+        "Picá los ajos finamente.",
+        "En una sartén caliente con aceite, dorá los ajos por 1 minuto.",
+        "Agregá el brócoli y salteá a fuego medio-alto por 5-7 minutos.",
+        "Terminá con un chorrito de jugo de limón fresco y pimienta."
       ],
       "difficulty": "Fácil",
       "time": "15 min"
     }
   ],
-  "users": [
+  "productos": [
     {
-      "id": "2",
-      "name": "María García",
-      "email": "m.garcia@example.com",
-      "role": "Vendedor",
-      "status": "Activo"
+      "id": "3e52",
+      "nombre": "Aguacate Hass",
+      "categoria": "Verduras",
+      "emoji": "🥑",
+      "descripcion": "Aguacate Hass importado/nacional · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 750
+        }
+      ],
+      "unidad": "Unidad",
+      "provincia": "Cartago",
+      "direccionPuesto": "Cartago, Tres Rios "
     },
     {
-      "id": "a599",
-      "name": "maria",
-      "email": "test@test.com",
-      "role": "Vendedor",
-      "status": "Activo"
+      "id": "f426",
+      "nombre": "Aguacate Criollo",
+      "categoria": "Verduras",
+      "emoji": "🥑",
+      "descripcion": "Aguacate Criollo · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 500
+        }
+      ],
+      "direccionPuesto": "San José"
+    },
+    {
+      "id": "908c",
+      "nombre": "Banano",
+      "categoria": "Frutas",
+      "emoji": "🍌",
+      "descripcion": "Banano criollo · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaNombre": "Feria de Pavas",
+          "provincia": "San José",
+          "precio": 35
+        },
+        {
+          "feriaNombre": "Feria de Heredia",
+          "provincia": "Heredia",
+          "precio": 40
+        }
+      ]
+    },
+    {
+      "id": "810b",
+      "nombre": "Cebolla seca",
+      "categoria": "Verduras",
+      "emoji": "🧅",
+      "descripcion": "Cebolla seca amarilla/trenza · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 950
+        }
+      ],
+      "provincia": "Cartago",
+      "direccionPuesto": "Cartago, Tres Rios ",
+      "unidad": "Kilogramo"
+    },
+    {
+      "id": "d339",
+      "nombre": "Chile dulce",
+      "categoria": "Verduras",
+      "emoji": "🌶️",
+      "descripcion": "Chile dulce primera · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Heredia",
+          "precio": 150
+        }
+      ],
+      "direccionPuesto": "Heredia centro",
+      "provincia": "Heredia"
+    },
+    {
+      "id": "3e49",
+      "nombre": "Lechuga americana",
+      "categoria": "Verduras",
+      "emoji": "🥬",
+      "descripcion": "Lechuga americana · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaNombre": "Feria de Alajuela",
+          "provincia": "Alajuela",
+          "precio": 285
+        },
+        {
+          "feriaNombre": "Feria de Pavas",
+          "provincia": "San José",
+          "precio": 323
+        }
+      ]
+    },
+    {
+      "id": "ac7c",
+      "nombre": "Papa blanca",
+      "categoria": "Verduras",
+      "emoji": "🥔",
+      "descripcion": "Papa blanca · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 650
+        }
+      ],
+      "unidad": "Kilogramo",
+      "direccionPuesto": "San José"
+    },
+    {
+      "id": "005e",
+      "nombre": "Piña ",
+      "categoria": "Frutas",
+      "emoji": "🍍",
+      "descripcion": "Piña grande · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 500
+        }
+      ],
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Esparza"
+    },
+    {
+      "id": "0389",
+      "nombre": "Plátano",
+      "categoria": "Frutas",
+      "emoji": "🍌",
+      "descripcion": "Plátano · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 500
+        }
+      ],
+      "unidad": "Mano",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "provincia": "Puntarenas"
+    },
+    {
+      "id": "c59d",
+      "nombre": "Repollo verde",
+      "categoria": "Verduras",
+      "emoji": "🥬",
+      "descripcion": "Repollo verde · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Heredia",
+          "precio": 350
+        }
+      ],
+      "direccionPuesto": "Heredia centro",
+      "provincia": "Heredia"
+    },
+    {
+      "id": "348a",
+      "nombre": "Tomate",
+      "categoria": "Verduras",
+      "emoji": "🍅",
+      "descripcion": "Tomate primera · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Alajuela",
+          "precio": 750
+        }
+      ],
+      "unidad": "Kilogramo",
+      "provincia": "Alajuela",
+      "direccionPuesto": "Alajuela"
+    },
+    {
+      "id": "9887",
+      "nombre": "Zanahoria",
+      "categoria": "Verduras",
+      "emoji": "🥕",
+      "descripcion": "Zanahoria fresca · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Guanacaste",
+          "precio": 450
+        }
+      ],
+      "unidad": "Kilogramo",
+      "provincia": "Guanacaste",
+      "direccionPuesto": "Guanacaste, Liberia"
+    },
+    {
+      "id": "f31a",
+      "nombre": "Huevos",
+      "categoria": "Proteína",
+      "emoji": "🥚",
+      "descripcion": "Huevos frescos · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Limón",
+          "precio": 1450
+        }
+      ],
+      "direccionPuesto": "Limón centro",
+      "provincia": "Limón",
+      "unidad": "Caja"
+    },
+    {
+      "id": "311f",
+      "nombre": "Brócoli",
+      "categoria": "Verduras",
+      "emoji": "🥦",
+      "descripcion": "Brócoli fresco · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaNombre": "Feria de Pavas",
+          "provincia": "San José",
+          "precio": 975
+        }
+      ]
+    },
+    {
+      "id": "dc24",
+      "nombre": "Culantro castilla",
+      "categoria": "Hierbas",
+      "emoji": "🌿",
+      "descripcion": "Culantro castilla · Por rollito",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 250
+        }
+      ],
+      "direccionPuesto": "Heredia centro"
+    },
+    {
+      "id": "0ced",
+      "nombre": "Limón",
+      "categoria": "Frutas",
+      "emoji": "🍋",
+      "descripcion": "Limón mandarino/mesino · Por unidad",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 100
+        }
+      ],
+      "direccionPuesto": "Limón centro"
+    },
+    {
+      "id": "50b4",
+      "nombre": "Fresa",
+      "categoria": "Frutas",
+      "emoji": "🍓",
+      "descripcion": "Fresa fresca · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 2800
+        }
+      ],
+      "unidad": "Caja",
+      "direccionPuesto": "San José"
+    },
+    {
+      "id": "4fba",
+      "nombre": "Sandía",
+      "categoria": "Frutas",
+      "emoji": "🍉",
+      "descripcion": "Sandía dulce · Por kilogramo",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaNombre": "Feria de Pavas",
+          "provincia": "San José",
+          "precio": 560
+        }
+      ]
+    },
+    {
+      "userId": "a057",
+      "nombre": "Tomates",
+      "emoji": "🍅",
+      "descripcion": "Tomate maduro",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 950
+        }
+      ],
+      "id": "2b6c",
+      "unidad": "Kilogramo",
+      "direccionPuesto": "San José"
+    },
+    {
+      "id": "3519",
+      "userId": "a057",
+      "nombre": "Frijoles",
+      "emoji": "🫘",
+      "descripcion": "frijoles",
+      "categoria": "Granos",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 1500
+        }
+      ],
+      "unidad": "Kilogramo"
+    },
+    {
+      "id": "0c92",
+      "userId": "0fbd",
+      "nombre": "Pepino",
+      "emoji": "🥒",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Limón",
+      "direccionPuesto": "Limón centro",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Limón",
+          "precio": 350
+        }
+      ],
+      "unidad": "Kilogramo"
+    },
+    {
+      "id": "1b1d",
+      "userId": "admin-main",
+      "nombre": "Pepino",
+      "emoji": "🥒",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Heredia",
+      "direccionPuesto": "Heredia centro",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Heredia",
+          "precio": 200
+        }
+      ]
+    },
+    {
+      "id": "18f9",
+      "userId": "73ca",
+      "nombre": "Chile dulce",
+      "emoji": "🫑",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Limón",
+      "direccionPuesto": "Limón centro",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Limón",
+          "precio": 150
+        }
+      ]
+    },
+    {
+      "id": "9a44",
+      "userId": "8867",
+      "nombre": "Elotes",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 100
+        }
+      ]
+    },
+    {
+      "id": "cd6f",
+      "userId": "8867",
+      "nombre": "Elotes",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Puntarenas",
+      "direccionPuesto": "Puntarenas, Barranca",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Puntarenas",
+          "precio": 100
+        }
+      ]
+    },
+    {
+      "id": "fa65",
+      "userId": "admin-main",
+      "nombre": "Brocoli",
+      "emoji": "🥦",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Cartago",
+      "direccionPuesto": "Cartago, Tres Rios ",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 1200
+        }
+      ]
+    },
+    {
+      "id": "95be",
+      "userId": "62fa",
+      "nombre": "Pepino",
+      "emoji": "🥒",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": false,
+      "provincia": "San José",
+      "direccionPuesto": "San José",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "San José",
+          "precio": 100
+        }
+      ]
     }
   ],
-  "products": [
+  "solicitudesCambioRol": [
     {
-      "id": "3",
-      "name": "Maíz Tierno",
-      "category": "Granos",
-      "unit": "un",
-      "image": "🌽"
+      "id": "ae72",
+      "usuarioId": "3f16",
+      "nombreDelPuesto": "Compra con Juan",
+      "correoUsuario": "juan1@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Puesto bien estructurado\n¡felicidades!",
+      "fechaSolicitud": "2026-03-21T02:56:04.349Z",
+      "fechaRespuesta": "2026-03-21T02:59:49.640Z"
     },
     {
-      "id": "4",
-      "name": "Zanahoria",
-      "category": "Verduras",
-      "unit": "kg",
-      "image": "🥕"
+      "id": "eac1",
+      "usuarioId": "62fa",
+      "nombreDelPuesto": "Verdurrika",
+      "correoUsuario": "estela@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "¡Bienvenido!",
+      "fechaSolicitud": "2026-03-21T03:59:07.003Z",
+      "fechaRespuesta": "2026-03-21T04:01:59.818Z"
     },
     {
-      "id": "5",
-      "name": "Papa",
-      "category": "Tubérculos",
-      "unit": "kg",
-      "image": "🥔"
+      "id": "18e8",
+      "usuarioId": "73ca",
+      "nombreDelPuesto": "CamiDC",
+      "correoUsuario": "cami73@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Exelente presentación",
+      "fechaSolicitud": "2026-03-21T04:16:54.590Z",
+      "fechaRespuesta": "2026-03-21T04:18:56.384Z"
+    },
+    {
+      "id": "d684",
+      "usuarioId": "bb9a",
+      "nombreDelPuesto": "steward",
+      "correoUsuario": "steward@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Rechazada",
+      "motivoRespuesta": "Poca información",
+      "fechaSolicitud": "2026-03-21T04:34:34.976Z",
+      "fechaRespuesta": "2026-03-21T04:35:50.615Z"
+    },
+    {
+      "id": "3380",
+      "usuarioId": "5029",
+      "nombreDelPuesto": "Maria Verduras",
+      "correoUsuario": "calderon@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Muy buen negocio.\n¡Bienvenida!",
+      "fechaSolicitud": "2026-03-21T05:23:17.543Z",
+      "fechaRespuesta": "2026-03-21T05:26:02.677Z"
+    },
+    {
+      "id": "b24b",
+      "usuarioId": "5062",
+      "nombreDelPuesto": "Compre con María",
+      "correoUsuario": "duarte@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "¡Bienvenida!",
+      "fechaSolicitud": "2026-03-21T06:09:34.697Z",
+      "fechaRespuesta": "2026-03-21T06:11:53.135Z"
+    },
+    {
+      "id": "3648",
+      "usuarioId": "8867",
+      "nombreDelPuesto": "Pablo verduras",
+      "correoUsuario": "pablo@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "¡Bienvenido!",
+      "fechaSolicitud": "2026-03-21T06:22:15.699Z",
+      "fechaRespuesta": "2026-03-21T06:24:31.422Z"
+    },
+    {
+      "id": "4b27",
+      "usuarioId": "0cf7",
+      "nombreDelPuesto": "Juan",
+      "correoUsuario": "juan01@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Rechazada",
+      "motivoRespuesta": "Poca información",
+      "fechaSolicitud": "2026-03-21T06:29:35.853Z",
+      "fechaRespuesta": "2026-03-21T06:30:23.108Z"
     }
   ],
-  "prices": [
+  "puestosAgricultor": [
     {
-      "id": "1",
-      "productId": "3",
-      "fair": "Feria Zapote",
-      "price": 599
+      "id": "44a1",
+      "usuarioId": "0fbd",
+      "nombrePuesto": "Quesitos",
+      "descripcion": "i,mukjnyhbtgrvfcedxwsa",
+      "ubicacion": "yntrvcewq",
+      "tiposProducto": [
+        "Huevos"
+      ],
+      "logoNombre": "semilla_digital_transparente (1).png",
+      "telefono": "88888888",
+      "email": "meg@gmail.com",
+      "horarios": "Sabados de 5:00 am a 9:pm",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:06:54.208Z"
     },
     {
-      "id": "2",
-      "productId": "4",
-      "fair": "Feria Heredia",
-      "price": 950
+      "id": "93f6",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "tyjhvrfrecsdc",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "astro.jpg"
+      ],
+      "telefono": "88888888",
+      "email": "oskar@hotmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:27:03.971Z"
     },
     {
-      "id": "3",
-      "productId": "5",
-      "fair": "Feria Zapote",
-      "price": 450
+      "id": "4e87",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "zxsdfgrthyulomnhg",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Proteínas",
+        "Hierbas"
+      ],
+      "fotosNombres": [
+        "astro.jpg"
+      ],
+      "telefono": "88888888",
+      "email": "ross@gmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:33:16.598Z"
     },
     {
-      "id": "4",
-      "productId": "3",
-      "fair": "Feria Heredia",
-      "price": 700
+      "id": "a2cc",
+      "usuarioId": "3100",
+      "nombrePuesto": "Carlos D",
+      "descripcion": "ilkujytrgfecdx8jt7hytgrfe",
+      "ubicacion": ".i,umnyhbgtvfr",
+      "tiposProducto": [
+        "Verduras",
+        "Proteínas"
+      ],
+      "fotosNombres": [
+        "ChatGPT Image 16 mar 2026, 15_11_52.png"
+      ],
+      "telefono": "88888888",
+      "email": "ross@gmail.com",
+      "horarios": "",
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-19T17:33:56.701Z"
+    },
+    {
+      "id": "c369",
+      "usuarioId": "3f16",
+      "nombrePuesto": "Compra con Juan",
+      "descripcion": "Comprá las mejores frutas con don Juan",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Fresas, Sandía, Uvas",
+      "tiposProducto": [
+        "Frutas"
+      ],
+      "fotosNombres": [
+        "fruit.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAEsAOADASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAxEAACAgEEAQQBAwMEAgMAAAABEQACIQMSMUFREyJhcYEykaEzUrEEQsHwI2LR4fH/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQID/8QAHREBAQEBAQEBAQEBAAAAAAAAAAERITECQRJRYf/aAAwDAQACEQMRAD8A5DzCOOYPuZQDapHzABGqx4lAtwHMCYARHfmH0z2odoJKE3AGX5kAP1iF+1Z+M8TP2niY+Bx5gYEkcZE2YK4OeI5BKqSF5BgKZsIniwjWBIGMDDkyFzz/AIgEm3BJPxBCKvgw2GA8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"
+      ],
+      "telefono": "11223344",
+      "email": "juan1@gmail.com",
+      "horarios": "Viernes: 6:00 AM - 9:00 PM, Sábado: 6:00 AM - 12:30",
+      "horariosList": [
+        {
+          "dia": "Viernes",
+          "ralgo": "6:00 AM - 9:00 PM"
+        },
+        {
+          "dia": "Sábado",
+          "ralgo": "6:00 AM - 12:30"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T02:56:04.292Z"
+    },
+    {
+      "id": "0896",
+      "usuarioId": "62fa",
+      "nombrePuesto": "Verdurrika",
+      "descripcion": "Las mejores y ricas verduras",
+      "ubicacion": "Cartago, Tres Rios",
+      "productosAOfrecer": "Papa, Elote, Tomate",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "verduras.jpg",
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQF/8QAKxAAAgICAgICAgIBBAMAAAAAAAECEQMhEjFBUSJhBBMycYEjM5GxQlKh/8QAFwEBAQEBAAAAAAAAAAAAAAAAAQACA//EAB8RAQEBAAMBAQADAQAAAAAAAAABEQIhMRJBAyJRMv/aAAwDAQACEQMRAD8AkpNGcvYs4yhtk22zGa7XnisJW6DJ1IWCpWbJad2OOPHlnLVscr15Nyd67IxUntJlYJyyW/8AIO1ovI0uzYnblL6BKMb5JOV+B8bbW1x+gFuzICi61SY++NPY6j1YXFDlZyJKLohmjx2j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",
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "87654321",
+      "email": "estela@gmail.com",
+      "horarios": "Domingo: 6:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "Domingo",
+          "ralgo": "6:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T03:59:06.988Z"
+    },
+    {
+      "id": "c119",
+      "usuarioId": "73ca",
+      "nombrePuesto": "CamiDC",
+      "descripcion": "El mejor puesto de hierbas",
+      "ubicacion": "Limón",
+      "productosAOfrecer": "romero, Albahaca, Cebollino",
+      "tiposProducto": [
+        "Hierbas"
+      ],
+      "fotosNombres": [
+        "hierbas.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASwDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAA0EAACAgEEAAQEBAUEAwAAAAAAAQIRIQMSMUEiUWFxEzKBkUKhscEEUmJy0SPh8PFTgsL/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAZEQEBAQADAAAAAAAAAAAAAAAAEQESITH/2gAMAwEAAhEDEQA/AMEUkV4Usszc844IrRRb6G4XSIWq0J6rZEa7YpW2ZPUcX4SZTb7FDLwgOjTcp/MU9TZKuiYtpZK2RlmTIMNSTlOzSMUoXuKnCDj5GEZO66KNN/4UqQbYydA65SIzuwRGiglaRNtMJOlj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"
+      ],
+      "telefono": "89765432",
+      "email": "cami73@gmail.com",
+      "horarios": "S-D: 6:00 AM - 12:30",
+      "horariosList": [
+        {
+          "dia": "S-D",
+          "ralgo": "6:00 AM - 12:30"
+        }
+      ],
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T04:16:54.575Z"
+    },
+    {
+      "id": "4fe1",
+      "usuarioId": "bb9a",
+      "nombrePuesto": "steward",
+      "descripcion": "lo mejor con steward",
+      "ubicacion": "Limón",
+      "productosAOfrecer": "papas",
+      "tiposProducto": [
+        "Tubérculos"
+      ],
+      "fotosNombres": [
+        "papas.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACeASwDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQF/8QAKBAAAgICAgICAgMBAQEBAAAAAAECEQMhEjFBUSJhE3EEMoGRM0Kx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwCzVoSONc+T7XQzkkDtWjLRrVgcuNir9myVTYB5mU9uicIykr6RSONLpW/LAKdyKfoRKn1RnKmA7pqmIqiqA5VsEU5K+vQBU1Zv7dEskZRV9l4fGKANOtkcmJt3BfsvYAIPFJLROEZKbck1R1iS3oCTqza7BHHK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"
+      ],
+      "telefono": "89765432",
+      "email": "steward@gmail.com",
+      "horarios": "Lunes: 6:00 AM - 12:30",
+      "horariosList": [
+        {
+          "dia": "Lunes",
+          "ralgo": "6:00 AM - 12:30"
+        }
+      ],
+      "metodosCultivo": "",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T04:34:34.947Z"
+    },
+    {
+      "id": "fb38",
+      "usuarioId": "5029",
+      "nombrePuesto": "Maria Verduras",
+      "descripcion": "Las mejores verduras de Puntarenas",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "87654321",
+      "email": "calderon@gmail.com",
+      "horarios": "Sábado: 5:00 AM - 9:00 PM, Domingo: 5:00 AM - 12:30 PM",
+      "horariosList": [
+        {
+          "dia": "Sábado",
+          "ralgo": "5:00 AM - 9:00 PM"
+        },
+        {
+          "dia": "Domingo",
+          "ralgo": "5:00 AM - 12:30 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T05:23:17.525Z"
+    },
+    {
+      "id": "668a",
+      "usuarioId": "5062",
+      "nombrePuesto": "Compre con María",
+      "descripcion": "Las mejores verduras",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "78563421",
+      "email": "duarte@gmail.com",
+      "horarios": "S-D: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "S-D",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:09:34.676Z"
+    },
+    {
+      "id": "edec",
+      "usuarioId": "8867",
+      "nombrePuesto": "Pablo verduras",
+      "descripcion": "Verduras de Don Pablo",
+      "ubicacion": "Puntarenas, Barranca",
+      "productosAOfrecer": "Elotes",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAQIDAAT/xAAsEAACAgICAgIBBAICAwEAAAAAAQIRITEDQRJRImFxEzKBkQRCobEjUuHx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDjCsM0V5OkZqvwADBfoABW0B7HjW+7F9gbQAmCgEMYSlpFY8MVmTv8ERPxcsRVugrg5H/rX5Z0QXUFj6KKHt/0NHJ+hO+q/Ir45aSb/g7lCKzQW61gaOWH+LJpOT8Sq4VHu0Upvqw+Le3RNEP013S/Blw2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"
+      ],
+      "telefono": "86754321",
+      "email": "pablo@gmail.com",
+      "horarios": "S-D: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "S-D",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Cultivo organico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:22:15.686Z"
+    },
+    {
+      "id": "2482",
+      "usuarioId": "0cf7",
+      "nombrePuesto": "Juan",
+      "descripcion": "Compra con Juan",
+      "ubicacion": "San José",
+      "productosAOfrecer": "Papa y tomates",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "verduras.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACoASsDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQF/8QAKxAAAgICAgICAgIBBAMAAAAAAAECEQMhEjFBUSJhBBMycYEjM5GxQlKh/8QAFwEBAQEBAAAAAAAAAAAAAAAAAQACA//EAB8RAQEBAAMBAQADAQAAAAAAAAABEQIhMRJBAyJRMv/aAAwDAQACEQMRAD8AkpNGcvYs4yhtk22zGa7XnisJW6DJ1IWCpWbJad2OOPHlnLVscr15Nyd67IxUntJlYJyyW/8AIO1ovI0uzYnblL6BKMb5JOV+B8bbW1x+gFuzICi61SY++NPY6j1YXFDlZyJKLohmjx2jpkmiOXen5BuOVts6sUqiiMYLz2OqjpM1WOHLb26Yyb2mHlenshCTul2Zze689mW7BbVpxVMWUvAjk6ArlJL7HD1BzvdUSLZ9yv6JUacWQ8RBoklUMmhExtPsyToZa6ET8DEgnJJNs5G+Tv2UzT5PiuiS7NQHQ6EQYuwKqDQqYwIJdUgxjSMl3Yy7JBQJQUu0OYk5p4pR2toEVo6qFcI3/EdQyjr6OdQfOktHU1WiU7Uu6RmHn4R+mqMop0316GlFpJ80xVLfYsfxzeS8Va9I0sUk7FjdFEpVq6B2pIwTTu00aLoE3Kmr2Ipf8keMXcmwqX2SjkM5CvlWU7Rz5ZUk/sLkTyu0l9h7RZkPersnkbUvQyTeo1RRYk3bVsXDjxtShzbuK6LTTc1JLtbH4tAkn/knazYhOCi7b16QrbjSS4/fkpHGuXKUrfoeeNSTLcZy31Ge4RfsQpL/AGt9pkxjIGujWAUdSHTvyTirLRggpFOjSbapaGUUHiCcso0KdOSOjnZqAV0NHQkfQ4FRBu0JFjLrQI0RhEHpkjBFsZEhQQIJIrZPI06GbJzd0g/W+X/INprcbryaCV66Cm26Wx1B+WNc/wCOd6pjaS2UjkSTRGqA7QbjrZKfIk4WjllplnIlx5SoWsyApWOlJ+CuPEktIr+tL+TIfWOZwkK4aSZ2cYPpkZqi8G/XTYo1pFrUGRjKlrs1sl8qPJu6M58tNUTduLa0CK+NKSte2TFslN/CW+hsklxpKkT4uKtybf8A8Gg1JcXsGretRyf7b/shZ0Z0l8EtEXjfhmoxyu9lsBmmuwGmVYdnRE54F8bM1pRGrYY0NRJOatUcs402dklRDLEk5+mOnYjMr8CFE9jokn7VMogJzAsyBCtDRlYthjpEjhFGJIcgpJ99EkW1GCXlssdvT4oelQ/KMMiT2n/2KpUqQsvkq7Jiw+WaUbrygyiqtbRJ3XFva9lFJxfy6flCzOXaMkotPxZbI4pJyQmRXaXkP5DqKSCNcu7DfscYp8HX9CSzQyQknfRNNyXbsWUfYj5v+nxTfnaXn0NklZJUk0mZv4pIKeEUjJXYXJNko3LSRRYn5ZN9GjtumScbbcXXspwcU0mTlyiq/wChlc7xlumcnDp69dophadtKmcy26fR04attdEOU66JkTeTl4MkNSTfyt2FIEm4JkZ43Hfg66BKPgpQ5cbLR7slOP65Wuhoy8jVHTFjWRjIfloEMmRyT8AnkJrbtimUbeysYpGiikQTPGmtolLG49dHQarJOXkunpjIfLiUlo5blF1Y5qXQ6ZzrJ7Q6mn5DEsmMTi78jq6JOZ/GTQynb2LP+bDCDfQum9qwkr2Ge+ugLEvLC4V02GtXKST5JJr5LyNH4wtMDuLtoSU27QsfMi2OXKaTSv2L+VfKPqg/jdSkw8uS+XGSJj96Sx7TNLl5RaoyjS+IMnGUYbq3smpyxBtICuTSL5caf0yWNNSd+A1p0YoUqRXjFRTfZOMuK12Fy1bIWUHKKyq9x4iYoucpSevCNJ0lOrB+9uq0Lnt0mbHxtpf2V/GX+k2/Ykskval/aGxybxulSXoo1ytJjk3KtUVSIYHc/wDB0P6CqnURJIaDbBMgjlimmjmTaOqfVs5pdsYDKdBeQmAcRrtlIkolYhUoikRYjxAmQTIJItHJ+TGpJnYzn/JVxX9lPU5oqysIWCKorEbUpCCRRLQkaHMpxqClK2zphDX0QxnVFpRqxjpevB4xUfslmlw1Hb+ys6cE0rZCTcYq1texY7wZxuSSTarbrRz5YOO10VhknJqNbv2Nkbg9pNfaJS/gRTh+P6bLY0lGLa00TzP/AE02bHN8PpAeM/qTLB3atBx0ofJ68FpTjNU9AhGCVXoheJZaxRt26Ip7Y+WSt10Rb2XrrOotFoaWiCkNyZJRS0k1YJJOV0InbM5utEzZJdDI9lMFfqd9NkG+To6FFLBXsWefZMeNQlakmWTQksbhHk69CrIFZdCa8CS27JrICWREmySOZjTnyf0IakDGMZdiDxWisUJFFYozWjJFIipDoEYxgEmZz53dL7OhnLld5EvRIEGLNVjRiRUgt9lVFexIRSKEHFjeiqtnPF0UjOidvYqm4htT/mTlks3Klvv0OCqT4unHTXRNyc5JMWWTwN+Orm2+kgF6hvyb4xa6QmKVRmgKU+brcbKRjBX4vwLG2QqfK68Ac6GaUU1FdiTxtdMK6TlpJSFVydLsDddlMHmX+B8Zt24rDEor2UoMI2rHcfjaDFqLim1r+xZQi/imPO0iUYqTck7fplGOWhGEYu2nJ/8ACKc3JXVJAl+yS6TX0bGrxyVUxXnZsk3PHx+yHFlIO9eRuPmtg1y9R4sWSpF5IhP0LJKs1DAEAaKMGJJWCLRRGJePRkmSGSFQyJCCQTEivSONPlOT+zpzS445P6OfGqRE6RWCEii0UCMkE3QBDzlvorHHJq3ofHBLwUp+CtdJMTjHim+5eAKEncnrfkZuUJJoWT5O0u+yjF3SvH/7TSK43GMXx6JSk1HjScfVFMaS/HkxFl/TcpNeyX8G20XjJRSpDv8AXP6Bqyf45lK69le0O4410aXFRu9lhmTxyZo3tBw/wNN7BD4ovxrO9XUn0g8mvJJSobk5dIliymmqkiU4RabQttNWmNekvvZM3qp07pFIrjF/K5Gk6j8VsXAvlvfkYxyumg+Tul/aGb8E4Q4SbDKVf0GqzAmyDdyGyTromuxkBgMIBQBQDIktAvDo54MtFmaTtbtDRFsZEjAMZskh+Q7Sj7Yq0LknyyunpaGTIqRKx0SgUsgZsFgByJExtLbKLKr60c6ZSlVpjNdbIo+MgPHqyV0Hk0rsPRmEyJUPcY41jbq0IvnkS+9i/kSvLQxnn7IdJx1IavKdkoZPEtxNzVuui6al1RSsEpCcqFlKwaCTGW40TbGT0OM72pjjydvoul4RPHqKKqddGVW4SYHGu0FZGhlNN7LodufImk32hI2+ns6ZpdojKKi7Q6pIaVrG3J2QnN1opJ3Bok0MZ5epmDJASbNMGTCZR9jpAU+L9B4S9F4xKKKYaccsbTqSaKJtP2i7iK8a7jpgiKSvsdMnL4vaoP7YpdkVFJ3TRPPl4rjHv/oV5XLUdL2KsV92UCcXTKxYHg9Myi4fyWvY1LQY1oipLw7DyXsCpKRJ5FYs530KuhwGjJdMaMmpJP2Rjb66HTUtXtdMsa+jq5SaSthaf/lKkBVG3dSFaTdyf+F2Q+rVMc4p1BO/Zz5N5JX3ZbHOKmlGFX5b2JPHuXu7Fn9TTDZqrwAmpbDWBsUeELI7aWmxqcey36+KuhZLT9hqzo0HpDpk4XGKTGsz+tTuKtKrFW2JyCpUPWo0rROT0zSlZOcqRZ2fIyegMVMI458rtbsyCkFImWSHigIZATxHXTommUTJGivYHKnXkZdAStgiZYc4/Zxpbpo9Cq0c+aK/Za8oUWESi0LEd9MCKQ1CxGskjlwp/KOmRSO3wc+SNT10OhFhXQGFdCghDk99HTDGvETGL2tyZDLFa6QrhXgxiwykaXT6YZXFJvTXnwzGKMcyT3TW14DHDe5Mxgta49wXgiug40o2Ywa1isskZQryc8/oxhqkTcny9Dp9GMNc+Ny4NmsxgdCuRNuzGNRz5VkOjGJkyRjGAmVmujGBGTsZMxiSkWOnRjEgbOfJK8j+jGIgikWYwI6DRjEBqlsjmXRjCnPIy6MYYn//2Q=="
+      ],
+      "telefono": "67853421",
+      "email": "juan01@gmail.com",
+      "horarios": "L-V: 5:00 AM - 9:00 PM",
+      "horariosList": [
+        {
+          "dia": "L-V",
+          "ralgo": "5:00 AM - 9:00 PM"
+        }
+      ],
+      "metodosCultivo": "Sin pesticida",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-21T06:29:35.840Z"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

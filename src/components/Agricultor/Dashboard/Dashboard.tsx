@@ -5,7 +5,11 @@ import Navbar from '../../Navbar/Navbar'
 import AgricultorSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import AdminStats from '../../adminAgricultor/AgricultorStats'
+<<<<<<< HEAD
 import { getProductosByUser, Producto } from '../../../servers/ProductService'
+=======
+import { getProductosByUser } from '../../../servers/ProductService'
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 import { getFeriaById, getPuestoByUserId } from '../../../servers/AgricultorServices'
 import './Dashboard.css'
 
@@ -18,7 +22,11 @@ const Dashboard: React.FC = () => {
     puestoDescripcion: '',
     puestoUbicacion: '',
   })
+<<<<<<< HEAD
   const [recentProducts, setRecentProducts] = useState<Producto[]>([])
+=======
+  const [recentProducts, setRecentProducts] = useState<any[]>([])
+>>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
