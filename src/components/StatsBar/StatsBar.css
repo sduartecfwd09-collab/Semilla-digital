@@ -1,0 +1,25 @@
+.stats-bar {
+    background: var(--verde);
+    padding: 20px 60px;
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--lima);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

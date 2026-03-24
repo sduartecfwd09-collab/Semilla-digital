@@ -1,0 +1,116 @@
+.products-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.products-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+}
+
+.products-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--surface-color);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.search-input {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    width: 300px;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.table-wrapper {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    padding: 1.2rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    background-color: #f9fafb;
+    border-bottom: 1px solid var(--border-color);
+}
+
+td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.product-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 1.5rem;
+}
+
+.product-name {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.category-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #e8f4fd;
+    color: #3498db;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background-color: transparent;
+}
+
+.btn-icon:hover {
+    background-color: #f0f2f5;
+}

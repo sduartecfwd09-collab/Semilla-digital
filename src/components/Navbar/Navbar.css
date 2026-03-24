@@ -1,0 +1,52 @@
+.navbar {
+    background: var(--fondo);
+    padding: 18px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--lima);
+    letter-spacing: -1px;
+    text-decoration: none;
+}
+
+.navbar-logo span {
+    color: var(--tierra);
+}
+
+.navbar-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+}
+
+.navbar-link {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.navbar-link.active {
+    color: var(--lima);
+}
+
+.navbar-cta {
+    background: var(--lima);
+    color: var(--fondo);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 14px;
+}

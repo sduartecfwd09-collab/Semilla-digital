@@ -1,0 +1,35 @@
+.admin-product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-product-list-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--blanco);
+  border-radius: 12px;
+  border: 2px dashed #e5e5e5;
+}
+
+.admin-product-list-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.admin-product-list-empty p {
+  font-size: 1.25rem;
+  color: var(--gris);
+  margin: 0 0 0.5rem 0;
+}
+
+.admin-product-list-empty span {
+  font-size: 0.95rem;
+  color: #999;
+}
+
+@media (max-width: 900px) {
+  .admin-product-list {
+    grid-template-columns: 1fr;
+  }
+}

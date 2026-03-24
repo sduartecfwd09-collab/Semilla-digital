@@ -1,0 +1,80 @@
+/* Estilos comunes para las páginas */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header de página (Título y descripción) */
+.page-header {
+  padding: 4rem 10% 1rem;
+  text-align: center;
+  background-color: var(--crema, #fdfaf5);
+}
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: #11361c;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #666;
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 1rem auto;
+  line-height: 1.6;
+}
+
+/* Barrera de contenido (para usuarios no logueados) */
+.content-barrier {
+  padding: 8rem 10%;
+  text-align: center;
+  background-color: var(--crema, #fdfaf5);
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.barrier-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.barrier-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: #11361c;
+  margin-bottom: 1rem;
+}
+
+.barrier-text {
+  color: #666;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.barrier-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-link {
+  color: #2d8a42;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 1rem;
+  border-bottom: 2px solid #2d8a42;
+  transition: all 0.3s ease;
+}
+
+.action-link:hover {
+  background-color: rgba(45, 138, 66, 0.05);
+}
