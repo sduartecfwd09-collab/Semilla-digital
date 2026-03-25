@@ -901,6 +901,27 @@
           "precio": 100
         }
       ]
+    },
+    {
+      "id": "a9bc",
+      "userId": "8867",
+      "nombre": "manzana",
+      "emoji": "Frutas",
+      "descripcion": "",
+      "categoria": "Frutas",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Guanacaste",
+      "direccionPuesto": "Guanacaste, Liberia manzanillo",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Guanacaste",
+          "precio": 900
+        }
+      ]
     }
   ],
   "solicitudesCambioRol": [
@@ -1325,6 +1346,5 @@
       "fechaRespuesta": "2026-03-24T22:17:45.751Z",
       "estado": "Respondido"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

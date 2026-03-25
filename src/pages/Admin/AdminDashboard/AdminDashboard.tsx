@@ -12,7 +12,9 @@ const AdminDashboard = () => {
         agricultores: 0,
         recipes: 0,
         pendingRequests: 0,
-        queries: 340 
+        queries: 340,
+        contactos: 0,
+        pendingContactos: 0
     })
     const [loading, setLoading] = useState(true)
 
@@ -41,6 +43,20 @@ const AdminDashboard = () => {
                 console.warn('Error fetching solicitudes:', e);
             }
 
+            // Obtener contactos para las cards
+            let contactosCount = 0;
+            let pendingContactosCount = 0;
+            try {
+                const contactRes = await fetch(ENDPOINTS.contactMessages);
+                if (contactRes.ok) {
+                    const contactos = await contactRes.json();
+                    contactosCount = contactos.length;
+                    pendingContactosCount = contactos.filter((c: any) => c.estado === 'Pendiente').length;
+                }
+            } catch (e) {
+                console.warn('Error fetching contactos:', e);
+            }
+
             const agricultoresCount = users.filter((u: any) => u.role === 'Agricultor').length;
 
             setStats({
@@ -49,7 +65,9 @@ const AdminDashboard = () => {
                 agricultores: agricultoresCount,
                 recipes: recipes.length,
                 pendingRequests: pendingCount,
-                queries: 340
+                queries: 340,
+                contactos: contactosCount,
+                pendingContactos: pendingContactosCount
             })
         } catch (error) {
             console.error('Error fetching stats:', error)
@@ -64,6 +82,7 @@ const AdminDashboard = () => {
         { title: 'Agricultores activos', value: loading ? '...' : stats.agricultores, icon: '👨‍🌾', trend: '+2', color: '#00cec9', bgColor: '#e0f9f8', path: '/admin/agricultores' },
         { title: 'Productos en catálogo', value: loading ? '...' : stats.products, icon: '🥦', trend: '+8', color: '#00b894', bgColor: '#e6fffb', path: '/admin/productos' },
         { title: 'Recetas publicadas', value: loading ? '...' : stats.recipes, icon: '🍃', trend: '+5', color: '#ff9f43', bgColor: '#fff8e1', path: '/admin/recetas' },
+        { title: 'Mensajes de contacto', value: loading ? '...' : stats.contactos, icon: '✉️', trend: stats.pendingContactos > 0 ? `${stats.pendingContactos} pendientes` : 'Al día', color: '#e84393', bgColor: '#ffeef8', path: '/admin/contactos' },
     ]
 
     return (
