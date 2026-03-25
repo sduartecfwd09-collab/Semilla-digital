@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
+import { X } from 'lucide-react'
 import { Producto, CATEGORIAS } from '../../../servers/ProductService'
 import { getCategoryIcon } from '../../../utils/categoryIcons'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
@@ -10,6 +12,7 @@ import { Feria } from '../../../types/feria.types'
 interface AdminProductFormProps {
   producto?: Producto
   userId: string | number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSubmit: (producto: Producto) => void
   onCancel: () => void
 }
@@ -57,8 +60,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         if (producto) {
           const feriasMap: { [key: string]: { selected: boolean; precio: string } } = {}
           data.forEach((feria: Feria) => {
-            const precioEnFeria = producto.precios.find((p) => p.feriaId === feria.id)
-            feriasMap[feria.id] = {
+            const precioEnFeria = producto.precios.find((p) => String(p.feriaId) === String(feria.id))
+            feriasMap[String(feria.id)] = {
               selected: !!precioEnFeria,
               precio: precioEnFeria ? precioEnFeria.precio.toString() : '',
             }
@@ -67,7 +70,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         } else {
           const feriasMap: { [key: string]: { selected: boolean; precio: string } } = {}
           data.forEach((feria: Feria) => {
-            feriasMap[feria.id] = { selected: false, precio: '' }
+            feriasMap[String(feria.id)] = { selected: false, precio: '' }
           })
           setSelectedFerias(feriasMap)
         }
@@ -160,7 +163,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         <div className="admin-product-form-header">
           <h2>{isEdit ? 'Editar Producto' : 'Nuevo Producto'}</h2>
           <button onClick={onCancel} className="admin-product-form-close">
-            ✕
+            <X size={18} strokeWidth={2} />
           </button>
         </div>
 

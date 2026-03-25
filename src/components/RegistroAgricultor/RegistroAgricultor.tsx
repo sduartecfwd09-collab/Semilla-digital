@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Navbar from '../Navbar';
-import Footer from '../Footer';
-import { validateEmail } from '../../utils/validation'
-import { ENDPOINTS } from '../../services/api.config'
 import './RegistroAgricultor.css';
+import Navbar from '../Navbar/Navbar';
+import Footer from '../Footer/Footer';
+import { ENDPOINTS } from '../../services/api.config';
+import { validateEmail } from '../../utils/validation';
+import ProductIcon from '../../utils/productIcons';
 
 // Opciones de tipo de productos
 const TIPOS_PRODUCTO = [
@@ -36,17 +37,14 @@ const RegistroAgricultor: React.FC = () => {
   const [nombrePuesto, setNombrePuesto] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [ubicacion, setUbicacion] = useState('');
-  const [productosAOfrecer, setProductosAOfrecer] = useState('');
   const [tiposProducto, setTiposProducto] = useState<string[]>([]);
   const [fotos, setFotos] = useState<FotoPreview[]>([]);
   const [fotosExistentes, setFotosExistentes] = useState<string[]>([]);
-  const [fotosExistentesB64, setFotosExistentesB64] = useState<string[]>([]);
   const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
 
   // Campos opcionales
-  // Horarios (Múltiples opciones)
-  const [horarios, setHorarios] = useState<{dia: string, ralgo: string}[]>([{dia: 'Lunes', ralgo: ''}]);
+  const [horarios, setHorarios] = useState('');
   const [metodosCultivo, setMetodosCultivo] = useState('');
   const [redesSociales, setRedesSociales] = useState('');
 
@@ -59,8 +57,8 @@ const RegistroAgricultor: React.FC = () => {
 
     const cachedUser = JSON.parse(userStr);
 
-    // Solo usuarios (no agricultores ni administradores) pueden acceder a esta página
-    if (cachedUser.role?.toLowerCase() !== 'usuario') {
+    // Solo clientes pueden acceder a esta página
+    if (cachedUser.role !== 'Cliente') {
       navigate('/perfil');
       return;
     }
@@ -83,15 +81,13 @@ const RegistroAgricultor: React.FC = () => {
           setNombrePuesto(puesto.nombrePuesto || '');
           setDescripcion(puesto.descripcion || '');
           setUbicacion(puesto.ubicacion || '');
-          setProductosAOfrecer(puesto.productosAOfrecer || '');
           setTiposProducto(puesto.tiposProducto || []);
           // Compatibilidad: campo antiguo logoNombre o nuevo fotosNombres
           const fotosGuardadas = puesto.fotosNombres || (puesto.logoNombre ? [puesto.logoNombre] : []);
           setFotosExistentes(fotosGuardadas);
-          setFotosExistentesB64(puesto.fotosBase64 || []);
           setTelefono(puesto.telefono || '');
           setEmail(puesto.email || cachedUser.email || '');
-          setHorarios(puesto.horariosList || [{dia: 'Lunes', ralgo: ''}]);
+          setHorarios(puesto.horarios || '');
           setMetodosCultivo(puesto.metodosCultivo || '');
           setRedesSociales(puesto.redesSociales || '');
         }
@@ -127,7 +123,7 @@ const RegistroAgricultor: React.FC = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const validFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const validFormats = ['image/jpeg', 'image/png', 'image/webp'];
     const disponibles = 6 - fotos.length - fotosExistentes.length;
 
     const archivosValidos: File[] = [];
@@ -149,39 +145,7 @@ const RegistroAgricultor: React.FC = () => {
     const leerArchivo = (file: File): Promise<FotoPreview> => {
       return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            // Configuración de redimensionado EXTREMO para ajustarse al límite de 100kb del servidor
-            const MAX_WIDTH = 300;
-            const MAX_HEIGHT = 300;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width *= MAX_HEIGHT / height;
-                height = MAX_HEIGHT;
-              }
-            }
-
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx?.drawImage(img, 0, 0, width, height);
-            
-            // Comprimir a 10% calidad para que el Base64 sea minúsculo (< 10kb por foto)
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.1);
-            resolve({ file, preview: compressedBase64 });
-          };
-          img.src = e.target?.result as string;
-        };
+        reader.onload = () => resolve({ file, preview: reader.result as string });
         reader.readAsDataURL(file);
       });
     };
@@ -198,14 +162,13 @@ const RegistroAgricultor: React.FC = () => {
 
   const handleRemoveFotoExistente = (index: number) => {
     setFotosExistentes(prev => prev.filter((_, i) => i !== index));
-    setFotosExistentesB64(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validaciones obligatorias
-    if (!nombrePuesto.trim() || !descripcion.trim() || !ubicacion.trim() || !productosAOfrecer.trim() || !telefono.trim() || !email.trim()) {
+    if (!nombrePuesto.trim() || !descripcion.trim() || !ubicacion.trim() || !telefono.trim() || !email.trim()) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
@@ -228,8 +191,8 @@ const RegistroAgricultor: React.FC = () => {
     if (tiposProducto.length === 0) {
       Swal.fire({
         icon: 'warning',
-        title: 'Categorías faltantes',
-        text: 'Seleccioná al menos una categoría de productos.',
+        title: 'Tipo de productos',
+        text: 'Seleccioná al menos un tipo de producto que ofrecés.',
         confirmButtonColor: 'var(--verde-claro)',
       });
       return;
@@ -257,19 +220,6 @@ const RegistroAgricultor: React.FC = () => {
       return;
     }
 
-    const { isConfirmed } = await Swal.fire({
-      title: '¿Confirmar envío?',
-      text: 'Se enviará tu información para solicitar el cambio de rol a Agricultor.',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--verde-claro)',
-      cancelButtonColor: '#718096',
-      confirmButtonText: 'Sí, enviar ahora',
-      cancelButtonText: 'Revisar datos'
-    });
-
-    if (!isConfirmed) return;
-
     setSubmitting(true);
 
     try {
@@ -277,65 +227,38 @@ const RegistroAgricultor: React.FC = () => {
         ...fotosExistentes,
         ...fotos.map(f => f.file.name)
       ];
-      
-      const fotosBase64Array = [
-        ...fotosExistentesB64,
-        ...fotos.map(f => f.preview)
-      ];
 
       const puestoData = {
         usuarioId: userId,
         nombrePuesto: nombrePuesto.trim(),
         descripcion: descripcion.trim(),
         ubicacion: ubicacion.trim(),
-        productosAOfrecer: productosAOfrecer.trim(),
         tiposProducto,
         fotosNombres,
-        fotosBase64: fotosBase64Array,
         telefono: telefono.trim(),
         email: email.trim(),
-        horarios: horarios.map(h => `${h.dia}: ${h.ralgo}`).join(', '), // Mantenemos compatibilidad con string
-        horariosList: horarios, // Guardamos la lista estructurada
+        horarios: horarios.trim(),
         metodosCultivo: metodosCultivo.trim(),
         redesSociales: redesSociales.trim(),
         fechaRegistro: new Date().toISOString()
       };
 
-      let puestoSaved = false;
       if (puestoId) {
-        try {
-          const puestoRes = await fetch(`${ENDPOINTS.puestosAgricultor}/${puestoId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(puestoData)
-          });
-          
-          if (puestoRes.ok) {
-            puestoSaved = true;
-          } else if (puestoRes.status === 404) {
-            console.warn('El puesto ya no existe, intentando crear uno nuevo...');
-          } else {
-            const errorMsg = await puestoRes.text();
-            throw new Error(`Error ${puestoRes.status}: ${errorMsg.substring(0, 100)}`);
-          }
-        } catch (e) {
-          console.error('Error en PUT:', e);
-        }
-      }
-
-      if (!puestoSaved) {
-        // Crear puesto nuevo (o re-crear si el anterior dio 404)
+        // Actualizar puesto existente
+        const puestoRes = await fetch(`${ENDPOINTS.puestosAgricultor}/${puestoId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(puestoData)
+        });
+        if (!puestoRes.ok) throw new Error('Error al actualizar puesto');
+      } else {
+        // Crear puesto nuevo
         const puestoRes = await fetch(ENDPOINTS.puestosAgricultor, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(puestoData)
         });
-        
-        if (!puestoRes.ok) {
-          const errorText = await puestoRes.text();
-          throw new Error(`Error ${puestoRes.status} al guardar: ${errorText || 'Sin respuesta del servidor'}`);
-        }
-        
+        if (!puestoRes.ok) throw new Error('Error al guardar puesto');
         const nuevoPuesto = await puestoRes.json();
         setPuestoId(nuevoPuesto.id);
       }
@@ -344,7 +267,7 @@ const RegistroAgricultor: React.FC = () => {
       if (!solicitudId) {
         const solicitudData = {
           usuarioId: userId,
-          nombreDelPuesto: nombrePuesto.trim(),
+          nombreUsuario: nombrePuesto.trim(),
           correoUsuario: email.trim(),
           rolSolicitado: 'Agricultor',
           estado: 'Pendiente',
@@ -366,7 +289,6 @@ const RegistroAgricultor: React.FC = () => {
 
       setSolicitudEnviada(true);
       setFotosExistentes(fotosNombres);
-      setFotosExistentesB64(fotosBase64Array);
       setFotos([]);
 
       Swal.fire({
@@ -376,12 +298,11 @@ const RegistroAgricultor: React.FC = () => {
         confirmButtonColor: 'var(--verde-claro)',
       });
 
-    } catch (error: any) {
-      console.error('Error completo:', error);
+    } catch {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: `Error: ${error.message || 'Hubo un problema al procesar tu solicitud.'} Intentá de nuevo.`,
+        text: 'Hubo un problema al procesar tu solicitud. Intentá de nuevo.',
         confirmButtonColor: 'var(--verde-claro)',
       });
     } finally {
@@ -425,7 +346,6 @@ const RegistroAgricultor: React.FC = () => {
 
               {/* === INFORMACIÓN DEL PUESTO === */}
               <h3 className="form-section-title">Información del puesto</h3>
-              <h6 className="form-section-title2">Cada espacio con un asterisco (*) es obligatorio</h6>
 
               <div className="input-group">
                 <label>Nombre del puesto *</label>
@@ -464,20 +384,9 @@ const RegistroAgricultor: React.FC = () => {
                 </div>
               </div>
 
+              {/* === TIPO DE PRODUCTOS === */}
               <div className="input-group full-width">
-                <label>Productos que vendes *</label>
-                <div className="input-box">
-                  <textarea
-                    placeholder="Ej: Fresas, lechuga, miel artesanal, repollo..."
-                    value={productosAOfrecer}
-                    onChange={(e) => setProductosAOfrecer(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* === CATEGORÍAS === */}
-              <div className="input-group full-width">
-                <label>Categorías *</label>
+                <label>Tipo de productos que ofrecés *</label>
                 <div className="productos-grid">
                   {TIPOS_PRODUCTO.map((tipo) => (
                     <label
@@ -494,7 +403,10 @@ const RegistroAgricultor: React.FC = () => {
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                       </span>
-                      {tipo.emoji} {tipo.value}
+                      <span className="chip-icon">
+                        <ProductIcon emoji={tipo.emoji} size={16} />
+                      </span>
+                      {tipo.value}
                     </label>
                   ))}
                 </div>
@@ -588,52 +500,15 @@ const RegistroAgricultor: React.FC = () => {
               <h3 className="form-section-title">Información adicional (opcional)</h3>
 
               <div className="input-group full-width">
-                <label>Horarios de atención * (Podés añadir varios)</label>
-                <div className="horarios-config-container">
-                  {horarios.map((h, idx) => (
-                    <div key={idx} className="horario-row animate-fade" style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}>
-                      <select 
-                        className="form-control" 
-                        value={h.dia} 
-                        onChange={(e) => {
-                          const newH = [...horarios];
-                          newH[idx].dia = e.target.value;
-                          setHorarios(newH);
-                        }}
-                        style={{ flex: 1, padding: '0.8rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}
-                      >
-                        {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo', 'L-V', 'S-D', 'Todos los días'].map(d => (
-                          <option key={d} value={d}>{d}</option>
-                        ))}
-                      </select>
-                      <input 
-                        type="text" 
-                        placeholder="Ej: 7:00 AM - 3:00 PM"
-                        value={h.ralgo}
-                        onChange={(e) => {
-                          const newH = [...horarios];
-                          newH[idx].ralgo = e.target.value;
-                          setHorarios(newH);
-                        }}
-                        style={{ flex: 2, padding: '0.8rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}
-                      />
-                      {horarios.length > 1 && (
-                        <button 
-                          type="button" 
-                          onClick={() => setHorarios(horarios.filter((_, i) => i !== idx))}
-                          style={{ background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}
-                        >✕</button>
-                      )}
-                    </div>
-                  ))}
-                  <button 
-                    type="button" 
-                    className="btn-add-horario"
-                    onClick={() => setHorarios([...horarios, { dia: 'Sábado', ralgo: '' }])}
-                    style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, marginTop: '5px' }}
-                  >
-                    + Añadir otro horario
-                  </button>
+                <label>Horarios de atención</label>
+                <div className="input-box">
+                  <span className="input-icon">🕐</span>
+                  <input
+                    type="text"
+                    placeholder="Ej: Sábados de 5:00 AM a 1:00 PM"
+                    value={horarios}
+                    onChange={(e) => setHorarios(e.target.value)}
+                  />
                 </div>
               </div>
 

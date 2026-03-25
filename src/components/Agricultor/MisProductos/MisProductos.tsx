@@ -4,8 +4,8 @@ import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
-import AdminProductList from '../../adminAgricultor/AgricultorProductList'
-import AdminProductForm from '../../adminAgricultor/AgricultorProductForm'
+import AdminProductList from '../../adminAgricultor/AgricultorProductList/AdminProductList'
+import AdminProductForm from '../../adminAgricultor/AgricultorProductForm/AdminProductForm'
 import {
   getProductosByUser,
   createProducto,

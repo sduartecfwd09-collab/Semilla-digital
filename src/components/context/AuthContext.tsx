@@ -49,7 +49,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(JSON.parse(storedUser))
       } catch (error) {
         console.error('Error al parsear usuario:', error)
-        localStorage.removeItem('user')
       }
     }
     setIsLoading(false)
@@ -81,9 +80,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: true, role: authenticatedUser.role }
       }
       return { success: false }
-    } catch (error) {
-      console.error('Error en login:', error)
-      return { success: false }
+    } finally {
+      setIsLoading(false)
     }
   }
 

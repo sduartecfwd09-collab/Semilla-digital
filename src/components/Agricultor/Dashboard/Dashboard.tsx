@@ -11,12 +11,25 @@ import './Dashboard.css'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
+  interface FeriaData {
+    nombre?: string
+  }
+
+  interface PuestoData {
+    nombrePuesto?: string
+    descripcion?: string
+    ubicacion?: string
+    numero?: string
+  }
+
   const [stats, setStats] = useState({
     totalProductos: 0,
     productosActivos: 0,
     puestoNombre: '',
     puestoDescripcion: '',
     puestoUbicacion: '',
+    feriaNombre: '',
+    puestoNumero: '',
   })
   const [recentProducts, setRecentProducts] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
@@ -32,15 +45,15 @@ const Dashboard: React.FC = () => {
         const productos = await getProductosByUser(user.id)
         
         // 2. Obtener información del puesto real
-        const puesto = await getPuestoByUserId(user.id) as any;
+        const puesto = await getPuestoByUserId(user.id) as PuestoData | null;
 
         // 3. Obtener información de la feria
-        let feria = null;
+        let feria: FeriaData | null = null;
         if (user.feriaId) {
           try {
             feria = await getFeriaById(user.feriaId);
-          } catch (e) {
-            console.warn('Feria no encontrada:', user.feriaId);
+          } catch (error) {
+            console.warn('Feria no encontrada:', user.feriaId, error);
           }
         }
 
@@ -53,8 +66,11 @@ const Dashboard: React.FC = () => {
           puestoNombre: puesto?.nombrePuesto || 'N/A',
           puestoDescripcion: puesto?.descripcion || 'No especificada',
           puestoUbicacion: puesto?.ubicacion || 'N/A',
+          feriaNombre: feria?.nombre || 'N/A',
+          puestoNumero: puesto?.numero || 'N/A',
         })
 
+        // Obtener productos recientes (últimos 3)
         setRecentProducts(productos.slice(-3).reverse())
       } catch (error) {
         console.error('Error al cargar dashboard:', error)
@@ -88,7 +104,7 @@ const Dashboard: React.FC = () => {
               <div className="dashboard-card">
                 <div className="dashboard-card-header">
                   <h3>Productos Recientes</h3>
-                  <Link to="/agricultor/productos" className="dashboard-card-link">
+                  <Link to="/admin/productos" className="dashboard-card-link">
                     Ver todos →
                   </Link>
                 </div>
@@ -96,31 +112,13 @@ const Dashboard: React.FC = () => {
                   {loading ? (
                     <p className="dashboard-card-empty">Cargando...</p>
                   ) : recentProducts.length > 0 ? (
-                    <div className="dashboard-products-list">
+                    <ul className="dashboard-recent-list">
                       {recentProducts.map((producto) => (
-                        <div key={producto.id} className="dashboard-product-item">
-                          <span className="dashboard-product-emoji">{producto.emoji}</span>
-                          <div className="dashboard-product-info">
-                            <div className="dashboard-product-name">{producto.nombre}</div>
-                            <div className="dashboard-product-meta">
-                              {producto.categoria} · {producto.precios.length} feria
-                              {producto.precios.length !== 1 ? 's' : ''}
-                            </div>
-                          </div>
-                          <span
-                            className={`dashboard-product-status ${
-                              producto.disponible ? 'active' : 'inactive'
-                            }`}
-                          >
-                            {producto.disponible ? '✓ Activo' : '✕ Inactivo'}
-                          </span>
-                        </div>
+                        <li key={producto.id}>{producto.nombre}</li>
                       ))}
-                    </div>
+                    </ul>
                   ) : (
-                    <p className="dashboard-card-empty">
-                      No tienes productos. <Link to="/agricultor/productos">Crea uno ahora</Link>
-                    </p>
+                    <p className="dashboard-card-empty">No hay productos recientes.</p>
                   )}
                 </div>
               </div>
@@ -156,12 +154,67 @@ const Dashboard: React.FC = () => {
                     </div>
                   )}
                 </div>
+            </div>
+
+            {/* Información de la Feria */}
+            <div className="dashboard-card">
+              <div className="dashboard-card-header">
+                <h3>Mi Feria</h3>
+                <Link to="/admin/ferias" className="dashboard-card-link">
+                  Ver detalles →
+                </Link>
               </div>
+              <div className="dashboard-card-body">
+                {loading ? (
+                  <p className="dashboard-card-empty">Cargando...</p>
+                ) : (
+                  <div className="dashboard-feria-info">
+                    <div className="dashboard-feria-item">
+                      <span className="dashboard-feria-label">Feria:</span>
+                      <span className="dashboard-feria-value">{stats.feriaNombre}</span>
+                    </div>
+                    <div className="dashboard-feria-item">
+                      <span className="dashboard-feria-label">Puesto:</span>
+                      <span className="dashboard-feria-value">{stats.puestoNumero}</span>
+                    </div>
+                    <div className="dashboard-feria-item">
+                      <span className="dashboard-feria-label">Descripción:</span>
+                      <span className="dashboard-feria-value">
+                        {user?.puestoInfo?.descripcion || 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Acciones Rápidas */}
+          <div className="dashboard-quick-actions">
+            <h3>Acciones Rápidas</h3>
+            <div className="dashboard-actions-grid">
+              <Link to="/admin/productos" className="dashboard-action-card">
+                <span className="dashboard-action-icon">➕</span>
+                <span className="dashboard-action-label">Agregar Producto</span>
+              </Link>
+              <Link to="/admin/productos" className="dashboard-action-card">
+                <span className="dashboard-action-icon">📝</span>
+                <span className="dashboard-action-label">Editar Productos</span>
+              </Link>
+              <Link to="/admin/ferias" className="dashboard-action-card">
+                <span className="dashboard-action-icon">🏪</span>
+                <span className="dashboard-action-label">Ver Mi Feria</span>
+              </Link>
+              <Link to="/admin/config" className="dashboard-action-card">
+                <span className="dashboard-action-icon">⚙️</span>
+                <span className="dashboard-action-label">Configuración</span>
+              </Link>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
+  </>
   )
 }
 

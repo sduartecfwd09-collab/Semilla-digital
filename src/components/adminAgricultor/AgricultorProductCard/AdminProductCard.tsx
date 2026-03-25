@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import React from 'react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { Producto } from '../../../servers/ProductService'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
 import './AdminProductCard.css'
@@ -6,8 +8,11 @@ import './AdminProductCard.css'
 // eslint-disable-next-line no-unused-vars
 interface AdminProductCardProps {
   producto: Producto
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onEdit: (producto: Producto) => void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onDelete: (id: string | number) => void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onToggleDisponibilidad: (id: string | number, disponible: boolean) => void
 }
 
@@ -17,9 +22,8 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
   onDelete,
   onToggleDisponibilidad,
 }) => {
-  const precios = producto.precios || []
-  const precioMin = precios.length > 0 ? Math.min(...precios.map((p) => p.precio)) : 0
-  const precioMax = precios.length > 0 ? Math.max(...precios.map((p) => p.precio)) : 0
+  const precioMin = Math.min(...producto.precios.map((p) => p.precio))
+  const precioMax = Math.max(...producto.precios.map((p) => p.precio))
 
   return (
     <div className={`admin-product-card ${!producto.disponible ? 'inactive' : ''}`}>
@@ -50,18 +54,8 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
       <div className="admin-product-card-body">
         <div className="admin-product-card-meta">
           <span className="admin-product-card-category">{producto.categoria}</span>
-          <span style={{
-            backgroundColor: '#f0f9ff',
-            color: '#0369a1',
-            padding: '2px 8px',
-            borderRadius: '10px',
-            fontSize: '0.75rem',
-            fontWeight: 600
-          }}>
-            {producto.unidad || 'Unidad'}
-          </span>
           <span className="admin-product-card-ferias">
-            {precios.length} feria{precios.length !== 1 ? 's' : ''}
+            {producto.precios.length} feria{producto.precios.length !== 1 ? 's' : ''}
           </span>
         </div>
 
@@ -82,13 +76,17 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
           onClick={() => onEdit(producto)}
           className="admin-product-card-btn admin-product-card-btn-edit"
         >
-          ✏️ Editar
+          <Pencil size={14} strokeWidth={2} /> Editar
         </button>
         <button
-          onClick={() => onDelete(producto.id!)}
+          onClick={() => {
+            if (window.confirm('¿Estás seguro de eliminar este producto?')) {
+              onDelete(producto.id!)
+            }
+          }}
           className="admin-product-card-btn admin-product-card-btn-delete"
         >
-          🗑️ Eliminar
+          <Trash2 size={14} strokeWidth={2} /> Eliminar
         </button>
       </div>
     </div>

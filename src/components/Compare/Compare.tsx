@@ -7,6 +7,23 @@ import Footer from '../Footer'
 import './Compare.css'
 import { ENDPOINTS } from '../../services/api.config'
 
+interface APIProducto {
+  id?: string | number
+  categoria?: string
+  category?: string
+  emoji?: string
+  nombre?: string
+  name?: string
+  descripcion?: string
+  description?: string
+  unidad?: string
+  direccionPuesto?: string
+  disponible?: boolean
+  lowestPrice?: string
+  rows?: ComparisonRow[]
+  precios?: Array<{ feriaNombre?: string; provincia?: string; precio?: number }>
+}
+
 const Compare: React.FC = () => {
   const [allProducts, setAllProducts] = useState<ProductComparisonData[]>([])
   const [loading, setLoading] = useState(true)
@@ -19,13 +36,13 @@ const Compare: React.FC = () => {
   useEffect(() => {
     fetch(ENDPOINTS.productos)
       .then(res => res.json())
-      .then((data: any[]) => {
-        const availableData = data.filter((p: any) => p.disponible !== false);
+      .then((data: APIProducto[]) => {
+        const availableData = data.filter((p) => p.disponible !== false);
         // Mapeamos los productos de la API a la estructura que espera la UI
         const mappedData: ProductComparisonData[] = availableData.map(p => {
           const prices = p.precios || [];
           const minPrice = prices.length > 0 
-            ? Math.min(...prices.map((pr: any) => pr.precio)) 
+            ? Math.min(...prices.map((pr) => pr.precio ?? 0)) 
             : 0;
 
           return {
@@ -35,12 +52,12 @@ const Compare: React.FC = () => {
             description: p.descripcion || p.description || '',
             unit: p.unidad || 'Unidad',
             lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
-            rows: p.rows ? p.rows : prices.map((pr: any) => ({
-              feriaName: pr.feriaNombre,
-              feriaLocation: `${pr.provincia}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
-              province: pr.provincia,
-              price: `₡${pr.precio.toLocaleString()}`,
-              priceNumeric: pr.precio,
+            rows: p.rows ? p.rows : prices.map((pr) => ({
+              feriaName: pr.feriaNombre || '',
+              feriaLocation: `${pr.provincia || ''}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+              province: pr.provincia || '',
+              price: `₡${(pr.precio ?? 0).toLocaleString()}`,
+              priceNumeric: pr.precio ?? 0,
               barWidth: 100 // El ancho se recalcula en el componente Card
             }))
           }

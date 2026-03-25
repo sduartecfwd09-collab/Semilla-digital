@@ -25,7 +25,7 @@ import AdminLayout from '../components/admin/AdminLayout';
 // Páginas de Agricultor (Unidas desde el merge)
 import Dashboard from '../components/Agricultor/Dashboard/Dashboard'
 import MisProductos from '../components/Agricultor/MisProductos/index'
-import MisFerias from '../components/Agricultor/MisFerias/index'
+import MisFerias from '../components/Agricultor/MisFerias/MisFerias'
 import Configuracion from '../components/Agricultor/Configuracion/index'
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
 

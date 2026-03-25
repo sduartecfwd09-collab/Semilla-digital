@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './SidebarFilters.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { ShoppingBasket } from 'lucide-react'
 
 interface Category {
   emoji: string
@@ -9,9 +11,15 @@ interface Category {
   count: number
 }
 
+interface ProductFromAPI {
+  categoria?: string
+  category?: string
+  disponible?: boolean
+}
+
 interface SidebarFiltersProps {
   activeCategory?: string
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCategoryChange?: (category: string) => void
 }
 
@@ -35,10 +43,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
     // Cargar productos para actualizar los conteos de categorías
     fetch(ENDPOINTS.productos)
       .then(res => res.json())
-      .then((productosData: { category: string }[]) => {
+      .then((productosData: ProductFromAPI[]) => {
         const counts: Record<string, number> = {};
-        const availableProducts = productosData.filter((p: any) => p.disponible !== false);
-        availableProducts.forEach((p: any) => {
+        const availableProducts = productosData.filter((p) => p.disponible !== false);
+        availableProducts.forEach((p) => {
           const cName = p.categoria || p.category || 'Otros';
           counts[cName] = (counts[cName] || 0) + 1;
         });
@@ -74,7 +82,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
             className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
             onClick={() => handleCategoryClick('Todos')}
           >
-            <span>🛒 Todos</span>
+            <span className="category-item-label">
+              <ShoppingBasket size={16} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+              Todos
+            </span>
             <span className="category-item-badge">{totalCount}</span>
           </li>
           {categories.map((cat) => (

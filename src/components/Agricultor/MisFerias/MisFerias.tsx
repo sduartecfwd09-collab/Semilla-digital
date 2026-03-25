@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
-import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
+import ProductIcon from '../../../utils/productIcons'
 import { Producto } from '../../../servers/ProductService'
 import { getFeriaById, getProductos, getPuestoByUserId, updatePuesto } from '../../../servers/AgricultorServices'
 import './MisFerias.css'
@@ -30,6 +30,7 @@ interface Puesto {
   redesSociales?: string
   tiposProducto?: string[]
   fotosNombres?: string[]
+  numero?: string
   fotosBase64?: string[]
 }
 
@@ -60,10 +61,10 @@ const MisFerias: React.FC = () => {
         // 1. Obtener información del puesto
         const dataPuesto = await getPuestoByUserId(user.id) as Puesto
         if (dataPuesto) {
-          setPuesto(dataPuesto as Puesto)
-          setPuestoData(dataPuesto as Partial<Puesto>)
-          setFotosExistentes((dataPuesto as any).fotosNombres || [])
-          setFotosExistentesB64((dataPuesto as any).fotosBase64 || [])
+          setPuesto(dataPuesto)
+          setPuestoData(dataPuesto)
+          setFotosExistentes(dataPuesto.fotosNombres ?? [])
+          setFotosExistentesB64(dataPuesto.fotosBase64 ?? [])
         }
 
         // 2. Obtener información de la feria si tiene vinculada una
@@ -165,13 +166,7 @@ const MisFerias: React.FC = () => {
   };
 
   const handleSavePuesto = async () => {
-    if (!puesto || !puesto.id) return
-
-    // Validaciones
-    if (!puestoData.nombrePuesto?.trim() || !puestoData.ubicacion?.trim() || !puestoData.descripcion?.trim()) {
-      Swal.fire('Atención', 'Nombre, ubicación y descripción son obligatorios', 'warning')
-      return
-    }
+    if (!user || !puesto) return
 
     try {
       const fotosNombres = [
@@ -186,14 +181,15 @@ const MisFerias: React.FC = () => {
 
       const updatedData = {
         ...puestoData,
-        nombrePuesto: puestoData.nombrePuesto.trim(),
-        ubicacion: puestoData.ubicacion.trim(),
-        descripcion: puestoData.descripcion.trim(),
+        nombrePuesto: (puestoData.nombrePuesto?.trim() || ''),
+        ubicacion: (puestoData.ubicacion?.trim() || ''),
+        descripcion: (puestoData.descripcion?.trim() || ''),
         telefono: puestoData.telefono?.trim(),
         email: puestoData.email?.trim(),
         horarios: puestoData.horarios?.trim(),
         metodosCultivo: puestoData.metodosCultivo?.trim(),
         redesSociales: puestoData.redesSociales?.trim(),
+        numero: puestoData.numero?.trim(),
         fotosNombres,
         fotosBase64: fotosBase64Array,
       }
@@ -201,33 +197,15 @@ const MisFerias: React.FC = () => {
       await updatePuesto(puesto.id, updatedData)
       setPuesto(updatedData as Puesto)
       setEditingPuesto(false)
-      Swal.fire('¡Éxito!', 'Información del puesto actualizada correctamente', 'success')
+      alert('Información del puesto actualizada correctamente')
     } catch (error) {
       console.error('Error al actualizar puesto:', error)
-      Swal.fire('Error', 'No se pudo actualizar la información', 'error')
+      alert('Error al actualizar la información')
     }
   }
 
   if (loading) {
     return (
-      <>
-        <Navbar />
-        <div className="admin-layout">
-          <AdminSidebar />
-          <div className="admin-main">
-            <AdminHeader title="Mi Feria" subtitle="Información de tu feria y puesto" />
-            <div className="admin-content">
-              <p>Cargando información...</p>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <Navbar />
       <div className="admin-layout">
         <AdminSidebar />
         <div className="admin-main">
@@ -460,7 +438,7 @@ const MisFerias: React.FC = () => {
                     <div className="mis-ferias-productos-grid">
                       {productosFeria.map((producto) => {
                         const precioEnFeria = producto.precios?.find(
-                          (p: any) => p.feriaId === user?.feriaId
+                          (p) => p.feriaId === user?.feriaId
                         )
                         return (
                           <div key={producto.id} className="mis-ferias-producto-item">
@@ -486,7 +464,158 @@ const MisFerias: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    )
+  }
+
+  return (
+    <div className="admin-layout">
+      <AdminSidebar />
+      <div className="admin-main">
+        <AdminHeader title="Mi Feria" subtitle="Información de tu feria y puesto" />
+        <div className="admin-content">
+          {/* Información de la Feria */}
+          <div className="mis-ferias-card">
+            <div className="mis-ferias-card-header">
+              <h3>🏪 Información de la Feria</h3>
+            </div>
+            <div className="mis-ferias-card-body">
+              {feria && (
+                <div className="mis-ferias-info-grid">
+                  <div className="mis-ferias-info-item">
+                    <span className="mis-ferias-info-label">Nombre:</span>
+                    <span className="mis-ferias-info-value mis-ferias-feria-nombre">
+                      <ProductIcon categoria="Verduras" size={16} />
+                      {feria.nombre}
+                    </span>
+                  </div>
+                  <div className="mis-ferias-info-item">
+                    <span className="mis-ferias-info-label">Ubicación:</span>
+                    <span className="mis-ferias-info-value">{feria.ubicacion}</span>
+                  </div>
+                  <div className="mis-ferias-info-item">
+                    <span className="mis-ferias-info-label">Provincia:</span>
+                    <span className="mis-ferias-info-value">{feria.provincia}</span>
+                  </div>
+                  <div className="mis-ferias-info-item">
+                    <span className="mis-ferias-info-label">Horario:</span>
+                    <span className="mis-ferias-info-value">{feria.horario}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Información del Puesto */}
+          <div className="mis-ferias-card">
+            <div className="mis-ferias-card-header">
+              <h3>📍 Mi Puesto</h3>
+              {!editingPuesto && (
+                <button
+                  onClick={() => setEditingPuesto(true)}
+                  className="mis-ferias-edit-btn"
+                >
+                  ✏️ Editar
+                </button>
+              )}
+            </div>
+            <div className="mis-ferias-card-body">
+              {editingPuesto ? (
+                <div className="mis-ferias-edit-form">
+                  <div className="mis-ferias-form-group">
+                    <label>Número de Puesto</label>
+                    <input
+                      type="text"
+                      value={puestoData.numero}
+                      onChange={(e) =>
+                        setPuestoData({ ...puestoData, numero: e.target.value })
+                      }
+                      placeholder="ej: A-12"
+                    />
+                  </div>
+                  <div className="mis-ferias-form-group">
+                    <label>Descripción</label>
+                    <textarea
+                      value={puestoData.descripcion}
+                      onChange={(e) =>
+                        setPuestoData({ ...puestoData, descripcion: e.target.value })
+                      }
+                      placeholder="ej: Puesto de verduras y frutas frescas"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="mis-ferias-form-actions">
+                    <button
+                      onClick={() => setEditingPuesto(false)}
+                      className="mis-ferias-btn-cancel"
+                    >
+                      Cancelar
+                    </button>
+                    <button onClick={handleSavePuesto} className="mis-ferias-btn-save">
+                      Guardar Cambios
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mis-ferias-info-grid">
+                  <div className="mis-ferias-info-item">
+                    <span className="mis-ferias-info-label">Número:</span>
+                      <span className="mis-ferias-info-value">{user?.puestoInfo?.numero || 'N/A'}</span>
+                    </div>
+                    <div className="mis-ferias-info-item">
+                      <span className="mis-ferias-info-label">Descripción:</span>
+                      <span className="mis-ferias-info-value">
+                        {user?.puestoInfo?.descripcion || 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Productos en esta Feria */}
+          <div className="mis-ferias-card">
+            <div className="mis-ferias-card-header">
+              <h3>🛒 Productos en esta Feria</h3>
+              <span className="mis-ferias-count">{productosFeria.length} productos</span>
+            </div>
+            <div className="mis-ferias-card-body">
+              {productosFeria.length > 0 ? (
+                <div className="mis-ferias-productos-grid">
+                  {productosFeria.slice(0, 12).map((producto) => {
+                    const precioEnFeria = producto.precios.find(
+                      (p) => String(p.feriaId) === String(user?.feriaId)
+                    )
+                    return (
+                      <div key={producto.id} className="mis-ferias-producto-item">
+                        <span className="mis-ferias-producto-emoji">
+                          <ProductIcon
+                            emoji={producto.emoji}
+                            categoria={producto.categoria}
+                            size={18}
+                            showBg
+                            containerSize={38}
+                          />
+                        </span>
+                        <div className="mis-ferias-producto-info">
+                          <div className="mis-ferias-producto-name">{producto.nombre}</div>
+                          {precioEnFeria && (
+                            <div className="mis-ferias-producto-precio">
+                              ₡{precioEnFeria.precio.toLocaleString('es-CR')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <p className="mis-ferias-empty">No hay productos disponibles en esta feria</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

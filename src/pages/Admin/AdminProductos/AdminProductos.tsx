@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { useAuth } from '../../../components/context/AuthContext'
-import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm'
+import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm/AdminProductForm'
 import {
   Producto,
   createProducto,

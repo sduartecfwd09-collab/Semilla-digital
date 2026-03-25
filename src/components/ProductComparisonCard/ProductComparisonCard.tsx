@@ -5,11 +5,11 @@ import './ProductComparisonCard.css'
 export interface ComparisonRow {
   feriaName: string
   feriaLocation: string
-  province?: string
   price: string
   priceNumeric: number
   barWidth: number
   barColor?: string
+  province?: string
 }
 
 export interface ProductComparisonData {
@@ -17,7 +17,6 @@ export interface ProductComparisonData {
   emoji: string
   name: string
   description: string
-  unit?: string
   lowestPrice: string
   rows: ComparisonRow[]
 }
@@ -36,23 +35,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
       <div className="product-comp-header">
         <span className="product-comp-emoji"><CategoryIcon categoria={product.category} size={24} /></span>
         <div>
-          <div className="product-comp-name">
-            {product.name}
-            {product.unit && (
-              <span style={{
-                fontSize: '0.7rem',
-                backgroundColor: '#f0f9ff',
-                color: '#0369a1',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontWeight: 600,
-                marginLeft: '8px',
-                verticalAlign: 'middle'
-              }}>
-                Por {product.unit}
-              </span>
-            )}
-          </div>
+          <div className="product-comp-name">{product.name}</div>
           <div className="product-comp-desc">{product.description}</div>
         </div>
         <div className="product-comp-price-summary">
