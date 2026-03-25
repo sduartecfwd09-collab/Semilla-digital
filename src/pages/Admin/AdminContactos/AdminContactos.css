@@ -1,0 +1,366 @@
+/* ─── Admin Contactos ─── */
+.admin-contactos-container {
+  padding: 10px 0;
+}
+
+.admin-contactos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-contactos-header h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+
+.admin-contactos-header p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.admin-contactos-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-contactos-stat {
+  padding: 10px 18px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.admin-contactos-stat.pending {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+}
+
+.admin-contactos-stat.responded {
+  background: #dcfce7;
+  border: 1px solid #4ade80;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Filters ─── */
+.admin-contactos-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-contactos-search {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.admin-contactos-search:focus {
+  outline: none;
+  border-color: #2d8a42;
+  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.08);
+}
+
+.admin-contactos-filter-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.admin-contactos-filter-btn {
+  padding: 8px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.admin-contactos-filter-btn:hover {
+  border-color: #2d8a42;
+  color: #166534;
+}
+
+.admin-contactos-filter-btn.active {
+  background: #166534;
+  color: #fff;
+  border-color: #166534;
+}
+
+/* ─── Loading / Empty ─── */
+.admin-contactos-loading,
+.admin-contactos-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ─── Messages List ─── */
+.admin-contactos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-contacto-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: all 0.2s;
+}
+
+.admin-contacto-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.admin-contacto-card.responded {
+  border-left: 4px solid #4ade80;
+}
+
+.admin-contacto-card.pending {
+  border-left: 4px solid #fbbf24;
+}
+
+.admin-contacto-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-contacto-user-info {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.admin-contacto-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #166534, #15803d);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.admin-contacto-user-info h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.admin-contacto-user-info p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.admin-contacto-whatsapp {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #25D366;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.admin-contacto-whatsapp:hover {
+  opacity: 0.8;
+}
+
+.admin-contacto-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.admin-contacto-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.admin-contacto-status.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.admin-contacto-status.status-responded {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.admin-contacto-date {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.admin-contacto-message {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.admin-contacto-message p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #334155;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.admin-contacto-response {
+  background: #f0fdf4;
+  border: 1px solid #d1fae5;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.admin-contacto-response strong {
+  display: block;
+  font-size: 0.78rem;
+  color: #166534;
+  margin-bottom: 6px;
+}
+
+.admin-contacto-response p {
+  margin: 0 0 6px;
+  font-size: 0.88rem;
+  color: #1e293b;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ─── Reply Form ─── */
+.admin-contacto-reply-form {
+  margin-bottom: 12px;
+}
+
+.admin-contacto-reply-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #f8fafc;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.admin-contacto-reply-form textarea:focus {
+  outline: none;
+  border-color: #2d8a42;
+  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+  background: #fff;
+}
+
+.admin-contacto-reply-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* ─── Action Buttons ─── */
+.admin-contacto-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-contacto-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.2s;
+}
+
+.admin-contacto-btn.reply {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.admin-contacto-btn.reply:hover {
+  background: #dbeafe;
+}
+
+.admin-contacto-btn.submit {
+  background: #166534;
+  color: #fff;
+  border-color: #166534;
+}
+
+.admin-contacto-btn.submit:hover {
+  background: #15803d;
+}
+
+.admin-contacto-btn.cancel {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.admin-contacto-btn.cancel:hover {
+  background: #e2e8f0;
+}
+
+.admin-contacto-btn.delete {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.admin-contacto-btn.delete:hover {
+  background: #fee2e2;
+}

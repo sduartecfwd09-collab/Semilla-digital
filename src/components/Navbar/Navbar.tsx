@@ -69,6 +69,11 @@ const Navbar: React.FC = () => {
             Recetas
           </Link>
         </li>
+        <li>
+          <Link to="/contacto" className={`navbar-link ${isActive('/contacto') ? 'active' : ''}`}>
+            Contáctanos
+          </Link>
+        </li>
 
         {/* Enlaces dinámicos según el rol */}
         {user?.role === 'Administrador' && (
