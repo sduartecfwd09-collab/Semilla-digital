@@ -20,8 +20,9 @@ const Compare: React.FC = () => {
     fetch(ENDPOINTS.productos)
       .then(res => res.json())
       .then((data: any[]) => {
+        const availableData = data.filter((p: any) => p.disponible !== false);
         // Mapeamos los productos de la API a la estructura que espera la UI
-        const mappedData: ProductComparisonData[] = data.map(p => {
+        const mappedData: ProductComparisonData[] = availableData.map(p => {
           const prices = p.precios || [];
           const minPrice = prices.length > 0 
             ? Math.min(...prices.map((pr: any) => pr.precio)) 

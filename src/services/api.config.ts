@@ -6,5 +6,6 @@ export const ENDPOINTS = {
   recetas: `${API_BASE_URL}/recetas`,
   solicitudesCambioRol: `${API_BASE_URL}/solicitudesCambioRol`,
   puestosAgricultor: `${API_BASE_URL}/puestosAgricultor`,
-  productos: `${API_BASE_URL}/productos`
+  productos: `${API_BASE_URL}/productos`,
+  contactMessages: `${API_BASE_URL}/contactMessages`
 };

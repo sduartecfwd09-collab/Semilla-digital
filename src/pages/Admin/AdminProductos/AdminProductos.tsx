@@ -9,7 +9,10 @@ import {
   deleteProducto,
 } from '../../../servers/ProductService'
 import { API_BASE_URL } from '../../../services/api.config'
+import CategoryIcon from '../../../components/CategoryIcon/CategoryIcon'
 import './AdminProductos.css'
+import { Product } from '../../../types'
+
 
 const AdminProductos = () => {
     const { user } = useAuth()
@@ -157,7 +160,7 @@ const AdminProductos = () => {
                                     <tr key={product.id}>
                                         <td>
                                             <div className="product-info">
-                                                <div className="product-icon">{product.emoji}</div>
+                                                <div className="product-icon"><CategoryIcon categoria={product.categoria} size={20} /></div>
                                                 <span className="product-name">{product.nombre}</span>
                                             </div>
                                         </td>

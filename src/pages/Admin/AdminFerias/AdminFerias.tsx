@@ -11,7 +11,7 @@ const AdminFerias = () => {
     const [provinceFilter, setProvinceFilter] = useState('Todas')
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
-    const [selectedFeria, setSelectedFeria] = useState<Fair | null>(null)
+    const [selectedFeria, setSelectedFeria] = useState<any>(null)
     const [formData, setFormData] = useState({ name: '', province: 'San José', location: '', schedule: '' })
 
     const provinces = ["Todas", "San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"]

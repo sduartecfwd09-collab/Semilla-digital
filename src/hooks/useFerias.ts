@@ -86,7 +86,7 @@ export const useFerias = () => {
                   name: feria.nombre,
                   province: feria.provincia,
                   location: feria.direccion,
-                  schedule: `${feria.dias}, ${feria.horario}`,
+                  schedule: `${feria.dias || 'Sábados'}, ${feria.horario || '05:00 - 13:00'}`,
                 }),
               });
               console.log(`Feria sincronizada: ${feria.nombre}`);

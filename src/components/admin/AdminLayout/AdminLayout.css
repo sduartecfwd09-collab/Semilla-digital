@@ -7,6 +7,20 @@
 .admin-main {
     flex: 1;
     padding: 0 2rem;
-    overflow-y: auto;
+    overflow: hidden;
     max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-header {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.admin-content {
+    flex: 1;
+    overflow-y: auto;
 }

@@ -18,7 +18,7 @@ export interface Producto {
   direccionPuesto?: string
   unidad?: string
   precios: {
-    feriaId: number
+    feriaId: string | number
     feriaNombre: string
     provincia: string
     precio: number
@@ -123,11 +123,12 @@ export const CATEGORIAS = [
   'Tubérculos',
   'Hierbas',
   'Lácteos',
+  'Proteína',
   'Otros',
 ]
 
 /**
- * Emojis sugeridos por categoría
+ * Emojis sugeridos por categoría (mantenidos como respaldo)
  */
 export const EMOJIS_POR_CATEGORIA: Record<string, string[]> = {
   'Verduras': ['🥬', '🥦', '🥕', '🍅', '🌽', '🫑', '🥒'],
@@ -136,5 +137,6 @@ export const EMOJIS_POR_CATEGORIA: Record<string, string[]> = {
   'Tubérculos': ['🥔', '🍠'],
   'Hierbas': ['🌿', '🌱'],
   'Lácteos': ['🥛', '🧀'],
+  'Proteína': ['🥚', '🍗'],
   'Otros': ['🥚', '🍯', '🫙'],
 }

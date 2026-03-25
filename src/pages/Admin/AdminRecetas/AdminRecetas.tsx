@@ -10,7 +10,7 @@ const AdminRecetas = () => {
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
-    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+    const [selectedRecipe, setSelectedRecipe] = useState<any>(null)
     const [formData, setFormData] = useState({
         title: '',
         description: '',

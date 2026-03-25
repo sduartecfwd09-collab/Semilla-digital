@@ -6,6 +6,7 @@ import { validateEmail } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
 
+
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
@@ -49,9 +50,9 @@ const Auth: React.FC = () => {
     }
     
     try {
-      const authResult = await login(loginEmail, loginPassword)
+      const result = await login(loginEmail, loginPassword)
 
-      if (authResult.success) {
+      if (result.success) {
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido a AgroMap!',
@@ -60,9 +61,9 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          if (authResult.role === 'Administrador' || authResult.role === 'Admin') {
+          if (result.role === 'Administrador' || result.role === 'Admin') {
             navigate('/admin')
-          } else if (authResult.role === 'Agricultor' || authResult.role === 'Vendedor') {
+          } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
             navigate('/agricultor')
           } else {
             navigate('/')
@@ -76,7 +77,8 @@ const Auth: React.FC = () => {
           confirmButtonColor: 'var(--verde-claro)',
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('Error en login:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -176,7 +178,8 @@ const Auth: React.FC = () => {
           setIsLogin(true)
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('Error en registro:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -228,6 +231,10 @@ const Auth: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <Link to="/" className="auth-back-btn">
+          <span>←</span> Volver al inicio
+        </Link>
       </div>
 
       {/* SECCIÓN DERECHA */}
