@@ -97,10 +97,10 @@
       "status": "Activo"
     },
     {
-      "id": "6a47",
-      "name": "Samir García González",
-      "email": "ygarc@gmail.com",
-      "password": "bbcita1234",
+      "id": "6680",
+      "name": "sara",
+      "email": "sara11@gmail.com",
+      "password": "sara12345",
       "role": "Usuario",
       "status": "Activo"
     }
@@ -1364,39 +1364,20 @@
       "metodosCultivo": "Sin pesticida",
       "redesSociales": "",
       "fechaRegistro": "2026-03-21T06:29:35.840Z"
-    },
-    {
-      "id": "a344",
-      "usuarioId": "6a47",
-      "nombrePuesto": "dada",
-      "descripcion": "dadadadada",
-      "ubicacion": "adadada",
-      "productosAOfrecer": "adadadadad",
-      "tiposProducto": [
-        "Verduras",
-        "Proteínas",
-        "Tubérculos",
-        "Frutas",
-        "Hierbas"
-      ],
-      "fotosNombres": [
-        "Gemini_Generated_Image_bjupp7bjupp7bjup.png"
-      ],
-      "fotosBase64": [
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCACjASwDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAECAwQF/8QALhAAAgIBAwMEAQQCAgMAAAAAAAECESEDEjFBUWETIjJxgSMzQpFSoQRiwfDx/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFxEBAQEBAAAAAAAAAAAAAAAAABEBMf/aAAwDAQACEQMRAD8A3FgoKAigaKoVAQ4rtQnDzf2aBgDKmun9BaNdrfBMod0BlJ0Tvafc0cOzJcPH9BFQ1FuV4OmMk1h2cdUUpNcBTr9d/bN4RfUxhqyj5NfXVcBF7RSSozerJ8YM22+XYVe5JkvLsmygEAwKiR0AwEIo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"
-      ],
-      "telefono": "232313213",
-      "email": "ygarc@gmail.com",
-      "horarios": "Lunes: 3 am - 5 pm",
-      "horariosList": [
-        {
-          "dia": "Lunes",
-          "ralgo": "3 am - 5 pm"
-        }
-      ],
-      "metodosCultivo": "wewrwrwr",
-      "redesSociales": "@akdfsfsfsf",
-      "fechaRegistro": "2026-03-23T19:29:20.685Z"
     }
-  ]
+  ],
+  "contactMessages": [
+    {
+      "id": "9dcd",
+      "nombre": "sara",
+      "correo": "sara11@gmail.com",
+      "telefono": "12345678",
+      "mensaje": "esxrdctfvgbjkmlñ",
+      "respuesta": "holas",
+      "fechaEnvio": "2026-03-24T21:54:49.910Z",
+      "fechaRespuesta": "2026-03-24T22:17:45.751Z",
+      "estado": "Respondido"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

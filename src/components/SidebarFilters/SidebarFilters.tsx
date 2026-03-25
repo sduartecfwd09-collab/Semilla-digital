@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './SidebarFilters.css'
 import { ENDPOINTS } from '../../services/api.config'
 
@@ -21,12 +22,13 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
   const [selected, setSelected] = useState<string>(activeCategory)
   const [totalCount, setTotalCount] = useState<number>(0)
   const [categories, setCategories] = useState<Category[]>([
-    { emoji: '🍅', name: 'Verduras', count: 0 },
-    { emoji: '🍎', name: 'Frutas', count: 0 },
-    { emoji: '🌿', name: 'Hierbas', count: 0 },
-    { emoji: '🥔', name: 'Tubérculos', count: 0 },
-    { emoji: '🌾', name: 'Granos', count: 0 },
-    { emoji: '🥚', name: 'Proteína', count: 0 },
+    { emoji: '', name: 'Verduras', count: 0 },
+    { emoji: '', name: 'Frutas', count: 0 },
+    { emoji: '', name: 'Hierbas', count: 0 },
+    { emoji: '', name: 'Tubérculos', count: 0 },
+    { emoji: '', name: 'Granos', count: 0 },
+    { emoji: '', name: 'Proteína', count: 0 },
+    { emoji: '', name: 'Lácteos', count: 0 },
   ])
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
               className={`category-item ${selected === cat.name ? 'active' : ''}`}
               onClick={() => handleCategoryClick(cat.name)}
             >
-              <span>{cat.emoji} {cat.name}</span>
+              <span><CategoryIcon categoria={cat.name} size={18} /> {cat.name}</span>
               <span className="category-item-badge">{cat.count}</span>
             </li>
           ))}

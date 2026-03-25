@@ -1,6 +1,24 @@
-#  AgroMap – Semilla Digital
+# React + Vite
 
-##  Descripción
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+#  AgroMap – Semilla Digital
+
+##  Descripción
 
 **AgroMap – Semilla Digital** es una aplicación web desarrollada con **React y Vite** que permite gestionar y visualizar información relacionada con el sector agrícola. El proyecto integra una API simulada mediante **json-server**, facilitando el manejo de datos de forma sencilla durante el desarrollo.
 
@@ -14,33 +32,33 @@ Actualmente incluye:
 
 ---
 
-##  Tecnologías utilizadas
+##  Tecnologías utilizadas
 
-*  React 19
-*  Vite
-*  React Router DOM
-*  React Icons / Lucide React
-*  SweetAlert2
-*  JSON Server (API simulada)
-*  ESLint
+*  React 19
+*  Vite
+*  React Router DOM
+*  React Icons / Lucide React
+*  SweetAlert2
+*  JSON Server (API simulada)
+*  ESLint
 
 ---
 
 ## Estructura del proyecto
 
 Semilla-digital/
-├── public/             # Archivos estáticos públicos
+├── public/             # Archivos estáticos públicos
 ├── src/
-│   ├── assets/         # Imágenes, fuentes, etc.
-│   ├── components/     # Componentes reutilizables
-│   ├── pages/          # Vistas/páginas principales
-│   ├── routes/         # Configuración de rutas
-│   ├── servers/        # Lógica de servicios o mocks
-│   ├── App.jsx         # Componente raíz
-│   ├── main.jsx        # Punto de entrada
-│   └── ...
-├── db.json             # Base de datos mock (semillas, productos, etc.)
-├── vite.config.js      # Configuración de Vite
+│   ├── assets/         # Imágenes, fuentes, etc.
+│   ├── components/     # Componentes reutilizables
+│   ├── pages/          # Vistas/páginas principales
+│   ├── routes/         # Configuración de rutas
+│   ├── servers/        # Lógica de servicios o mocks
+│   ├── App.jsx         # Componente raíz
+│   ├── main.jsx        # Punto de entrada
+│   └── ...
+├── db.json             # Base de datos mock (semillas, productos, etc.)
+├── vite.config.js      # Configuración de Vite
 ├── package.json
 └── README.md
 
@@ -63,7 +81,7 @@ npm install
 
 ---
 
-## ▶️ Ejecución del proyecto
+## :arrow_forward: Ejecución del proyecto
 
 ### 1. Iniciar el frontend
 
@@ -88,16 +106,18 @@ npm run server
 2. Accede desde el navegador
 3. Interactúa con la interfaz para visualizar o gestionar datos
 
+Este proyecto está diseñado para ser intuitivo y fácil de usar.
+
 ---
 
 ## Scripts disponibles
 
 ```bash
-npm run dev       # Ejecuta la app en modo desarrollo
-npm run build     # Construye la aplicación para producción
-npm run preview   # Previsualiza la build
-npm run server    # Ejecuta la API local con json-server
-npm run lint      # Analiza el código con ESLint
+npm run dev       # Ejecuta la app en modo desarrollo
+npm run build     # Construye la aplicación para producción
+npm run preview   # Previsualiza la build
+npm run server    # Ejecuta la API local con json-server
+npm run lint      # Analiza el código con ESLint
 ```
 
 ---
@@ -150,9 +170,4 @@ Desarrollado por: *Yerik Samir García González* *Saraí Duarte Centeno* *Marie
 En desarrollo activo. Últimas mejoras incluyen estructura de carpetas, implementación de servidores agrícolas y funcionalidad de comparación.
 ¿Ideas, bugs o sugerencias? ¡Abre un issue!
 
-# ¡Gracias por visitar AgroMap! 
-
-
-
-
-
+# ¡Gracias por visitar AgroMap!

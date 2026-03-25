@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
-import { Producto, CATEGORIAS, EMOJIS_POR_CATEGORIA } from '../../../servers/ProductService'
-import { getFerias } from '../../../servers/AgricultorServices'
+import { Producto, CATEGORIAS } from '../../../servers/ProductService'
+import { getCategoryIcon } from '../../../utils/categoryIcons'
+import CategoryIcon from '../../CategoryIcon/CategoryIcon'
 import './AdminProductForm.css'
 
 interface AdminProductFormProps {
@@ -9,12 +10,6 @@ interface AdminProductFormProps {
   userId: string | number
   onSubmit: (producto: Producto) => void
   onCancel: () => void
-}
-
-interface Feria {
-  id: number
-  nombre: string
-  provincia: string
 }
 
 const PROVINCIAS = [
@@ -36,7 +31,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   const [formData, setFormData] = useState<Producto>({
     userId,
     nombre: '',
-    emoji: '🍅',
+    emoji: 'Verduras',
     descripcion: '',
     categoria: 'Verduras',
     imagen: '',
@@ -63,13 +58,16 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    if (name === 'categoria') {
+      setFormData({ ...formData, categoria: value, emoji: value })
+    } else {
+      setFormData({ ...formData, [name]: value })
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validaciones
     if (!formData.nombre.trim()) {
       Swal.fire('Error', 'El nombre del producto es obligatorio', 'error');
       return;
@@ -93,7 +91,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     }]
 
     try {
-      await onSubmit({ ...formData, precios })
+      await onSubmit({ ...formData, emoji: formData.categoria, precios })
       Swal.fire({
         icon: 'success',
         title: producto ? 'Producto Actualizado' : 'Producto Creado',
@@ -106,7 +104,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     }
   }
 
-  const emojisDisponibles = EMOJIS_POR_CATEGORIA[formData.categoria] || []
+  const categoryIconData = getCategoryIcon(formData.categoria)
 
   return (
     <div className="admin-product-form-overlay">
@@ -144,21 +142,35 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             </div>
           </div>
 
+          {/* Icono de categoría auto-asignado */}
           <div className="admin-product-form-group">
-            <label>Emoji</label>
-            <div className="admin-product-form-emoji-picker">
-              {emojisDisponibles.map((emoji) => (
-                <button
-                  key={emoji}
-                  type="button"
-                  className={`admin-product-form-emoji-btn ${
-                    formData.emoji === emoji ? 'active' : ''
-                  }`}
-                  onClick={() => setFormData({ ...formData, emoji })}
-                >
-                  {emoji}
-                </button>
-              ))}
+            <label>Icono de categoría</label>
+            <div className="admin-product-form-icon-preview" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: '10px',
+              backgroundColor: categoryIconData.bgColor,
+              border: `1.5px solid ${categoryIconData.color}20`,
+            }}>
+              <CategoryIcon categoria={formData.categoria} size={32} />
+              <div>
+                <span style={{
+                  fontWeight: 600,
+                  color: categoryIconData.color,
+                  fontSize: '0.95rem'
+                }}>
+                  {formData.categoria}
+                </span>
+                <p style={{
+                  margin: '2px 0 0',
+                  fontSize: '0.75rem',
+                  color: '#64748b'
+                }}>
+                  Se asigna automáticamente según la categoría
+                </p>
+              </div>
             </div>
           </div>
 

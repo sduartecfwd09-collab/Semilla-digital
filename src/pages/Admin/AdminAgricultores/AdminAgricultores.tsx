@@ -245,7 +245,17 @@ const AdminAgricultores = () => {
                                     🏪 {agro.puesto?.nombrePuesto || 'Sin puesto registrado'}
                                 </p>
                                 <p>📍 {agro.puesto?.ubicacion || 'Ubicación no disponible'}</p>
-                                <p>📞 {agro.puesto?.telefono || 'Sin teléfono'}</p>
+                                <p>📞 {agro.puesto?.telefono ? (
+                                  <a 
+                                    href={`https://wa.me/506${agro.puesto.telefono.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: '#25D366', textDecoration: 'none', fontWeight: 600 }}
+                                    title="Abrir WhatsApp"
+                                  >
+                                    {agro.puesto.telefono} 💬
+                                  </a>
+                                ) : 'Sin teléfono'}</p>
                                 <p>⏰ {agro.puesto?.horarios || 'Horario no definido'}</p>
                             </div>
 

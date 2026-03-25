@@ -9,6 +9,7 @@ import Profile from '../pages/Profile';
 import FeriasPage from '../pages/Ferias';
 import RecetasPage from '../pages/Recetas';
 import RegistroAgricultorPage from '../pages/RegistroAgricultor';
+import ContactUs from '../components/ContactUs/ContactUs';
 
 // Páginas de Administración (Unidas desde el merge)
 import AdminDashboard from '../pages/Admin/AdminDashboard';
@@ -18,6 +19,7 @@ import AdminAgricultores from '../pages/Admin/AdminAgricultores/AdminAgricultore
 import AdminProductos from '../pages/Admin/AdminProductos';
 import AdminRecetas from '../pages/Admin/AdminRecetas';
 import AdminConfiguracion from '../pages/Admin/AdminConfiguracion';
+import AdminContactos from '../pages/Admin/AdminContactos/AdminContactos';
 import AdminLayout from '../components/admin/AdminLayout';
 
 // Páginas de Agricultor (Unidas desde el merge)
@@ -38,6 +40,7 @@ const Routing: React.FC = () => {
         <Route path="/login" element={<Navigate to="/auth" replace />} /> {/* Aliasing login to auth */}
         <Route path="/ferias" element={<FeriasPage />} />
         <Route path="/recetas" element={<RecetasPage />} />
+        <Route path="/contacto" element={<ContactUs />} />
         
         {/* Rutas de Usuario */}
         <Route path="/perfil" element={<Profile />} />
@@ -59,6 +62,7 @@ const Routing: React.FC = () => {
           <Route path="productos" element={<AdminProductos />} />
           <Route path="recetas" element={<AdminRecetas />} />
           <Route path="configuracion" element={<AdminConfiguracion />} />
+          <Route path="contactos" element={<AdminContactos />} />
         </Route>
 
         {/* Rutas de Agricultor (Protegido por rol 'Agricultor') */}
