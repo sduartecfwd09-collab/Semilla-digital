@@ -1,11 +1,6 @@
 .ferias-by-province-section {
-<<<<<<< HEAD
-  padding: 100px 5%;
-  background-color: var(--white);
-=======
   padding: 80px 5%;
   background-color: var(--crema);
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   font-family: 'DM Sans', sans-serif;
   min-height: 400px;
 }
@@ -21,51 +16,30 @@
   font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
-<<<<<<< HEAD
-  letter-spacing: 2px;
-  color: var(--primary-color);
-  margin-bottom: 16px;
-  background: var(--lima); /* Brighter green background */
-  padding: 6px 20px;
-  border-radius: 20px;
-  border: 2px solid var(--verde-claro);
-=======
   letter-spacing: 3px;
   color: var(--verde-claro);
   margin-bottom: 16px;
   background: rgba(45, 138, 66, 0.08);
   padding: 4px 16px;
   border-radius: 20px;
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 }
 
 .ferias-title {
   font-family: 'Playfair Display', serif;
   font-size: 52px;
-<<<<<<< HEAD
-  color: var(--primary-color);
-=======
   color: var(--fondo);
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   line-height: 1.1;
   margin-bottom: 20px;
   letter-spacing: -1px;
 }
 
 .ferias-description {
-<<<<<<< HEAD
-  color: var(--color-text); /* Dark blue */
-=======
   color: #666;
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   font-size: 18px;
   line-height: 1.6;
   max-width: 700px;
   margin: 0 auto;
-<<<<<<< HEAD
-  font-weight: 600;
-=======
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
+
 }
 
 /* Loading State */
@@ -99,22 +73,12 @@
 
 /* Province Card */
 .province-card {
-<<<<<<< HEAD
-  background: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  transition: var(--transition-base);
-  border-left: 4px solid var(--color-blue);
-=======
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   overflow: hidden;
   border: 1px solid #eee;
   transition: all 0.3s ease;
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 }
 
 .province-card.expanded {
@@ -155,11 +119,7 @@
 .province-card-name {
   font-family: 'Playfair Display', serif;
   font-size: 22px;
-<<<<<<< HEAD
-  color: var(--primary-color);
-=======
   color: var(--fondo);
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   margin: 0;
 }
 
@@ -299,18 +259,10 @@
 }
 
 .feria-item-text {
-<<<<<<< HEAD
-  font-size: 14px;
-  color: var(--text-main); /* Black for readability */
-  margin: 0;
-  line-height: 1.4;
-  font-weight: 500;
-=======
   font-size: 13px;
   color: #4a5568;
   margin: 0;
   line-height: 1.4;
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 }
 
 .feria-item-map-btn {

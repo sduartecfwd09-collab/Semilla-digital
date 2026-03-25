@@ -5,10 +5,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { validateEmail } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
-<<<<<<< HEAD
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
-=======
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
+
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -53,15 +50,9 @@ const Auth: React.FC = () => {
     }
     
     try {
-<<<<<<< HEAD
-      const result = await login(loginEmail, loginPassword)
-
-      if (result.success) {
-=======
       const success = await login(loginEmail, loginPassword)
 
       if (success) {
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido a AgroMap!',
@@ -70,17 +61,7 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-<<<<<<< HEAD
-          if (result.role === 'Admin') {
-            navigate('/admin')
-          } else if (result.role === 'Agricultor') {
-            navigate('/agricultor')
-          } else {
-            navigate('/')
-          }
-=======
           navigate('/')
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
         })
       } else {
         Swal.fire({
@@ -90,11 +71,7 @@ const Auth: React.FC = () => {
           confirmButtonColor: 'var(--verde-claro)',
         })
       }
-<<<<<<< HEAD
-    } catch {
-=======
     } catch (error) {
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -157,11 +134,7 @@ const Auth: React.FC = () => {
       const resCheck = await fetch(`${ENDPOINTS.usuarios}`)
       const allUsers = await resCheck.json()
       
-<<<<<<< HEAD
-      const emailExists = allUsers.some((u: { email: string }) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
-=======
       const emailExists = allUsers.some((u: any) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       if (emailExists) {
         Swal.fire({
           icon: 'error',
@@ -198,11 +171,7 @@ const Auth: React.FC = () => {
           setIsLogin(true)
         })
       }
-<<<<<<< HEAD
-    } catch {
-=======
     } catch (error) {
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -212,8 +181,6 @@ const Auth: React.FC = () => {
     }
   }
 
-<<<<<<< HEAD
-=======
   // Iconos SVG para el ojo (mostrar/ocultar contraseña)
   const EyeIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -228,7 +195,6 @@ const Auth: React.FC = () => {
       <line x1="1" y1="1" x2="23" y2="23"></line>
     </svg>
   )
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 
   return (
     <div className="auth-container">

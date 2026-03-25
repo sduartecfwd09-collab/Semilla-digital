@@ -17,11 +17,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-<<<<<<< HEAD
-  login: (email: string, password: string) => Promise<{ success: boolean; role?: string }>
-=======
   login: (email: string, password: string) => Promise<boolean>
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
@@ -59,13 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false)
   }, [])
 
-<<<<<<< HEAD
-
-
-  const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
-=======
   const login = async (email: string, password: string): Promise<boolean> => {
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
     try {
       // Buscar usuario en la API usando ENDPOINTS centralizados
       const response = await fetch(`${ENDPOINTS.usuarios}?email=${email}&password=${password}`)
@@ -86,21 +76,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userToStore)
         localStorage.setItem('user', JSON.stringify(userToStore))
-<<<<<<< HEAD
-        return { success: true, role: authenticatedUser.role }
-      }
-      return { success: false }
-    } catch (error) {
-      console.error('Error en login:', error)
-      return { success: false }
-=======
         return true
       }
       return false
     } catch (error) {
       console.error('Error en login:', error)
       return false
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
     }
   }
 

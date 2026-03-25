@@ -3,16 +3,13 @@ import { Producto } from '../../../servers/ProductService'
 import AdminProductCard from '../../adminAgricultor/AgricultorProductCard'
 import './AdminProductList.css'
 
-<<<<<<< HEAD
-// eslint-disable-next-line no-unused-vars
-=======
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
+
 interface AdminProductListProps {
   productos: Producto[]
   loading: boolean
   onEdit: (producto: Producto) => void
-  onDelete: (id: number) => void
-  onToggleDisponibilidad: (id: number, disponible: boolean) => void
+  onDelete: (id: string | number) => void
+  onToggleDisponibilidad: (id: string | number, disponible: boolean) => void
 }
 
 const AdminProductList: React.FC<AdminProductListProps> = ({

@@ -75,11 +75,7 @@ const RegistroAgricultor: React.FC = () => {
         // 1. Buscar puesto existente (filtrado client-side por compatibilidad con json-server)
         const puestoRes = await fetch(ENDPOINTS.puestosAgricultor);
         const todosPuestos = await puestoRes.json();
-<<<<<<< HEAD
-        const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
-=======
         const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(currentUserId));
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
 
         if (misPuestos.length > 0) {
           const puesto = misPuestos[misPuestos.length - 1]; // Último puesto creado
@@ -104,11 +100,7 @@ const RegistroAgricultor: React.FC = () => {
         const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
         const todasSolicitudes = await solRes.json();
         const misSolicitudes = todasSolicitudes.filter(
-<<<<<<< HEAD
-          (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
-=======
           (s: any) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
         );
         if (misSolicitudes.length > 0) {
           setSolicitudEnviada(true);

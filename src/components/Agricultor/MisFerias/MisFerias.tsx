@@ -4,10 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
-<<<<<<< HEAD
-import { Producto } from '../../../servers/ProductService'
-=======
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
+
 import { getFeriaById, getProductos, getPuestoByUserId, updatePuesto } from '../../../servers/AgricultorServices'
 import './MisFerias.css'
 
@@ -45,11 +42,7 @@ const MisFerias: React.FC = () => {
   const { user } = useAuth()
   const [feria, setFeria] = useState<Feria | null>(null)
   const [puesto, setPuesto] = useState<Puesto | null>(null)
-<<<<<<< HEAD
-  const [productosFeria, setProductosFeria] = useState<Producto[]>([])
-=======
   const [productosFeria, setProductosFeria] = useState<any[]>([])
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
   const [loading, setLoading] = useState(true)
   const [editingPuesto, setEditingPuesto] = useState(false)
   const [puestoData, setPuestoData] = useState<Partial<Puesto>>({})
@@ -65,11 +58,7 @@ const MisFerias: React.FC = () => {
         setLoading(true)
         
         // 1. Obtener información del puesto
-<<<<<<< HEAD
-        const dataPuesto = await getPuestoByUserId(user.id) as Puesto
-=======
         const dataPuesto = await getPuestoByUserId(user.id)
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
         if (dataPuesto) {
           setPuesto(dataPuesto as Puesto)
           setPuestoData(dataPuesto as Partial<Puesto>)
@@ -83,15 +72,9 @@ const MisFerias: React.FC = () => {
           setFeria(feriaData as Feria)
 
           // 3. Obtener productos de esta feria
-<<<<<<< HEAD
-          const allProductos = await getProductos() as Producto[]
-          const productosDeFeria = allProductos.filter((p: Producto) =>
-            p.precios?.some((precio) => precio.feriaId === user.feriaId)
-=======
           const allProductos = await getProductos()
           const productosDeFeria = allProductos.filter((p: any) =>
             p.precios?.some((precio: any) => precio.feriaId === user.feriaId)
->>>>>>> 4325f1856665e17db6cd392cc18ba9518db22206
           )
           setProductosFeria(productosDeFeria)
         }
