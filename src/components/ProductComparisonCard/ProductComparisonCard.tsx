@@ -17,6 +17,7 @@ export interface ProductComparisonData {
   emoji: string
   name: string
   description: string
+  unit: string
   lowestPrice: string
   rows: ComparisonRow[]
 }
@@ -39,7 +40,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           <div className="product-comp-desc">{product.description}</div>
         </div>
         <div className="product-comp-price-summary">
-          <div className="product-comp-price-label">Precio más bajo</div>
+          <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
           <div className="product-comp-min-price">{product.lowestPrice}</div>
         </div>
       </div>
