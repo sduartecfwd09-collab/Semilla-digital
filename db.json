@@ -1077,6 +1077,27 @@
           "precio": 600
         }
       ]
+    },
+    {
+      "id": "72cd",
+      "userId": "2b65",
+      "nombre": "Papa Blanca",
+      "emoji": "Tubérculos",
+      "descripcion": "",
+      "categoria": "Tubérculos",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Limón",
+      "direccionPuesto": "p0l9okijuytrfew",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Limón",
+          "precio": 850
+        }
+      ]
     }
   ],
   "solicitudesCambioRol": [
@@ -1563,5 +1584,6 @@
       "fechaRespuesta": "",
       "estado": "Pendiente"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
