@@ -16,39 +16,39 @@ const AgricultorSidebar: React.FC = () => {
   ]
 
   return (
-    <aside className="admin-sidebar">
-      <div className="admin-sidebar-header">
-        <Link to="/" className="admin-sidebar-logo">
+    <aside className="agricultor-sidebar">
+      <div className="agricultor-sidebar-header">
+        <Link to="/" className="agricultor-sidebar-logo">
           Agro<span>Map</span>
         </Link>
-        <div className="admin-sidebar-subtitle">Panel Agricultor</div>
+        <div className="agricultor-sidebar-subtitle">Panel Agricultor</div>
       </div>
 
-      <div className="admin-sidebar-user">
-        <div className="admin-sidebar-user-avatar">
+      <div className="agricultor-sidebar-user">
+        <div className="agricultor-sidebar-user-avatar">
           {user?.name?.charAt(0).toUpperCase() || 'A'}
         </div>
-        <div className="admin-sidebar-user-info">
-          <div className="admin-sidebar-user-name">{user?.name}</div>
-          <div className="admin-sidebar-user-role">Agricultor</div>
+        <div className="agricultor-sidebar-user-info">
+          <div className="agricultor-sidebar-user-name">{user?.name}</div>
+          <div className="agricultor-sidebar-user-role">Agricultor</div>
         </div>
       </div>
 
-      <nav className="admin-sidebar-nav">
+      <nav className="agricultor-sidebar-nav">
         {menuItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`admin-sidebar-link ${isActive(item.path) ? 'active' : ''}`}
+            className={`agricultor-sidebar-link ${isActive(item.path) ? 'active' : ''}`}
           >
-            <span className="admin-sidebar-link-icon">{item.icon}</span>
-            <span className="admin-sidebar-link-label">{item.label}</span>
+            <span className="agricultor-sidebar-link-icon">{item.icon}</span>
+            <span className="agricultor-sidebar-link-label">{item.label}</span>
           </Link>
         ))}
       </nav>
 
-      <div className="admin-sidebar-footer">
-        <Link to="/" className="admin-sidebar-home-link">
+      <div className="agricultor-sidebar-footer">
+        <Link to="/" className="agricultor-sidebar-home-link">
           ← Volver al sitio
         </Link>
       </div>

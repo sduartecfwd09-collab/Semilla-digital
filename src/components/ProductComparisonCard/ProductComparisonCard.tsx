@@ -41,11 +41,11 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
             {product.unit && (
               <span style={{
                 fontSize: '0.7rem',
-                backgroundColor: '#f0f9ff',
-                color: '#0369a1',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontWeight: 600,
+                backgroundColor: 'rgba(59, 156, 58, 0.1)',
+                color: '#3B9C3A',
+                padding: '2px 10px',
+                borderRadius: '12px',
+                fontWeight: 700,
                 marginLeft: '8px',
                 verticalAlign: 'middle'
               }}>
@@ -75,7 +75,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           const isExpensive = row.priceNumeric === maxPrice && !isBest
           const diff = row.priceNumeric - lowestPriceNumeric
           const barWidthPct = Math.round((row.priceNumeric / maxPrice) * 100)
-          const barColor = isBest ? 'var(--lima)' : isExpensive ? '#e08060' : '#f0c060'
+          const barColor = isBest ? '#3B9C3A' : '#e2e8f0'
 
           return (
             <div key={index} className={`product-comp-row ${isBest ? 'best' : ''}`}>

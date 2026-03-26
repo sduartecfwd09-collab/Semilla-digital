@@ -103,6 +103,22 @@
       "password": "sara12345",
       "role": "Usuario",
       "status": "Activo"
+    },
+    {
+      "id": "79a4",
+      "name": "Mariel Lefebre",
+      "email": "mariel@gmail.com",
+      "password": "12345678",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5c5d",
+      "name": "Mariel Lopez",
+      "email": "lopezma@gmail.com",
+      "password": "123456789",
+      "role": "Usuario",
+      "status": "Activo"
     }
   ],
   "ferias": [

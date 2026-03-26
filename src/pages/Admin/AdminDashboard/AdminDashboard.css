@@ -1,7 +1,9 @@
 .dashboard-container {
     padding: 0;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
     animation: fadeIn 0.4s ease-out;
 }
 
@@ -12,18 +14,27 @@
 
 .dashboard-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     margin-bottom: 2.5rem;
     padding-top: 1rem;
 }
 
 .dashboard-header h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #052e16;
     margin: 0;
+    font-family: 'Playfair Display', serif;
 }
+
+.dashboard-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-top: 0.4rem;
+}
+
+/* Removing former Hero component styles */
 
 .btn-new {
     background: linear-gradient(135deg, var(--accent-color), var(--primary-light));
@@ -50,20 +61,21 @@
 }
 
 .stat-card {
-    background: linear-gradient(145deg, #ffffff, #fdfdfd);
-    padding: 1.75rem 1.5rem;
-    border-radius: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    padding: 2rem 1.8rem;
+    border-radius: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
-    box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05);
+    gap: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
     grid-column: span 2;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* 3 cards top, 2 cards bottom centered */
@@ -85,9 +97,9 @@
 }
 
 .stat-card:hover {
-    /* Eliminadas las animaciones de movimiento (estáticas) */
-    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.1);
-    border-color: rgba(82,183,136,0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(59, 156, 58, 0.15);
+    border-color: rgba(59, 156, 58, 0.3);
 }
 
 .stat-card:hover::before {
@@ -133,17 +145,19 @@
 }
 
 .card-content h3 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     margin: 0;
-    color: var(--text-main);
+    color: #052e16;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 900;
     letter-spacing: -1px;
 }
 
 .card-content p {
-    color: var(--text-muted);
+    color: #64748b;
     margin-top: 0.4rem;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }

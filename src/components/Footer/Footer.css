@@ -1,18 +1,21 @@
 .footer {
-    background: var(--fondo);
-    padding: 40px 60px;
+    background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
+    padding: 30px 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .footer-logo {
     font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: var(--lima);
+    font-size: 24px;
+    color: #8cc63f; /* Verde lima exacto */
     text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s ease;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .footer-logo:hover {
@@ -20,10 +23,13 @@
 }
 
 .footer-logo span {
-    color: var(--tierra);
+    color: #f7931e; /* Naranja exacto */
+    font-weight: 800;
 }
 
 .footer-copyright {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 13px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }

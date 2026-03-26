@@ -18,8 +18,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
         name: '',
         email: '',
         password: '',
+        avatar: '',
         role: 'Usuario',
-        status: 'Activo'
+        status: 'Active'
     });
     const [loading, setLoading] = useState(false);
 
@@ -31,6 +32,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                 name: '',
                 email: '',
                 password: '',
+                avatar: '',
                 role: 'Usuario',
                 status: 'Activo'
             });
@@ -104,6 +106,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     placeholder={isEditing ? 'Sin cambios si está vacío' : 'Contraseña del usuario'}
+                                />
+                            </div>
+                            <div className="form-field">
+                                <label>URL de Foto de Perfil</label>
+                                <input
+                                    type="text"
+                                    value={formData.avatar}
+                                    onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                                    placeholder="https://ejemplo.com/avatar.jpg"
                                 />
                             </div>
                         </div>

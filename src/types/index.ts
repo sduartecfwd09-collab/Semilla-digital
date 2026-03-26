@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: 'Vendedor' | 'Administrador' | 'Comprador' | string;
   status: 'Activo' | 'Inactivo' | string;
+  avatar?: string;
 }
 
 export interface Product {

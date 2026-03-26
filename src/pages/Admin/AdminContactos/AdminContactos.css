@@ -13,15 +13,17 @@
 }
 
 .admin-contactos-header h1 {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0 0 4px;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #052e16;
+  margin: 0 0 8px;
+  font-family: 'Playfair Display', serif;
 }
 
 .admin-contactos-header p {
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
   margin: 0;
 }
 
@@ -31,20 +33,28 @@
 }
 
 .admin-contactos-stat {
-  padding: 10px 18px;
-  border-radius: 12px;
+  padding: 1.2rem 2rem;
+  border-radius: 20px;
   text-align: center;
-  min-width: 80px;
+  min-width: 120px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.admin-contactos-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
 }
 
 .admin-contactos-stat.pending {
-  background: #fef3c7;
-  border: 1px solid #fbbf24;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-bottom: 4px solid #fbbf24;
 }
 
 .admin-contactos-stat.responded {
-  background: #dcfce7;
-  border: 1px solid #4ade80;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-bottom: 4px solid #4ade80;
 }
 
 .stat-number {
@@ -72,19 +82,20 @@
 
 .admin-contactos-search {
   flex: 1;
-  min-width: 200px;
-  padding: 10px 14px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  background: #f8fafc;
-  transition: all 0.2s;
+  min-width: 250px;
+  padding: 1rem 1.5rem;
+  border: 2px solid #edf2f7;
+  border-radius: 15px;
+  font-size: 1rem;
+  background: #fbfbfc;
+  transition: all 0.3s ease;
 }
 
 .admin-contactos-search:focus {
   outline: none;
-  border-color: #2d8a42;
-  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.08);
+  border-color: #3B9C3A;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(59, 156, 58, 0.08);
 }
 
 .admin-contactos-filter-btns {
@@ -93,26 +104,27 @@
 }
 
 .admin-contactos-filter-btn {
-  padding: 8px 16px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
   background: #fff;
   cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: #64748b;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .admin-contactos-filter-btn:hover {
-  border-color: #2d8a42;
-  color: #166534;
+  background: #f8fafc;
+  color: #3B9C3A;
 }
 
 .admin-contactos-filter-btn.active {
-  background: #166534;
+  background: #3B9C3A;
   color: #fff;
-  border-color: #166534;
+  border-color: #3B9C3A;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
 }
 
 /* ─── Loading / Empty ─── */
@@ -133,23 +145,24 @@
 
 .admin-contacto-card {
   background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  transition: all 0.2s;
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s ease;
 }
 
 .admin-contacto-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transform: scale(1.01);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.06);
 }
 
 .admin-contacto-card.responded {
-  border-left: 4px solid #4ade80;
+  border-left: none;
 }
 
 .admin-contacto-card.pending {
-  border-left: 4px solid #fbbf24;
+  border-left: none;
 }
 
 .admin-contacto-card-header {
@@ -168,17 +181,19 @@
 }
 
 .admin-contacto-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #166534, #15803d);
-  color: #fff;
+  background: linear-gradient(135deg, #052e16 0%, #3B9C3A 100%);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(59, 156, 58, 0.2);
+  border: 2px solid #ffffff;
 }
 
 .admin-contacto-user-info h3 {
@@ -254,10 +269,24 @@
 
 .admin-contacto-response {
   background: #f0fdf4;
-  border: 1px solid #d1fae5;
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 12px;
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.admin-contacto-response::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 30px;
+  width: 15px;
+  height: 15px;
+  background: #f0fdf4;
+  border-left: 1px solid #bbf7d0;
+  border-top: 1px solid #bbf7d0;
+  transform: rotate(45deg);
 }
 
 .admin-contacto-response strong {
@@ -316,33 +345,38 @@
 }
 
 .admin-contacto-btn {
-  padding: 7px 16px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 800; /* Increased weight for legibility */
   cursor: pointer;
-  border: 1.5px solid;
-  transition: all 0.2s;
+  border: 2px solid; /* Made border thicker and consistent */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff; /* Default background */
 }
 
 .admin-contacto-btn.reply {
-  background: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
+  color: #3B9C3A;
+  border-color: #3B9C3A;
 }
 
 .admin-contacto-btn.reply:hover {
-  background: #dbeafe;
+  background: #3B9C3A;
+  color: #ffffff;
+  border-color: #3B9C3A;
+  transform: translateY(-2px);
 }
 
-.admin-contacto-btn.submit {
-  background: #166534;
+.admin-contactos-stat.submit, .admin-contacto-btn.submit {
+  background: #3B9C3A;
   color: #fff;
-  border-color: #166534;
+  border-color: #3B9C3A;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
 }
 
 .admin-contacto-btn.submit:hover {
-  background: #15803d;
+  background: #2d7a2d;
+  transform: translateY(-2px);
 }
 
 .admin-contacto-btn.cancel {
@@ -353,14 +387,17 @@
 
 .admin-contacto-btn.cancel:hover {
   background: #e2e8f0;
+  transform: translateY(-2px);
 }
 
 .admin-contacto-btn.delete {
-  background: #fef2f2;
   color: #dc2626;
-  border-color: #fecaca;
+  border-color: #dc2626;
 }
 
 .admin-contacto-btn.delete:hover {
-  background: #fee2e2;
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  transform: translateY(-2px);
 }

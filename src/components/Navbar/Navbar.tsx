@@ -94,7 +94,26 @@ const Navbar: React.FC = () => {
 
         {user && (
           <li>
-            <Link to="/perfil" className={`navbar-link ${isActive('/perfil') ? 'active' : ''}`}>
+            <Link to="/perfil" className={`navbar-link ${isActive('/perfil') ? 'active' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="navbar-avatar-mini" style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}>
+                {user.avatar ? (
+                  <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  user.name ? user.name.charAt(0).toUpperCase() : 'U'
+                )}
+              </div>
               Perfil
             </Link>
           </li>
@@ -102,8 +121,12 @@ const Navbar: React.FC = () => {
 
         <li>
           {user ? (
-            <button className="navbar-cta-logout" onClick={handleLogout}>
-              Cerrar sesión
+            <button className="navbar-cta-logout" onClick={handleLogout} title="Cerrar sesión">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
             </button>
           ) : (
             <Link to="/auth" className="navbar-cta">
