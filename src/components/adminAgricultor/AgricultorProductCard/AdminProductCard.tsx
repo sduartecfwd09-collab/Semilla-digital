@@ -67,13 +67,15 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
 
         <div className="admin-product-card-prices">
           <div className="admin-product-card-price-item">
-            <span className="admin-product-card-price-label">Precio mínimo:</span>
+            <span className="admin-product-card-price-label">Precio:</span>
             <span className="admin-product-card-price-value">₡{precioMin.toLocaleString('es-CR')}</span>
           </div>
+          {/*
           <div className="admin-product-card-price-item">
             <span className="admin-product-card-price-label">Precio máximo:</span>
             <span className="admin-product-card-price-value">₡{precioMax.toLocaleString('es-CR')}</span>
           </div>
+          */}
         </div>
       </div>
 
