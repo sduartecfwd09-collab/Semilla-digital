@@ -1,5 +1,5 @@
 .hero-section {
-    background: var(--fondo);
+    background: var(--blanco);
     padding: 100px 60px 80px;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -11,11 +11,11 @@
 
 .hero-tag {
     display: inline-block;
-    background: rgba(140, 198, 63, 0.15);
-    border: 1px solid rgba(140, 198, 63, 0.4);
-    color: var(--lima);
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.35);
+    color: var(--verde-claro);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
     padding: 6px 16px;
@@ -24,20 +24,21 @@
 }
 
 .hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
     font-size: 58px;
     line-height: 1.1;
-    color: white;
+    color: var(--fondo);
     margin-bottom: 20px;
 }
 
 .hero-title em {
     font-style: normal;
-    color: var(--lima);
+    color: #3B9C3A;
 }
 
 .hero-description {
-    color: rgba(255, 255, 255, 0.65);
+    color: #374151;
     font-size: 17px;
     line-height: 1.7;
     margin-bottom: 36px;
@@ -51,28 +52,35 @@
 }
 
 .hero-btn-primary {
-    background: var(--lima);
-    color: var(--fondo);
+    background: linear-gradient(90deg, #022405, #36EB60);
+    color: #ffffff;
     padding: 14px 32px;
     border-radius: 30px;
     font-weight: 700;
     font-size: 15px;
     text-decoration: none;
-    box-shadow: 0 4px 20px rgba(140, 198, 63, 0.4);
+    box-shadow: 0 4px 20px rgba(54, 235, 96, 0.3);
     display: inline-block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hero-btn-primary:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
 }
 
 .hero-btn-secondary {
-    color: rgba(255, 255, 255, 0.7);
+    color: #5D5751;
     text-decoration: none;
     font-size: 14px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .hero-btn-secondary span {
-    color: var(--lima);
+    color: var(--fondo);
     font-size: 18px;
 }
 

@@ -9,7 +9,7 @@
 .page-header {
   padding: 4rem 10% 1rem;
   text-align: center;
-  background-color: var(--crema, #fdfaf5);
+  background-color: var(--blanco);
 }
 
 .page-title {
@@ -31,7 +31,7 @@
 .content-barrier {
   padding: 8rem 10%;
   text-align: center;
-  background-color: var(--crema, #fdfaf5);
+  background-color: var(--blanco);
   min-height: 60vh;
   display: flex;
   flex-direction: column;

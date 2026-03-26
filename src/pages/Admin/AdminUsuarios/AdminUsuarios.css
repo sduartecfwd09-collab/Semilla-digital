@@ -20,29 +20,33 @@
 }
 
 .users-header h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    flex-shrink: 0; /* Que no se encoga el titulo */
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #052e16;
     margin: 0;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -1.5px;
 }
 
 .btn-new {
-    background: linear-gradient(135deg, var(--accent-color), var(--primary-light));
+    background: #3B9C3A;
     color: white;
-    padding: 0.9rem 1.75rem;
-    border-radius: var(--radius-md);
-    font-weight: 700;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    box-shadow: var(--shadow-accent);
-    transition: var(--transition-base);
+    box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-new:hover {
-    /* Animaciones de movimiento eliminadas */
-    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.4);
+    background: #3B9C3A;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 156, 58, 0.3);
 }
 
 .users-actions {
@@ -57,27 +61,27 @@
 .search-input {
     width: 100%;
     max-width: 450px;
-    padding: 0.85rem 1.25rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    background: #fdfdfd;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #edf2f7;
+    background: #fbfbfc;
     font-size: 1rem;
-    transition: var(--transition-base);
+    transition: all 0.3s ease;
 }
 
 .search-input:focus {
     outline: none;
-    border-color: var(--accent-color);
-    box-shadow: var(--shadow-accent);
+    border-color: #3B9C3A;
     background: white;
+    box-shadow: 0 0 0 4px rgba(59, 156, 58, 0.08);
 }
 
 .table-wrapper {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 table {
@@ -92,11 +96,11 @@ thead {
 }
 
 th {
-    padding: 1.25rem 1.5rem;
-    font-size: 0.75rem;
+    padding: 1.5rem 1.8rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
+    letter-spacing: 1px;
+    color: #64748b;
     font-weight: 800;
 }
 
@@ -121,17 +125,25 @@ tr:hover td {
 }
 
 .user-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #022405, #36EB60);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    color: var(--primary-color);
-    font-size: 1.1rem;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: #ffffff;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(129, 112, 212, 0.2);
+    border: 2px solid #ffffff;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .user-details {
@@ -160,13 +172,21 @@ tr:hover td {
 }
 
 .status-active {
-    background-color: #ecfdf5;
-    color: #059669;
+    background-color: #3B9C3A;
+    color: #166534;
+    border: 1px solid #bbf7d0;
 }
 
-.status-inactive {
+.status-inactive, .status-pending {
+    background-color: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fef3c7;
+}
+
+.status-blocked, .status-rejected {
     background-color: #fef2f2;
-    color: #ef4444;
+    color: #991b1b;
+    border: 1px solid #fecaca;
 }
 
 .action-buttons {
@@ -187,14 +207,50 @@ tr:hover td {
     border: 1px solid var(--border-color);
 }
 
-.btn-edit:hover {
+.btn-edit-pill {
     background-color: #f0fdf4;
     color: #166534;
-    border-color: #bbf7d0;
+    border: 1px solid #bbf7d0;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
 }
 
-.btn-delete:hover {
+.btn-edit-pill:hover {
+    background-color: #3B9C3A;
+    color: white;
+    border-color: #3B9C3A;
+    transform: translateY(-2px);
+}
+
+.btn-delete-pill {
     background-color: #fef2f2;
     color: #991b1b;
-    border-color: #fecaca;
+    border: 1px solid #fecaca;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-delete-pill:hover {
+    background-color: #dc2626;
+    color: white;
+    border-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+.btn-icon-small {
+    font-size: 1rem;
 }

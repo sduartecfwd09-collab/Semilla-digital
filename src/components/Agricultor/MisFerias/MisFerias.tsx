@@ -3,10 +3,10 @@ import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
-import ProductIcon from '../../../utils/productIcons'
-import { Producto } from '../../../servers/ProductService'
 import { getFeriaById, getProductos, getPuestoByUserId, updatePuesto } from '../../../servers/AgricultorServices'
 import './MisFerias.css'
+import ProductIcon from '../../../utils/productIcons'
+import { Producto } from '../../../servers/ProductService'
 
 interface Feria {
   id: number

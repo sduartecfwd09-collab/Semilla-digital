@@ -14,13 +14,13 @@
 }
 
 .profile-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 50px;
   width: 100%;
-  max-width: 600px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-  border: 1px solid #eef2ef;
+  max-width: 650px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .profile-header {
@@ -28,26 +28,86 @@
   margin-bottom: 40px;
 }
 
+.profile-avatar-container {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto 25px;
+}
+
 .profile-avatar {
-  background: var(--verde-claro, #2d8a42);
+  background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
   color: white;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 32px;
+  font-size: 42px;
+  font-weight: 800;
+  box-shadow: 0 10px 25px rgba(59, 156, 58, 0.3);
+  border: 4px solid #ffffff;
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #ffffff;
+  color: #3B9C3A;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid #3B9C3A;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.avatar-upload-label:hover {
+  background: #f0fdf4;
+  transform: scale(1.1);
+}
+
+.change-photo-text {
+  display: block;
+  font-size: 0.85rem;
   font-weight: 700;
-  margin: 0 auto 20px;
-  box-shadow: 0 5px 15px rgba(45, 138, 66, 0.2);
+  color: #3B9C3A;
+  cursor: pointer;
+  margin-top: -15px;
+  margin-bottom: 20px;
+  transition: opacity 0.2s ease;
+}
+
+.change-photo-text:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.camera-icon {
+  font-size: 16px;
+  transform: translateY(-1px);
 }
 
 .profile-header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: var(--fondo, #1a3621);
-  margin-bottom: 10px;
+  font-size: 32px;
+  color: #052e16;
+  margin-bottom: 8px;
+  font-weight: 900;
 }
 
 .profile-status {
@@ -98,16 +158,17 @@
 .input-box {
   display: flex;
   align-items: center;
-  background: #fcfcfc;
-  border: 1px solid #edf2f7;
-  border-radius: 10px;
-  padding: 12px 16px;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+  background: #fbfbfc;
+  border: 2px solid #edf2f7;
+  border-radius: 12px;
+  padding: 14px 18px;
+  transition: all 0.3s ease;
 }
 
 .input-box:focus-within {
-  border-color: var(--verde-claro, #2d8a42);
-  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+  border-color: #3B9C3A;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(59, 156, 58, 0.1);
 }
 
 .input-icon {
@@ -175,56 +236,61 @@
 
 .save-btn {
   flex: 2;
-  background: var(--verde-claro, #2d8a42);
+  background: #3B9C3A;
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 10px;
-  font-weight: 700;
+  padding: 16px;
+  border-radius: 50px;
+  font-weight: 800;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
 }
 
 .save-btn:hover {
-  background: var(--verde, #1a5c2a);
-  transform: translateY(-2px);
+  background: #2d7a2d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.4);
 }
 
 .edit-btn {
   flex: 2;
-  background: white;
-  color: var(--verde-claro, #2d8a42);
-  border: 2px solid var(--verde-claro, #2d8a42);
-  padding: 14px;
-  border-radius: 10px;
-  font-weight: 700;
+  background: #3B9C3A;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 50px;
+  font-weight: 800;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
 }
 
 .edit-btn:hover {
-  background: var(--verde-claro, #2d8a42);
-  color: white;
-  transform: translateY(-2px);
+  background: #2d7a2d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.4);
 }
 
 .cancel-btn {
   flex: 1;
-  background: #edf2f7;
-  color: #4a5568;
-  border: none;
-  padding: 14px;
-  border-radius: 10px;
-  font-weight: 700;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1.5px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 50px;
+  font-weight: 800;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .cancel-btn:hover {
   background: #e2e8f0;
+  color: #334155;
+  transform: translateY(-3px);
 }
 
 /* Animations */
@@ -259,16 +325,18 @@
 
 .role-request-content {
   text-align: center;
-  background: #f7fafc;
-  padding: 25px;
-  border-radius: 15px;
-  border: 1px dashed #cbd5e0;
+  background: #fdfdfd;
+  padding: 35px;
+  border-radius: 20px;
+  border: 2px solid #f0f4f8;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .role-request-content h3 {
-  font-size: 18px;
-  color: #2d3748;
-  margin-bottom: 10px;
+  font-size: 20px;
+  color: #052e16;
+  margin-bottom: 12px;
+  font-weight: 800;
 }
 
 .role-request-content p {
@@ -279,20 +347,22 @@
 }
 
 .role-request-btn {
-  background: white;
-  color: var(--verde-claro, #2d8a42);
-  border: 2px solid var(--verde-claro, #2d8a42);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
+  background: #3B9C3A;
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
 }
 
 .role-request-btn:hover {
-  background: var(--verde-claro, #2d8a42);
-  color: white;
+  background: #2d7a2d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.3);
 }
 
 .request-status-badge {

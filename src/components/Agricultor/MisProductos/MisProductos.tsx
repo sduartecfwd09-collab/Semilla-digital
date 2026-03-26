@@ -26,7 +26,6 @@ const MisProductos: React.FC = () => {
 
   useEffect(() => {
     fetchProductos()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const fetchProductos = async () => {

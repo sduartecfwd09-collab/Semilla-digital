@@ -105,11 +105,19 @@
       "status": "Activo"
     },
     {
-      "id": "2b65",
-      "name": "Samir",
-      "email": "samir@gmail.com",
-      "password": "sami12345",
-      "role": "Agricultor",
+      "id": "79a4",
+      "name": "Mariel Lefebre",
+      "email": "mariel@gmail.com",
+      "password": "12345678",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "5c5d",
+      "name": "Mariel Lopez",
+      "email": "lopezma@gmail.com",
+      "password": "123456789",
+      "role": "Usuario",
       "status": "Activo"
     }
   ],

@@ -1,6 +1,8 @@
 import React from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './ProductComparisonCard.css'
+import { Producto } from '../../servers/ProductService'
+
 
 export interface ComparisonRow {
   feriaName: string
@@ -36,7 +38,23 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
       <div className="product-comp-header">
         <span className="product-comp-emoji"><CategoryIcon categoria={product.category} size={24} /></span>
         <div>
-          <div className="product-comp-name">{product.name}</div>
+          <div className="product-comp-name">
+            {product.name}
+            {product.unit && (
+              <span style={{
+                fontSize: '0.7rem',
+                backgroundColor: 'rgba(59, 156, 58, 0.1)',
+                color: '#3B9C3A',
+                padding: '2px 10px',
+                borderRadius: '12px',
+                fontWeight: 700,
+                marginLeft: '8px',
+                verticalAlign: 'middle'
+              }}>
+                Por {product.unit}
+              </span>
+            )}
+          </div>
           <div className="product-comp-desc">{product.description}</div>
         </div>
         <div className="product-comp-price-summary">
@@ -59,7 +77,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           const isExpensive = row.priceNumeric === maxPrice && !isBest
           const diff = row.priceNumeric - lowestPriceNumeric
           const barWidthPct = Math.round((row.priceNumeric / maxPrice) * 100)
-          const barColor = isBest ? 'var(--lima)' : isExpensive ? '#e08060' : '#f0c060'
+          const barColor = isBest ? '#3B9C3A' : '#e2e8f0'
 
           return (
             <div key={index} className={`product-comp-row ${isBest ? 'best' : ''}`}>

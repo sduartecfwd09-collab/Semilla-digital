@@ -1,16 +1,20 @@
 .compare-page-header {
-    background: var(--fondo);
-    padding: 50px 60px 40px;
+    background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
 }
 
 .compare-breadcrumb {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 12px;
+    font-weight: 600;
 }
 
 .compare-breadcrumb-active {
-    color: var(--lima);
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .compare-h1 {
@@ -21,8 +25,9 @@
 }
 
 .compare-sub {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    max-width: 600px;
 }
 
 .compare-search-bar-full {
@@ -52,30 +57,38 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     flex: 1;
-    color: var(--gris);
+    color: var(--fondo);
 }
 
 .compare-filter-select {
-    background: var(--crema);
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     padding: 12px 20px;
     border-radius: 10px;
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     cursor: pointer;
-    color: var(--gris);
+    color: #1a202c;
+    font-weight: 600;
 }
 
 .compare-search-go-btn {
-    background: var(--verde-claro);
+    background: linear-gradient(90deg, #022405, #36EB60);
     color: white;
     border: none;
-    padding: 12px 28px;
+    padding: 12px 30px;
     border-radius: 10px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compare-search-go-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 156, 58, 0.2);
 }
 
 .compare-main {
@@ -83,7 +96,7 @@
     grid-template-columns: 260px 1fr;
     gap: 28px;
     padding: 30px 60px;
-    background: #f0f4ec;
+    background: var(--blanco);
     min-height: calc(100vh - 300px);
 }
 
@@ -98,22 +111,25 @@
     font-family: 'Playfair Display', serif;
     font-size: 22px;
     color: var(--fondo);
+    font-weight: 700;
 }
 
 .compare-results-count {
     font-size: 13px;
-    color: #888;
+    color: #666;
+    font-weight: 500;
 }
 
 .compare-sort-select {
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
     padding: 8px 14px;
     border-radius: 8px;
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    color: var(--gris);
+    color: var(--fondo);
     cursor: pointer;
+    font-weight: 500;
 }
 
 .compare-no-results {

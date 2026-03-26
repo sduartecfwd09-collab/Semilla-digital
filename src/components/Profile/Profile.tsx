@@ -24,9 +24,10 @@ const EyeOffIcon = () => (
 );
 
 
+
 const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUserInContext } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
@@ -36,7 +37,8 @@ const Profile: React.FC = () => {
     role: '',
     status: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    avatar: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -70,7 +72,8 @@ const Profile: React.FC = () => {
           role: data.role,
           status: data.status,
           password: data.password || '',
-          confirmPassword: data.password || ''
+          confirmPassword: data.password || '',
+          avatar: data.avatar || user?.avatar || ''
         };
         setUserData(userInfo);
         setOriginalData({...userInfo});
@@ -210,7 +213,7 @@ const Profile: React.FC = () => {
 
       if (response.ok) {
         const finalUser = await response.json();
-        localStorage.setItem('user', JSON.stringify(finalUser));
+        updateUserInContext(finalUser);
         setOriginalData(userData);
         setIsEditing(false);
         
@@ -231,6 +234,53 @@ const Profile: React.FC = () => {
         confirmButtonColor: 'var(--verde-claro)',
       });
     }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      Swal.fire('Error', 'Por favor selecciona una imagen válida.', 'error');
+      return;
+    }
+
+    // Validar tamaño (máximo 2MB para db.json)
+    if (file.size > 2 * 1024 * 1024) {
+      Swal.fire('Error', 'La imagen es demasiado grande. Máximo 2MB.', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Image = event.target?.result as string;
+      
+      try {
+        // Actualizamos localmente y en contexto global
+        setUserData(prev => ({ ...prev, avatar: base64Image }));
+        updateUserInContext({ avatar: base64Image });
+        
+        // Guardamos en el servidor
+        await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ avatar: base64Image })
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Foto actualizada',
+          text: 'Tu foto de perfil se ha guardado correctamente.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } catch (error) {
+        console.error('Error updating avatar:', error);
+        Swal.fire('Error', 'No se pudo guardar la foto de perfil.', 'error');
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleRoleRequest = async () => {
@@ -382,11 +432,30 @@ const Profile: React.FC = () => {
       <main className="profile-container">
         <div className="profile-card animate-fade">
           <div className="profile-header">
-            <div className="profile-avatar">
-              {userData.name.charAt(0).toUpperCase()}
+            <div className="profile-avatar-container">
+              <div className="profile-avatar">
+                {userData.avatar ? (
+                  <img src={userData.avatar} alt="Avatar" className="avatar-img" />
+                ) : (
+                  userData.name.charAt(0).toUpperCase()
+                )}
+              </div>
+              <label htmlFor="avatar-upload" className="avatar-upload-label" title="Cambiar foto">
+                <span className="camera-icon">📷</span>
+                <input 
+                  type="file" 
+                  id="avatar-upload" 
+                  accept="image/*" 
+                  onChange={handleAvatarChange} 
+                  style={{ display: 'none' }} 
+                />
+              </label>
             </div>
+            <label htmlFor="avatar-upload" className="change-photo-text">
+               Cambiar foto
+            </label>
             <h1>Mi Perfil</h1>
-            <p className="profile-status">Estado: <span className={userData.status.toLowerCase() || 'activo'}>{userData.status || 'Activo'}</span></p>
+            <p className="profile-status">Estado: <span className={userData.status?.toLowerCase() || 'activo'}>{userData.status || 'Activo'}</span></p>
           </div>
 
           <form onSubmit={handleSubmit} className="profile-form">

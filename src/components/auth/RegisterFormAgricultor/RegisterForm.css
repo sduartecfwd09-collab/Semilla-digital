@@ -92,20 +92,23 @@
 }
 
 .register-form-button {
-  background: var(--verde);
-  color: var(--blanco);
+  background: #3B9C3A;
+  color: #ffffff;
   border: none;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1rem 2rem;
+  border-radius: 50px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 800;
   cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
 }
 
 .register-form-button:hover:not(:disabled) {
-  background: var(--verde-claro);
+  background: #2d7a2d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(59, 156, 58, 0.4);
 }
 
 .register-form-button:disabled {
@@ -124,12 +127,40 @@
 }
 
 .register-form-footer a {
-  color: var(--verde);
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: #ffffff;
   text-decoration: none;
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  background-color: #8170D4;
+  border-radius: 50px;
+  font-weight: 800;
+  transition: all 0.3s ease;
+  width: fit-content;
+  box-shadow: 0 4px 15px rgba(129, 112, 212, 0.3);
+  margin-inline: auto;
 }
 
 .register-form-footer a:hover {
+  background-color: #6a59bc;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(129, 112, 212, 0.4);
+}
+
+.register-form-footer p:first-child a {
+  background: none;
+  color: #3B9C3A;
+  box-shadow: none;
+  margin-top: 0;
+  padding: 0;
+}
+
+.register-form-footer p:first-child a:hover {
+  transform: none;
+  box-shadow: none;
   text-decoration: underline;
 }
 

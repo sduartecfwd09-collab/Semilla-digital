@@ -1,126 +1,126 @@
-.admin-sidebar {
+.agricultor-sidebar {
   width: 280px;
-  background: var(--blanco);
-  border-right: 1px solid #e5e5e5;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  min-height: 100%;
+  background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
+  border-right: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.2) !important;
 }
 
-.admin-sidebar-header {
+.agricultor-sidebar-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.admin-sidebar-logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--verde);
+.agricultor-sidebar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #8cc63f !important;
+  font-weight: 900;
+  letter-spacing: -1.5px;
   text-decoration: none;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
 }
 
-.admin-sidebar-logo span {
-  color: var(--lima);
+.agricultor-sidebar-logo span {
+  color: #f7931e !important;
+  font-weight: 800;
 }
 
-.admin-sidebar-subtitle {
+.agricultor-sidebar-subtitle {
   font-size: 0.8rem;
-  color: var(--gris);
-  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.6) !important;
+  margin-top: 0.4rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.admin-sidebar-user {
+.agricultor-sidebar-user {
   padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.admin-sidebar-user-avatar {
-  width: 48px;
-  height: 48px;
+.agricultor-sidebar-user-avatar {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  background: var(--lima);
-  color: var(--blanco);
+  background: #ffffff;
+  color: #052e16;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 800;
 }
 
-.admin-sidebar-user-info {
-  flex: 1;
-}
-
-.admin-sidebar-user-name {
+.agricultor-sidebar-user-name {
   font-weight: 600;
-  color: var(--gris);
+  color: #ffffff !important;
   font-size: 0.95rem;
 }
 
-.admin-sidebar-user-role {
+.agricultor-sidebar-user-role {
   font-size: 0.8rem;
-  color: #999;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.admin-sidebar-nav {
+.agricultor-sidebar-nav {
   flex: 1;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.admin-sidebar-link {
+.agricultor-sidebar-link {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
-  border-radius: 8px;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: 12px;
   text-decoration: none;
-  color: var(--gris);
-  transition: all 0.2s;
+  color: #ffffff !important;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  opacity: 0.8;
 }
 
-.admin-sidebar-link:hover {
-  background: var(--crema);
-  color: var(--verde);
+.agricultor-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+  transform: translateX(5px);
 }
 
-.admin-sidebar-link.active {
-  background: var(--verde);
-  color: var(--blanco);
+.agricultor-sidebar-link.active {
+  background: #ffffff !important;
+  color: #052e16 !important;
+  opacity: 1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.admin-sidebar-link-icon {
-  font-size: 1.25rem;
-}
-
-.admin-sidebar-link-label {
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.admin-sidebar-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e5e5e5;
-}
-
-.admin-sidebar-home-link {
+.agricultor-sidebar-home-link {
   display: block;
   text-align: center;
-  color: var(--verde);
+  color: #ffffff !important;
   text-decoration: none;
-  font-size: 0.9rem;
-  padding: 0.75rem;
+  font-size: 0.95rem;
+  padding: 1rem;
   border-radius: 8px;
-  transition: background 0.2s;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 1rem;
+  transition: all 0.3s ease;
 }
 
-.admin-sidebar-home-link:hover {
-  background: var(--crema);
+.agricultor-sidebar-home-link:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
