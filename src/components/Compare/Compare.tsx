@@ -47,6 +47,7 @@ const Compare: React.FC = () => {
           }
         });
 
+        
         // Agrupar productos por nombre normalizado para evitar duplicados
         // (Elotes, elote, Elote → mismo grupo usando catálogo canónico)
         const groupedMap = new Map<string, ProductComparisonData>()
