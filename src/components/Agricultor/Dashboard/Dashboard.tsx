@@ -104,7 +104,7 @@ const Dashboard: React.FC = () => {
               <div className="dashboard-card">
                 <div className="dashboard-card-header">
                   <h3>Productos Recientes</h3>
-                  <Link to="/admin/productos" className="dashboard-card-link">
+                  <Link to="/agricultor/productos" className="dashboard-card-link">
                     Ver todos →
                   </Link>
                 </div>
