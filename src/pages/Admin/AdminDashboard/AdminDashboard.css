@@ -66,14 +66,7 @@
     grid-column: span 2;
 }
 
-/* 3 cards top, 2 cards bottom centered */
-.stat-card:nth-child(4) {
-    grid-column: 2 / span 2;
-}
-
-.stat-card:nth-child(5) {
-    grid-column: 4 / span 2;
-}
+/* Sin reglas especiales para nth-child, las 6 cards se acomodan en 2 filas de 3 */
 
 .stat-card::before {
     content: '';
