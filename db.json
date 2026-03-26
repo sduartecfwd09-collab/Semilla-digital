@@ -447,7 +447,7 @@
     },
     {
       "id": "810b",
-      "nombre": "Cebolla seca",
+      "nombre": "Cebolla Seca",
       "categoria": "Verduras",
       "emoji": "🧅",
       "descripcion": "Cebolla seca amarilla/trenza · Por kilogramo",
@@ -484,7 +484,7 @@
     },
     {
       "id": "3e49",
-      "nombre": "Lechuga americana",
+      "nombre": "Lechuga Americana",
       "categoria": "Verduras",
       "emoji": "🥬",
       "descripcion": "Lechuga americana · Por unidad",
@@ -504,7 +504,7 @@
     },
     {
       "id": "ac7c",
-      "nombre": "Papa blanca",
+      "nombre": "Papa Blanca",
       "categoria": "Verduras",
       "emoji": "🥔",
       "descripcion": "Papa blanca · Por kilogramo",
@@ -522,7 +522,7 @@
     },
     {
       "id": "005e",
-      "nombre": "Piña ",
+      "nombre": "Piña",
       "categoria": "Frutas",
       "emoji": "🍍",
       "descripcion": "Piña grande · Por unidad",
@@ -559,7 +559,7 @@
     },
     {
       "id": "c59d",
-      "nombre": "Repollo verde",
+      "nombre": "Repollo Verde",
       "categoria": "Verduras",
       "emoji": "🥬",
       "descripcion": "Repollo verde · Por kilogramo",
@@ -649,7 +649,7 @@
     },
     {
       "id": "dc24",
-      "nombre": "Culantro castilla",
+      "nombre": "Culantro Castilla",
       "categoria": "Hierbas",
       "emoji": "🌿",
       "descripcion": "Culantro castilla · Por rollito",
@@ -716,7 +716,7 @@
     },
     {
       "userId": "a057",
-      "nombre": "Tomates",
+      "nombre": "Tomate",
       "emoji": "🍅",
       "descripcion": "Tomate maduro",
       "categoria": "Verduras",
@@ -821,7 +821,7 @@
     {
       "id": "9a44",
       "userId": "8867",
-      "nombre": "Elotes",
+      "nombre": "Elote",
       "emoji": "🌽",
       "descripcion": "",
       "categoria": "Verduras",
@@ -842,7 +842,7 @@
     {
       "id": "cd6f",
       "userId": "8867",
-      "nombre": "Elotes",
+      "nombre": "Elote",
       "emoji": "🌽",
       "descripcion": "",
       "categoria": "Verduras",
@@ -863,7 +863,7 @@
     {
       "id": "fa65",
       "userId": "admin-main",
-      "nombre": "Brocoli",
+      "nombre": "Brócoli",
       "emoji": "🥦",
       "descripcion": "",
       "categoria": "Verduras",
@@ -926,7 +926,7 @@
     {
       "id": "91bc",
       "userId": "62fa",
-      "nombre": "chile dulce",
+      "nombre": "Chile Dulce",
       "emoji": "🫑",
       "descripcion": "",
       "categoria": "Verduras",
@@ -941,6 +941,111 @@
           "feriaNombre": "Feria Local",
           "provincia": "Puntarenas",
           "precio": 31
+        }
+      ]
+    },
+    {
+      "id": "ec88",
+      "userId": "3f16",
+      "nombre": "Elote",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Heredia",
+      "direccionPuesto": "Pasillo 40 puesto 4",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Heredia",
+          "precio": 500
+        }
+      ]
+    },
+    {
+      "id": "270e",
+      "userId": "3f16",
+      "nombre": "Elote",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Limón",
+      "direccionPuesto": "pasillo 1 lote 4",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Limón",
+          "precio": 700
+        }
+      ]
+    },
+    {
+      "id": "522a",
+      "userId": "62fa",
+      "nombre": "Elote",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Guanacaste",
+      "direccionPuesto": "pasillo 1 lote 3",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Guanacaste",
+          "precio": 300
+        }
+      ]
+    },
+    {
+      "id": "c1f6",
+      "userId": "62fa",
+      "nombre": "Elote",
+      "emoji": "🌽",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Heredia",
+      "direccionPuesto": "pasillo 2 puesto 5",
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Heredia",
+          "precio": 200
+        }
+      ]
+    },
+    {
+      "id": "6e7e",
+      "userId": "62fa",
+      "nombre": "Lentejas",
+      "emoji": "Granos",
+      "descripcion": "",
+      "categoria": "Granos",
+      "imagen": "",
+      "disponible": true,
+      "provincia": "Cartago",
+      "direccionPuesto": "Pasillo 40 puesto 4",
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": 1,
+          "feriaNombre": "Feria Local",
+          "provincia": "Cartago",
+          "precio": 600
         }
       ]
     }
@@ -1378,5 +1483,6 @@
       "fechaRespuesta": "2026-03-24T22:17:45.751Z",
       "estado": "Respondido"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

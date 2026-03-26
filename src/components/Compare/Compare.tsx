@@ -6,6 +6,7 @@ import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/P
 import Footer from '../Footer'
 import './Compare.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { normalizeProductName, getCanonicalName, findInCatalog } from '../../utils/productCatalog'
 
 const Compare: React.FC = () => {
   const [allProducts, setAllProducts] = useState<ProductComparisonData[]>([])
@@ -46,10 +47,13 @@ const Compare: React.FC = () => {
           }
         });
 
-        // Agrupar productos por nombre (case-insensitive) para evitar duplicados
+        // Agrupar productos por nombre normalizado para evitar duplicados
+        // (Elotes, elote, Elote → mismo grupo usando catálogo canónico)
         const groupedMap = new Map<string, ProductComparisonData>()
         mappedData.forEach(product => {
-          const key = product.name.trim().toLowerCase()
+          const key = normalizeProductName(product.name)
+          const canonicalName = getCanonicalName(product.name)
+          const catalogEntry = findInCatalog(product.name)
           const existing = groupedMap.get(key)
           if (existing) {
             // Concatenar rows (ferias/precios) del producto duplicado
@@ -68,8 +72,16 @@ const Compare: React.FC = () => {
             // Llenar descripción/unidad si faltaban en el primero
             if (!existing.description && product.description) existing.description = product.description
             if (!existing.unit && product.unit) existing.unit = product.unit
+            // Usar emoji del catálogo si está disponible
+            if (catalogEntry) existing.emoji = catalogEntry.emoji
           } else {
-            groupedMap.set(key, { ...product, rows: [...product.rows] })
+            groupedMap.set(key, {
+              ...product,
+              name: canonicalName,
+              emoji: catalogEntry ? catalogEntry.emoji : product.emoji,
+              category: catalogEntry ? catalogEntry.categoria : product.category,
+              rows: [...product.rows],
+            })
           }
         })
 

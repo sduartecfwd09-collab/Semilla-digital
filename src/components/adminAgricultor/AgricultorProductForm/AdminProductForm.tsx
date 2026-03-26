@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Producto, CATEGORIAS } from '../../../servers/ProductService'
 import { getCategoryIcon } from '../../../utils/categoryIcons'
+import { PRODUCTOS_CATALOGO, getCategoriasDelCatalogo } from '../../../utils/productCatalog'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
 import './AdminProductForm.css'
 
@@ -58,7 +59,20 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    if (name === 'categoria') {
+    if (name === 'nombre') {
+      // Al seleccionar un producto del catálogo, auto-asignar emoji y categoría
+      const catalogProduct = PRODUCTOS_CATALOGO.find(p => p.nombre === value)
+      if (catalogProduct) {
+        setFormData({
+          ...formData,
+          nombre: catalogProduct.nombre,
+          emoji: catalogProduct.emoji,
+          categoria: catalogProduct.categoria,
+        })
+      } else {
+        setFormData({ ...formData, nombre: value })
+      }
+    } else if (name === 'categoria') {
       setFormData({ ...formData, categoria: value, emoji: value })
     } else {
       setFormData({ ...formData, [name]: value })
@@ -120,14 +134,25 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           <div className="admin-product-form-row">
             <div className="admin-product-form-group">
               <label>Nombre del Producto</label>
-              <input
-                type="text"
+              <select
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                placeholder="ej: Tomate"
                 required
-              />
+              >
+                <option value="">— Seleccionar producto —</option>
+                {getCategoriasDelCatalogo().map(cat => (
+                  <optgroup key={cat} label={cat}>
+                    {PRODUCTOS_CATALOGO
+                      .filter(p => p.categoria === cat)
+                      .map(p => (
+                        <option key={p.nombre} value={p.nombre}>
+                          {p.emoji} {p.nombre}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
 
             <div className="admin-product-form-group">
