@@ -62,7 +62,35 @@ const Compare: React.FC = () => {
             }))
           }
         });
-        setAllProducts(mappedData)
+
+        // Agrupar productos por nombre (case-insensitive) para evitar duplicados
+        const groupedMap = new Map<string, ProductComparisonData>()
+        mappedData.forEach(product => {
+          const key = product.name.trim().toLowerCase()
+          const existing = groupedMap.get(key)
+          if (existing) {
+            // Concatenar rows (ferias/precios) del producto duplicado
+            existing.rows = [...existing.rows, ...product.rows]
+            // Deduplicar rows con misma feria + ubicación + precio
+            const seen = new Set<string>()
+            existing.rows = existing.rows.filter(r => {
+              const id = `${r.feriaName}-${r.feriaLocation}-${r.priceNumeric}`
+              if (seen.has(id)) return false
+              seen.add(id)
+              return true
+            })
+            // Recalcular precio más bajo
+            const minP = Math.min(...existing.rows.map(r => r.priceNumeric))
+            existing.lowestPrice = `₡${minP.toLocaleString()}`
+            // Llenar descripción/unidad si faltaban en el primero
+            if (!existing.description && product.description) existing.description = product.description
+            if (!existing.unit && product.unit) existing.unit = product.unit
+          } else {
+            groupedMap.set(key, { ...product, rows: [...product.rows] })
+          }
+        })
+
+        setAllProducts(Array.from(groupedMap.values()))
         setLoading(false)
       })
       .catch(err => {
