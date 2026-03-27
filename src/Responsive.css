@@ -1,0 +1,1358 @@
+/* ============================================================
+   responsive.css — Semilla Digital
+   Responsividad completa para todos los dispositivos móviles
+   
+   CÓMO USAR: Importa este archivo al final de src/index.css:
+     @import './responsive.css';
+   
+   Breakpoints usados:
+     - 1200px : Laptops pequeñas / tablets horizontales
+     - 1024px : Tablets (iPad landscape)
+     - 768px  : Tablets (iPad portrait) / móviles grandes
+     - 600px  : Móviles medianos (iPhone Plus, Samsung S)
+     - 480px  : Móviles estándar (iPhone 14, Pixel)
+     - 360px  : Móviles pequeños (iPhone SE, Moto G)
+   ============================================================ */
+
+
+/* ============================================================
+   1. VARIABLES GLOBALES Y RESET MÓVIL
+   ============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+    --header-height: 60px;
+  }
+
+  html {
+    font-size: 15px; /* Base ligeramente menor en móvil */
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+}
+
+
+/* ============================================================
+   2. NAVBAR
+   ============================================================ */
+
+/* Tablet horizontal: reducir padding y gaps */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 14px 30px;
+  }
+
+  .navbar-links {
+    gap: 20px;
+  }
+}
+
+/* Tablet/móvil: ocultar links, mostrar menú hamburguesa */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  /* Ocultar los links de navegación en móvil */
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #061A02 0%, #022405 100%);
+    padding: 20px;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 199;
+  }
+
+  /* Clase para activar el menú abierto (agregar desde JS/TSX) */
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .navbar-link {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .navbar-link:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .navbar-logo {
+    font-size: 22px;
+  }
+
+  /* Botón hamburguesa — agregar este elemento en Navbar.tsx si aún no existe */
+  .navbar-hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    border: none;
+    background: transparent;
+  }
+
+  .navbar-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  /* Ocultar el botón CTA texto largo en móvil pequeño */
+  .navbar-cta {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .navbar-logo {
+    font-size: 20px;
+  }
+}
+
+
+/* ============================================================
+   3. HERO SECTION
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 70px 40px 60px;
+    gap: 40px;
+  }
+
+  .hero-title {
+    font-size: 46px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    grid-template-columns: 1fr;   /* Cambio clave: de 2 columnas a 1 */
+    padding: 50px 24px 40px;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 38px;
+    line-height: 1.15;
+  }
+
+  .hero-description {
+    font-size: 16px;
+    max-width: 100%;
+    margin: 0 auto 28px;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-search-card {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-glow {
+    display: none; /* Quitar el glow decorativo en móvil */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 36px 16px 32px;
+  }
+
+  .hero-title {
+    font-size: 30px;
+  }
+
+  .hero-tag {
+    font-size: 11px;
+  }
+
+  .hero-btn-primary {
+    padding: 12px 24px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-btn-secondary {
+    font-size: 13px;
+  }
+}
+
+
+/* ============================================================
+   4. STATS BAR
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .stats-bar {
+    padding: 24px 20px;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-bar {
+    gap: 20px;
+    padding: 20px 16px;
+  }
+
+  .stat-item {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+}
+
+
+/* ============================================================
+   5. FEATURES SECTION
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .features-section {
+    padding: 70px 40px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .features-section {
+    padding: 50px 24px;
+  }
+
+  .features-title {
+    font-size: 2.2rem;
+    max-width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr; /* Una sola columna en móvil */
+    gap: 16px;
+  }
+
+  .features-card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .features-section {
+    padding: 36px 16px;
+  }
+
+  .features-title {
+    font-size: 1.8rem;
+  }
+
+  .features-card-title {
+    font-size: 18px;
+  }
+}
+
+
+/* ============================================================
+   6. FERIAS BY PROVINCE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .ferias-by-province-section {
+    padding: 16px 4% 40px;
+  }
+
+  .ferias-title {
+    font-size: 36px;
+  }
+
+  .ferias-description {
+    font-size: 16px;
+  }
+
+  .province-card-header {
+    padding: 18px 20px;
+  }
+
+  .province-card-name {
+    font-size: 18px;
+  }
+
+  .feria-list {
+    padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ferias-title {
+    font-size: 28px;
+  }
+
+  .province-card-main {
+    gap: 12px;
+  }
+
+  .province-emoji {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+/* ============================================================
+   7. SIDEBAR FILTERS + COMPARE PAGE
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .compare-main {
+    grid-template-columns: 220px 1fr;
+    padding: 24px 30px;
+  }
+
+  .compare-page-header {
+    padding: 40px 30px;
+  }
+
+  .compare-search-bar-full {
+    padding: 16px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .compare-page-header {
+    padding: 30px 20px;
+  }
+
+  .compare-h1 {
+    font-size: 28px;
+  }
+
+  /* El sidebar de filtros se convierte en panel colapsable horizontal */
+  .compare-main {
+    grid-template-columns: 1fr; /* Apilar vertical */
+    padding: 16px 16px;
+    gap: 16px;
+  }
+
+  /* Filtros arriba, resultado abajo */
+  .sidebar-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .sidebar-card {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .compare-search-bar-full {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .compare-search-input-wrap {
+    width: 100%;
+  }
+
+  .compare-filter-select,
+  .compare-search-go-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .compare-search-bar-full {
+    flex-direction: column;
+  }
+
+  .compare-filter-select,
+  .compare-search-go-btn {
+    width: 100%;
+  }
+
+  .compare-page-header {
+    padding: 24px 16px;
+  }
+
+  .compare-h1 {
+    font-size: 24px;
+  }
+}
+
+
+/* ============================================================
+   8. CONTACT US
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .contact-container {
+    padding: 16px 16px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr; /* Ya tiene este media query, lo reforzamos */
+  }
+
+  .contact-form-card,
+  .contact-info-card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-header h1 {
+    font-size: 2rem;
+  }
+
+  .contact-header p {
+    font-size: 1rem;
+  }
+
+  .contact-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-page {
+    background-attachment: scroll; /* fixed causa problemas en iOS */
+  }
+}
+
+
+/* ============================================================
+   9. RECIPES
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .recipes-section {
+    padding: 3rem 5%; /* Ya tiene este media query */
+    background-attachment: scroll; /* fixed causa lag en iOS */
+  }
+
+  .recipes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .recipes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-title {
+    font-size: 1.1rem;
+  }
+}
+
+
+/* ============================================================
+   10. LOGIN Y REGISTRO (Auth Container)
+   ============================================================ */
+
+/* Ya tiene un media query en 968px — lo complementamos */
+@media (max-width: 968px) {
+  .auth-title {
+    font-size: 2.2rem;
+  }
+
+  .auth-logo {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    padding: 2rem 1.5rem;
+    min-height: auto;
+  }
+
+  .auth-title {
+    font-size: 1.9rem;
+  }
+
+  .auth-description {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .auth-card {
+    padding: 2rem 1.5rem;
+    border-radius: 0; /* Sin esquinas en pantallas pequeñas */
+  }
+
+  .auth-right {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-left {
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem 1rem;
+    max-width: 100%;
+  }
+
+  .auth-form-wrapper h2 {
+    font-size: 1.8rem;
+  }
+
+  .auth-submit-btn {
+    padding: 0.9rem 1.5rem;
+  }
+
+  .auth-back-btn {
+    padding: 1rem 1.5rem;
+  }
+}
+
+
+/* ============================================================
+   11. PROFILE PAGE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 30px 24px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr; /* Ya tiene este media query */
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .save-btn,
+  .edit-btn,
+  .cancel-btn {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 24px 16px;
+    border-radius: 0;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+  }
+}
+
+
+/* ============================================================
+   12. REGISTRO AGRICULTOR
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .registro-agricultor-card {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .registro-agricultor-grid {
+    grid-template-columns: 1fr; /* Ya tiene este media query */
+  }
+
+  .productos-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .fotos-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .registro-agricultor-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .registro-agricultor-container {
+    padding: 20px 12px;
+  }
+
+  .registro-agricultor-card {
+    padding: 20px 14px;
+  }
+
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   13. PAGES (Header genérico de páginas)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 2.5rem 5% 1rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+  }
+
+  .page-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .barrier-title {
+    font-size: 2.2rem;
+  }
+
+  .barrier-text {
+    font-size: 1.05rem;
+  }
+
+  .content-barrier {
+    padding: 4rem 5%;
+  }
+
+  .barrier-actions {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .barrier-title {
+    font-size: 1.8rem;
+  }
+}
+
+
+/* ============================================================
+   14. FOOTER
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 20px 24px;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 16px;
+  }
+
+  .footer-logo {
+    font-size: 20px;
+  }
+
+  .footer-copyright {
+    font-size: 12px;
+  }
+}
+
+
+/* ============================================================
+   15. ADMIN DASHBOARD (Panel Admin General)
+   ============================================================ */
+
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0 4px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  .card-content h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+}
+
+
+/* ============================================================
+   16. ADMIN SIDEBAR (Panel Admin)
+   ============================================================ */
+
+/* El sidebar se oculta en móvil y se convierte en nav inferior o slide-in */
+@media (max-width: 1024px) {
+  aside.admin-sidebar {
+    width: 200px !important;
+    padding: 1.5rem 0.5rem !important;
+  }
+
+  .admin-sidebar .nav-item {
+    padding: 0.85rem 1rem !important;
+    font-size: 0.9rem !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* El sidebar se convierte en barra inferior */
+  aside.admin-sidebar {
+    width: 100% !important;
+    min-height: auto !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    z-index: 100 !important;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+    overflow-x: auto;
+    border-right: none !important;
+  }
+
+  .sidebar-profile {
+    display: none !important; /* Ocultar perfil en barra inferior */
+  }
+
+  .sidebar-nav {
+    flex-direction: row !important;
+    gap: 0 !important;
+    width: 100% !important;
+    overflow-x: auto;
+    padding: 0 !important;
+    justify-content: space-around;
+  }
+
+  .admin-sidebar .nav-label {
+    display: none !important; /* Sin etiquetas de sección */
+  }
+
+  .admin-sidebar .nav-item {
+    flex-direction: column !important;
+    padding: 10px 8px !important;
+    border-radius: 0 !important;
+    font-size: 0.65rem !important;
+    gap: 4px !important;
+    text-align: center !important;
+    min-width: 60px;
+    white-space: nowrap;
+  }
+
+  .admin-sidebar .nav-item.active {
+    background: rgba(255,255,255,0.15) !important;
+    color: #36EB60 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .admin-sidebar .logout-container {
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .admin-sidebar .logout-btn {
+    flex-direction: column !important;
+    padding: 10px 8px !important;
+    border-radius: 0 !important;
+    font-size: 0.65rem !important;
+    gap: 4px !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  /* El contenido principal necesita padding inferior para la barra */
+  .admin-main {
+    padding-bottom: 75px;
+  }
+}
+
+
+/* ============================================================
+   17. AGRICULTOR SIDEBAR
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .agricultor-sidebar {
+    width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Igual que admin sidebar: barra inferior */
+  .agricultor-sidebar {
+    width: 100% !important;
+    min-height: auto !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    flex-direction: row !important;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+  }
+
+  .agricultor-sidebar-header,
+  .agricultor-sidebar-user {
+    display: none;
+  }
+
+  .agricultor-sidebar-nav {
+    flex-direction: row !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    width: 100%;
+    justify-content: space-around;
+    overflow-x: auto;
+  }
+
+  .agricultor-sidebar-link {
+    flex-direction: column !important;
+    padding: 10px 8px !important;
+    border-radius: 0 !important;
+    font-size: 0.65rem !important;
+    gap: 4px !important;
+    text-align: center !important;
+    min-width: 60px;
+    opacity: 1;
+  }
+
+  .agricultor-sidebar-link:hover {
+    transform: none !important;
+  }
+
+  .agricultor-sidebar-home-link {
+    display: none;
+  }
+
+  .admin-layout .admin-main {
+    padding-bottom: 75px;
+  }
+}
+
+
+/* ============================================================
+   18. AGRICULTOR DASHBOARD (Panel Agricultor)
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .dashboard-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 1.25rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-card-header h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 1rem 0.75rem;
+  }
+
+  .dashboard-actions-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .dashboard-action-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .dashboard-action-icon {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-action-label {
+    font-size: 0.85rem;
+  }
+}
+
+
+/* ============================================================
+   19. ADMIN USUARIOS (Tabla de usuarios)
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .users-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .users-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .btn-new {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Tabla responsiva: scroll horizontal en móvil */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 16px;
+  }
+
+  table {
+    min-width: 600px; /* Forzar scroll antes de colapsar */
+  }
+
+  th {
+    padding: 1rem 1rem;
+    font-size: 0.7rem;
+  }
+
+  td {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    gap: 0.5rem;
+  }
+
+  .btn-edit-pill,
+  .btn-delete-pill {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-header h1 {
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.875rem 1rem;
+  }
+}
+
+
+/* ============================================================
+   20. MODAL DE USUARIO (AdminModal)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .admin-product-form-overlay {
+    padding: 1rem;
+    align-items: flex-end; /* Modal desde abajo en móvil */
+  }
+
+  .admin-product-form-modal {
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0; /* Solo esquinas arriba */
+  }
+
+  .admin-product-form-row {
+    grid-template-columns: 1fr; /* Ya tiene este media query */
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-product-form-overlay {
+    padding: 0;
+  }
+
+  .admin-product-form-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .admin-product-form {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .admin-product-form-actions {
+    flex-direction: column;
+  }
+
+  .admin-product-form-btn-cancel,
+  .admin-product-form-btn-submit {
+    width: 100%;
+  }
+}
+
+
+/* ============================================================
+   21. ACTIVE FERIAS CARD (Hero search widget)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .active-ferias-card {
+    max-width: 100%;
+    padding: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .active-ferias-card {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .active-ferias-title {
+    font-size: 17px;
+  }
+}
+
+
+/* ============================================================
+   22. MIS FERIAS (Agricultor)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .mis-ferias-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .mis-ferias-form-actions {
+    justify-content: stretch;
+    flex-direction: column;
+  }
+
+  .mis-ferias-btn-cancel,
+  .mis-ferias-btn-save {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mis-ferias-productos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   23. LOGIN FORM AGRICULTOR
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .login-form-container {
+    padding: 1rem;
+  }
+
+  .login-form-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .login-form-header h2 {
+    font-size: 1.6rem;
+  }
+}
+
+
+/* ============================================================
+   24. REGISTER FORM AGRICULTOR
+   ============================================================ */
+
+@media (max-width: 600px) {
+  .register-form-row {
+    grid-template-columns: 1fr; /* Ya tiene este media query */
+  }
+}
+
+@media (max-width: 480px) {
+  .register-form-container {
+    padding: 1rem;
+  }
+
+  .register-form-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 12px;
+    max-height: none;
+  }
+}
+
+
+/* ============================================================
+   25. AGRICULTOR STATS (Panel)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .admin-stats-grid,
+  .agricultor-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stats-grid,
+  .agricultor-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   26. AGRICULTOR PRODUCT LIST
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .admin-products-grid,
+  .mis-productos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-product-card-header {
+    flex-wrap: wrap;
+  }
+
+  .admin-product-card-prices {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+   27. PRODUCT COMPARISON CARD
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .compare-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-results-title {
+    font-size: 18px;
+  }
+}
+
+
+/* ============================================================
+   28. ADMIN LAYOUT (contenedor principal admin)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  /* El main toma todo el ancho */
+  .admin-layout > .admin-main {
+    width: 100%;
+  }
+}
+
+
+/* ============================================================
+   29. CORRECCIONES GENERALES DE ACCESIBILIDAD MÓVIL
+   ============================================================ */
+
+/* Targets táctiles mínimos 44x44px */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="submit"],
+  input[type="button"],
+  .nav-item,
+  .navbar-link,
+  .category-item {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* background-attachment: fixed causa problemas en iOS Safari */
+  .recipes-section,
+  .contact-page {
+    background-attachment: scroll !important;
+  }
+
+  /* Evitar zoom automático en inputs en iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* iOS no hace zoom si el tamaño es ≥16px */
+  }
+
+  /* Scroll suave en iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Pantallas muy pequeñas (360px) */
+@media (max-width: 360px) {
+  .navbar-logo {
+    font-size: 18px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+  }
+
+  .features-title,
+  .ferias-title {
+    font-size: 1.6rem;
+  }
+
+  .auth-title {
+    font-size: 1.4rem;
+  }
+
+  .page-title,
+  .barrier-title {
+    font-size: 1.6rem;
+  }
+}
