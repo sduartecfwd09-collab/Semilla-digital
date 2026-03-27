@@ -82,3 +82,51 @@
     color: #1a202c; /* Negro más profundo para legibilidad */
     font-weight: 500;
 }
+
+/* ===== TABLET ===== */
+@media (max-width: 64rem) {
+    .features-section {
+        padding: 4.375rem 2.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 48rem) {
+    .features-section {
+        padding: 3.125rem 1.5rem;
+    }
+
+    .features-title {
+        font-size: 2.2rem;
+        max-width: 100%;
+        margin-bottom: 2.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .features-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 30rem) {
+    .features-section {
+        padding: 2.25rem 1rem;
+    }
+
+    .features-title {
+        font-size: 1.8rem;
+    }
+
+    .features-card-title {
+        font-size: 1.125rem;
+    }
+}

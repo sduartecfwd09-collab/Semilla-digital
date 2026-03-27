@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useAuth } from '../context/AuthContext'
@@ -8,6 +8,23 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -35,13 +52,28 @@ const Navbar: React.FC = () => {
     }
   }
 
+  const toggleMenu = () => {
+    setMenuOpen(prev => !prev)
+  }
+
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo" onClick={handleScrollToTop}>
         Agro<span>Map</span>
       </Link>
 
-      <ul className="navbar-links">
+      {/* Hamburger button — visible only on mobile/tablet */}
+      <button
+        className={`navbar-hamburger ${menuOpen ? 'active' : ''}`}
+        onClick={toggleMenu}
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li>
           <Link 
             to="/" 

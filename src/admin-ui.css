@@ -175,3 +175,50 @@
     box-shadow: 0 0.5rem 1.25rem rgba(82, 183, 136, 0.4);
     background: #40916c;
 }
+
+/* ===== MOBILE ===== */
+@media (max-width: 48rem) {
+    .modal-backdrop {
+        padding: 0.5rem;
+        align-items: flex-end;
+    }
+
+    .admin-modal {
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 1.25rem 1.25rem 0 0;
+    }
+
+    .modal-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .modal-form {
+        padding: 1.5rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field.full-width {
+        grid-column: span 1;
+    }
+
+    .modal-actions {
+        padding: 1.25rem 1.5rem;
+        flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+    }
+}
