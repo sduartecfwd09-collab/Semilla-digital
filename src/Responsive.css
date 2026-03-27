@@ -6,26 +6,26 @@
      @import './responsive.css';
    
    Breakpoints usados:
-     - 1200px : Laptops pequeñas / tablets horizontales
-     - 1024px : Tablets (iPad landscape)
-     - 768px  : Tablets (iPad portrait) / móviles grandes
-     - 600px  : Móviles medianos (iPhone Plus, Samsung S)
-     - 480px  : Móviles estándar (iPhone 14, Pixel)
-     - 360px  : Móviles pequeños (iPhone SE, Moto G)
+     - 75rem : Laptops pequeñas / tablets horizontales
+     - 64rem : Tablets (iPad landscape)
+     - 48rem  : Tablets (iPad portrait) / móviles grandes
+     - 37.5rem  : Móviles medianos (iPhone Plus, Samsung S)
+     - 30rem  : Móviles estándar (iPhone 14, Pixel)
+     - 22.5rem  : Móviles pequeños (iPhone SE, Moto G)
    ============================================================ */
 
 
 /* ============================================================
    1. VARIABLES GLOBALES Y RESET MÓVIL
    ============================================================ */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   :root {
-    --sidebar-width: 0px;
-    --header-height: 60px;
+    --sidebar-width: 0rem;
+    --header-height: 3.75rem;
   }
 
   html {
-    font-size: 15px; /* Base ligeramente menor en móvil */
+    font-size: 0.9375rem; /* Base ligeramente menor en móvil */
   }
 
   body {
@@ -39,20 +39,20 @@
    ============================================================ */
 
 /* Tablet horizontal: reducir padding y gaps */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .navbar {
-    padding: 14px 30px;
+    padding: 0.875rem 1.875rem;
   }
 
   .navbar-links {
-    gap: 20px;
+    gap: 1.25rem;
   }
 }
 
 /* Tablet/móvil: ocultar links, mostrar menú hamburguesa */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .navbar {
-    padding: 14px 20px;
+    padding: 0.875rem 1.25rem;
     position: sticky;
     top: 0;
     z-index: 200;
@@ -67,9 +67,9 @@
     left: 0;
     right: 0;
     background: linear-gradient(180deg, #061A02 0%, #022405 100%);
-    padding: 20px;
-    gap: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    padding: 1.25rem;
+    gap: 0.625rem;
+    box-shadow: 0 0.625rem 1.875rem rgba(0,0,0,0.3);
     z-index: 199;
   }
 
@@ -79,9 +79,9 @@
   }
 
   .navbar-link {
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 16px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.625rem;
+    font-size: 1rem;
     width: 100%;
     text-align: left;
   }
@@ -91,43 +91,110 @@
   }
 
   .navbar-logo {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 
   /* Botón hamburguesa — agregar este elemento en Navbar.tsx si aún no existe */
   .navbar-hamburger {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 0.3125rem;
     cursor: pointer;
-    padding: 8px;
+    padding: 0.5rem;
     border: none;
     background: transparent;
   }
 
   .navbar-hamburger span {
     display: block;
-    width: 24px;
-    height: 2px;
+    width: 1.5rem;
+    height: 0.125rem;
     background: #ffffff;
-    border-radius: 2px;
+    border-radius: 0.125rem;
     transition: all 0.3s ease;
   }
 
   /* Ocultar el botón CTA texto largo en móvil pequeño */
   .navbar-cta {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
   }
-}
 
-@media (max-width: 480px) {
+  /* Ajustes extra para navbar móvil más compacto */
   .navbar {
-    padding: 12px 16px;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .navbar-logo {
-    font-size: 20px;
+    font-size: 1.35rem;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+  }
+
+  .navbar-links li {
+    width: auto;
+  }
+
+  .navbar-link {
+    flex: 1 1 min(10rem, 45%);
+    max-width: calc(50% - 0.75rem);
+    text-align: center;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .navbar-cta {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .navbar-cta-logout {
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 30rem) {
+  .navbar {
+    padding: 0.65rem 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .navbar-logo {
+    font-size: 1.15rem;
+  }
+
+  .navbar-links {
+    gap: 0.5rem;
+  }
+
+  .navbar-link {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.78rem;
+  }
+
+  .navbar-cta {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+  }
+
+  .navbar-cta-logout {
+    width: 2rem;
+    height: 2rem;
   }
 }
 
@@ -136,40 +203,40 @@
    3. HERO SECTION
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .hero-section {
-    padding: 70px 40px 60px;
-    gap: 40px;
+    padding: 4.375rem 2.5rem 3.75rem;
+    gap: 2.5rem;
   }
 
   .hero-title {
-    font-size: 46px;
+    font-size: 2.875rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .hero-section {
     grid-template-columns: 1fr;   /* Cambio clave: de 2 columnas a 1 */
-    padding: 50px 24px 40px;
-    gap: 32px;
+    padding: 3.125rem 1.5rem 2.5rem;
+    gap: 2rem;
     text-align: center;
   }
 
   .hero-title {
-    font-size: 38px;
+    font-size: 2.375rem;
     line-height: 1.15;
   }
 
   .hero-description {
-    font-size: 16px;
+    font-size: 1rem;
     max-width: 100%;
-    margin: 0 auto 28px;
+    margin: 0 auto 1.75rem;
   }
 
   .hero-buttons {
     justify-content: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .hero-search-card {
@@ -182,28 +249,28 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .hero-section {
-    padding: 36px 16px 32px;
+    padding: 2.25rem 1rem 2rem;
   }
 
   .hero-title {
-    font-size: 30px;
+    font-size: 1.875rem;
   }
 
   .hero-tag {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
 
   .hero-btn-primary {
-    padding: 12px 24px;
-    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
     width: 100%;
     text-align: center;
   }
 
   .hero-btn-secondary {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 
@@ -212,36 +279,36 @@
    4. STATS BAR
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .stats-bar {
-    padding: 24px 20px;
-    gap: 30px;
+    padding: 1.5rem 1.25rem;
+    gap: 1.875rem;
     flex-wrap: wrap;
     justify-content: space-around;
   }
 
   .stat-value {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .stat-label {
-    font-size: 11px !important;
+    font-size: 0.6875rem !important;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .stats-bar {
-    gap: 20px;
-    padding: 20px 16px;
+    gap: 1.25rem;
+    padding: 1.25rem 1rem;
   }
 
   .stat-item {
     flex: 1;
-    min-width: 80px;
+    min-width: 5rem;
   }
 
   .stat-value {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
 
@@ -250,9 +317,9 @@
    5. FEATURES SECTION
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .features-section {
-    padding: 70px 40px;
+    padding: 4.375rem 2.5rem;
   }
 
   .features-grid {
@@ -260,30 +327,30 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .features-section {
-    padding: 50px 24px;
+    padding: 3.125rem 1.5rem;
   }
 
   .features-title {
     font-size: 2.2rem;
     max-width: 100%;
-    margin-bottom: 40px;
+    margin-bottom: 2.5rem;
   }
 
   .features-grid {
     grid-template-columns: 1fr; /* Una sola columna en móvil */
-    gap: 16px;
+    gap: 1rem;
   }
 
   .features-card {
-    padding: 24px;
+    padding: 1.5rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .features-section {
-    padding: 36px 16px;
+    padding: 2.25rem 1rem;
   }
 
   .features-title {
@@ -291,7 +358,7 @@
   }
 
   .features-card-title {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 }
 
@@ -300,46 +367,46 @@
    6. FERIAS BY PROVINCE
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .ferias-by-province-section {
-    padding: 16px 4% 40px;
+    padding: 1rem 4% 2.5rem;
   }
 
   .ferias-title {
-    font-size: 36px;
+    font-size: 2.25rem;
   }
 
   .ferias-description {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .province-card-header {
-    padding: 18px 20px;
+    padding: 1.125rem 1.25rem;
   }
 
   .province-card-name {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .feria-list {
-    padding: 20px;
+    padding: 1.25rem;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 1rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .ferias-title {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .province-card-main {
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .province-emoji {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 
@@ -348,53 +415,53 @@
    7. SIDEBAR FILTERS + COMPARE PAGE
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .compare-main {
-    grid-template-columns: 220px 1fr;
-    padding: 24px 30px;
+    grid-template-columns: 13.75rem 1fr;
+    padding: 1.5rem 1.875rem;
   }
 
   .compare-page-header {
-    padding: 40px 30px;
+    padding: 2.5rem 1.875rem;
   }
 
   .compare-search-bar-full {
-    padding: 16px 30px;
+    padding: 1rem 1.875rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .compare-page-header {
-    padding: 30px 20px;
+    padding: 1.875rem 1.25rem;
   }
 
   .compare-h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   /* El sidebar de filtros se convierte en panel colapsable horizontal */
   .compare-main {
     grid-template-columns: 1fr; /* Apilar vertical */
-    padding: 16px 16px;
-    gap: 16px;
+    padding: 1rem 1rem;
+    gap: 1rem;
   }
 
   /* Filtros arriba, resultado abajo */
   .sidebar-filters {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .sidebar-card {
     flex: 1;
-    min-width: 160px;
+    min-width: 10rem;
   }
 
   .compare-search-bar-full {
-    padding: 14px 16px;
+    padding: 0.875rem 1rem;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .compare-search-input-wrap {
@@ -407,7 +474,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .compare-search-bar-full {
     flex-direction: column;
   }
@@ -418,11 +485,11 @@
   }
 
   .compare-page-header {
-    padding: 24px 16px;
+    padding: 1.5rem 1rem;
   }
 
   .compare-h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
 
@@ -431,13 +498,13 @@
    8. CONTACT US
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .contact-container {
-    padding: 16px 16px 32px;
+    padding: 1rem 1rem 2rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .contact-header h1 {
     font-size: 2.5rem;
   }
@@ -448,11 +515,11 @@
 
   .contact-form-card,
   .contact-info-card {
-    padding: 24px;
+    padding: 1.5rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .contact-header h1 {
     font-size: 2rem;
   }
@@ -475,19 +542,19 @@
    9. RECIPES
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .recipes-section {
     padding: 3rem 5%; /* Ya tiene este media query */
     background-attachment: scroll; /* fixed causa lag en iOS */
   }
 
   .recipes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
     gap: 1rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .recipes-grid {
     grid-template-columns: 1fr;
   }
@@ -502,8 +569,8 @@
    10. LOGIN Y REGISTRO (Auth Container)
    ============================================================ */
 
-/* Ya tiene un media query en 968px — lo complementamos */
-@media (max-width: 968px) {
+/* Ya tiene un media query en 60.5rem — lo complementamos */
+@media (max-width: 60.5rem) {
   .auth-title {
     font-size: 2.2rem;
   }
@@ -514,7 +581,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .auth-container {
     flex-direction: column;
   }
@@ -543,7 +610,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .auth-left {
     padding: 1.5rem 1rem;
   }
@@ -575,21 +642,21 @@
    11. PROFILE PAGE
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .profile-card {
-    padding: 30px 24px;
-    border-radius: 16px;
+    padding: 1.875rem 1.5rem;
+    border-radius: 1rem;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5rem) {
   .profile-grid {
     grid-template-columns: 1fr; /* Ya tiene este media query */
   }
 
   .profile-actions {
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
   }
 
   .save-btn,
@@ -600,20 +667,20 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .profile-card {
-    padding: 24px 16px;
+    padding: 1.5rem 1rem;
     border-radius: 0;
   }
 
   .profile-avatar {
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
+    width: 5rem;
+    height: 5rem;
+    font-size: 2rem;
   }
 
   .profile-header h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
 
@@ -622,14 +689,14 @@
    12. REGISTRO AGRICULTOR
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .registro-agricultor-card {
-    padding: 24px 20px;
-    border-radius: 12px;
+    padding: 1.5rem 1.25rem;
+    border-radius: 0.75rem;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5rem) {
   .registro-agricultor-grid {
     grid-template-columns: 1fr; /* Ya tiene este media query */
   }
@@ -644,17 +711,17 @@
 
   .registro-agricultor-actions {
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .registro-agricultor-container {
-    padding: 20px 12px;
+    padding: 1.25rem 0.75rem;
   }
 
   .registro-agricultor-card {
-    padding: 20px 14px;
+    padding: 1.25rem 0.875rem;
   }
 
   .productos-grid {
@@ -667,7 +734,7 @@
    13. PAGES (Header genérico de páginas)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .page-header {
     padding: 2.5rem 5% 1rem;
   }
@@ -699,7 +766,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .page-title {
     font-size: 1.8rem;
   }
@@ -714,26 +781,26 @@
    14. FOOTER
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .footer {
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
     text-align: center;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .footer {
-    padding: 16px;
+    padding: 1rem;
   }
 
   .footer-logo {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .footer-copyright {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 
@@ -742,7 +809,7 @@
    15. ADMIN DASHBOARD (Panel Admin General)
    ============================================================ */
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -752,7 +819,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -763,9 +830,9 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .dashboard-container {
-    padding: 0 4px;
+    padding: 0 0.25rem;
   }
 
   .dashboard-header h1 {
@@ -779,7 +846,7 @@
 
   .stat-card {
     padding: 1.25rem;
-    border-radius: 16px;
+    border-radius: 1rem;
   }
 
   .card-content h3 {
@@ -787,7 +854,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .stats-grid {
     grid-template-columns: 1fr;
   }
@@ -803,9 +870,9 @@
    ============================================================ */
 
 /* El sidebar se oculta en móvil y se convierte en nav inferior o slide-in */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   aside.admin-sidebar {
-    width: 200px !important;
+    width: 12.5rem !important;
     padding: 1.5rem 0.5rem !important;
   }
 
@@ -816,7 +883,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   /* El sidebar se convierte en barra inferior */
   aside.admin-sidebar {
     width: 100% !important;
@@ -829,7 +896,7 @@
     flex-direction: row !important;
     padding: 0 !important;
     z-index: 100 !important;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 -0.25rem 1.25rem rgba(0,0,0,0.2) !important;
     overflow-x: auto;
     border-right: none !important;
   }
@@ -853,12 +920,12 @@
 
   .admin-sidebar .nav-item {
     flex-direction: column !important;
-    padding: 10px 8px !important;
+    padding: 0.625rem 0.5rem !important;
     border-radius: 0 !important;
     font-size: 0.65rem !important;
-    gap: 4px !important;
+    gap: 0.25rem !important;
     text-align: center !important;
-    min-width: 60px;
+    min-width: 3.75rem;
     white-space: nowrap;
   }
 
@@ -876,17 +943,17 @@
 
   .admin-sidebar .logout-btn {
     flex-direction: column !important;
-    padding: 10px 8px !important;
+    padding: 0.625rem 0.5rem !important;
     border-radius: 0 !important;
     font-size: 0.65rem !important;
-    gap: 4px !important;
+    gap: 0.25rem !important;
     background: transparent !important;
     border: none !important;
   }
 
   /* El contenido principal necesita padding inferior para la barra */
   .admin-main {
-    padding-bottom: 75px;
+    padding-bottom: 4.6875rem;
   }
 }
 
@@ -895,13 +962,13 @@
    17. AGRICULTOR SIDEBAR
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .agricultor-sidebar {
-    width: 220px;
+    width: 13.75rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   /* Igual que admin sidebar: barra inferior */
   .agricultor-sidebar {
     width: 100% !important;
@@ -912,7 +979,7 @@
     left: 0 !important;
     right: 0 !important;
     flex-direction: row !important;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 -0.25rem 1.25rem rgba(0,0,0,0.2) !important;
   }
 
   .agricultor-sidebar-header,
@@ -931,12 +998,12 @@
 
   .agricultor-sidebar-link {
     flex-direction: column !important;
-    padding: 10px 8px !important;
+    padding: 0.625rem 0.5rem !important;
     border-radius: 0 !important;
     font-size: 0.65rem !important;
-    gap: 4px !important;
+    gap: 0.25rem !important;
     text-align: center !important;
-    min-width: 60px;
+    min-width: 3.75rem;
     opacity: 1;
   }
 
@@ -949,7 +1016,7 @@
   }
 
   .admin-layout .admin-main {
-    padding-bottom: 75px;
+    padding-bottom: 4.6875rem;
   }
 }
 
@@ -958,7 +1025,7 @@
    18. AGRICULTOR DASHBOARD (Panel Agricultor)
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .dashboard-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -969,7 +1036,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-content {
     padding: 1.25rem;
   }
@@ -985,7 +1052,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .admin-content {
     padding: 1rem 0.75rem;
   }
@@ -1013,7 +1080,7 @@
    19. ADMIN USUARIOS (Tabla de usuarios)
    ============================================================ */
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .users-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1032,15 +1099,15 @@
 }
 
 /* Tabla responsiva: scroll horizontal en móvil */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border-radius: 16px;
+    border-radius: 1rem;
   }
 
   table {
-    min-width: 600px; /* Forzar scroll antes de colapsar */
+    min-width: 37.5rem; /* Forzar scroll antes de colapsar */
   }
 
   th {
@@ -1054,8 +1121,8 @@
   }
 
   .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     font-size: 1rem;
   }
 
@@ -1070,10 +1137,10 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .users-header h1 {
     font-size: 1.5rem;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03125rem;
   }
 
   .search-input {
@@ -1087,7 +1154,7 @@
    20. MODAL DE USUARIO (AdminModal)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-product-form-overlay {
     padding: 1rem;
     align-items: flex-end; /* Modal desde abajo en móvil */
@@ -1095,7 +1162,7 @@
 
   .admin-product-form-modal {
     max-height: 85vh;
-    border-radius: 20px 20px 0 0; /* Solo esquinas arriba */
+    border-radius: 1.25rem 1.25rem 0 0; /* Solo esquinas arriba */
   }
 
   .admin-product-form-row {
@@ -1103,7 +1170,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .admin-product-form-overlay {
     padding: 0;
   }
@@ -1132,21 +1199,21 @@
    21. ACTIVE FERIAS CARD (Hero search widget)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .active-ferias-card {
     max-width: 100%;
-    padding: 22px;
+    padding: 1.375rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .active-ferias-card {
-    padding: 18px 14px;
-    border-radius: 14px;
+    padding: 1.125rem 0.875rem;
+    border-radius: 0.875rem;
   }
 
   .active-ferias-title {
-    font-size: 17px;
+    font-size: 1.0625rem;
   }
 }
 
@@ -1155,7 +1222,7 @@
    22. MIS FERIAS (Agricultor)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .mis-ferias-info-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -1172,7 +1239,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .mis-ferias-productos-grid {
     grid-template-columns: 1fr;
   }
@@ -1183,14 +1250,14 @@
    23. LOGIN FORM AGRICULTOR
    ============================================================ */
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .login-form-container {
     padding: 1rem;
   }
 
   .login-form-card {
     padding: 1.75rem 1.25rem;
-    border-radius: 12px;
+    border-radius: 0.75rem;
   }
 
   .login-form-header h2 {
@@ -1203,20 +1270,20 @@
    24. REGISTER FORM AGRICULTOR
    ============================================================ */
 
-@media (max-width: 600px) {
+@media (max-width: 37.5rem) {
   .register-form-row {
     grid-template-columns: 1fr; /* Ya tiene este media query */
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .register-form-container {
     padding: 1rem;
   }
 
   .register-form-card {
     padding: 1.75rem 1.25rem;
-    border-radius: 12px;
+    border-radius: 0.75rem;
     max-height: none;
   }
 }
@@ -1226,7 +1293,7 @@
    25. AGRICULTOR STATS (Panel)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-stats-grid,
   .agricultor-stats-grid {
     grid-template-columns: 1fr 1fr;
@@ -1234,7 +1301,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .admin-stats-grid,
   .agricultor-stats-grid {
     grid-template-columns: 1fr;
@@ -1246,14 +1313,14 @@
    26. AGRICULTOR PRODUCT LIST
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-products-grid,
   .mis-productos-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .admin-product-card-header {
     flex-wrap: wrap;
   }
@@ -1268,13 +1335,13 @@
    27. PRODUCT COMPARISON CARD
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .compare-products-grid {
     grid-template-columns: 1fr;
   }
 
   .compare-results-title {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 }
 
@@ -1283,7 +1350,7 @@
    28. ADMIN LAYOUT (contenedor principal admin)
    ============================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .admin-layout {
     flex-direction: column;
   }
@@ -1299,8 +1366,8 @@
    29. CORRECCIONES GENERALES DE ACCESIBILIDAD MÓVIL
    ============================================================ */
 
-/* Targets táctiles mínimos 44x44px */
-@media (max-width: 768px) {
+/* Targets táctiles mínimos 44x2.75rem */
+@media (max-width: 48rem) {
   button,
   a,
   input[type="submit"],
@@ -1308,7 +1375,7 @@
   .nav-item,
   .navbar-link,
   .category-item {
-    min-height: 44px;
+    min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
   }
@@ -1323,7 +1390,7 @@
   input,
   select,
   textarea {
-    font-size: 16px !important; /* iOS no hace zoom si el tamaño es ≥16px */
+    font-size: 1rem !important; /* iOS no hace zoom si el tamaño es ≥1rem */
   }
 
   /* Scroll suave en iOS */
@@ -1332,14 +1399,14 @@
   }
 }
 
-/* Pantallas muy pequeñas (360px) */
-@media (max-width: 360px) {
+/* Pantallas muy pequeñas (22.5rem) */
+@media (max-width: 22.5rem) {
   .navbar-logo {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .hero-title {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
 
   .features-title,
@@ -1354,5 +1421,179 @@
   .page-title,
   .barrier-title {
     font-size: 1.6rem;
+  }
+}
+
+/* ============================================================
+   30. GLOBAL MOBILE FLUIDITY
+   ============================================================ */
+
+html {
+  font-size: clamp(0.85rem, 1.1vw + 0.2rem, 1rem);
+}
+
+body {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+}
+
+section,
+article,
+main,
+header,
+footer,
+.navbar,
+.hero-section,
+.features-section,
+.contact-container,
+.auth-container,
+.profile-card,
+.dashboard-container,
+.admin-main,
+.admin-content,
+.page-header,
+.content-barrier,
+.card,
+.form-card,
+.login-form-card,
+.register-form-card,
+.compare-main,
+.sidebar-filters,
+.table-wrapper,
+.page,
+.container,
+.wrapper,
+.app-container {
+  width: 100%;
+  max-width: 100%;
+  padding-inline: min(6%, 1rem);
+  margin-inline: auto;
+}
+
+@media (max-width: 48rem) {
+  section,
+  article,
+  main,
+  header,
+  footer,
+  .page-header,
+  .content-barrier,
+  .hero-section,
+  .features-section,
+  .contact-container,
+  .auth-container,
+  .auth-card,
+  .profile-card,
+  .dashboard-container,
+  .admin-main,
+  .admin-content,
+  .card,
+  .form-card,
+  .login-form-card,
+  .register-form-card,
+  .compare-main,
+  .sidebar-filters,
+  .table-wrapper,
+  .app-container {
+    padding-inline: 4%;
+  }
+
+  .page-title,
+  .hero-title,
+  .features-title,
+  .barrier-title,
+  .auth-title,
+  .compare-results-title,
+  .contact-header h1 {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+  }
+
+  .navbar,
+  .navbar-links {
+    width: 100%;
+  }
+
+  .navbar-links {
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar-link,
+  .btn,
+  .button,
+  .compare-filter-select,
+  .compare-search-go-btn,
+  .auth-submit-btn,
+  .auth-back-btn,
+  .mis-ferias-btn-cancel,
+  .mis-ferias-btn-save,
+  .dashboard-action-card {
+    width: 100%;
+    min-height: 3rem;
+  }
+
+  .hero-buttons,
+  .sidebar-filters,
+  .compare-search-bar-full,
+  .dashboard-actions-grid {
+    gap: 0.75rem;
+  }
+
+  .page-header,
+  .content-barrier,
+  .auth-card,
+  .profile-card,
+  .contact-container,
+  .hero-section,
+  .features-section {
+    margin: 0;
+  }
+}
+
+@media (max-width: 30rem) {
+  section,
+  article,
+  main,
+  header,
+  footer,
+  .page-header,
+  .content-barrier,
+  .hero-section,
+  .features-section,
+  .contact-container,
+  .auth-container,
+  .auth-card,
+  .profile-card,
+  .dashboard-container,
+  .admin-main,
+  .admin-content,
+  .card,
+  .form-card,
+  .login-form-card,
+  .register-form-card,
+  .compare-main,
+  .sidebar-filters,
+  .table-wrapper,
+  .app-container {
+    padding-inline: 3%;
+  }
+
+  .navbar-logo {
+    font-size: 1rem;
   }
 }

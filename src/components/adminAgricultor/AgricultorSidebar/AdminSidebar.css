@@ -1,29 +1,29 @@
 .agricultor-sidebar {
-  width: 280px;
+  width: 17.5rem;
   background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
   border-right: none !important;
   display: flex !important;
   flex-direction: column !important;
   min-height: 100vh !important;
-  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0.625rem 0 2.5rem rgba(0, 0, 0, 0.2) !important;
 }
 
 .agricultor-sidebar-header {
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .agricultor-sidebar-logo {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
+  font-size: 1.75rem;
   color: #8cc63f !important;
   font-weight: 900;
-  letter-spacing: -1.5px;
+  letter-spacing: -0.09375rem;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.2rem;
-  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0.1875rem 0.75rem rgba(0, 0, 0, 0.4);
 }
 
 .agricultor-sidebar-logo span {
@@ -37,7 +37,7 @@
   margin-top: 0.4rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .agricultor-sidebar-user {
@@ -45,12 +45,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .agricultor-sidebar-user-avatar {
-  width: 45px;
-  height: 45px;
+  width: 2.8125rem;
+  height: 2.8125rem;
   border-radius: 50%;
   background: #ffffff;
   color: #052e16;
@@ -85,7 +85,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.9rem 1.25rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   text-decoration: none;
   color: #ffffff !important;
   transition: all 0.3s ease;
@@ -97,14 +97,14 @@
 .agricultor-sidebar-link:hover {
   background: rgba(255, 255, 255, 0.1);
   opacity: 1;
-  transform: translateX(5px);
+  transform: translateX(0.3125rem);
 }
 
 .agricultor-sidebar-link.active {
   background: #ffffff !important;
   color: #052e16 !important;
   opacity: 1;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.2);
 }
 
 .agricultor-sidebar-home-link {
@@ -114,9 +114,9 @@
   text-decoration: none;
   font-size: 0.95rem;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.2);
   margin-top: 1rem;
   transition: all 0.3s ease;
 }

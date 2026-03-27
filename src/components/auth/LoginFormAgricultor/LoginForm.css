@@ -9,9 +9,9 @@
 
 .login-form-card {
   background: var(--blanco);
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  max-width: 450px;
+  border-radius: 1rem;
+  box-shadow: 0 1.25rem 3.75rem rgba(0, 0, 0, 0.15);
+  max-width: 28.125rem;
   width: 100%;
   padding: 2.5rem;
 }
@@ -42,9 +42,9 @@
   background: #fee;
   color: var(--rojo);
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-size: 0.9rem;
-  border: 1px solid var(--rojo);
+  border: 0.0625rem solid var(--rojo);
 }
 
 .login-form-group {
@@ -61,8 +61,8 @@
 
 .login-form-group input {
   padding: 0.875rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 0.125rem solid #e0e0e0;
+  border-radius: 0.5rem;
   font-size: 1rem;
   transition: all 0.2s;
 }
@@ -70,7 +70,7 @@
 .login-form-group input:focus {
   outline: none;
   border-color: var(--verde);
-  box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(26, 92, 42, 0.1);
 }
 
 .login-form-button {
@@ -78,19 +78,19 @@
   color: #ffffff;
   border: none;
   padding: 1rem 2rem;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 1rem;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.3);
 }
 
 .login-form-button:hover:not(:disabled) {
   background: #2d7a2d;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(59, 156, 58, 0.4);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.25rem rgba(59, 156, 58, 0.4);
 }
 
 .login-form-button:disabled {
@@ -118,18 +118,18 @@
   margin-top: 1rem;
   padding: 0.8rem 2rem;
   background-color: #8170D4;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   font-weight: 800;
   transition: all 0.3s ease;
   width: fit-content;
-  box-shadow: 0 4px 15px rgba(129, 112, 212, 0.3);
+  box-shadow: 0 0.25rem 0.9375rem rgba(129, 112, 212, 0.3);
   margin-inline: auto;
 }
 
 .login-form-footer a:hover {
   background-color: #6a59bc;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(129, 112, 212, 0.4);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.25rem rgba(129, 112, 212, 0.4);
 }
 
 .login-form-footer p:first-child a {
@@ -149,7 +149,7 @@
 .login-form-demo {
   background: var(--crema);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-size: 0.85rem;
   text-align: center;
   color: var(--gris);

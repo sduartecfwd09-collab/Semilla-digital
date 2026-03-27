@@ -1,25 +1,25 @@
 .footer {
     background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
-    padding: 30px 60px;
+    padding: 1.875rem 3.75rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -0.25rem 1.25rem rgba(0, 0, 0, 0.1);
 }
 
 .footer-logo {
     font-family: 'Playfair Display', serif;
-    font-size: 24px;
+    font-size: 1.5rem;
     color: #8cc63f; /* Verde lima exacto */
     text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s ease;
     font-weight: 800;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.2);
 }
 
 .footer-logo:hover {
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
 }
 
 .footer-logo span {
@@ -29,7 +29,7 @@
 
 .footer-copyright {
     color: #ffffff;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 700;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.4);
 }

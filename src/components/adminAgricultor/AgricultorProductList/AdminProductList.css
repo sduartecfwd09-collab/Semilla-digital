@@ -1,6 +1,6 @@
 .admin-product-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
   gap: 1.5rem;
 }
 
@@ -8,8 +8,8 @@
   text-align: center;
   padding: 4rem 2rem;
   background: var(--blanco);
-  border-radius: 12px;
-  border: 2px dashed #e5e5e5;
+  border-radius: 0.75rem;
+  border: 0.125rem dashed #e5e5e5;
 }
 
 .admin-product-list-empty-icon {
@@ -28,7 +28,7 @@
   color: #999;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 56.25rem) {
   .admin-product-list {
     grid-template-columns: 1fr;
   }

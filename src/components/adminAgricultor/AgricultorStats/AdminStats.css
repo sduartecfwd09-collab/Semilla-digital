@@ -1,38 +1,38 @@
 .admin-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .admin-stat-card {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   padding: 1.8rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.04);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.02);
   transition: all 0.3s ease;
 }
 
 .admin-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 }
 
 .admin-stat-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
   color: #3B9C3A;
-  box-shadow: 0 4px 10px rgba(59, 156, 58, 0.1);
+  box-shadow: 0 0.25rem 0.625rem rgba(59, 156, 58, 0.1);
 }
 
 /* Gradients for specific stat types (can be applied via classes if needed) */

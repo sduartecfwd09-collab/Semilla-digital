@@ -3,17 +3,17 @@
    ============================== */
 
 aside.admin-sidebar {
-    width: 250px !important;
-    min-height: calc(100vh - 70px) !important; /* Adjusted for top Navbar */
+    width: 15.625rem !important;
+    min-height: calc(100vh - 4.375rem) !important; /* Adjusted for top Navbar */
     background: linear-gradient(180deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
     border-right: none !important;
     padding: 2.5rem 0.75rem !important;
     display: flex !important;
     flex-direction: column !important;
     position: sticky !important;
-    top: 70px !important; 
+    top: 4.375rem !important; 
     z-index: 50 !important;
-    box-shadow: 15px 0 50px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0.9375rem 0 3.125rem rgba(0, 0, 0, 0.2) !important;
 }
 
 /* New Profile Section */
@@ -23,18 +23,18 @@ aside.admin-sidebar {
     align-items: center !important;
     padding: 0 1.5rem 2rem !important;
     margin-bottom: 2rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .profile-img-container {
-    width: 90px !important;
-    height: 90px !important;
+    width: 5.625rem !important;
+    height: 5.625rem !important;
     border-radius: 50% !important;
-    padding: 5px !important;
+    padding: 0.3125rem !important;
     background: rgba(255, 255, 255, 0.15) !important;
     margin-bottom: 1rem !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    border: 0.125rem solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.2) !important;
     overflow: hidden !important;
 }
 
@@ -78,7 +78,7 @@ aside.admin-sidebar {
     font-size: 0.8rem !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
+    letter-spacing: 0.09375rem !important;
 }
 
 .sidebar-nav {
@@ -93,7 +93,7 @@ aside.admin-sidebar {
     font-weight: 800 !important;
     text-transform: uppercase !important;
     color: rgba(255, 255, 255, 0.5) !important;
-    letter-spacing: 2.5px !important;
+    letter-spacing: 0.15625rem !important;
     margin: 2rem 0 1rem 1.25rem !important;
 }
 
@@ -101,7 +101,7 @@ aside.admin-sidebar {
     display: flex !important;
     align-items: center !important;
     padding: 1rem 1.5rem !important;
-    border-radius: 50px !important;
+    border-radius: 3.125rem !important;
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 600 !important;
     gap: 1.25rem !important;
@@ -112,14 +112,14 @@ aside.admin-sidebar {
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     text-decoration: none !important;
     cursor: pointer !important;
-    border: 1px solid transparent !important;
+    border: 0.0625rem solid transparent !important;
 }
 
 .admin-sidebar .nav-item:hover {
     background-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
     padding-left: 1.8rem !important;
-    backdrop-filter: blur(5px) !important;
+    backdrop-filter: blur(0.3125rem) !important;
 }
 
 .admin-sidebar .nav-item span {
@@ -134,7 +134,7 @@ aside.admin-sidebar {
     background: #ffffff !important;
     color: #052e16 !important;
     font-weight: 800 !important;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 0.75rem 2.1875rem rgba(0, 0, 0, 0.3) !important;
     transform: scale(1.02) !important;
 }
 
@@ -153,7 +153,7 @@ aside.admin-sidebar {
     align-items: center !important;
     gap: 1.2rem !important;
     padding: 1rem 1.5rem !important;
-    border-radius: 50px !important;
+    border-radius: 3.125rem !important;
     background-color: rgba(0, 0, 0, 0.2) !important;
     color: #ffffff !important;
     font-weight: 800 !important;
@@ -161,12 +161,12 @@ aside.admin-sidebar {
     font-size: 1rem !important;
     font-family: 'Outfit', sans-serif !important;
     transition: all 0.3s ease !important;
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border: 0.125rem solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .admin-sidebar .logout-btn:hover {
     background-color: #ef4444 !important;
     border-color: #ffffff !important;
-    transform: translateY(-3px) !important;
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important;
+    transform: translateY(-0.1875rem) !important;
+    box-shadow: 0 0.625rem 1.5625rem rgba(239, 68, 68, 0.4) !important;
 }
