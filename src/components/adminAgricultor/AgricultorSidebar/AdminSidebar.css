@@ -1,11 +1,29 @@
 .agricultor-sidebar {
-  width: 280px;
+  width: 220px;
   background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
   border-right: none !important;
   display: flex !important;
   flex-direction: column !important;
-  min-height: 100vh !important;
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow-y: auto !important;
   box-shadow: 10px 0 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom scrollbar for agricultor sidebar */
+.agricultor-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.agricultor-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.agricultor-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+.agricultor-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .agricultor-sidebar-header {
@@ -15,10 +33,10 @@
 
 .agricultor-sidebar-logo {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
+  font-size: 24px;
   color: #8cc63f !important;
   font-weight: 900;
-  letter-spacing: -1.5px;
+  letter-spacing: -1px;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -32,7 +50,7 @@
 }
 
 .agricultor-sidebar-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6) !important;
   margin-top: 0.4rem;
   font-weight: 600;

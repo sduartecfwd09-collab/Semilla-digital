@@ -35,10 +35,20 @@ const Compare: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
   useEffect(() => {
-    fetch(ENDPOINTS.productos)
-      .then(res => res.json())
-      .then((data: APIProducto[]) => {
-        const availableData = data.filter((p) => p.disponible !== false);
+    Promise.all([
+      fetch(ENDPOINTS.productos).then(res => res.json()),
+      fetch(ENDPOINTS.ferias).then(res => res.json())
+    ])
+      .then(([productsData, feriasData]: [APIProducto[], any[]]) => {
+        // Normalizar ferias para tener nombres consistentes
+        const normalizedFerias = feriasData.map(f => ({
+          ...f,
+          nombre: f.nombre || f.name || "Feria sin nombre",
+          provincia: f.provincia || f.province || "Otras"
+        }));
+
+        const availableData = productsData.filter((p) => p.disponible !== false);
+        
         // Mapeamos los productos de la API a la estructura que espera la UI
         const mappedData: ProductComparisonData[] = availableData.map(p => {
           const prices = p.precios || [];
@@ -53,14 +63,21 @@ const Compare: React.FC = () => {
             description: p.descripcion || p.description || '',
             unit: p.unidad || 'Unidad',
             lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
-            rows: p.rows ? p.rows : prices.map((pr) => ({
-              feriaName: pr.feriaNombre || '',
-              feriaLocation: `${pr.provincia || ''}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
-              province: pr.provincia || '',
-              price: `₡${(pr.precio ?? 0).toLocaleString()}`,
-              priceNumeric: pr.precio ?? 0,
-              barWidth: 100 // El ancho se recalcula en el componente Card
-            }))
+            rows: p.rows ? p.rows : prices.map((pr: any) => {
+              // Buscar feria si no tiene el nombre guardado directamente en el objeto de precio
+              const relatedFeria = normalizedFerias.find(f => String(f.id) === String(pr.feriaId));
+              const feriaName = pr.feriaNombre || (relatedFeria ? relatedFeria.nombre : 'Feria Local');
+              const province = pr.provincia || (relatedFeria ? relatedFeria.provincia : (p as any).provincia || '');
+              
+              return {
+                feriaName: feriaName,
+                feriaLocation: `${province}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+                province: province,
+                price: `₡${(pr.precio ?? 0).toLocaleString()}`,
+                priceNumeric: pr.precio ?? 0,
+                barWidth: 100 // El ancho se recalcula en el componente Card
+              };
+            })
           }
         });
 
@@ -120,9 +137,11 @@ const Compare: React.FC = () => {
 
     // Búsqueda inteligente: si no hay resultados en la categoría actual, 
     // pero sí en otra, cambiamos de categoría automáticamente
-    const matchingProducts = allProducts.filter((p: ProductComparisonData) => 
-      p.name.toLowerCase().includes(query.toLowerCase())
-    )
+    const normalizedQuery = normalizeProductName(query)
+    const matchingProducts = allProducts.filter((p: ProductComparisonData) => {
+      const normalizedName = normalizeProductName(p.name)
+      return normalizedName.includes(normalizedQuery)
+    })
 
     if (matchingProducts.length > 0) {
       const currentCategoryHasMatches = matchingProducts.some((p: ProductComparisonData) => p.category === activeCategory)
@@ -153,7 +172,13 @@ const Compare: React.FC = () => {
     .filter((p: ProductComparisonData) => {
       if (p.rows.length === 0) return false;
       if (activeCategory !== 'Todos' && p.category !== activeCategory) return false;
-      if (searchQuery !== '' && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      
+      if (searchQuery !== '') {
+        const normalizedQuery = normalizeProductName(searchQuery)
+        const normalizedName = normalizeProductName(p.name)
+        if (!normalizedName.includes(normalizedQuery)) return false
+      }
+      
       return true;
     })
     .sort((a: ProductComparisonData, b: ProductComparisonData) => {

@@ -88,13 +88,16 @@ const Profile: React.FC = () => {
           ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
           
           if (userRequests.length > 0) {
-            // Priorizamos: Aprobada > Rechazada > Pendiente
+            // Priorizamos: Aprobada > Pendiente > Rechazada
             let activeRequest = userRequests[0];
             const aprobada = userRequests.find((r: any) => r.estado === 'Aprobada');
+            const pendiente = userRequests.find((r: any) => r.estado === 'Pendiente');
             const rechazada = userRequests.find((r: any) => r.estado === 'Rechazada');
             
             if (aprobada) {
               activeRequest = aprobada;
+            } else if (pendiente) {
+              activeRequest = pendiente;
             } else if (rechazada) {
               activeRequest = rechazada;
             }
@@ -200,9 +203,9 @@ const Profile: React.FC = () => {
 
       const updatedData = {
         ...fullUserData,
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
       };
 
       const response = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
@@ -353,22 +356,34 @@ const Profile: React.FC = () => {
 
     if (isConfirmed) {
       try {
+        // Borrar la solicitud de cambio de rol
         await fetch(`${ENDPOINTS.solicitudesCambioRol}/${requestId}`, {
           method: 'DELETE',
         });
+
+        // Borrar la información del puesto asociado (puestosAgricultor)
+        const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+        const todosPuestos = await puestosRes.json();
+        const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
+        
+        // Elimar todos sus puestos (normalmente debería ser solo uno)
+        await Promise.all(misPuestos.map((p: any) => 
+          fetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
+        ));
         
         setRequestStatus(null);
         setHasPendingRequest(false);
         setRequestId('');
         
-        Swal.fire(
-          'Cancelada',
-          'Tu solicitud ha sido cancelada exitosamente.',
-          'success'
-        );
+        Swal.fire({
+          icon: 'success',
+          title: 'Solicitud cancelada',
+          text: 'Tu solicitud y toda la información asociada han sido borradas correctamente.',
+          confirmButtonColor: 'var(--verde-claro)',
+        });
       } catch (error) {
         console.error('Error al cancelar solicitud:', error);
-        Swal.fire('Error', 'No se pudo cancelar la solicitud', 'error');
+        Swal.fire('Error', 'No se pudo cancelar la solicitud por completo.', 'error');
       }
     }
   };
@@ -376,20 +391,52 @@ const Profile: React.FC = () => {
   const handleConvertirseEnAgricultor = async () => {
     try {
       setLoading(true);
+      
+      // Obtener datos del puesto solicitado y la feria asignada
+      const [userRes, puestosRes, feriasRes] = await Promise.all([
+        fetch(`${ENDPOINTS.usuarios}/${userData.id}`),
+        fetch(ENDPOINTS.puestosAgricultor),
+        fetch(ENDPOINTS.ferias)
+      ]);
+      
+      const currentFullUser = await userRes.json();
+      const allPuestos = await puestosRes.json();
+      const allFerias = await feriasRes.json();
+      
+      const miPuesto = allPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id)).pop();
+      const feriasSolicitadas = miPuesto?.ubicacion || [];
+      const feriaAsignada = allFerias.find((f: any) => String(f.id) === String(currentFullUser.feriaId));
+      
+      let mensajeFeria = '';
+      if (feriaAsignada) {
+        const feriaName = feriaAsignada.name || feriaAsignada.nombre || '';
+        const fueSolicitada = Array.isArray(feriasSolicitadas) 
+          ? feriasSolicitadas.includes(feriaName)
+          : feriasSolicitadas === feriaName;
+          
+        if (feriaName) {
+          if (fueSolicitada) {
+            mensajeFeria = `\n\nTu solicitud para vender en la feria de ${feriaName} ha sido aceptada.`;
+          } else {
+            mensajeFeria = `\n\nSe te ha asignado la feria de ${feriaName} para tus ventas.`;
+          }
+        }
+      }
+
       await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'Agricultor' })
       });
 
-      const fullUserResponse = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
-      const fullUserData = await fullUserResponse.json();
-      localStorage.setItem('user', JSON.stringify(fullUserData));
+      const updatedUserRes = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const updatedUserData = await updatedUserRes.json();
+      localStorage.setItem('user', JSON.stringify(updatedUserData));
 
       Swal.fire({
         icon: 'success',
         title: '¡Felicidades!',
-        text: 'Bienvenido a tu nuevo perfil de Agricultor en AgroMap.',
+        text: `Bienvenido a tu nuevo perfil de Agricultor en AgroMap.${mensajeFeria}`,
         confirmButtonColor: 'var(--verde-claro)',
       }).then(() => {
         window.location.href = '/agricultor';
@@ -641,7 +688,7 @@ const Profile: React.FC = () => {
                     <button 
                       type="button" 
                       className="role-request-btn"
-                      onClick={() => navigate('/registro-agricultor')}
+                      onClick={() => navigate('/registro-agricultor?reset=true')}
                     >
                       Enviar nueva solicitud
                     </button>

@@ -2,9 +2,11 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  password?: string;
   role: 'Vendedor' | 'Administrador' | 'Comprador' | string;
   status: 'Activo' | 'Inactivo' | string;
   avatar?: string;
+  feriaId?: string;
 }
 
 export interface Product {

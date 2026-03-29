@@ -113,6 +113,24 @@ const AdminSolicitudes: React.FC = () => {
         })
       });
 
+      // 2. Si es aprobada, asignar la feria automáticamente al usuario desde su puesto
+      if (nuevoEstado === 'Aprobada' && solicitud.usuarioId) {
+        try {
+          const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+          const puestos = await puestosRes.json();
+          const miPuesto = puestos.find((p: any) => String(p.usuarioId) === String(solicitud.usuarioId));
+          
+          if (miPuesto && miPuesto.feriaId) {
+            await fetch(`${ENDPOINTS.usuarios}/${solicitud.usuarioId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ feriaId: miPuesto.feriaId })
+            });
+          }
+        } catch (e) {
+          console.error("Error al asignar feria automáticamente:", e);
+        }
+      }
       Swal.fire('¡Listo!', `Solicitud ${nuevoEstado.toLowerCase()} correctamente${nuevoEstado === 'Aprobada' ? '. El usuario podrá activar su rol de Agricultor desde su perfil.' : '.'}`, 'success');
       fetchDatos();
     } catch (error) {
@@ -143,18 +161,18 @@ const AdminSolicitudes: React.FC = () => {
         html: `
           <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
             <p><strong>Nombre del Puesto:</strong> ${puestoUsuario.nombrePuesto || 'N/A'}</p>
-            <p><strong>Ubicación:</strong> ${puestoUsuario.ubicacion || 'N/A'}</p>
+            <p><strong>Ferias de interés:</strong> ${Array.isArray(puestoUsuario.ubicacion) ? puestoUsuario.ubicacion.join(', ') : (puestoUsuario.ubicacion || 'N/A')}</p>
             <p><strong>Descripción:</strong> ${puestoUsuario.descripcion || 'N/A'}</p>
-            <p><strong>Productos:</strong> ${puestoUsuario.productosAOfrecer || 'N/A'}</p>
-            <p><strong>Categorías:</strong> ${(puestoUsuario.tiposProducto || []).join(', ') || 'N/A'}</p>
+            <p><strong>Tipos de Producto:</strong> ${Array.isArray(puestoUsuario.tiposProducto) ? puestoUsuario.tiposProducto.join(', ') : 'N/A'}</p>
             <hr style="opacity: 0.3; margin: 10px 0;">
             <p><strong>Teléfono:</strong> ${puestoUsuario.telefono || 'N/A'}</p>
             <p><strong>Email de contacto:</strong> ${puestoUsuario.email || 'N/A'}</p>
-            <p><strong>Horarios:</strong> ${puestoUsuario.horarios || 'N/A'}</p>
+            <p><strong>Horarios propuestos:</strong> ${puestoUsuario.horarios || 'N/A'}</p>
             <p><strong>Métodos de Cultivo:</strong> ${puestoUsuario.metodosCultivo || 'N/A'}</p>
             <p><strong>Redes Sociales:</strong> ${puestoUsuario.redesSociales || 'N/A'}</p>
+            <hr style="opacity: 0.3; margin: 10px 0;">
             ${puestoUsuario.fotosBase64 && puestoUsuario.fotosBase64.length > 0
-              ? `<p><strong>Fotos:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64.map((b64: string) => `<img src="${b64}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" />`).join('')}</div>`
+              ? `<p><strong>Fotos Adjuntas:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64.map((b64: string) => `<img src="${b64}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" />`).join('')}</div>`
               : (puestoUsuario.fotosNombres && puestoUsuario.fotosNombres.length > 0 
                   ? `<p><strong>Fotos adjuntas:</strong> ${puestoUsuario.fotosNombres.length} foto(s)</p>` 
                   : '')}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
+import Footer from '../../Footer/Footer'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
 import AdminProductList from '../../adminAgricultor/AgricultorProductList/AdminProductList'
@@ -175,6 +176,7 @@ const MisProductos: React.FC = () => {
         </div>
       </div>
       </div>
+      <Footer />
     </>
   )
 }

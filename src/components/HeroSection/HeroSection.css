@@ -1,6 +1,6 @@
 .hero-section {
     background: var(--blanco);
-    padding: 100px 60px 80px;
+    padding: 50px 60px 80px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;

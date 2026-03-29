@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Obtenemos todos los usuarios para filtrar manualmente (más fiable que los query params)
       const response = await fetch(ENDPOINTS.usuarios)
-      if (!response.ok) return false
+      if (!response.ok) return { success: false }
       
       const allUsers = await response.json()
       

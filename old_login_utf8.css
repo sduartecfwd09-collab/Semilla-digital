@@ -1,4 +1,4 @@
-/* Contenedor de Autenticaci├│n */
+﻿/* Contenedor de Autenticaci├│n */
 .auth-container {
   display: flex;
   min-height: 100vh;
@@ -7,12 +7,12 @@
   background-color: var(--crema);
 }
 
-/* SECCIÓN IZQUIERDA */
+/* SECCI├ôN IZQUIERDA */
 .auth-left {
-  flex: 0.65;
+  flex: 1;
   background-color: #11361c; /* Similar a var(--fondo) pero coincidiendo mejor con la imagen */
   color: var(--blanco);
-  padding: 4rem 3.5rem;
+  padding: 4rem 5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;

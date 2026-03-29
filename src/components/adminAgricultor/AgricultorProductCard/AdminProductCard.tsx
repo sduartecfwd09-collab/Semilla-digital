@@ -22,17 +22,12 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
   onDelete,
   onToggleDisponibilidad,
 }) => {
-  const precioMin = Math.min(...producto.precios.map((p) => p.precio))
-  const precioMax = Math.max(...producto.precios.map((p) => p.precio))
-
   return (
     <div className={`admin-product-card ${!producto.disponible ? 'inactive' : ''}`}>
       <div className="admin-product-card-header">
-        <div className="admin-product-card-emoji"><CategoryIcon categoria={producto.categoria} size={24} /></div>
-
         <div className="admin-product-card-info">
           <h3 className="admin-product-card-name">{producto.nombre}</h3>
-          <p className="admin-product-card-desc">{producto.descripcion}</p>
+          <p className="admin-product-card-desc">{producto.descripcion || 'Sin descripción'}</p>
         </div>
         <div className="admin-product-card-status">
           <label className="admin-product-card-toggle">
@@ -53,23 +48,27 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
 
       <div className="admin-product-card-body">
         <div className="admin-product-card-meta">
-          <span className="admin-product-card-category">{producto.categoria}</span>
-          <span className="admin-product-card-ferias">
-            {producto.precios.length} feria{producto.precios.length !== 1 ? 's' : ''}
-          </span>
+          <div className="admin-product-card-meta-item">
+            <span className="admin-product-card-meta-label">Categoría:</span>
+            <span className="admin-product-card-category">{producto.categoria}</span>
+          </div>
+          <div className="admin-product-card-meta-item">
+            <span className="admin-product-card-meta-label">Ubicación:</span>
+            <span className="admin-product-card-ferias">
+              {producto.provincia || (producto.precios && producto.precios.length > 0 ? producto.precios[0].provincia : 'N/A')}
+            </span>
+          </div>
         </div>
 
         <div className="admin-product-card-prices">
           <div className="admin-product-card-price-item">
-            <span className="admin-product-card-price-label">Precio:</span>
-            <span className="admin-product-card-price-value">₡{precioMin.toLocaleString('es-CR')}</span>
+            <span className="admin-product-card-price-label">Precio registrado:</span>
+            <span className="admin-product-card-price-value">
+              {producto.precios && producto.precios.length > 0 
+                ? `₡${producto.precios[0].precio.toLocaleString('es-CR')} / ${producto.unidad || 'Unidad'}`
+                : 'Precio no definido'}
+            </span>
           </div>
-          {/*
-          <div className="admin-product-card-price-item">
-            <span className="admin-product-card-price-label">Precio máximo:</span>
-            <span className="admin-product-card-price-value">₡{precioMax.toLocaleString('es-CR')}</span>
-          </div>
-          */}
         </div>
       </div>
 
@@ -81,11 +80,7 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({
           <Pencil size={14} strokeWidth={2} /> Editar
         </button>
         <button
-          onClick={() => {
-            if (window.confirm('¿Estás seguro de eliminar este producto?')) {
-              onDelete(producto.id!)
-            }
-          }}
+          onClick={() => onDelete(producto.id!)}
           className="admin-product-card-btn admin-product-card-btn-delete"
         >
           <Trash2 size={14} strokeWidth={2} /> Eliminar

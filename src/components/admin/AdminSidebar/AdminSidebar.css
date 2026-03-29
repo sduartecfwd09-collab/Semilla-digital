@@ -3,8 +3,9 @@
    ============================== */
 
 aside.admin-sidebar {
-    width: 250px !important;
-    min-height: calc(100vh - 70px) !important; /* Adjusted for top Navbar */
+    width: 220px !important;
+    height: calc(100vh - 70px) !important; 
+    overflow-y: auto !important;
     background: linear-gradient(180deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
     border-right: none !important;
     padding: 2.5rem 0.75rem !important;
@@ -14,6 +15,21 @@ aside.admin-sidebar {
     top: 70px !important; 
     z-index: 50 !important;
     box-shadow: 15px 0 50px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom scrollbar for admin sidebar */
+aside.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+aside.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* New Profile Section */
@@ -84,7 +100,7 @@ aside.admin-sidebar {
 .sidebar-nav {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.6rem !important;
+    gap: 1.25rem !important;
     width: 100% !important;
 }
 
@@ -94,13 +110,13 @@ aside.admin-sidebar {
     text-transform: uppercase !important;
     color: rgba(255, 255, 255, 0.5) !important;
     letter-spacing: 2.5px !important;
-    margin: 2rem 0 1rem 1.25rem !important;
+    margin: 3rem 0 1rem 1.25rem !important;
 }
 
 .admin-sidebar .nav-item {
     display: flex !important;
     align-items: center !important;
-    padding: 1rem 1.5rem !important;
+    padding: 1rem 1.25rem !important;
     border-radius: 50px !important;
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 600 !important;

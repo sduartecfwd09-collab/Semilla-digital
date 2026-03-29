@@ -7,6 +7,7 @@ import { getCategoryIcon } from '../../../utils/categoryIcons'
 import { PRODUCTOS_CATALOGO, getCategoriasDelCatalogo } from '../../../utils/productCatalog'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
 import { getFerias } from '../../../servers/AgricultorServices'
+import { useAuth } from '../../context/AuthContext'
 import './AdminProductForm.css'
 import { Feria } from '../../../types/feria.types'
 
@@ -35,6 +36,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { user } = useAuth()
   const isEdit = !!producto
   const [ferias, setFerias] = useState<Feria[]>([])
   const [formData, setFormData] = useState<Producto>({
@@ -45,12 +47,12 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     categoria: 'Verduras',
     imagen: '',
     disponible: true,
+    unidad: 'Kilogramo',
     precios: [],
   })
 
-  const [selectedFerias, setSelectedFerias] = useState<{
-    [key: string]: { selected: boolean; precio: string }
-  }>({})
+  const [selectedFeriaId, setSelectedFeriaId] = useState<string>('')
+  const [precio, setPrecio] = useState<string>('')
 
   useEffect(() => {
     const fetchFerias = async () => {
@@ -58,22 +60,12 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         const data = await getFerias()
         setFerias(data)
 
-        if (producto) {
-          const feriasMap: { [key: string]: { selected: boolean; precio: string } } = {}
-          data.forEach((feria: Feria) => {
-            const precioEnFeria = producto.precios.find((p) => String(p.feriaId) === String(feria.id))
-            feriasMap[String(feria.id)] = {
-              selected: !!precioEnFeria,
-              precio: precioEnFeria ? precioEnFeria.precio.toString() : '',
-            }
-          })
-          setSelectedFerias(feriasMap)
-        } else {
-          const feriasMap: { [key: string]: { selected: boolean; precio: string } } = {}
-          data.forEach((feria: Feria) => {
-            feriasMap[String(feria.id)] = { selected: false, precio: '' }
-          })
-          setSelectedFerias(feriasMap)
+        if (producto && producto.precios && producto.precios.length > 0) {
+          setSelectedFeriaId(String(producto.precios[0].feriaId))
+          setPrecio(producto.precios[0].precio.toString())
+        } else if (user?.feriaId) {
+          // Si es nuevo y tenemos feria asignada al usuario, la precargamos
+          setSelectedFeriaId(String(user.feriaId))
         }
       } catch (error) {
         console.error('Error al cargar ferias:', error)
@@ -83,7 +75,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     fetchFerias()
 
     if (producto) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(producto)
     }
   }, [producto, userId])
@@ -93,7 +84,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   ) => {
     const { name, value } = e.target
     if (name === 'nombre') {
-      // Al seleccionar un producto del catálogo, auto-asignar emoji y categoría
       const catalogProduct = PRODUCTOS_CATALOGO.find(p => p.nombre === value)
       if (catalogProduct) {
         setFormData({
@@ -112,26 +102,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     }
   }
 
-  const handleFeriaToggle = (feriaId: string) => {
-    setSelectedFerias({
-      ...selectedFerias,
-      [feriaId]: {
-        ...selectedFerias[feriaId],
-        selected: !selectedFerias[feriaId].selected,
-      },
-    })
-  }
-
-  const handlePrecioChange = (feriaId: string, precio: string) => {
-    setSelectedFerias({
-      ...selectedFerias,
-      [feriaId]: {
-        ...selectedFerias[feriaId],
-        precio,
-      },
-    })
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -140,26 +110,42 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       return;
     }
 
-    if (!formData.direccionPuesto?.trim()) {
-      Swal.fire('Error', 'La dirección del puesto es obligatoria', 'error');
+    const numericPrice = parseFloat(precio);
+    if (numericPrice < 0) {
+      Swal.fire('Error', 'El precio no puede ser negativo', 'error');
       return;
     }
 
-    const precios = ferias
-      .filter(feria => selectedFerias[feria.id]?.selected)
-      .map(feria => ({
-        feriaId: feria.id,
-        feriaNombre: feria.nombre,
-        provincia: feria.provincia,
-        precio: parseFloat(selectedFerias[feria.id].precio) || 0
-      }))
+    // Intentamos obtener la feria seleccionada o la del usuario como fallback
+    const finalFeriaId = selectedFeriaId || String(user?.feriaId || '');
+    const selectedFeria = ferias.find(f => String(f.id) === finalFeriaId);
+
+    // Creamos el arreglo de precios. Si no hay feria, usamos la provincia seleccionada en el form
+    const precios = selectedFeria ? [{
+      feriaId: selectedFeria.id,
+      feriaNombre: selectedFeria.nombre,
+      provincia: selectedFeria.provincia,
+      precio: numericPrice || 0
+    }] : [{
+      feriaId: 1, // ID genérico para feria local
+      feriaNombre: 'Feria Local',
+      provincia: formData.provincia || 'N/A',
+      precio: numericPrice || 0
+    }];
 
     try {
-      await onSubmit({ ...formData, emoji: formData.categoria, precios })
+      await onSubmit({ 
+        ...formData, 
+        nombre: formData.nombre.trim(),
+        descripcion: formData.descripcion?.trim() || '',
+        direccionPuesto: formData.direccionPuesto?.trim() || '',
+        emoji: formData.categoria, 
+        precios 
+      })
       Swal.fire({
         icon: 'success',
         title: isEdit ? 'Producto Actualizado' : 'Producto Creado',
-        text: `El producto ${formData.nombre} se ha guardado correctamente`,
+        text: `El producto ${formData.nombre} se ha guardado correctamente con precio ₡${numericPrice}`,
         timer: 2000,
         showConfirmButton: false
       });
@@ -218,7 +204,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             </div>
           </div>
 
-          {/* Icono de categoría auto-asignado */}
           <div className="admin-product-form-group">
             <label>Icono de categoría</label>
             <div className="admin-product-form-icon-preview" style={{
@@ -261,53 +246,53 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
                 {PROVINCIAS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+          </div>
 
+          <div className="admin-product-form-row">
             <div className="admin-product-form-group">
-              <label>Unidad</label>
-              <select 
-                name="unidad" 
-                value={formData.unidad || 'Unidad'} 
-                onChange={handleChange}
-                style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
-              >
-                <option value="Unidad">Por Unidad (un)</option>
-                <option value="Kilogramo">Por Kilogramo (kg)</option>
-                <option value="Docena">Por Docena (doc)</option>
-                <option value="Mano">Por Mano (mano)</option>
-                <option value="Caja">Por Caja (cj)</option>
-              </select>
+              <label>Precio (₡)</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Ej: 1500"
+                  value={precio}
+                  onChange={(e) => {
+                    // Solo permitir dígitos
+                    const val = e.target.value.replace(/[^0-9]/g, '')
+                    setPrecio(val)
+                  }}
+                  required
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                />
+                <select 
+                  name="unidad" 
+                  value={formData.unidad || 'Kilogramo'} 
+                  onChange={handleChange}
+                  style={{ width: '140px', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                >
+                  <option value="Kilogramo">Por kg</option>
+                  <option value="Gramo">Por gramo</option>
+                  <option value="Unidad">Por un</option>
+                  <option value="Litro">Por litro</option>
+                  <option value="Mililitro">Por ml</option>
+                  <option value="Botella">Por botella</option>
+                  <option value="Docena">Por docena</option>
+                  <option value="Mano">Por mano</option>
+                  <option value="Caja">Por caja</option>
+                </select>
+              </div>
+              <p style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
+                Precio según la unidad seleccionada
+              </p>
             </div>
           </div>
 
-          <div className="admin-product-form-group">
-            <label>Precios por Feria</label>
-            <div className="admin-product-form-ferias">
-              {ferias.map((feria) => (
-                <div key={feria.id} className="admin-product-form-feria-item">
-                  <label className="admin-product-form-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={selectedFerias[feria.id]?.selected || false}
-                      onChange={() => handleFeriaToggle(feria.id)}
-                    />
-                    <span>{feria.nombre}</span>
-                  </label>
-                  {selectedFerias[feria.id]?.selected && (
-                    <input
-                      type="number"
-                      placeholder="Precio ₡"
-                      value={selectedFerias[feria.id].precio}
-                      onChange={(e) => handlePrecioChange(feria.id, e.target.value)}
-                      className="admin-product-form-precio-input"
-                      min="0"
-                      step="50"
-                      required
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+<div style={{ display: 'none' }}>
+              <label>Feria (automática)</label>
+              <input type="hidden" value={selectedFeriaId} />
+           </div>
 
           <div className="admin-product-form-actions">
             <button type="button" onClick={onCancel} className="admin-product-form-btn-cancel">
