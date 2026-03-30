@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
 @import './admin-ui.css';
 
 :root {
@@ -54,8 +55,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 {
-  color: var(--primary-color);
+h1, h2, h3, h4, h5, h6 {
+  color: var(--fondo);
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -63,18 +64,17 @@ h1, h2, h3 {
 a {
   text-decoration: none;
   color: inherit;
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
 }
 :root {
-  --verde: #1a5c2a;
-  --verde-claro: #2d8a42;
-  --lima: #8cc63f;
-  --tierra: #c4813a;
-  --rojo: #e05252;
-  --crema: #f7f2e8;
-  --blanco: #ffffff;
-  --gris: #4a4a4a;
-  --fondo: #0f3318;
+  --verde: #3B9C3A;       
+  --verde-claro: #2d7a2d; 
+  --lima: #36EB60;        
+  --tierra: #d97706;      
+  --rojo: #e11d48;        /* Deep rose red for errors/logout */
+  --crema: #ffffff;       /* White background */
+  --blanco: #ffffff;      /* Pure white for headings and high contrast */
+  --gris: #374151;        /* Dark gray for body text on white */
+  --fondo: #052e16;       /* Deep dark green for navbar/footer */
 }
 
 * {
@@ -85,9 +85,10 @@ a {
 
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--crema);
-  color: var(--gris);
+  background: #ffffff;
+  color: var(--fondo);
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 a {

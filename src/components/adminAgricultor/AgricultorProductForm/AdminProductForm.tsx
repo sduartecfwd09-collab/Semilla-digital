@@ -1,14 +1,20 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
+import { X } from 'lucide-react'
 import { Producto, CATEGORIAS } from '../../../servers/ProductService'
 import { getCategoryIcon } from '../../../utils/categoryIcons'
 import { PRODUCTOS_CATALOGO, getCategoriasDelCatalogo } from '../../../utils/productCatalog'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
+import { getFerias } from '../../../servers/AgricultorServices'
+import { useAuth } from '../../context/AuthContext'
 import './AdminProductForm.css'
+import { Feria } from '../../../types/feria.types'
 
 interface AdminProductFormProps {
   producto?: Producto
   userId: string | number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSubmit: (producto: Producto) => void
   onCancel: () => void
 }
@@ -23,12 +29,16 @@ const PROVINCIAS = [
   'Limón'
 ]
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AdminProductForm: React.FC<AdminProductFormProps> = ({
   producto,
   userId,
   onSubmit,
   onCancel,
 }) => {
+  const { user } = useAuth()
+  const isEdit = !!producto
+  const [ferias, setFerias] = useState<Feria[]>([])
   const [formData, setFormData] = useState<Producto>({
     userId,
     nombre: '',
@@ -37,30 +47,43 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     categoria: 'Verduras',
     imagen: '',
     disponible: true,
-    provincia: 'San José',
-    direccionPuesto: '',
-    unidad: 'Unidad',
+    unidad: 'Kilogramo',
     precios: [],
   })
 
-  const [precio, setPrecio] = useState('')
+  const [selectedFeriaId, setSelectedFeriaId] = useState<string>('')
+  const [precio, setPrecio] = useState<string>('')
 
   useEffect(() => {
-    if (producto) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFormData(producto)
-      if (producto.precios && producto.precios.length > 0) {
-        setPrecio(producto.precios[0].precio.toString())
+    const fetchFerias = async () => {
+      try {
+        const data = await getFerias()
+        setFerias(data)
+
+        if (producto && producto.precios && producto.precios.length > 0) {
+          setSelectedFeriaId(String(producto.precios[0].feriaId))
+          setPrecio(producto.precios[0].precio.toString())
+        } else if (user?.feriaId) {
+          // Si es nuevo y tenemos feria asignada al usuario, la precargamos
+          setSelectedFeriaId(String(user.feriaId))
+        }
+      } catch (error) {
+        console.error('Error al cargar ferias:', error)
       }
     }
-  }, [producto])
+
+    fetchFerias()
+
+    if (producto) {
+      setFormData(producto)
+    }
+  }, [producto, userId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
     if (name === 'nombre') {
-      // Al seleccionar un producto del catálogo, auto-asignar emoji y categoría
       const catalogProduct = PRODUCTOS_CATALOGO.find(p => p.nombre === value)
       if (catalogProduct) {
         setFormData({
@@ -87,33 +110,47 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       return;
     }
 
-    if (!precio || parseFloat(precio) <= 0) {
-      Swal.fire('Error', 'Por favor ingresa un precio válido', 'error');
+    const numericPrice = parseFloat(precio);
+    if (numericPrice < 0) {
+      Swal.fire('Error', 'El precio no puede ser negativo', 'error');
       return;
     }
 
-    if (!formData.direccionPuesto?.trim()) {
-      Swal.fire('Error', 'La dirección del puesto es obligatoria', 'error');
-      return;
-    }
+    // Intentamos obtener la feria seleccionada o la del usuario como fallback
+    const finalFeriaId = selectedFeriaId || String(user?.feriaId || '');
+    const selectedFeria = ferias.find(f => String(f.id) === finalFeriaId);
 
-    const precios = [{
-      feriaId: 1, 
+    // Creamos el arreglo de precios. Si no hay feria, usamos la provincia seleccionada en el form
+    const precios = selectedFeria ? [{
+      feriaId: selectedFeria.id,
+      feriaNombre: selectedFeria.nombre,
+      provincia: selectedFeria.provincia,
+      precio: numericPrice || 0
+    }] : [{
+      feriaId: 1, // ID genérico para feria local
       feriaNombre: 'Feria Local',
-      provincia: formData.provincia || 'San José',
-      precio: parseFloat(precio)
-    }]
+      provincia: formData.provincia || 'N/A',
+      precio: numericPrice || 0
+    }];
 
     try {
-      await onSubmit({ ...formData, emoji: formData.categoria, precios })
+      await onSubmit({ 
+        ...formData, 
+        nombre: formData.nombre.trim(),
+        descripcion: formData.descripcion?.trim() || '',
+        direccionPuesto: formData.direccionPuesto?.trim() || '',
+        emoji: formData.categoria, 
+        precios 
+      })
       Swal.fire({
         icon: 'success',
-        title: producto ? 'Producto Actualizado' : 'Producto Creado',
-        text: `El producto ${formData.nombre} se ha guardado correctamente`,
+        title: isEdit ? 'Producto Actualizado' : 'Producto Creado',
+        text: `El producto ${formData.nombre} se ha guardado correctamente con precio ₡${numericPrice}`,
         timer: 2000,
         showConfirmButton: false
       });
     } catch (error) {
+      console.error('Error al guardar producto:', error)
       Swal.fire('Error', 'No se pudo guardar el producto', 'error');
     }
   }
@@ -124,9 +161,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     <div className="admin-product-form-overlay">
       <div className="admin-product-form-modal">
         <div className="admin-product-form-header">
-          <h2>{producto ? 'Editar Producto' : 'Nuevo Producto'}</h2>
+          <h2>{isEdit ? 'Editar Producto' : 'Nuevo Producto'}</h2>
           <button onClick={onCancel} className="admin-product-form-close">
-            ✕
+            <X size={18} strokeWidth={2} />
           </button>
         </div>
 
@@ -167,7 +204,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             </div>
           </div>
 
-          {/* Icono de categoría auto-asignado */}
           <div className="admin-product-form-group">
             <label>Icono de categoría</label>
             <div className="admin-product-form-icon-preview" style={{
@@ -210,55 +246,60 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
                 {PROVINCIAS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+          </div>
 
+          <div className="admin-product-form-row">
             <div className="admin-product-form-group">
-              <label>Precio y Unidad</label>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <div className="admin-product-form-precio-wrapper" style={{ flex: 1 }}>
-                  <span className="precio-prefix">₡</span>
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      value={precio}
-                      onChange={(e) => setPrecio(e.target.value)}
-                      className="admin-product-form-precio-input"
-                      required
-                    />
-                </div>
+              <label>Precio (₡)</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Ej: 1500"
+                  value={precio}
+                  onChange={(e) => {
+                    // Solo permitir dígitos
+                    const val = e.target.value.replace(/[^0-9]/g, '')
+                    setPrecio(val)
+                  }}
+                  required
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                />
                 <select 
                   name="unidad" 
-                  value={formData.unidad || 'Unidad'} 
+                  value={formData.unidad || 'Kilogramo'} 
                   onChange={handleChange}
-                  style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                  style={{ width: '140px', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                 >
-                  <option value="Unidad">Por Unidad (un)</option>
-                  <option value="Kilogramo">Por Kilogramo (kg)</option>
-                  <option value="Docena">Por Docena (doc)</option>
-                  <option value="Mano">Por Mano (mano)</option>
-                  <option value="Caja">Por Caja (cj)</option>
+                  <option value="Kilogramo">Por kg</option>
+                  <option value="Gramo">Por gramo</option>
+                  <option value="Unidad">Por un</option>
+                  <option value="Litro">Por litro</option>
+                  <option value="Mililitro">Por ml</option>
+                  <option value="Botella">Por botella</option>
+                  <option value="Docena">Por docena</option>
+                  <option value="Mano">Por mano</option>
+                  <option value="Caja">Por caja</option>
                 </select>
               </div>
+              <p style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
+                Precio según la unidad seleccionada
+              </p>
             </div>
           </div>
 
-          <div className="admin-product-form-group">
-            <label>Dirección del Puesto</label>
-            <input
-              type="text"
-              name="direccionPuesto"
-              value={formData.direccionPuesto}
-              onChange={handleChange}
-              placeholder="ej: Pasillo 3, Puesto 15 (Al lado de las frutas)"
-              required
-            />
-          </div>
+<div style={{ display: 'none' }}>
+              <label>Feria (automática)</label>
+              <input type="hidden" value={selectedFeriaId} />
+           </div>
 
           <div className="admin-product-form-actions">
             <button type="button" onClick={onCancel} className="admin-product-form-btn-cancel">
               Cancelar
             </button>
             <button type="submit" className="admin-product-form-btn-submit">
-              {producto ? 'Guardar Cambios' : 'Crear Producto'}
+              {isEdit ? 'Guardar Cambios' : 'Crear Producto'}
             </button>
           </div>
         </form>

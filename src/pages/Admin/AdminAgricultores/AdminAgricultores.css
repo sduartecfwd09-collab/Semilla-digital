@@ -20,34 +20,40 @@
 }
 
 .header-info h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #052e16;
     margin: 0;
-    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
 }
 
 .header-info p {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    font-weight: 500;
 }
 
 .btn-add {
-    background: linear-gradient(135deg, var(--accent-color), var(--primary-light));
+    background: #3B9C3A;
     color: white;
-    padding: 0.9rem 1.75rem;
-    border-radius: var(--radius-md);
-    font-weight: 700;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    box-shadow: var(--shadow-accent);
-    transition: var(--transition-base);
+    box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
 }
 
 .btn-add:hover {
-    box-shadow: 0 8px 20px rgba(82, 183, 136, 0.4);
+    background: #2d7a2d;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 156, 58, 0.3);
 }
 
 .filters-bar {
@@ -94,11 +100,11 @@
 
 .agro-card {
     background: white;
-    border-radius: 20px;
-    padding: 1.75rem;
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    transition: all 0.3s ease;
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .agro-card:hover {
@@ -113,16 +119,18 @@
 }
 
 .agro-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #052e16 0%, #3B9C3A 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 156, 58, 0.2);
+    border: 2px solid #ffffff;
 }
 
 .agro-main-info {
@@ -132,20 +140,22 @@
 
 .agro-main-info h3 {
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #052e16;
 }
 
 .agro-main-info span {
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-size: 0.85rem;
+    color: #64748b;
 }
 
 .agro-puesto-info {
-    background: #f9fafb;
-    padding: 1.25rem;
-    border-radius: 12px;
+    background: #fbfbfc;
+    padding: 1.2rem;
+    border-radius: 16px;
     margin-bottom: 1.5rem;
+    border: 1px solid #f1f5f9;
 }
 
 .agro-puesto-info p {
@@ -156,9 +166,10 @@
 }
 
 .puesto-title {
-    font-weight: 700;
-    color: var(--primary-color) !important;
-    font-size: 1.05rem !important;
+    font-weight: 800;
+    color: #3B9C3A !important;
+    font-size: 1rem !important;
+    font-family: 'Playfair Display', serif;
 }
 
 .agro-card-actions {
@@ -168,31 +179,42 @@
 
 .agro-card-actions button {
     flex: 1;
-    padding: 0.75rem;
-    border-radius: 8px;
+    padding: 0.7rem;
+    border-radius: 50px;
     font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .btn-edit {
-    background: #eff6ff;
-    color: #3b82f6;
-    border: 1px solid #bfdbfe;
+    background: #ffffff;
+    color: #3B9C3A;
+    border: 2px solid #3B9C3A;
 }
 
 .btn-edit:hover {
-    background: #dbeafe;
+    background: #3B9C3A;
+    color: white;
+    border-color: #3B9C3A;
+    transform: translateY(-2px);
 }
 
 .btn-delete {
-    background: #fef2f2;
-    color: #ef4444;
-    border: 1px solid #fecaca;
+    background: #ffffff;
+    color: #dc2626;
+    border: 2px solid #dc2626;
 }
 
 .btn-delete:hover {
-    background: #fee2e2;
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+    transform: translateY(-2px);
 }
 
 /* Los estilos de modales ahora son globales en admin-ui.css */

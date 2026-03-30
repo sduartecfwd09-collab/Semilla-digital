@@ -19,6 +19,7 @@ interface Usuario {
   name: string;
   email: string;
   role: string;
+  avatar?: string;
 }
 
 const AdminSolicitudes: React.FC = () => {
@@ -112,6 +113,24 @@ const AdminSolicitudes: React.FC = () => {
         })
       });
 
+      // 2. Si es aprobada, asignar la feria automáticamente al usuario desde su puesto
+      if (nuevoEstado === 'Aprobada' && solicitud.usuarioId) {
+        try {
+          const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+          const puestos = await puestosRes.json();
+          const miPuesto = puestos.find((p: any) => String(p.usuarioId) === String(solicitud.usuarioId));
+          
+          if (miPuesto && miPuesto.feriaId) {
+            await fetch(`${ENDPOINTS.usuarios}/${solicitud.usuarioId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ feriaId: miPuesto.feriaId })
+            });
+          }
+        } catch (e) {
+          console.error("Error al asignar feria automáticamente:", e);
+        }
+      }
       Swal.fire('¡Listo!', `Solicitud ${nuevoEstado.toLowerCase()} correctamente${nuevoEstado === 'Aprobada' ? '. El usuario podrá activar su rol de Agricultor desde su perfil.' : '.'}`, 'success');
       fetchDatos();
     } catch (error) {
@@ -142,18 +161,18 @@ const AdminSolicitudes: React.FC = () => {
         html: `
           <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
             <p><strong>Nombre del Puesto:</strong> ${puestoUsuario.nombrePuesto || 'N/A'}</p>
-            <p><strong>Ubicación:</strong> ${puestoUsuario.ubicacion || 'N/A'}</p>
+            <p><strong>Ferias de interés:</strong> ${Array.isArray(puestoUsuario.ubicacion) ? puestoUsuario.ubicacion.join(', ') : (puestoUsuario.ubicacion || 'N/A')}</p>
             <p><strong>Descripción:</strong> ${puestoUsuario.descripcion || 'N/A'}</p>
-            <p><strong>Productos:</strong> ${puestoUsuario.productosAOfrecer || 'N/A'}</p>
-            <p><strong>Categorías:</strong> ${(puestoUsuario.tiposProducto || []).join(', ') || 'N/A'}</p>
+            <p><strong>Tipos de Producto:</strong> ${Array.isArray(puestoUsuario.tiposProducto) ? puestoUsuario.tiposProducto.join(', ') : 'N/A'}</p>
             <hr style="opacity: 0.3; margin: 10px 0;">
             <p><strong>Teléfono:</strong> ${puestoUsuario.telefono || 'N/A'}</p>
             <p><strong>Email de contacto:</strong> ${puestoUsuario.email || 'N/A'}</p>
-            <p><strong>Horarios:</strong> ${puestoUsuario.horarios || 'N/A'}</p>
+            <p><strong>Horarios propuestos:</strong> ${puestoUsuario.horarios || 'N/A'}</p>
             <p><strong>Métodos de Cultivo:</strong> ${puestoUsuario.metodosCultivo || 'N/A'}</p>
             <p><strong>Redes Sociales:</strong> ${puestoUsuario.redesSociales || 'N/A'}</p>
+            <hr style="opacity: 0.3; margin: 10px 0;">
             ${puestoUsuario.fotosBase64 && puestoUsuario.fotosBase64.length > 0
-              ? `<p><strong>Fotos:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64.map((b64: string) => `<img src="${b64}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd;" />`).join('')}</div>`
+              ? `<p><strong>Fotos Adjuntas:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64.map((b64: string) => `<img src="${b64}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" />`).join('')}</div>`
               : (puestoUsuario.fotosNombres && puestoUsuario.fotosNombres.length > 0 
                   ? `<p><strong>Fotos adjuntas:</strong> ${puestoUsuario.fotosNombres.length} foto(s)</p>` 
                   : '')}
@@ -203,11 +222,18 @@ const AdminSolicitudes: React.FC = () => {
                   <tr key={sol.id}>
                     <td>
                       <div className="user-info-cell">
+                        <div className="user-avatar">
+                          {user?.avatar ? (
+                            <img src={user.avatar} alt={nombreSolicitante} />
+                          ) : (
+                            nombreSolicitante.charAt(0).toUpperCase()
+                          )}
+                        </div>
                         <div className="user-details">
-                          <span className="user-name" style={{ fontWeight: 700, color: 'var(--primary-color)' }}>
+                          <span className="user-name">
                             {nombreSolicitante}
                           </span>
-                          <span className="user-email" style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                          <span className="user-email">
                             {emailSolicitante}
                           </span>
                         </div>
@@ -215,8 +241,8 @@ const AdminSolicitudes: React.FC = () => {
                     </td>
                     <td>
                       <div className="puesto-info">
-                        <span style={{ fontWeight: 600 }}>{sol.nombreDelPuesto}</span>
-                        <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '2px' }}>
+                        <span className="user-name" style={{ color: '#052e16' }}>{sol.nombreDelPuesto}</span>
+                        <div className="user-email">
                           Para: <strong>{sol.rolSolicitado}</strong>
                         </div>
                       </div>
@@ -224,42 +250,36 @@ const AdminSolicitudes: React.FC = () => {
                     <td>{new Date(sol.fechaSolicitud).toLocaleDateString()}</td>
                     <td>
                       <span className={`status-badge ${
-                        sol.estado === 'Pendiente' ? 'status-inactive' : 
-                        sol.estado === 'Aprobada' ? 'status-active' : 'status-blocked'
-                      }`} style={{ 
-                        backgroundColor: sol.estado === 'Pendiente' ? '#fffbeb' : '',
-                        color: sol.estado === 'Pendiente' ? '#92400e' : ''
-                      }}>
+                        sol.estado === 'Pendiente' ? 'status-pending' : 
+                        sol.estado === 'Aprobada' ? 'status-active' : 'status-rejected'
+                      }`}>
                         {sol.estado}
                       </span>
                     </td>
                     <td>
                       <div className="action-buttons">
                         <button 
-                          className="btn-text" 
-                          style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                          className="btn-text btn-edit-pill" 
                           title="Ver detalles"
                           onClick={() => handleVerDetalles(sol)}
                         >
-                          Ver Detalles
+                          <span className="btn-icon-small">👁️</span> Detalles
                         </button>
                         {sol.estado === 'Pendiente' && (
                           <>
                             <button 
-                              className="btn-text" 
-                              style={{ backgroundColor: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                              className="btn-text btn-edit-pill" 
                               title="Aprobar solicitud"
                               onClick={() => handleResponder(sol, 'Aprobada')}
                             >
-                              Aprobar
+                              <span className="btn-icon-small">✅</span> Aprobar
                             </button>
                             <button 
-                              className="btn-text" 
-                              style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                              className="btn-text btn-delete-pill" 
                               title="Rechazar solicitud"
                               onClick={() => handleResponder(sol, 'Rechazada')}
                             >
-                              Rechazar
+                              <span className="btn-icon-small">❌</span> Rechazar
                             </button>
                           </>
                         )}

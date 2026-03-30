@@ -1,6 +1,6 @@
 .stats-bar {
-    background: var(--verde);
-    padding: 20px 60px;
+    background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
+    padding: 30px 60px;
     display: flex;
     justify-content: center;
     gap: 80px;
@@ -12,14 +12,18 @@
 
 .stat-value {
     font-family: 'Playfair Display', serif;
-    font-size: 30px;
+    font-size: 34px;
     font-weight: 900;
-    color: var(--lima);
+    color: var(--blanco);
+    margin-bottom: 4px;
 }
 
 .stat-label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px !important;
+    color: #ffffff !important;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    font-weight: 800 !important;
+    text-shadow: 0 0 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6) !important;
+    opacity: 1 !important;
 }

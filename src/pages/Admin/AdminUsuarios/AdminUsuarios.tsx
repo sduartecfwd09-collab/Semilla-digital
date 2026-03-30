@@ -117,14 +117,20 @@ const AdminUsuarios = () => {
                             {filteredUsers.map(user => (
                                 <tr key={user.id}>
                                     <td>
-                                        <div className="user-info-cell">
-                                            <div className="user-avatar">{getInitials(user.name)}</div>
-                                            <div className="user-details">
-                                                <span className="user-name">{user.name}</span>
-                                                <span className="user-email">{user.email}</span>
-                                            </div>
-                                        </div>
-                                    </td>
+                                         <div className="user-info-cell">
+                                             <div className="user-avatar">
+                                                 {user.avatar ? (
+                                                     <img src={user.avatar} alt={user.name} />
+                                                 ) : (
+                                                     getInitials(user.name)
+                                                 )}
+                                             </div>
+                                             <div className="user-details">
+                                                 <span className="user-name">{user.name}</span>
+                                                 <span className="user-email">{user.email}</span>
+                                             </div>
+                                         </div>
+                                     </td>
                                     <td>{user.role}</td>
                                     <td>
                                         <span className={`status-badge ${user.status === 'Activo' ? 'status-active' : 'status-inactive'}`}>
@@ -132,25 +138,23 @@ const AdminUsuarios = () => {
                                         </span>
                                     </td>
                                     <td>
-                                        <div className="action-buttons">
-                                            <button
-                                                className="btn-text"
-                                                style={{ backgroundColor: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
-                                                title="Editar"
-                                                onClick={() => handleEditClick(user)}
-                                            >
-                                                Editar
-                                            </button>
-                                            <button
-                                                className="btn-text"
-                                                style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
-                                                title="Eliminar"
-                                                onClick={() => handleDeleteClick(user.id)}
-                                            >
-                                                Eliminar
-                                            </button>
-                                        </div>
-                                    </td>
+                                         <div className="action-buttons">
+                                             <button
+                                                 className="btn-text btn-edit-pill"
+                                                 title="Editar"
+                                                 onClick={() => handleEditClick(user)}
+                                             >
+                                                 <span className="btn-icon-small">✏️</span> Editar
+                                             </button>
+                                             <button
+                                                 className="btn-text btn-delete-pill"
+                                                 title="Eliminar"
+                                                 onClick={() => handleDeleteClick(user.id)}
+                                             >
+                                                 <span className="btn-icon-small">🗑️</span> Eliminar
+                                             </button>
+                                         </div>
+                                     </td>
                                 </tr>
                             ))}
                         </tbody>

@@ -40,9 +40,7 @@ const FeriaItem: React.FC<FeriaItemProps> = ({ feria }) => {
             </a>
           </div>
           
-          <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 28px; text-align: center; border-top: 1px solid #f3f4f6; padding-top: 15px;">
-            ⚠️ <b>Aviso:</b> Hemos desactivado el mapa integrado para evitar bloqueos de seguridad de Google y garantizar que siempre puedas ver la ubicación en la app oficial.
-          </p>
+         
         </div>
       `,
       showCloseButton: true,

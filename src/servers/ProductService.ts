@@ -1,9 +1,6 @@
-// ─────────────────────────────────────────────────────────────────
-// ProductService.ts
-// Servicio para gestión de productos por usuario administrador
-// ─────────────────────────────────────────────────────────────────
+import { API_BASE_URL } from '../services/api.config'
 
-const BASE_URL = 'http://localhost:3002'
+const BASE_URL = API_BASE_URL
 
 export interface Producto {
   id?: string | number
@@ -18,7 +15,7 @@ export interface Producto {
   direccionPuesto?: string
   unidad?: string
   precios: {
-    feriaId: number
+    feriaId: string | number
     feriaNombre: string
     provincia: string
     precio: number
@@ -103,7 +100,7 @@ export const deleteProducto = async (id: string | number): Promise<void> => {
 /**
  * Obtiene un producto por ID
  */
-export const getProductoById = async (id: number): Promise<Producto> => {
+export const getProductoById = async (id: string | number): Promise<Producto> => {
   const response = await fetch(`${BASE_URL}/productos/${id}`)
   
   if (!response.ok) {

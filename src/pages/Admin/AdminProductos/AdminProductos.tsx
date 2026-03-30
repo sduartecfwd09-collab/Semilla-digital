@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { useAuth } from '../../../components/context/AuthContext'
-import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm'
+import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm/AdminProductForm'
 import {
   Producto,
   createProducto,
@@ -10,6 +10,7 @@ import {
 } from '../../../servers/ProductService'
 import { API_BASE_URL } from '../../../services/api.config'
 import CategoryIcon from '../../../components/CategoryIcon/CategoryIcon'
+import { normalizeProductName } from '../../../utils/productCatalog'
 import './AdminProductos.css'
 import { Product } from '../../../types'
 
@@ -104,6 +105,8 @@ const AdminProductos = () => {
         product.categoria?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
+    const finalProducts = filteredProducts;
+
     // Función auxiliar para mostrar la unidad de forma legible
     const getUnidadLabel = (unidad?: string) => {
         switch (unidad) {
@@ -150,7 +153,7 @@ const AdminProductos = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map(product => {
+                            {finalProducts.map(product => {
                                 const precios = product.precios || []
                                 const precioDisplay = precios.length > 0
                                     ? `₡${precios[0].precio.toLocaleString('es-CR')}`
@@ -160,7 +163,6 @@ const AdminProductos = () => {
                                     <tr key={product.id}>
                                         <td>
                                             <div className="product-info">
-                                                <div className="product-icon"><CategoryIcon categoria={product.categoria} size={20} /></div>
                                                 <span className="product-name">{product.nombre}</span>
                                             </div>
                                         </td>

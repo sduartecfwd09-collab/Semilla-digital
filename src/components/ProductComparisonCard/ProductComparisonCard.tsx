@@ -1,15 +1,17 @@
 import React from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './ProductComparisonCard.css'
+import { Producto } from '../../servers/ProductService'
+
 
 export interface ComparisonRow {
   feriaName: string
   feriaLocation: string
-  province?: string
   price: string
   priceNumeric: number
   barWidth: number
   barColor?: string
+  province?: string
 }
 
 export interface ProductComparisonData {
@@ -17,7 +19,7 @@ export interface ProductComparisonData {
   emoji: string
   name: string
   description: string
-  unit?: string
+  unit: string
   lowestPrice: string
   rows: ComparisonRow[]
 }
@@ -30,22 +32,26 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
   const lowestPriceNumeric = Math.min(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
   const maxPrice = Math.max(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
 
+  // Eliminar cualquier '· Por ...' embebido en la descripción que contradiga la unidad real
+  const cleanDescription = product.description
+    ? product.description.replace(/\s*[·•]\s*[Pp]or\s+\w+/g, '').trim()
+    : ''
+
   return (
     <div className="product-comp-card">
       {/* Card header */}
       <div className="product-comp-header">
-        <span className="product-comp-emoji"><CategoryIcon categoria={product.category} size={24} /></span>
         <div>
           <div className="product-comp-name">
             {product.name}
             {product.unit && (
               <span style={{
                 fontSize: '0.7rem',
-                backgroundColor: '#f0f9ff',
-                color: '#0369a1',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontWeight: 600,
+                backgroundColor: 'rgba(59, 156, 58, 0.1)',
+                color: '#3B9C3A',
+                padding: '2px 10px',
+                borderRadius: '12px',
+                fontWeight: 700,
                 marginLeft: '8px',
                 verticalAlign: 'middle'
               }}>
@@ -53,10 +59,10 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
               </span>
             )}
           </div>
-          <div className="product-comp-desc">{product.description}</div>
+          <div className="product-comp-desc">{cleanDescription}</div>
         </div>
         <div className="product-comp-price-summary">
-          <div className="product-comp-price-label">Precio más bajo</div>
+          <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
           <div className="product-comp-min-price">{product.lowestPrice}</div>
         </div>
       </div>
@@ -75,7 +81,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           const isExpensive = row.priceNumeric === maxPrice && !isBest
           const diff = row.priceNumeric - lowestPriceNumeric
           const barWidthPct = Math.round((row.priceNumeric / maxPrice) * 100)
-          const barColor = isBest ? 'var(--lima)' : isExpensive ? '#e08060' : '#f0c060'
+          const barColor = isBest ? '#3B9C3A' : '#e2e8f0'
 
           return (
             <div key={index} className={`product-comp-row ${isBest ? 'best' : ''}`}>

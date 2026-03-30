@@ -8,6 +8,7 @@ interface User {
   name: string
   nombre?: string
   status: string
+  avatar?: string
   feriaId?: number
   puestoInfo?: {
     numero: string
@@ -19,6 +20,7 @@ interface AuthContextType {
   user: User | null
   login: (email: string, password: string) => Promise<{ success: boolean; role?: string }>
   logout: () => void
+  updateUserInContext: (updatedUser: Partial<User>) => void
   isAuthenticated: boolean
   isLoading: boolean
 }
@@ -49,7 +51,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(JSON.parse(storedUser))
       } catch (error) {
         console.error('Error al parsear usuario:', error)
-        localStorage.removeItem('user')
       }
     }
     setIsLoading(false)
@@ -59,12 +60,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
     try {
-      // Buscar usuario en la API usando ENDPOINTS centralizados
-      const response = await fetch(`${ENDPOINTS.usuarios}?email=${email}&password=${password}`)
-      const users = await response.json()
+      // Normalizamos el email para la búsqueda
+      const targetEmail = email.toLowerCase().trim()
+      const targetPassword = password.trim()
 
-      if (users.length > 0) {
-        const authenticatedUser = users[0]
+      // Obtenemos todos los usuarios para filtrar manualmente (más fiable que los query params)
+      const response = await fetch(ENDPOINTS.usuarios)
+      if (!response.ok) return { success: false }
+      
+      const allUsers = await response.json()
+      
+      // Buscamos un usuario que coincida (email ignorando mayúsculas)
+      const authenticatedUser = allUsers.find((u: any) => 
+        u.email.toLowerCase() === targetEmail && 
+        u.password === targetPassword
+      )
+
+      if (authenticatedUser) {
         // Guardar en estado y localStorage (sin password por seguridad)
         const userToStore: User = {
           id: String(authenticatedUser.id),
@@ -73,6 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: authenticatedUser.name || authenticatedUser.nombre,
           nombre: authenticatedUser.nombre || authenticatedUser.name,
           status: authenticatedUser.status || 'Activo',
+          avatar: authenticatedUser.avatar,
           feriaId: authenticatedUser.feriaId,
           puestoInfo: authenticatedUser.puestoInfo,
         }
@@ -81,10 +94,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: true, role: authenticatedUser.role }
       }
       return { success: false }
-    } catch (error) {
-      console.error('Error en login:', error)
-      return { success: false }
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  const updateUserInContext = (updatedData: Partial<User>) => {
+    if (!user) return
+    const newUser = { ...user, ...updatedData }
+    setUser(newUser)
+    localStorage.setItem('user', JSON.stringify(newUser))
   }
 
   const logout = () => {
@@ -96,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     login,
     logout,
+    updateUserInContext,
     isAuthenticated: !!user,
     isLoading,
   }

@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link } from 'react-router-dom'
 import { validateEmail } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
+
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -61,9 +62,9 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          if (result.role === 'Admin') {
+          if (result.role === 'Administrador' || result.role === 'Admin') {
             navigate('/admin')
-          } else if (result.role === 'Agricultor') {
+          } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
             navigate('/agricultor')
           } else {
             navigate('/')
@@ -77,7 +78,8 @@ const Auth: React.FC = () => {
           confirmButtonColor: 'var(--verde-claro)',
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('Error en login:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -177,7 +179,8 @@ const Auth: React.FC = () => {
           setIsLogin(true)
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('Error en registro:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -192,6 +195,10 @@ const Auth: React.FC = () => {
     <div className="auth-container">
       {/* SECCIÓN IZQUIERDA */}
       <div className="auth-left">
+        <Link to="/" className="auth-back-btn" style={{ marginTop: 0, marginBottom: '2rem' }}>
+          <span>←</span> Volver al inicio
+        </Link>
+
         <Link to="/" className="auth-logo-link">
           <div className="auth-logo">
             <span className="logo-agro">Agro</span><span className="logo-map">Map</span>
@@ -230,9 +237,6 @@ const Auth: React.FC = () => {
           </div>
         </div>
 
-        <Link to="/" className="auth-back-btn">
-          <span>←</span> Volver al inicio
-        </Link>
       </div>
 
       {/* SECCIÓN DERECHA */}
@@ -295,7 +299,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowLoginPass(!showLoginPass)}
                     >
-                      {showLoginPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showLoginPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -369,7 +373,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegPass(!showRegPass)}
                     >
-                      {showRegPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -390,7 +394,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegConfirm(!showRegConfirm)}
                     >
-                      {showRegConfirm ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>

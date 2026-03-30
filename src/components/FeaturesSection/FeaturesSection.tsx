@@ -1,27 +1,28 @@
 import React from 'react'
+import { BarChart3, Map, Search } from 'lucide-react'
 import './FeaturesSection.css'
 
 interface Feature {
-  icon: string
+  icon: React.ReactNode
   title: string
   description: string
 }
 
 const features: Feature[] = [
   {
-    icon: '📊',
+    icon: <BarChart3 size={32} />,
     title: 'Comparación de precios',
     description:
       'Visualizá el precio de un mismo producto en distintas ferias de tu zona y tomá la mejor decisión antes de ir.',
   },
   {
-    icon: '🗺️',
+    icon: <Map size={32} />,
     title: 'Directorio de ferias',
     description:
       'Encontrá ferias del agricultor cerca de vos con información sobre ubicación, horarios y productos disponibles.',
   },
   {
-    icon: '🔍',
+    icon: <Search size={32} />,
     title: 'Buscador rápido',
     description:
       'Buscá cualquier producto agrícola y encontrá en qué ferias está disponible y a qué precio aproximado se vende.',

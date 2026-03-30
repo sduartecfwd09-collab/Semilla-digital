@@ -68,6 +68,12 @@
   font-weight: 600;
 }
 
+.mis-ferias-feria-nombre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .mis-ferias-edit-form {
   display: flex;
   flex-direction: column;
@@ -161,7 +167,10 @@
 }
 
 .mis-ferias-producto-emoji {
-  font-size: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mis-ferias-producto-info {
@@ -181,6 +190,13 @@
   font-weight: 600;
 }
 
+.mis-ferias-empty {
+  text-align: center;
+  color: #999;
+  padding: 2rem;
+  font-size: 0.95rem;
+}
+
 .mis-ferias-info-item.full-width {
   grid-column: 1 / -1;
 }
@@ -188,35 +204,36 @@
 .mis-ferias-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .mis-feria-tag {
-  background: var(--verde-claro);
-  color: var(--verde);
-  padding: 0.35rem 0.75rem;
+  background: #f0fdf4;
+  color: #166534;
+  padding: 4px 14px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  border: 1px solid #bbf7d0;
 }
 
-.mis-ferias-form-row {
+.mis-ferias-fotos-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
 }
 
-@media (max-width: 768px) {
-  .mis-ferias-form-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+.mis-ferias-foto {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s;
 }
 
-.mis-ferias-empty {
-  text-align: center;
-  color: #999;
-  padding: 2rem;
-  font-size: 0.95rem;
+.mis-ferias-foto:hover {
+  transform: scale(1.03);
 }

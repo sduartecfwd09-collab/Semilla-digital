@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../../../services/api'
 import { ENDPOINTS } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
+import { normalizeProductName } from '../../../utils/productCatalog'
 import './AdminDashboard.css'
 
 const AdminDashboard = () => {
@@ -88,7 +89,8 @@ const AdminDashboard = () => {
     return (
         <div className="dashboard-container">
             <header className="dashboard-header">
-                <h1>Panel de Administración</h1>
+                <h1>AgroMap Admin</h1>
+                <p>Bienvenido al Centro de Control de Semilla Digital</p>
             </header>
 
             <div className="stats-grid">

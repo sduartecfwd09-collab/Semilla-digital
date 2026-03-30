@@ -1,4 +1,4 @@
-/* Contenedor de Autenticación */
+/* Contenedor de Autenticaci├│n */
 .auth-container {
   display: flex;
   min-height: 100vh;
@@ -9,10 +9,10 @@
 
 /* SECCIÓN IZQUIERDA */
 .auth-left {
-  flex: 1;
+  flex: 0.65;
   background-color: #11361c; /* Similar a var(--fondo) pero coincidiendo mejor con la imagen */
   color: var(--blanco);
-  padding: 4rem 5rem;
+  padding: 4rem 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -100,7 +100,7 @@
   line-height: 1.4;
 }
 
-/* SECCIÓN DERECHA */
+/* SECCI├ôN DERECHA */
 .auth-right {
   flex: 1;
   display: flex;
@@ -331,7 +331,7 @@ input::-webkit-credentials-auto-fill-button {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Diseño responsivo / Adaptabilidad */
+/* Dise├▒o responsivo / Adaptabilidad */
 @media (max-width: 968px) {
   .auth-container {
     flex-direction: column;
@@ -342,7 +342,7 @@ input::-webkit-credentials-auto-fill-button {
   }
 
   .auth-features {
-    display: none; /* Ocultar características en móviles para ahorrar espacio */
+    display: none; /* Ocultar caracter├¡sticas en m├│viles para ahorrar espacio */
   }
 
   .auth-right {

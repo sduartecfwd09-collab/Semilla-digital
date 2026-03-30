@@ -1,16 +1,21 @@
+.admin-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .admin-layout {
     display: flex;
-    min-height: 100vh;
+    flex: 1;
     background-color: var(--bg-color);
 }
 
 .admin-main {
     flex: 1;
-    padding: 0 2rem;
-    overflow: hidden;
-    max-height: 100vh;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .admin-header {
@@ -22,5 +27,4 @@
 
 .admin-content {
     flex: 1;
-    overflow-y: auto;
 }

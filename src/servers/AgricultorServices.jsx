@@ -110,7 +110,15 @@ export const deleteProducto = async (id) => {
  */
 export const getFerias = async () => {
   const res = await fetch(`${BASE_URL}/ferias`)
-  return handleResponse(res)
+  const data = await handleResponse(res)
+  if (!data) return []
+  return data.map(f => ({
+    ...f,
+    nombre: f.nombre || f.name || "Feria sin nombre",
+    provincia: f.provincia || f.province || "Otras",
+    direccion: f.direccion || f.location || "Ubicación no especificada",
+    horario: f.horario || f.schedule || "Horario no disponible"
+  }))
 }
 
 /**
@@ -120,7 +128,15 @@ export const getFerias = async () => {
  */
 export const getFeriaById = async (id) => {
   const res = await fetch(`${BASE_URL}/ferias/${id}`)
-  return handleResponse(res)
+  const f = await handleResponse(res)
+  if (!f) return null
+  return {
+    ...f,
+    nombre: f.nombre || f.name || "Feria sin nombre",
+    provincia: f.provincia || f.province || "Otras",
+    direccion: f.direccion || f.location || "Ubicación no especificada",
+    horario: f.horario || f.schedule || "Horario no disponible"
+  }
 }
 
 /**
@@ -175,7 +191,8 @@ export const getPuestoByUserId = async (userId) => {
   try {
     const res = await fetch(`${BASE_URL}/puestosAgricultor?usuarioId=${userId}`)
     const posts = await handleResponse(res)
-    return posts.length > 0 ? posts[0] : null
+    // Devolvemos el último para que coincida con RegistroAgricultor (último registro ingresado/actualizado)
+    return posts.length > 0 ? posts[posts.length - 1] : null
   } catch (error) {
     console.error('Error fetching puesto:', error)
     return null

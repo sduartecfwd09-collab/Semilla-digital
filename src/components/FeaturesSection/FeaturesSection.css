@@ -1,24 +1,31 @@
 .features-section {
     padding: 90px 60px;
-    background: var(--crema);
+    background: var(--blanco);
 }
 
 .features-label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 3px;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--verde-claro);
-    margin-bottom: 12px;
+    color: #052e16 !important; /* Deep Green Solid */
+    margin-bottom: 20px;
+    background: #ffffff !important; /* Pure White */
+    padding: 6px 16px;
+    border-radius: 50px;
+    border: 1.5px solid #e2e8f0;
 }
 
 .features-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 40px;
-    color: var(--fondo);
-    margin-bottom: 50px;
-    max-width: 500px;
-    line-height: 1.2;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: #052e16;
+    margin-bottom: 60px;
+    max-width: 650px;
+    line-height: 1.1;
+    letter-spacing: -1px;
 }
 
 .features-grid {
@@ -31,29 +38,47 @@
     background: white;
     border-radius: 16px;
     padding: 30px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s;
 }
 
 .features-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(54, 235, 96, 0.15);
+    border-color: #3B9C3A;
 }
 
 .features-icon {
-    font-size: 36px;
-    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(54, 235, 96, 0.1) 0%, rgba(2, 36, 5, 0.05) 100%);
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    border: 1px solid rgba(54, 235, 96, 0.2);
+    box-shadow: 0 4px 12px rgba(54, 235, 96, 0.08);
+    color: #36EB60;
+    margin-bottom: 20px;
 }
 
 .features-card-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Outfit', sans-serif;
     font-size: 20px;
-    color: var(--fondo);
-    margin-bottom: 10px;
+    font-weight: 800;
+    color: #0d2818; /* Verde profundo */
+    margin-bottom: 12px;
+    transition: color 0.2s;
+}
+
+.features-card:hover .features-card-title {
+    color: #3B9C3A;
 }
 
 .features-card-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    color: #777;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1a202c; /* Negro más profundo para legibilidad */
+    font-weight: 500;
 }

@@ -1,69 +1,188 @@
-.admin-sidebar {
-    width: 250px !important;
-    min-height: calc(100vh - 70px) !important;
-    background: #ffffff !important;
-    border-right: 1px solid rgba(0,0,0,0.06) !important;
-    color: var(--text-main) !important;
-    padding: 1.5rem 0.75rem !important;
+/* ==============================
+   AdminSidebar.css - High Specificity Gradient
+   ============================== */
+
+aside.admin-sidebar {
+    width: 220px !important;
+    height: calc(100vh - 70px) !important; 
+    overflow-y: auto !important;
+    background: linear-gradient(180deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
+    border-right: none !important;
+    padding: 2.5rem 0.75rem !important;
     display: flex !important;
     flex-direction: column !important;
     position: sticky !important;
     top: 70px !important; 
     z-index: 50 !important;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.02) !important;
+    box-shadow: 15px 0 50px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom scrollbar for admin sidebar */
+aside.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+aside.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* New Profile Section */
+.sidebar-profile {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 0 1.5rem 2rem !important;
+    margin-bottom: 2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.profile-img-container {
+    width: 90px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    padding: 5px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    margin-bottom: 1rem !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden !important;
+}
+
+.sidebar-avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
+
+.sidebar-avatar-placeholder {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    font-size: 2rem !important;
+    font-weight: 900 !important;
+    font-family: 'Outfit', sans-serif !important;
+    border-radius: 50% !important;
+}
+
+.profile-info {
+    text-align: center !important;
+}
+
+.profile-name {
+    display: block !important;
+    color: #ffffff !important;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    font-family: 'Outfit', sans-serif !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.profile-role {
+    display: block !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
 }
 
 .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
 }
 
-.nav-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #9ca3af;
-    letter-spacing: 1.5px;
-    margin: 2rem 0 0.8rem 1rem;
+.admin-sidebar .nav-label {
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    letter-spacing: 2.5px !important;
+    margin: 3rem 0 1rem 1.25rem !important;
 }
 
-.nav-item {
+.admin-sidebar .nav-item {
     display: flex !important;
     align-items: center !important;
-    padding: 1.25rem 1.5rem !important; /* Adaptado al tamaño */
-    border-radius: var(--radius-md) !important;
-    color: #4b5563 !important;
-    font-weight: 700 !important;
-    gap: 1rem !important;
+    padding: 1rem 1.25rem !important;
+    border-radius: 50px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 600 !important;
+    gap: 1.25rem !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    font-size: 1.1rem !important;
+    font-size: 1rem !important;
+    font-family: 'Outfit', sans-serif !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    border: 1px solid transparent !important;
 }
 
-.nav-item:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-    color: var(--primary-color);
+.admin-sidebar .nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    padding-left: 1.8rem !important;
+    backdrop-filter: blur(5px) !important;
 }
 
-.nav-item.active {
-    background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-light) 100%);
-    color: white;
-    font-weight: 600;
-    box-shadow: var(--shadow-accent);
+.admin-sidebar .nav-item span {
+    transition: transform 0.3s ease !important;
 }
 
-.logout-btn {
-    margin-top: auto;
-    background-color: rgba(0, 0, 0, 0.04);
-    color: #4b5563;
-    padding: 0.8rem;
-    border-radius: var(--radius-sm);
-    text-align: center;
-    font-weight: 500;
+.admin-sidebar .nav-item:hover span {
+    transform: scale(1.15) !important;
 }
 
-.logout-btn:hover {
-    background-color: #fee2e2;
-    color: #dc2626;
+.admin-sidebar .nav-item.active {
+    background: #ffffff !important;
+    color: #052e16 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(1.02) !important;
+}
+
+.admin-sidebar .nav-item.active:hover {
+    padding-left: 1.5rem !important;
+    background: #f8fafc !important;
+}
+
+.admin-sidebar .logout-container {
+    margin-top: auto !important;
+    padding-bottom: 2rem !important;
+}
+
+.admin-sidebar .logout-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.2rem !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 50px !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    font-size: 1rem !important;
+    font-family: 'Outfit', sans-serif !important;
+    transition: all 0.3s ease !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.admin-sidebar .logout-btn:hover {
+    background-color: #ef4444 !important;
+    border-color: #ffffff !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important;
 }

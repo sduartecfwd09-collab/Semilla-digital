@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './SidebarFilters.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { ShoppingBasket } from 'lucide-react'
+import { findInCatalog, normalizeProductName } from '../../utils/productCatalog'
 
 interface Category {
   emoji: string
@@ -9,9 +11,17 @@ interface Category {
   count: number
 }
 
+interface ProductFromAPI {
+  nombre?: string
+  name?: string
+  categoria?: string
+  category?: string
+  disponible?: boolean
+}
+
 interface SidebarFiltersProps {
   activeCategory?: string
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCategoryChange?: (category: string) => void
 }
 
@@ -35,15 +45,29 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
     // Cargar productos para actualizar los conteos de categorías
     fetch(ENDPOINTS.productos)
       .then(res => res.json())
-      .then((productosData: { category: string }[]) => {
+      .then((productosData: ProductFromAPI[]) => {
         const counts: Record<string, number> = {};
-        const availableProducts = productosData.filter((p: any) => p.disponible !== false);
-        availableProducts.forEach((p: any) => {
-          const cName = p.categoria || p.category || 'Otros';
-          counts[cName] = (counts[cName] || 0) + 1;
+        const availableProducts = productosData.filter((p) => p.disponible !== false);
+        
+        // Deduplicar por nombre normalizado (igual que en el comparador)
+        const uniqueProducts = new Map<string, string>(); // normalizedName -> category
+        
+        availableProducts.forEach((p) => {
+          const rawName = p.nombre || p.name || 'Otros';
+          const key = normalizeProductName(rawName);
+          
+          if (!uniqueProducts.has(key)) {
+            const catalogEntry = findInCatalog(rawName);
+            const category = catalogEntry ? catalogEntry.categoria : (p.categoria || p.category || 'Otros');
+            uniqueProducts.set(key, category);
+          }
         });
 
-        setTotalCount(availableProducts.length);
+        uniqueProducts.forEach((category) => {
+          counts[category] = (counts[category] || 0) + 1;
+        });
+
+        setTotalCount(uniqueProducts.size);
         setCategories((prev) => prev.map((cat) => ({
           ...cat,
           count: counts[cat.name] || 0
@@ -74,7 +98,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
             className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
             onClick={() => handleCategoryClick('Todos')}
           >
-            <span>🛒 Todos</span>
+            <span className="category-item-label">
+              <ShoppingBasket size={16} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+              Todos
+            </span>
             <span className="category-item-badge">{totalCount}</span>
           </li>
           {categories.map((cat) => (

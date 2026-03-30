@@ -109,20 +109,24 @@
   height: 48px;
   border: 2px solid #e5e5e5;
   background: var(--blanco);
-  border-radius: 8px;
-  font-size: 1.5rem;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .admin-product-form-emoji-btn:hover {
   border-color: var(--verde);
-  transform: scale(1.1);
+  transform: scale(1.08);
+  background: #f4f4f4;
 }
 
 .admin-product-form-emoji-btn.active {
-  border-color: var(--verde);
-  background: var(--crema);
+  border-width: 2px;
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .admin-product-form-ferias {
@@ -156,34 +160,12 @@
   cursor: pointer;
 }
 
-.admin-product-form-precio-wrapper {
-  display: flex;
-  align-items: center;
-  background: #fcfcfc;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
-  padding: 0 12px;
+.admin-product-form-precio-input {
   width: 150px;
-  transition: all 0.2s ease;
-}
-
-.admin-product-form-precio-wrapper:focus-within {
-  border-color: var(--verde-claro, #2d8a42);
-  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
-}
-
-.precio-prefix {
-  font-weight: 700;
-  color: var(--verde-claro, #2d8a42);
-  margin-right: 4px;
-}
-
-.admin-product-form-precio-wrapper .admin-product-form-precio-input {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0.5rem 0 !important;
-  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .admin-product-form-actions {
