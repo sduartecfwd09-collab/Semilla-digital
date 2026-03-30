@@ -146,6 +146,22 @@
       "role": "Agricultor",
       "status": "Activo",
       "feriaId": "3"
+    },
+    {
+      "id": "cfe8",
+      "name": "Samir García González",
+      "email": "ygarciafwd@gmail.com",
+      "password": "123456789098765432123456789098765432123456789098765432",
+      "role": "Usuario",
+      "status": "Activo"
+    },
+    {
+      "id": "0adc",
+      "name": "Samir García González",
+      "email": "garciafwd@gmail.com",
+      "password": "123412343",
+      "role": "Usuario",
+      "status": "Activo"
     }
   ],
   "ferias": [
@@ -2191,6 +2207,28 @@
       "fechaEnvio": "2026-03-29T04:22:32.224Z",
       "fechaRespuesta": "2026-03-29T04:27:20.325Z",
       "estado": "Respondido"
+    },
+    {
+      "id": "79d2",
+      "nombre": "Samir García",
+      "correo": "ygarciafwd@gmail.com",
+      "telefono": "22384392",
+      "mensaje": "Me gustaría ser agricultor",
+      "respuesta": "",
+      "fechaEnvio": "2026-03-30T22:20:50.676Z",
+      "fechaRespuesta": "",
+      "estado": "Pendiente"
+    },
+    {
+      "id": "4f7d",
+      "nombre": "Samir García",
+      "correo": "ygarciafwd@gmail.com",
+      "telefono": "27392873",
+      "mensaje": "quiero ser admin",
+      "respuesta": "",
+      "fechaEnvio": "2026-03-30T22:24:53.492Z",
+      "fechaRespuesta": "",
+      "estado": "Pendiente"
     }
   ]
 }

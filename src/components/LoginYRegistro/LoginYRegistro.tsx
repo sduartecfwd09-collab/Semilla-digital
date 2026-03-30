@@ -40,11 +40,11 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (loginPassword.length <= 6) {
+    if (loginPassword.length < 8) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña inválida',
-        text: 'La contraseña debe tener más de 6 caracteres.',
+        text: 'La contraseña debe tener mínimo 8 caracteres.',
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
@@ -106,11 +106,11 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (trimmedPassword.length <= 6) {
+    if (trimmedPassword.length < 8) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña insegura',
-        text: 'La contraseña debe tener más de 6 dígitos de longitud.',
+        text: 'La contraseña debe tener mínimo 8 dígitos de longitud.',
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
@@ -292,6 +292,7 @@ const Auth: React.FC = () => {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value.trim())}
                       autoComplete="current-password"
+                      maxLength={20}
                       required
                     />
                     <button 
@@ -367,6 +368,7 @@ const Auth: React.FC = () => {
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       autoComplete="new-password"
+                      maxLength={20}
                     />
                     <button 
                       type="button" 
@@ -388,6 +390,7 @@ const Auth: React.FC = () => {
                       value={regConfirm}
                       onChange={(e) => setRegConfirm(e.target.value)}
                       autoComplete="new-password"
+                      maxLength={20}
                     />
                     <button 
                       type="button" 
