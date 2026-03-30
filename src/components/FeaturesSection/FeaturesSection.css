@@ -1,6 +1,6 @@
 .features-section {
     padding: 5.625rem 3.75rem;
-    background: var(--blanco);
+    background: linear-gradient(180deg, #0d3d1a 0%, #0a2f13 100%);
 }
 
 .features-label {
@@ -9,19 +9,19 @@
     font-weight: 800;
     letter-spacing: 0.125rem;
     text-transform: uppercase;
-    color: #052e16 !important; /* Deep Green Solid */
+    color: #8cde9e !important;
     margin-bottom: 1.25rem;
-    background: #ffffff !important; /* Pure White */
+    background: rgba(255, 255, 255, 0.08) !important;
     padding: 0.375rem 1rem;
     border-radius: 3.125rem;
-    border: 0.09375rem solid #e2e8f0;
+    border: 0.09375rem solid rgba(255, 255, 255, 0.15);
 }
 
 .features-title {
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
     font-size: 3rem;
-    color: #052e16;
+    color: #ffffff;
     margin-bottom: 3.75rem;
     max-width: 40.625rem;
     line-height: 1.1;
@@ -35,18 +35,20 @@
 }
 
 .features-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.06);
     border-radius: 1rem;
     padding: 1.875rem;
-    border: 0.125rem solid #e2e8f0;
-    box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.06);
+    border: 0.125rem solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.2);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s;
+    backdrop-filter: blur(0.5rem);
 }
 
 .features-card:hover {
     transform: translateY(-0.5rem);
-    box-shadow: 0 1.25rem 3.125rem rgba(54, 235, 96, 0.15);
-    border-color: #3B9C3A;
+    box-shadow: 0 1.25rem 3.125rem rgba(54, 235, 96, 0.12);
+    border-color: rgba(54, 235, 96, 0.4);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .features-icon {
@@ -67,19 +69,19 @@
     font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
     font-weight: 800;
-    color: #0d2818; /* Verde profundo */
+    color: #ffffff;
     margin-bottom: 0.75rem;
     transition: color 0.2s;
 }
 
 .features-card:hover .features-card-title {
-    color: #3B9C3A;
+    color: #36EB60;
 }
 
 .features-card-desc {
     font-size: 0.9375rem;
     line-height: 1.6;
-    color: #1a202c; /* Negro más profundo para legibilidad */
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 500;
 }
 

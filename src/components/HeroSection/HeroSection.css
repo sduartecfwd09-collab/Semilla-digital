@@ -1,5 +1,5 @@
 .hero-section {
-    background: var(--blanco);
+    background: linear-gradient(160deg, #061A02 0%, #0a3015 50%, #0d3d1a 100%);
     padding: 6.25rem 3.75rem 5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -11,9 +11,9 @@
 
 .hero-tag {
     display: inline-block;
-    background: rgba(5, 150, 105, 0.1);
-    border: 0.0625rem solid rgba(5, 150, 105, 0.35);
-    color: var(--verde-claro);
+    background: rgba(54, 235, 96, 0.12);
+    border: 0.0625rem solid rgba(54, 235, 96, 0.3);
+    color: #8cde9e;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.125rem;
@@ -28,17 +28,17 @@
     font-weight: 800;
     font-size: 3.625rem;
     line-height: 1.1;
-    color: var(--fondo);
+    color: #ffffff;
     margin-bottom: 1.25rem;
 }
 
 .hero-title em {
     font-style: normal;
-    color: #3B9C3A;
+    color: #36EB60;
 }
 
 .hero-description {
-    color: #374151;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1.0625rem;
     line-height: 1.7;
     margin-bottom: 2.25rem;
@@ -70,7 +70,7 @@
 }
 
 .hero-btn-secondary {
-    color: #5D5751;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 600;
@@ -80,7 +80,7 @@
 }
 
 .hero-btn-secondary span {
-    color: var(--fondo);
+    color: #ffffff;
     font-size: 1.125rem;
 }
 
@@ -94,7 +94,7 @@
     position: absolute;
     width: 37.5rem;
     height: 37.5rem;
-    background: radial-gradient(circle, rgba(140, 198, 63, 0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(54, 235, 96, 0.08) 0%, transparent 70%);
     top: -6.25rem;
     right: -6.25rem;
     border-radius: 50%;
