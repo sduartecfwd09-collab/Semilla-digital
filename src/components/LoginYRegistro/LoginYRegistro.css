@@ -28,7 +28,9 @@
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
   margin-bottom: 3rem;
-  font-weight: 900;
+  font-weight: 800;
+  letter-spacing: -0.0625rem;
+  text-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.4);
 }
 
 .logo-agro {
@@ -40,15 +42,20 @@
 }
 
 .auth-title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  font-family: 'Playfair Display', serif;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
+  font-size: 2.8rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+  letter-spacing: -0.09375rem;
+  text-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.4);
 }
 
 .highlight-green {
-  color: #7ab536;
+  color: #3B9C3A; /* Brand Green instead of yellow-lime */
+  text-decoration: underline decoration-thickness 0.25rem;
+  text-decoration-color: #ffffff;
 }
 
 .auth-description {
@@ -56,7 +63,9 @@
   line-height: 1.5;
   color: #aedab5;
   margin-bottom: 3rem;
-  max-width: 450px;
+  max-width: 30rem;
+  font-weight: 500;
+  text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
 }
 
 .auth-features {
@@ -66,24 +75,37 @@
 }
 
 .feature-card {
-  background-color: #1a4d29;
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(0.9375rem);
+  -webkit-backdrop-filter: blur(0.9375rem);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  max-width: 450px;
+  gap: 1.5rem;
+  max-width: 30rem;
+  border: 0.1875rem solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0.75rem 2.5rem rgba(0, 0, 0, 0.18);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-0.3125rem) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1.25rem 3.125rem rgba(0, 0, 0, 0.25);
 }
 
 .feature-icon {
-  font-size: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  min-width: 40px;
-  height: 40px;
+  font-size: 1.8rem;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 0.75rem;
+  min-width: 3.125rem;
+  height: 3.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
 }
 
 .feature-card h3 {
@@ -112,18 +134,18 @@
 
 .auth-card {
   background-color: var(--blanco);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  border-radius: 1.25rem;
+  box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.05);
   padding: 3rem;
   width: 100%;
-  max-width: 460px;
+  max-width: 28.75rem;
 }
 
 /* Botones de alternancia */
 .auth-toggle {
   display: flex;
   background-color: #f0f0f0;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   padding: 0.3rem;
   margin-bottom: 2.5rem;
 }
@@ -135,15 +157,16 @@
   background: transparent;
   font-weight: 600;
   color: #888;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   transition: all 0.3s ease;
   font-size: 0.95rem;
 }
 
 .toggle-btn.active {
-  background-color: var(--blanco);
-  color: #11361c;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  color: #3B9C3A;
+  box-shadow: 0 0.25rem 0.75rem rgba(59, 156, 58, 0.15);
+  border: 0.0625rem solid rgba(59, 156, 58, 0.1);
 }
 
 /* Estilos de formulario */
@@ -152,6 +175,8 @@
   font-size: 2rem;
   color: #11361c;
   margin-bottom: 0.5rem;
+  font-weight: 800;
+  letter-spacing: -0.0625rem;
 }
 
 .auth-subtitle {
@@ -175,16 +200,17 @@
 .input-box {
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 0.0625rem solid #e0e0e0;
+  border-radius: 0.5rem;
   padding: 0.8rem 1rem;
   background-color: #fafafa;
   transition: border-color 0.2s ease;
 }
 
 .input-box:focus-within {
-  border-color: #7ab536;
-  background-color: var(--blanco);
+  border-color: #3B9C3A;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 0.25rem rgba(59, 156, 58, 0.08);
 }
 
 .input-icon {
@@ -244,16 +270,20 @@ input::-webkit-credentials-auto-fill-button {
   background-color: #2d8a42;
   color: var(--blanco);
   border: none;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1rem 2rem;
+  border-radius: 3.125rem;
   font-size: 1rem;
   font-weight: 600;
   margin-top: 1rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.3);
 }
 
 .auth-submit-btn:hover {
-  background-color: #1a5c2a;
+  background: #2d7a2d;
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.25rem rgba(59, 156, 58, 0.4);
 }
 
 /* Separador */
@@ -269,7 +299,7 @@ input::-webkit-credentials-auto-fill-button {
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 0.0625rem;
   background-color: #eee;
   z-index: 1;
 }
@@ -309,17 +339,21 @@ input::-webkit-credentials-auto-fill-button {
   color: var(--blanco);
   text-decoration: none;
   margin-top: 2rem;
-  padding: 0.8rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  padding: 1.2rem 2.5rem;
+  background-color: transparent;
+  border-radius: 3.125rem;
+  font-weight: 800;
+  transition: all 0.3s ease;
   width: fit-content;
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
+  border: 0.125rem solid rgba(255, 255, 255, 0.5);
 }
 
 .auth-back-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(-5px);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.9375rem 2.5rem rgba(0, 0, 0, 0.3);
 }
 
 .animate-fade {
@@ -327,12 +361,12 @@ input::-webkit-credentials-auto-fill-button {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
+  from { opacity: 0; transform: translateY(0.3125rem); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Dise├▒o responsivo / Adaptabilidad */
-@media (max-width: 968px) {
+/* Diseño responsivo / Adaptabilidad */
+@media (max-width: 60.5rem) {
   .auth-container {
     flex-direction: column;
   }

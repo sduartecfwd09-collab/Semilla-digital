@@ -10,43 +10,43 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 20px;
+  padding: 2.5rem 1.25rem;
 }
 
 .profile-card {
   background: #ffffff;
-  border-radius: 24px;
-  padding: 50px;
+  border-radius: 1.5rem;
+  padding: 3.125rem;
   width: 100%;
-  max-width: 650px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  max-width: 40.625rem;
+  box-shadow: 0 1.25rem 3.75rem rgba(0, 0, 0, 0.08);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.03);
 }
 
 .profile-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
 }
 
 .profile-avatar-container {
   position: relative;
   width: fit-content;
-  margin: 0 auto 25px;
+  margin: 0 auto 1.5625rem;
 }
 
 .profile-avatar {
   background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
   color: white;
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 42px;
+  font-size: 2.625rem;
   font-weight: 800;
-  box-shadow: 0 10px 25px rgba(59, 156, 58, 0.3);
-  border: 4px solid #ffffff;
+  box-shadow: 0 0.625rem 1.5625rem rgba(59, 156, 58, 0.3);
+  border: 0.25rem solid #ffffff;
   overflow: hidden;
   position: relative;
 }
@@ -63,15 +63,15 @@
   right: 0;
   background: #ffffff;
   color: #3B9C3A;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid #3B9C3A;
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
+  border: 0.125rem solid #3B9C3A;
   transition: all 0.3s ease;
   z-index: 2;
 }
@@ -87,8 +87,8 @@
   font-weight: 700;
   color: #3B9C3A;
   cursor: pointer;
-  margin-top: -15px;
-  margin-bottom: 20px;
+  margin-top: -0.9375rem;
+  margin-bottom: 1.25rem;
   transition: opacity 0.2s ease;
 }
 
@@ -98,29 +98,29 @@
 }
 
 .camera-icon {
-  font-size: 16px;
-  transform: translateY(-1px);
+  font-size: 1rem;
+  transform: translateY(-0.0625rem);
 }
 
 .profile-header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
+  font-size: 2rem;
   color: #052e16;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   font-weight: 900;
 }
 
 .profile-status {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #718096;
 }
 
 .profile-status span {
   font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .profile-status span.activo {
@@ -132,16 +132,16 @@
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1.5625rem;
 }
 
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5rem) {
   .profile-grid {
     grid-template-columns: 1fr;
   }
@@ -149,38 +149,38 @@
 
 .input-group label {
   display: block;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #4a5568;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .input-box {
   display: flex;
   align-items: center;
   background: #fbfbfc;
-  border: 2px solid #edf2f7;
-  border-radius: 12px;
-  padding: 14px 18px;
+  border: 0.125rem solid #edf2f7;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.125rem;
   transition: all 0.3s ease;
 }
 
 .input-box:focus-within {
   border-color: #3B9C3A;
   background-color: #ffffff;
-  box-shadow: 0 0 0 4px rgba(59, 156, 58, 0.1);
+  box-shadow: 0 0 0 0.25rem rgba(59, 156, 58, 0.1);
 }
 
 .input-icon {
-  margin-right: 12px;
-  font-size: 18px;
+  margin-right: 0.75rem;
+  font-size: 1.125rem;
 }
 
 .input-box input {
   border: none;
   background: transparent;
   width: 100%;
-  font-size: 16px;
+  font-size: 1rem;
   color: #2d3748;
   outline: none;
 }
@@ -230,8 +230,8 @@
 /* Actions */
 .profile-actions {
   display: flex;
-  gap: 15px;
-  margin-top: 10px;
+  gap: 0.9375rem;
+  margin-top: 0.625rem;
 }
 
 .save-btn {
@@ -239,19 +239,19 @@
   background: #3B9C3A;
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 50px;
+  padding: 1rem;
+  border-radius: 3.125rem;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.3);
 }
 
 .save-btn:hover {
   background: #2d7a2d;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.4);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.5625rem rgba(59, 156, 58, 0.4);
 }
 
 .edit-btn {
@@ -259,30 +259,30 @@
   background: #3B9C3A;
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 50px;
+  padding: 1rem;
+  border-radius: 3.125rem;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.3);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.3);
 }
 
 .edit-btn:hover {
   background: #2d7a2d;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.4);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.5625rem rgba(59, 156, 58, 0.4);
 }
 
 .cancel-btn {
   flex: 1;
   background: #f1f5f9;
   color: #64748b;
-  border: 1.5px solid #e2e8f0;
-  padding: 16px;
-  border-radius: 50px;
+  border: 0.09375rem solid #e2e8f0;
+  padding: 1rem;
+  border-radius: 3.125rem;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -290,7 +290,7 @@
 .cancel-btn:hover {
   background: #e2e8f0;
   color: #334155;
-  transform: translateY(-3px);
+  transform: translateY(-0.1875rem);
 }
 
 /* Animations */
@@ -299,7 +299,7 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(0.625rem); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -308,41 +308,41 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 18px;
+  font-size: 1.125rem;
   color: var(--verde-claro, #2d8a42);
 }
 
 /* Role Request Section */
 .role-request-section {
-  margin-top: 30px;
+  margin-top: 1.875rem;
 }
 
 .role-request-section .separator {
-  height: 1px;
+  height: 0.0625rem;
   background: #edf2f7;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 }
 
 .role-request-content {
   text-align: center;
   background: #fdfdfd;
-  padding: 35px;
-  border-radius: 20px;
-  border: 2px solid #f0f4f8;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.02);
+  padding: 2.1875rem;
+  border-radius: 1.25rem;
+  border: 0.125rem solid #f0f4f8;
+  box-shadow: inset 0 0.125rem 0.625rem rgba(0, 0, 0, 0.02);
 }
 
 .role-request-content h3 {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #052e16;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
   font-weight: 800;
 }
 
 .role-request-content p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #718096;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   line-height: 1.5;
 }
 
@@ -350,33 +350,33 @@
   background: #3B9C3A;
   color: white;
   border: none;
-  padding: 14px 30px;
-  border-radius: 50px;
+  padding: 0.875rem 1.875rem;
+  border-radius: 3.125rem;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.2);
 }
 
 .role-request-btn:hover {
   background: #2d7a2d;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(59, 156, 58, 0.3);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.5rem 1.5625rem rgba(59, 156, 58, 0.3);
 }
 
 .request-status-badge {
   display: inline-block;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .request-status-badge.pending {
   background: #fffaf0;
   color: #dd6b20;
-  border: 1px solid #fbd38d;
-  margin-bottom: 20px;
+  border: 0.0625rem solid #fbd38d;
+  margin-bottom: 1.25rem;
   display: block;
 }

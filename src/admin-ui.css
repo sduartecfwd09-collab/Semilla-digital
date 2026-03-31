@@ -4,8 +4,8 @@
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(13, 40, 24, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,18 +14,18 @@
 
 .admin-modal {
     background: white;
-    border-radius: 24px;
+    border-radius: 1.5rem;
     width: 95%;
-    max-width: 800px;
+    max-width: 50rem;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    box-shadow: 0 1.5625rem 3.125rem -0.75rem rgba(0,0,0,0.25);
     animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalSlideUp {
     from {
-        transform: translateY(20px);
+        transform: translateY(1.25rem);
         opacity: 0;
     }
     to {
@@ -36,7 +36,7 @@
 
 .modal-header {
     padding: 1.75rem 2rem;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 0.0625rem solid #f3f4f6;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,15 +50,15 @@
     margin: 0;
     font-size: 1.6rem;
     font-weight: 800;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03125rem;
     color: #11361c;
 }
 
 .close-btn {
     background: #f9fafb;
-    border: 1px solid #f3f4f6;
-    width: 36px;
-    height: 36px;
+    border: 0.0625rem solid #f3f4f6;
+    width: 2.25rem;
+    height: 2.25rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -84,7 +84,7 @@
 .form-section h3 {
     font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.09375rem;
     color: #64748b;
     margin-bottom: 1.25rem;
     font-weight: 800;
@@ -116,8 +116,8 @@
 .form-field select, 
 .form-field textarea {
     padding: 0.85rem 1rem;
-    border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
+    border-radius: 0.75rem;
+    border: 0.09375rem solid #e2e8f0;
     background: #f8fafc;
     font-size: 1rem;
     transition: all 0.2s;
@@ -130,7 +130,7 @@
     border-color: #52b788;
     background: white;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(82, 183, 136, 0.1);
+    box-shadow: 0 0 0 0.25rem rgba(82, 183, 136, 0.1);
 }
 
 .modal-actions {
@@ -139,16 +139,16 @@
     gap: 1rem;
     padding: 1.75rem 2rem;
     background: #f8fafc;
-    border-top: 1px solid #f1f5f9;
+    border-top: 0.0625rem solid #f1f5f9;
 }
 
 .btn-cancel {
     padding: 0.85rem 1.75rem;
-    border-radius: 12px;
+    border-radius: 0.75rem;
     font-weight: 700;
     cursor: pointer;
     background: white;
-    border: 1px solid #e2e8f0;
+    border: 0.0625rem solid #e2e8f0;
     color: #64748b;
     transition: all 0.2s;
 }
@@ -160,21 +160,65 @@
 
 .btn-save {
     padding: 0.85rem 2.25rem;
-    border-radius: 12px;
+    border-radius: 0.75rem;
     font-weight: 700;
     cursor: pointer;
     background: #52b788;
     color: white;
     border: none;
-    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+    box-shadow: 0 0.25rem 0.75rem rgba(82, 183, 136, 0.3);
     transition: all 0.2s;
 }
 
 .btn-save:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(82, 183, 136, 0.4);
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.5rem 1.25rem rgba(82, 183, 136, 0.4);
     background: #40916c;
 }
 
+/* ===== MOBILE ===== */
+@media (max-width: 48rem) {
+    .modal-backdrop {
+        padding: 0.5rem;
+        align-items: flex-end;
+    }
 
+    .admin-modal {
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 1.25rem 1.25rem 0 0;
+    }
 
+    .modal-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .modal-form {
+        padding: 1.5rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field.full-width {
+        grid-column: span 1;
+    }
+
+    .modal-actions {
+        padding: 1.25rem 1.5rem;
+        flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+    }
+}

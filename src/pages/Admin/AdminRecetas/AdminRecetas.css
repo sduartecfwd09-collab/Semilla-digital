@@ -1,6 +1,6 @@
 .recipes-container {
     padding: 0;
-    max-width: 1500px;
+    max-width: 93.75rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -36,25 +36,26 @@
 
 .recipes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); /* Tamaño más cómodo */
-    gap: 2.5rem; /* Más aire entre cards */
+    grid-template-columns: repeat(auto-fill, minmax(21.875rem, 1fr));
+    gap: 2.5rem;
     align-items: start;
 }
 
 .recipe-card {
     background-color: #ffffff;
-    border-radius: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 1.5rem;
+    border: 0.0625rem solid rgba(0, 0, 0, 0.02);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); 
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.08); /* Stronger premium shadow */
 }
 
 .recipe-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(59, 156, 58, 0.12);
+    transform: translateY(-0.3125rem);
+    box-shadow: 0 1.25rem 2.5rem rgba(59, 156, 58, 0.15); /* Green tinted premium shadow */
+    border-color: rgba(59, 156, 58, 0.3);
 }
 
 .recipe-card-content {
@@ -63,6 +64,16 @@
     flex-direction: column;
     gap: 1.25rem;
     flex: 1;
+}
+
+/* Scrollbar sutil para las tarjetas cuadradas */
+.recipe-card-content::-webkit-scrollbar {
+    width: 0.25rem;
+}
+
+.recipe-card-content::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 0.625rem;
 }
 
 .recipe-card-content h3 {
@@ -83,8 +94,8 @@
 }
 
 .recipe-card-actions {
-    padding: 1.25rem 2rem;
-    border-top: 1px solid #f1f5f9;
+    padding: 1.25rem 1.75rem;
+    border-top: 0.0625rem solid var(--border-color);
     display: flex;
     justify-content: space-between;
     gap: 1.5rem;
@@ -110,11 +121,14 @@
     background-color: #f1f5f9;
     color: #475569;
     padding: 0.4rem 0.8rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
+    border-radius: 3.125rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    border: 1px solid #e2e8f0;
+    border: 0.0625rem solid #e2e8f0;
 }
+.recipe-card-actions {
+    padding: 1.25rem 1.75rem;
+    border-top: 0.0625rem solid var(--border-color);
 
 .btn-new {
     background: linear-gradient(135deg, #3B9C3A 0%, #2e7d32 100%);
@@ -140,10 +154,10 @@
 
 .btn-recipe-action {
     padding: 0.75rem 1.5rem;
-    border-radius: 50px;
+    border-radius: 3.125rem;
     font-weight: 800;
     font-size: 0.9rem;
-    border: 2px solid; /* Use 2px border for premium feel */
+    border: 0.125rem solid; /* Use 0.125rem border for premium feel */
     background: #ffffff; /* White background by default */
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -160,8 +174,8 @@
 .btn-edit-recipe:hover {
     background: #3B9C3A;
     color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 156, 58, 0.25);
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.5rem 1.25rem rgba(59, 156, 58, 0.25);
 }
 
 .btn-delete-recipe {
@@ -172,6 +186,7 @@
 .btn-delete-recipe:hover {
     background: #dc2626;
     color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.5rem 1.25rem rgba(220, 38, 38, 0.25);
+}
 }

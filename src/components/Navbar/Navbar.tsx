@@ -9,6 +9,23 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   const [hasProfileNotif, setHasProfileNotif] = useState(false)
   const [hasContactNotif, setHasContactNotif] = useState(false)
 
@@ -113,7 +130,18 @@ const Navbar: React.FC = () => {
         Agro<span>Map</span>
       </Link>
 
-      <ul className="navbar-links">
+      {/* Hamburger button — visible only on mobile/tablet */}
+      <button
+        className={`navbar-hamburger ${menuOpen ? 'active' : ''}`}
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li>
           <Link 
             to="/" 

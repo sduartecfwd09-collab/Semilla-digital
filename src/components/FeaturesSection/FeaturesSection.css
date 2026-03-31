@@ -1,52 +1,54 @@
 .features-section {
-    padding: 90px 60px;
-    background: var(--blanco);
+    padding: 5.625rem 3.75rem;
+    background: #ffffff;
 }
 
 .features-label {
     display: inline-block;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 0.125rem;
     text-transform: uppercase;
-    color: #052e16 !important; /* Deep Green Solid */
-    margin-bottom: 20px;
-    background: #ffffff !important; /* Pure White */
-    padding: 6px 16px;
-    border-radius: 50px;
-    border: 1.5px solid #e2e8f0;
+    color: #2d8a42 !important;
+    margin-bottom: 1.25rem;
+    background: rgba(45, 138, 66, 0.1) !important;
+    padding: 0.375rem 1rem;
+    border-radius: 3.125rem;
+    border: 0.09375rem solid rgba(45, 138, 66, 0.2);
 }
 
 .features-title {
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
     font-size: 3rem;
-    color: #052e16;
-    margin-bottom: 60px;
-    max-width: 650px;
+    color: #1a1a1a;
+    margin-bottom: 3.75rem;
+    max-width: 40.625rem;
     line-height: 1.1;
-    letter-spacing: -1px;
+    letter-spacing: -0.0625rem;
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 1.5rem;
 }
 
 .features-card {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.875rem;
+    border: 0.125rem solid #eaeaea;
+    box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.05);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s;
+    backdrop-filter: blur(0.5rem);
 }
 
 .features-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 50px rgba(54, 235, 96, 0.15);
-    border-color: #3B9C3A;
+    transform: translateY(-0.5rem);
+    box-shadow: 0 1.25rem 3.125rem rgba(45, 138, 66, 0.1);
+    border-color: rgba(45, 138, 66, 0.3);
+    background: #ffffff;
 }
 
 .features-icon {
@@ -54,31 +56,79 @@
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, rgba(54, 235, 96, 0.1) 0%, rgba(2, 36, 5, 0.05) 100%);
-    width: 64px;
-    height: 64px;
-    border-radius: 14px;
-    border: 1px solid rgba(54, 235, 96, 0.2);
-    box-shadow: 0 4px 12px rgba(54, 235, 96, 0.08);
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.875rem;
+    border: 0.0625rem solid rgba(54, 235, 96, 0.2);
+    box-shadow: 0 0.25rem 0.75rem rgba(54, 235, 96, 0.08);
     color: #36EB60;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
 .features-card-title {
     font-family: 'Outfit', sans-serif;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: #0d2818; /* Verde profundo */
-    margin-bottom: 12px;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
     transition: color 0.2s;
 }
 
 .features-card:hover .features-card-title {
-    color: #3B9C3A;
+    color: #36EB60;
 }
 
 .features-card-desc {
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.6;
-    color: #1a202c; /* Negro más profundo para legibilidad */
+    color: #4a4a4a;
     font-weight: 500;
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 64rem) {
+    .features-section {
+        padding: 4.375rem 2.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 48rem) {
+    .features-section {
+        padding: 3.125rem 1.5rem;
+    }
+
+    .features-title {
+        font-size: 2.2rem;
+        max-width: 100%;
+        margin-bottom: 2.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .features-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 30rem) {
+    .features-section {
+        padding: 2.25rem 1rem;
+    }
+
+    .features-title {
+        font-size: 1.8rem;
+    }
+
+    .features-card-title {
+        font-size: 1.125rem;
+    }
 }

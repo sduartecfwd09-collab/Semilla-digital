@@ -22,7 +22,7 @@
 .page-subtitle {
   color: #666;
   font-size: 1.2rem;
-  max-width: 700px;
+  max-width: 43.75rem;
   margin: 1rem auto;
   line-height: 1.6;
 }
@@ -54,7 +54,7 @@
 .barrier-text {
   color: #666;
   font-size: 1.2rem;
-  max-width: 600px;
+  max-width: 37.5rem;
   margin: 0 auto 2.5rem;
   line-height: 1.6;
 }
@@ -71,7 +71,7 @@
   font-weight: 700;
   text-decoration: none;
   padding: 1rem;
-  border-bottom: 2px solid #2d8a42;
+  border-bottom: 0.125rem solid #2d8a42;
   transition: all 0.3s ease;
 }
 

@@ -12,12 +12,12 @@
 
 .prices-header h1 {
     font-size: 2rem;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03125rem;
 }
 
 .prices-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(18.75rem, 1fr));
     gap: 1.5rem;
 }
 
@@ -25,7 +25,7 @@
     background-color: var(--surface-color);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    border: 0.0625rem solid var(--border-color);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -59,7 +59,7 @@
     color: var(--text-muted);
     background-color: var(--bg-color);
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
 }
 
 .price-value-row {
@@ -89,7 +89,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 0.0625rem solid var(--border-color);
     padding-top: 1rem;
     margin-top: 0.5rem;
 }

@@ -27,4 +27,37 @@
 
 .admin-content {
     flex: 1;
+    overflow-y: auto;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 48rem) {
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .admin-layout > .admin-main {
+        width: 100%;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .admin-main {
+        padding: 0 1rem;
+        padding-bottom: 4.6875rem;
+    }
+
+    .admin-content {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 30rem) {
+    .admin-main {
+        padding: 0 0.5rem;
+    }
+
+    .admin-content {
+        padding: 1rem 0.75rem;
+    }
 }
