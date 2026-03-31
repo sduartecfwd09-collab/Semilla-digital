@@ -162,6 +162,15 @@
       "password": "123412343",
       "role": "Usuario",
       "status": "Activo"
+    },
+    {
+      "id": "2dd1",
+      "name": "María Lopez",
+      "email": "lopez12@gmail.com",
+      "password": "lopez123",
+      "role": "Agricultor",
+      "status": "Activo",
+      "feriaId": "8"
     }
   ],
   "ferias": [
@@ -1243,7 +1252,7 @@
       "id": "ec88",
       "userId": "3f16",
       "nombre": "Elote",
-      "emoji": "🌽",
+      "emoji": "Verduras",
       "descripcion": "",
       "categoria": "Verduras",
       "imagen": "",
@@ -1256,7 +1265,7 @@
           "feriaId": 1,
           "feriaNombre": "Feria Local",
           "provincia": "Heredia",
-          "precio": 500
+          "precio": 250
         }
       ]
     },
@@ -1264,7 +1273,7 @@
       "id": "270e",
       "userId": "3f16",
       "nombre": "Elote",
-      "emoji": "🌽",
+      "emoji": "Verduras",
       "descripcion": "",
       "categoria": "Verduras",
       "imagen": "",
@@ -1277,7 +1286,7 @@
           "feriaId": 1,
           "feriaNombre": "Feria Local",
           "provincia": "Limón",
-          "precio": 700
+          "precio": 200
         }
       ]
     },
@@ -1464,6 +1473,48 @@
         }
       ],
       "provincia": "Alajuela",
+      "direccionPuesto": ""
+    },
+    {
+      "id": "874a",
+      "userId": "2dd1",
+      "nombre": "Arroz",
+      "emoji": "Granos",
+      "descripcion": "",
+      "categoria": "Granos",
+      "imagen": "",
+      "disponible": true,
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": "8",
+          "feriaNombre": "Feria Liberia",
+          "provincia": "Guanacaste",
+          "precio": 1000
+        }
+      ],
+      "provincia": "Guanacaste",
+      "direccionPuesto": ""
+    },
+    {
+      "id": "20f8",
+      "userId": "2dd1",
+      "nombre": "Frijoles",
+      "emoji": "Granos",
+      "descripcion": "",
+      "categoria": "Granos",
+      "imagen": "",
+      "disponible": false,
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": "8",
+          "feriaNombre": "Feria Liberia",
+          "provincia": "Guanacaste",
+          "precio": 750
+        }
+      ],
+      "provincia": "Guanacaste",
       "direccionPuesto": ""
     }
   ],
@@ -1654,6 +1705,17 @@
       "motivoRespuesta": "jnnnnnnnnnnn",
       "fechaSolicitud": "2026-03-29T06:08:49.507Z",
       "fechaRespuesta": "2026-03-29T06:09:33.385Z"
+    },
+    {
+      "id": "89aa",
+      "usuarioId": "2dd1",
+      "nombreDelPuesto": "Rocío Granos",
+      "correoUsuario": "lopez12@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "Bienvenido",
+      "fechaSolicitud": "2026-03-31T03:45:10.058Z",
+      "fechaRespuesta": "2026-03-31T03:52:59.767Z"
     }
   ],
   "puestosAgricultor": [
@@ -2172,20 +2234,41 @@
       "metodosCultivo": "",
       "redesSociales": "",
       "fechaRegistro": "2026-03-29T06:08:49.488Z"
+    },
+    {
+      "id": "ea26",
+      "usuarioId": "2dd1",
+      "nombrePuesto": "Rocío Granos",
+      "descripcion": "En este puesto se venden los mejores granos del país",
+      "ubicacion": [
+        "Feria Liberia"
+      ],
+      "feriaId": "8",
+      "tiposProducto": [
+        "Granos"
+      ],
+      "fotosNombres": [
+        "elotes.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,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"
+      ],
+      "telefono": "87655678",
+      "email": "lopez12@gmail.com",
+      "horarios": "Sábado de 05:00 a 13:00",
+      "horariosList": [
+        {
+          "dia": "Sábado",
+          "inicio": "05:00",
+          "fin": "13:00"
+        }
+      ],
+      "metodosCultivo": "Hidropónico",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-31T03:45:10.044Z"
     }
   ],
   "contactMessages": [
-    {
-      "id": "9dcd",
-      "nombre": "sara",
-      "correo": "sara11@gmail.com",
-      "telefono": "12345678",
-      "mensaje": "esxrdctfvgbjkmlñ",
-      "respuesta": "holas",
-      "fechaEnvio": "2026-03-24T21:54:49.910Z",
-      "fechaRespuesta": "2026-03-24T22:17:45.751Z",
-      "estado": "Respondido"
-    },
     {
       "id": "f9a8",
       "nombre": "Rocío Duran",
@@ -2229,6 +2312,17 @@
       "fechaEnvio": "2026-03-30T22:24:53.492Z",
       "fechaRespuesta": "",
       "estado": "Pendiente"
+    },
+    {
+      "id": "84f8",
+      "nombre": "María Lopez",
+      "correo": "lopez12@gmail.com",
+      "telefono": "64865467",
+      "mensaje": "Las ferias tardan en cargar",
+      "respuesta": "Lo siento mucho, trabajaremos en ello.",
+      "fechaEnvio": "2026-03-31T03:40:57.416Z",
+      "fechaRespuesta": "2026-03-31T03:53:57.315Z",
+      "estado": "Respondido"
     }
   ]
 }

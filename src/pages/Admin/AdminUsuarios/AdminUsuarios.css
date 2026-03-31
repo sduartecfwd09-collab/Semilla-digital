@@ -80,7 +80,8 @@
     background: #ffffff;
     border-radius: 1.5rem;
     box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.03);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border: 0.0625rem solid rgba(0, 0, 0, 0.03);
 }
 
@@ -109,6 +110,19 @@ td {
     border-bottom: 0.0625rem solid #f3f4f6;
     vertical-align: middle;
     word-break: break-word;
+}
+
+td:nth-child(3),
+td:nth-child(4) {
+    white-space: nowrap;
+    word-break: normal;
+    min-width: 6rem;
+}
+
+td:nth-child(5) {
+    white-space: nowrap;
+    word-break: normal;
+    min-width: 12rem;
 }
 
 tr:last-child td {
@@ -170,6 +184,8 @@ tr:hover td {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03125rem;
+    white-space: nowrap;
+    display: inline-block;
 }
 
 .status-active {
@@ -192,8 +208,9 @@ tr:hover td {
 
 .action-buttons {
     display: flex;
+    flex-direction: column;
     gap: 0.35rem;
-    white-space: nowrap;
+    align-items: flex-start;
 }
 
 .btn-icon {
