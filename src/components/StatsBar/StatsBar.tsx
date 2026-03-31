@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useFerias } from '../../hooks/useFerias'
 import './StatsBar.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { normalizeProductName } from '../../utils/productCatalog'
 
 interface Stat {
   value: string
@@ -19,8 +20,15 @@ const StatsBar: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          const availableCount = data.filter((p: any) => p.disponible !== false).length;
-          setProductCount(availableCount)
+          const availableData = data.filter((p: any) => p.disponible !== false);
+          const uniqueProducts = new Set<string>();
+          availableData.forEach((p: any) => {
+            const name = p.nombre || p.name || '';
+            if (name.trim()) {
+              uniqueProducts.add(normalizeProductName(name));
+            }
+          });
+          setProductCount(uniqueProducts.size);
         }
         setLoadingProducts(false)
       })

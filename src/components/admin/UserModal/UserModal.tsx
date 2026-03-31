@@ -54,9 +54,19 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
         try {
             let result;
             if (isEditing && userToEdit.id) {
-                result = await api.updateUser(userToEdit.id, formData);
+                result = await api.updateUser(userToEdit.id, {
+                    ...formData,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password?.trim() || ''
+                });
             } else {
-                result = await api.createUser(formData);
+                result = await api.createUser({
+                    ...formData,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password?.trim() || ''
+                });
             }
             onSuccess(result);
             onClose();

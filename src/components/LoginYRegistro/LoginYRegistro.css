@@ -1,4 +1,4 @@
-/* Contenedor de Autenticación */
+/* Contenedor de Autenticaci├│n */
 .auth-container {
   display: flex;
   min-height: 100vh;
@@ -9,10 +9,10 @@
 
 /* SECCIÓN IZQUIERDA */
 .auth-left {
-  flex: 1;
-  background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
+  flex: 0.65;
+  background-color: #11361c; /* Similar a var(--fondo) pero coincidiendo mejor con la imagen */
   color: var(--blanco);
-  padding: 4rem 5rem;
+  padding: 4rem 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,8 +25,8 @@
 }
 
 .auth-logo {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.5rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
   margin-bottom: 3rem;
   font-weight: 800;
   letter-spacing: -0.0625rem;
@@ -34,11 +34,11 @@
 }
 
 .logo-agro {
-  color: #a4d65e;
+  color: #7ab536; /* Verde claro de la imagen */
 }
 
 .logo-map {
-  color: #c69c6d;
+  color: #c4813a; /* Bronce/dorado */
 }
 
 .auth-title {
@@ -59,9 +59,9 @@
 }
 
 .auth-description {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   line-height: 1.5;
-  color: #f8fafc;
+  color: #aedab5;
   margin-bottom: 3rem;
   max-width: 30rem;
   font-weight: 500;
@@ -112,23 +112,23 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.25rem;
-  color: #ffffff;
+  color: #7ab536;
 }
 
 .feature-card p {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: #c9e6ce;
   margin: 0;
   line-height: 1.4;
 }
 
-/* SECCIÓN DERECHA */
+/* SECCI├ôN DERECHA */
 .auth-right {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
+  background-color: #f8f6f0;
   position: relative;
 }
 
@@ -171,19 +171,18 @@
 
 /* Estilos de formulario */
 .auth-form-wrapper h2 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.2rem;
-  color: #052e16;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #11361c;
   margin-bottom: 0.5rem;
   font-weight: 800;
   letter-spacing: -0.0625rem;
 }
 
 .auth-subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin-bottom: 2.5rem;
-  font-weight: 500;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
 }
 
 .input-group {
@@ -224,10 +223,9 @@
   border: none;
   background: transparent;
   flex: 1;
-  font-size: 1rem;
+  font-size: 0.95rem;
   outline: none;
-  color: #1a202c;
-  font-weight: 500;
+  color: #333;
 }
 
 .password-toggle {
@@ -269,13 +267,13 @@ input::-webkit-credentials-auto-fill-button {
 
 .auth-submit-btn {
   width: 100%;
-  background: #3B9C3A;
+  background-color: #2d8a42;
   color: var(--blanco);
   border: none;
   padding: 1rem 2rem;
   border-radius: 3.125rem;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 600;
   margin-top: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -324,26 +322,21 @@ input::-webkit-credentials-auto-fill-button {
 .auth-link-btn {
   background: none;
   border: none;
-  color: #3B9C3A;
-  font-weight: 800;
+  color: #2d8a42;
+  font-weight: 700;
   cursor: pointer;
   padding: 0;
-  font-size: 0.95rem;
-  display: inline-block;
 }
 
 .auth-link-btn:hover {
-  color: #3B9C3A;
   text-decoration: underline;
-  transform: scale(1.05);
 }
 
 .auth-back-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  color: #ffffff;
+  gap: 0.5rem;
+  color: var(--blanco);
   text-decoration: none;
   margin-top: 2rem;
   padding: 1.2rem 2.5rem;
@@ -383,7 +376,7 @@ input::-webkit-credentials-auto-fill-button {
   }
 
   .auth-features {
-    display: none; /* Ocultar características en móviles para ahorrar espacio */
+    display: none; /* Ocultar caracter├¡sticas en m├│viles para ahorrar espacio */
   }
 
   .auth-right {

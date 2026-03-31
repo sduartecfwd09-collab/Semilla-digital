@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../../../services/api'
 import { ENDPOINTS } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
+import { normalizeProductName } from '../../../utils/productCatalog'
 import './AdminDashboard.css'
 
 const AdminDashboard = () => {

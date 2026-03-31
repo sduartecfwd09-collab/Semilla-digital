@@ -1,9 +1,6 @@
-// ─────────────────────────────────────────────────────────────────
-// ProductService.ts
-// Servicio para gestión de productos por usuario administrador
-// ─────────────────────────────────────────────────────────────────
+import { API_BASE_URL } from '../services/api.config'
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = API_BASE_URL
 
 export interface Producto {
   id?: string | number

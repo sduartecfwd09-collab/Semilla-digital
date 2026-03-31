@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './RegistroAgricultor.css';
 import Navbar from '../Navbar/Navbar';
@@ -7,14 +7,17 @@ import Footer from '../Footer/Footer';
 import { ENDPOINTS } from '../../services/api.config';
 import { validateEmail } from '../../utils/validation';
 import ProductIcon from '../../utils/productIcons';
+import CategoryIcon from '../CategoryIcon/CategoryIcon';
 
 // Opciones de tipo de productos
 const TIPOS_PRODUCTO = [
-  { value: 'Verduras', emoji: '🥬' },
-  { value: 'Frutas', emoji: '🍎' },
-  { value: 'Hierbas', emoji: '🌿' },
-  { value: 'Tubérculos', emoji: '🥔' },
-  { value: 'Proteínas', emoji: '🥩' },
+  { value: 'Verduras' },
+  { value: 'Frutas' },
+  { value: 'Hierbas' },
+  { value: 'Tubérculos' },
+  { value: 'Granos' },
+  { value: 'Proteína' },
+  { value: 'Lácteos' },
 ];
 
 interface FotoPreview {
@@ -22,11 +25,22 @@ interface FotoPreview {
   preview: string;
 }
 
+interface HorarioItem {
+  dia: string;
+  inicio: string;
+  fin: string;
+}
+
 const RegistroAgricultor: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState('');
+  const [role, setRole] = useState('');
+  
+  // Parámetro para reiniciar formulario
+  const isReset = new URLSearchParams(location.search).get('reset') === 'true';
 
   // Estado del formulario enviado (solicitud pendiente)
   const [solicitudEnviada, setSolicitudEnviada] = useState(false);
@@ -36,7 +50,8 @@ const RegistroAgricultor: React.FC = () => {
   // Campos obligatorios
   const [nombrePuesto, setNombrePuesto] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [ubicacion, setUbicacion] = useState('');
+  const [selectedFeriaId, setSelectedFeriaId] = useState('');
+  const [ferias, setFerias] = useState<any[]>([]);
   const [tiposProducto, setTiposProducto] = useState<string[]>([]);
   const [fotos, setFotos] = useState<FotoPreview[]>([]);
   const [fotosExistentes, setFotosExistentes] = useState<string[]>([]);
@@ -44,9 +59,12 @@ const RegistroAgricultor: React.FC = () => {
   const [email, setEmail] = useState('');
 
   // Campos opcionales
-  const [horarios, setHorarios] = useState('');
+  const [horariosList, setHorariosList] = useState<HorarioItem[]>([]);
   const [metodosCultivo, setMetodosCultivo] = useState('');
   const [redesSociales, setRedesSociales] = useState('');
+
+  // Estados de expansión de secciones
+  const [feriaExpanded, setFeriaExpanded] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -57,66 +75,89 @@ const RegistroAgricultor: React.FC = () => {
 
     const cachedUser = JSON.parse(userStr);
 
-    // Solo clientes pueden acceder a esta página
-    if (cachedUser.role !== 'Cliente') {
+    // Solo clientes, usuarios o agricultores pueden acceder a esta página
+    if (cachedUser.role !== 'Cliente' && cachedUser.role !== 'Usuario' && cachedUser.role !== 'Agricultor') {
       navigate('/perfil');
       return;
     }
 
+    setRole(cachedUser.role);
     const currentUserId = cachedUser.id;
     setUserId(currentUserId);
     setEmail(cachedUser.email || '');
 
-    // Cargar datos existentes del puesto y solicitud pendiente
-    const cargarDatosExistentes = async () => {
+    // Cargar datos existentes y ferias
+    const cargarDatos = async () => {
       try {
-        // 1. Buscar puesto existente (filtrado client-side por compatibilidad con json-server)
-        const puestoRes = await fetch(ENDPOINTS.puestosAgricultor);
-        const todosPuestos = await puestoRes.json();
-        const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
-
-        if (misPuestos.length > 0) {
-          const puesto = misPuestos[misPuestos.length - 1]; // Último puesto creado
-          setPuestoId(puesto.id);
-          setNombrePuesto(puesto.nombrePuesto || '');
-          setDescripcion(puesto.descripcion || '');
-          setUbicacion(puesto.ubicacion || '');
-          setTiposProducto(puesto.tiposProducto || []);
-          // Compatibilidad: campo antiguo logoNombre o nuevo fotosNombres
-          const fotosGuardadas = puesto.fotosNombres || (puesto.logoNombre ? [puesto.logoNombre] : []);
-          setFotosExistentes(fotosGuardadas);
-          setTelefono(puesto.telefono || '');
-          setEmail(puesto.email || cachedUser.email || '');
-          setHorarios(puesto.horarios || '');
-          setMetodosCultivo(puesto.metodosCultivo || '');
-          setRedesSociales(puesto.redesSociales || '');
-        }
-
-        // 2. Buscar solicitud pendiente (siempre, aunque no haya puesto)
-        const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
-        const todasSolicitudes = await solRes.json();
-        const misSolicitudes = todasSolicitudes.filter(
-          (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
+        setLoading(true);
+        // Cargar ferias y deduplicar
+        const feriasRes = await fetch(ENDPOINTS.ferias);
+        const dataFerias = await feriasRes.json();
+        
+        // Deduplicar ferias por nombre para evitar repeticiones visuales
+        const feriasUnicas = dataFerias.filter((feria: any, index: number, self: any[]) =>
+          index === self.findIndex((f) => f.name === feria.name)
         );
-        if (misSolicitudes.length > 0) {
-          setSolicitudEnviada(true);
-          setSolicitudId(misSolicitudes[0].id);
+          setFerias(feriasUnicas);
+  
+          // Si estamos en modo reinicio (nueva solicitud tras rechazo), no cargamos datos existentes
+          if (isReset) {
+            setLoading(false);
+            return;
+          }
+  
+          // Buscar puesto existente
+          const puestoRes = await fetch(ENDPOINTS.puestosAgricultor);
+          const todosPuestos = await puestoRes.json();
+          const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
+  
+          if (misPuestos.length > 0) {
+            const puesto = misPuestos[misPuestos.length - 1];
+            setPuestoId(puesto.id);
+            setNombrePuesto(puesto.nombrePuesto || '');
+            setDescripcion(puesto.descripcion || '');
+            setSelectedFeriaId(String(puesto.feriaId || ''));
+            setTiposProducto(puesto.tiposProducto || []);
+            const fotosGuardadas = puesto.fotosNombres || (puesto.logoNombre ? [puesto.logoNombre] : []);
+            setFotosExistentes(fotosGuardadas);
+            setTelefono(puesto.telefono || '');
+            setEmail(puesto.email || cachedUser.email || '');
+            if (puesto.horariosList && Array.isArray(puesto.horariosList)) {
+              setHorariosList(puesto.horariosList);
+            }
+            setMetodosCultivo(puesto.metodosCultivo || '');
+            setRedesSociales(puesto.redesSociales || '');
+          }
+  
+          // Buscar solicitud pendiente
+          const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
+          const todasSolicitudes = await solRes.json();
+          const misSolicitudes = todasSolicitudes.filter(
+            (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
+          );
+          if (misSolicitudes.length > 0) {
+            setSolicitudEnviada(true);
+            setSolicitudId(misSolicitudes[0].id);
+          }
+        } catch (error) {
+          console.error('Error al cargar datos:', error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error al cargar datos existentes:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarDatosExistentes();
-  }, [navigate]);
+      };
+  
+      cargarDatos();
+    }, [navigate, setEmail, isReset]);
 
 
   const handleToggleProducto = (tipo: string) => {
     setTiposProducto(prev =>
       prev.includes(tipo) ? prev.filter(t => t !== tipo) : [...prev, tipo]
     );
+  };
+
+  const handleSelectFeria = (fId: string) => {
+    setSelectedFeriaId(fId);
   };
 
   const handleFotosChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,21 +209,21 @@ const RegistroAgricultor: React.FC = () => {
     e.preventDefault();
 
     // Validaciones obligatorias
-    if (!nombrePuesto.trim() || !descripcion.trim() || !ubicacion.trim() || !telefono.trim() || !email.trim()) {
+    if (!nombrePuesto.trim() || !descripcion.trim() || !selectedFeriaId || tiposProducto.length === 0 || (fotos.length === 0 && fotosExistentes.length === 0) || !telefono.trim()) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
-        text: 'Por favor, completá todos los campos obligatorios.',
+        text: 'Por favor, completá todos los campos obligatorios del formulario.',
         confirmButtonColor: 'var(--verde-claro)',
       });
       return;
     }
 
-    if (telefono.trim().length < 8) {
+    if (telefono.trim().length !== 8) {
       Swal.fire({
         icon: 'warning',
         title: 'Teléfono inválido',
-        text: 'El número de teléfono debe tener al menos 8 dígitos.',
+        text: 'El número de teléfono debe tener exactamente 8 dígitos.',
         confirmButtonColor: 'var(--verde-claro)',
       });
       return;
@@ -220,24 +261,31 @@ const RegistroAgricultor: React.FC = () => {
       return;
     }
 
-    setSubmitting(true);
-
     try {
+      // Buscar el nombre de la feria seleccionada para guardar en el array retrocompatible
+      const feriaSeleccionada = ferias.find(f => String(f.id) === String(selectedFeriaId));
+      const ubicacionNombre = feriaSeleccionada ? feriaSeleccionada.name : '';
+
       const fotosNombres = [
         ...fotosExistentes,
         ...fotos.map(f => f.file.name)
       ];
 
+      const fotosBase64 = fotos.map(f => f.preview);
+
       const puestoData = {
         usuarioId: userId,
         nombrePuesto: nombrePuesto.trim(),
         descripcion: descripcion.trim(),
-        ubicacion: ubicacion.trim(),
+        ubicacion: [ubicacionNombre],
+        feriaId: selectedFeriaId,
         tiposProducto,
         fotosNombres,
+        fotosBase64,
         telefono: telefono.trim(),
         email: email.trim(),
-        horarios: horarios.trim(),
+        horarios: horariosList.length > 0 ? horariosList.map(h => `${h.dia} de ${h.inicio} a ${h.fin}`).join(', ') : '',
+        horariosList: horariosList,
         metodosCultivo: metodosCultivo.trim(),
         redesSociales: redesSociales.trim(),
         fechaRegistro: new Date().toISOString()
@@ -262,29 +310,57 @@ const RegistroAgricultor: React.FC = () => {
         const nuevoPuesto = await puestoRes.json();
         setPuestoId(nuevoPuesto.id);
       }
+  
+      // Si el usuario es un AGRICULTOR ya activo, NO creamos ni actualizamos solicitudes.
+      // Simplemente actualizamos el puesto y terminamos.
+      if (role === 'Agricultor') {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Información actualizada!',
+          text: 'Los datos de tu puesto han sido actualizados correctamente.',
+          confirmButtonColor: 'var(--verde-claro)',
+        }).then(() => {
+          navigate('/agricultor');
+        });
+        return;
+      }
 
-      // Crear o actualizar solicitud de cambio de rol
+      // Crear o actualizar solicitud de cambio de rol (Solo para Usuario/Cliente)
       if (!solicitudId) {
         const solicitudData = {
           usuarioId: userId,
-          nombreUsuario: nombrePuesto.trim(),
+          nombreDelPuesto: nombrePuesto.trim(),
           correoUsuario: email.trim(),
           rolSolicitado: 'Agricultor',
           estado: 'Pendiente',
           motivoRespuesta: '',
           fechaSolicitud: new Date().toISOString()
         };
-
+  
         const solRes = await fetch(ENDPOINTS.solicitudesCambioRol, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(solicitudData)
         });
-
-        if (solRes.ok) {
-          const nuevaSolicitud = await solRes.json();
-          setSolicitudId(nuevaSolicitud.id);
-        }
+  
+        if (!solRes.ok) throw new Error('Error al crear solicitud');
+        
+        const nuevaSolicitud = await solRes.json();
+        setSolicitudId(nuevaSolicitud.id);
+      } else {
+        // Si ya existía una solicitud (modo edición), nos aseguramos de que esté en Pendiente
+        // y actualizamos sus datos básicos
+        const solRes = await fetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitudId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombreDelPuesto: nombrePuesto.trim(),
+            correoUsuario: email.trim(),
+            estado: 'Pendiente',
+            fechaSolicitud: new Date().toISOString()
+          })
+        });
+        if (!solRes.ok) throw new Error('Error al actualizar solicitud');
       }
 
       setSolicitudEnviada(true);
@@ -294,15 +370,19 @@ const RegistroAgricultor: React.FC = () => {
       Swal.fire({
         icon: 'success',
         title: solicitudId ? '¡Solicitud actualizada!' : '¡Solicitud enviada!',
-        text: 'Tu solicitud para ser Agricultor ha sido enviada y será revisada por un administrador.',
+        text: role === 'Agricultor' ? 'Información actualizada.' : 'Tu solicitud para ser Agricultor ha sido enviada y será revisada por un administrador.',
         confirmButtonColor: 'var(--verde-claro)',
+      }).then(() => {
+        navigate(role === 'Agricultor' ? '/agricultor' : '/perfil');
       });
-
-    } catch {
+  
+    } catch (error) {
+      console.error('Error detallado en handleSubmit:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Hubo un problema al procesar tu solicitud. Intentá de nuevo.',
+        footer: 'Asegurate de que las imágenes no sean demasiado pesadas.',
         confirmButtonColor: 'var(--verde-claro)',
       });
     } finally {
@@ -325,9 +405,10 @@ const RegistroAgricultor: React.FC = () => {
       <main className="registro-agricultor-container">
         <div className="registro-agricultor-card animate-fade">
           <div className="profile-header">
-            <div className="profile-avatar">🌾</div>
-            <h1>Solicitud de Agricultor</h1>
-            <p>Completá la información de tu puesto para solicitar el rol de Agricultor</p>
+            <div className="header-info">
+              <h1>{role === 'Agricultor' ? 'Gestionar Información' : 'Registro de Agricultor'}</h1>
+              <p>{role === 'Agricultor' ? 'Mantené actualizados los datos de tu puesto y feria.' : 'Completá los datos de tu puesto para que un administrador pueda revisar tu solicitud.'}</p>
+            </div>
           </div>
 
           {/* Banner de estado pendiente */}
@@ -360,17 +441,73 @@ const RegistroAgricultor: React.FC = () => {
                 </div>
               </div>
 
-              <div className="input-group">
-                <label>Ubicación *</label>
-                <div className="input-box">
-                  <span className="input-icon">📍</span>
-                  <input
-                    type="text"
-                    placeholder="Ej: Feria de Heredia, puesto #12"
-                    value={ubicacion}
-                    onChange={(e) => setUbicacion(e.target.value)}
-                  />
-                </div>
+              <div className="input-group full-width" style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1rem', background: '#f8fafc' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setFeriaExpanded(!feriaExpanded)}
+                  className="section-toggle-btn"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    background: 'none',
+                    border: 'none',
+                    padding: '0',
+                    cursor: 'pointer',
+                    color: 'var(--verde-oscuro)',
+                    fontWeight: '600'
+                  }}
+                >
+                  <label style={{ cursor: 'pointer', margin: 0 }}>
+                    📍 Feria en la cual desea vender * 
+                    {selectedFeriaId && (
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '400', marginLeft: '10px' }}>
+                        (Seleccionada: {ferias.find(f => String(f.id) === String(selectedFeriaId))?.name})
+                      </span>
+                    )}
+                  </label>
+                  <span style={{ transition: 'transform 0.3s', transform: feriaExpanded ? 'rotate(180deg)' : 'rotate(0)' }}>
+                    ▼
+                  </span>
+                </button>
+
+                {feriaExpanded && (
+                  <div className="productos-grid animate-fade" style={{ marginTop: '1.5rem' }}>
+                    {ferias.map((f) => (
+                      <label
+                        key={f.id}
+                        className={`producto-chip ${String(selectedFeriaId) === String(f.id) ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="feria-selection"
+                          checked={String(selectedFeriaId) === String(f.id)}
+                          onChange={() => handleSelectFeria(String(f.id))}
+                        />
+                        <span className="chip-check radio">
+                          <div className="radio-inner" />
+                        </span>
+                        <span className="chip-icon">📍</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                          <span style={{ fontWeight: '600' }}>{f.name}</span>
+                          <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>{f.location}, {f.province}</span>
+                          {f.ubicacion && (
+                            <a 
+                              href={f.ubicacion} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              onClick={(e) => e.stopPropagation()}
+                              style={{ fontSize: '0.75rem', color: '#3b82f6', textDecoration: 'underline', marginTop: '4px' }}
+                            >
+                              Ver mapa 🗺️
+                            </a>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="input-group full-width">
@@ -404,9 +541,9 @@ const RegistroAgricultor: React.FC = () => {
                         </svg>
                       </span>
                       <span className="chip-icon">
-                        <ProductIcon emoji={tipo.emoji} size={16} />
+                        <CategoryIcon categoria={tipo.value} size={18} />
                       </span>
-                      {tipo.value}
+                      <span>{tipo.value}</span>
                     </label>
                   ))}
                 </div>
@@ -477,8 +614,8 @@ const RegistroAgricultor: React.FC = () => {
                     type="tel"
                     placeholder="Ej: 88888888"
                     value={telefono}
-                    onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, ''))}
-                    maxLength={15}
+                    onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
+                    maxLength={8}
                   />
                 </div>
               </div>
@@ -501,15 +638,60 @@ const RegistroAgricultor: React.FC = () => {
 
               <div className="input-group full-width">
                 <label>Horarios de atención</label>
-                <div className="input-box">
-                  <span className="input-icon">🕐</span>
-                  <input
-                    type="text"
-                    placeholder="Ej: Sábados de 5:00 AM a 1:00 PM"
-                    value={horarios}
-                    onChange={(e) => setHorarios(e.target.value)}
-                  />
-                </div>
+                {horariosList.map((h, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <select 
+                      value={h.dia} 
+                      onChange={(e) => {
+                        const newList = [...horariosList];
+                        newList[i].dia = e.target.value;
+                        setHorariosList(newList);
+                      }}
+                      style={{ flex: 1, minWidth: '120px', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
+                    >
+                      {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                    <span style={{ fontWeight: '600', color: '#666' }}>De:</span>
+                    <input 
+                      type="time" 
+                      value={h.inicio} 
+                      onChange={(e) => {
+                        const newList = [...horariosList];
+                        newList[i].inicio = e.target.value;
+                        setHorariosList(newList);
+                      }}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
+                    />
+                    <span style={{ fontWeight: '600', color: '#666' }}>a:</span>
+                    <input 
+                      type="time" 
+                      value={h.fin} 
+                      onChange={(e) => {
+                        const newList = [...horariosList];
+                        newList[i].fin = e.target.value;
+                        setHorariosList(newList);
+                      }}
+                      style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setHorariosList(horariosList.filter((_, idx) => idx !== i))}
+                      style={{ padding: '10px 14px', background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', transition: 'background 0.2s' }}
+                      title="Eliminar horario"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <button 
+                  type="button" 
+                  onClick={() => setHorariosList([...horariosList, { dia: 'Sábado', inicio: '05:00', fin: '13:00' }])}
+                  style={{ marginTop: '5px', padding: '10px 15px', background: '#f8fafc', border: '1px dashed #94a3b8', color: '#475569', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', transition: 'all 0.2s' }}
+                >
+                  <span style={{ fontSize: '1.2rem', lineHeight: 1, color: 'var(--verde-claro)' }}>+</span> Agregar horario
+                </button>
               </div>
 
               <div className="input-group full-width">
@@ -547,15 +729,22 @@ const RegistroAgricultor: React.FC = () => {
                 style={submitting ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
               >
                 {submitting
-                  ? 'Enviando...'
-                  : solicitudEnviada
-                    ? 'Actualizar solicitud'
-                    : 'Enviar solicitud de Agricultor'
+                  ? (role === 'Agricultor' ? 'Guardando...' : 'Enviando...')
+                  : role === 'Agricultor'
+                    ? 'Guardar cambios'
+                    : solicitudEnviada
+                      ? 'Actualizar solicitud'
+                      : 'Enviar solicitud de Agricultor'
                 }
               </button>
               <button type="button" className="cancel-btn" onClick={() => navigate('/perfil')}>
                 Volver al perfil
               </button>
+              {role === 'Agricultor' && (
+                <button type="button" className="cancel-btn" onClick={() => navigate('/agricultor')}>
+                  Volver al Dashboard
+                </button>
+              )}
             </div>
           </form>
         </div>

@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './SidebarFilters.css'
 import { ENDPOINTS } from '../../services/api.config'
 import { ShoppingBasket } from 'lucide-react'
+import { findInCatalog, normalizeProductName } from '../../utils/productCatalog'
 
 interface Category {
   emoji: string
@@ -12,6 +12,8 @@ interface Category {
 }
 
 interface ProductFromAPI {
+  nombre?: string
+  name?: string
   categoria?: string
   category?: string
   disponible?: boolean
@@ -46,12 +48,26 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
       .then((productosData: ProductFromAPI[]) => {
         const counts: Record<string, number> = {};
         const availableProducts = productosData.filter((p) => p.disponible !== false);
+        
+        // Deduplicar por nombre normalizado (igual que en el comparador)
+        const uniqueProducts = new Map<string, string>(); // normalizedName -> category
+        
         availableProducts.forEach((p) => {
-          const cName = p.categoria || p.category || 'Otros';
-          counts[cName] = (counts[cName] || 0) + 1;
+          const rawName = p.nombre || p.name || 'Otros';
+          const key = normalizeProductName(rawName);
+          
+          if (!uniqueProducts.has(key)) {
+            const catalogEntry = findInCatalog(rawName);
+            const category = catalogEntry ? catalogEntry.categoria : (p.categoria || p.category || 'Otros');
+            uniqueProducts.set(key, category);
+          }
         });
 
-        setTotalCount(availableProducts.length);
+        uniqueProducts.forEach((category) => {
+          counts[category] = (counts[category] || 0) + 1;
+        });
+
+        setTotalCount(uniqueProducts.size);
         setCategories((prev) => prev.map((cat) => ({
           ...cat,
           count: counts[cat.name] || 0

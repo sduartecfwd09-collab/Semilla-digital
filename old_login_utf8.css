@@ -1,0 +1,352 @@
+﻿/* Contenedor de Autenticaci├│n */
+.auth-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--crema);
+}
+
+/* SECCI├ôN IZQUIERDA */
+.auth-left {
+  flex: 1;
+  background-color: #11361c; /* Similar a var(--fondo) pero coincidiendo mejor con la imagen */
+  color: var(--blanco);
+  padding: 4rem 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.auth-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  font-weight: 900;
+}
+
+.logo-agro {
+  color: #7ab536; /* Verde claro de la imagen */
+}
+
+.logo-map {
+  color: #c4813a; /* Bronce/dorado */
+}
+
+.auth-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.highlight-green {
+  color: #7ab536;
+}
+
+.auth-description {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #aedab5;
+  margin-bottom: 3rem;
+  max-width: 450px;
+}
+
+.auth-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-card {
+  background-color: #1a4d29;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 450px;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #7ab536;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: #c9e6ce;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* SECCI├ôN DERECHA */
+.auth-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f6f0;
+  position: relative;
+}
+
+.auth-card {
+  background-color: var(--blanco);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  padding: 3rem;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* Botones de alternancia */
+.auth-toggle {
+  display: flex;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 0.3rem;
+  margin-bottom: 2.5rem;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  color: #888;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.toggle-btn.active {
+  background-color: var(--blanco);
+  color: #11361c;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilos de formulario */
+.auth-form-wrapper h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #11361c;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #11361c;
+  margin-bottom: 0.6rem;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+}
+
+.input-box:focus-within {
+  border-color: #7ab536;
+  background-color: var(--blanco);
+}
+
+.input-icon {
+  margin-right: 0.8rem;
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+.input-box input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  font-size: 0.95rem;
+  outline: none;
+  color: #333;
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #aaa;
+}
+
+.password-toggle:hover {
+  color: #7ab536;
+  transform: scale(1.1);
+}
+
+/* Ocultar el ojito por defecto de los navegadores (Edge, Chrome, etc) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+.input-box input::placeholder {
+  color: #bbb;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  background-color: #2d8a42;
+  color: var(--blanco);
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.auth-submit-btn:hover {
+  background-color: #1a5c2a;
+}
+
+/* Separador */
+.auth-separator {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.auth-separator::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #eee;
+  z-index: 1;
+}
+
+.auth-separator span {
+  background-color: var(--blanco);
+  padding: 0 1rem;
+  color: #aaa;
+  font-size: 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-switch-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auth-link-btn {
+  background: none;
+  border: none;
+  color: #2d8a42;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.auth-link-btn:hover {
+  text-decoration: underline;
+}
+
+.auth-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--blanco);
+  text-decoration: none;
+  margin-top: 2rem;
+  padding: 0.8rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.auth-back-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-5px);
+}
+
+.animate-fade {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dise├▒o responsivo / Adaptabilidad */
+@media (max-width: 968px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    padding: 3rem 2rem;
+  }
+
+  .auth-features {
+    display: none; /* Ocultar caracter├¡sticas en m├│viles para ahorrar espacio */
+  }
+
+  .auth-right {
+    padding: 2rem 1rem;
+    align-items: flex-start;
+  }
+}

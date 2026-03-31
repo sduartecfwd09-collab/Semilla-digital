@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link } from 'react-router-dom'
@@ -194,6 +195,10 @@ const Auth: React.FC = () => {
     <div className="auth-container">
       {/* SECCIÓN IZQUIERDA */}
       <div className="auth-left">
+        <Link to="/" className="auth-back-btn" style={{ marginTop: 0, marginBottom: '2rem' }}>
+          <span>←</span> Volver al inicio
+        </Link>
+
         <Link to="/" className="auth-logo-link">
           <div className="auth-logo">
             <span className="logo-agro">Agro</span><span className="logo-map">Map</span>
@@ -232,9 +237,6 @@ const Auth: React.FC = () => {
           </div>
         </div>
 
-        <Link to="/" className="auth-back-btn">
-          <span>←</span> Volver al inicio
-        </Link>
       </div>
 
       {/* SECCIÓN DERECHA */}
@@ -297,7 +299,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowLoginPass(!showLoginPass)}
                     >
-                      {showLoginPass ? '👁️‍🗨️' : '👁️'}
+                      {showLoginPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -371,7 +373,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegPass(!showRegPass)}
                     >
-                      {showRegPass ? '👁️‍🗨️' : '👁️'}
+                      {showRegPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -392,7 +394,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowRegConfirm(!showRegConfirm)}
                     >
-                      {showRegConfirm ? '👁️‍🗨️' : '👁️'}
+                      {showRegConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>

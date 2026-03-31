@@ -47,11 +47,7 @@ const AgricultorSidebar: React.FC = () => {
         ))}
       </nav>
 
-      <div className="agricultor-sidebar-footer">
-        <Link to="/" className="agricultor-sidebar-home-link">
-          ← Volver al sitio
-        </Link>
-      </div>
+
     </aside>
   )
 }

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
+import { ENDPOINTS } from '../../services/api.config'
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
@@ -25,6 +26,8 @@ const Navbar: React.FC = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+  const [hasProfileNotif, setHasProfileNotif] = useState(false)
+  const [hasContactNotif, setHasContactNotif] = useState(false)
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -52,9 +55,74 @@ const Navbar: React.FC = () => {
     }
   }
 
-  const toggleMenu = () => {
-    setMenuOpen(prev => !prev)
-  }
+  useEffect(() => {
+    const checkNotifications = async () => {
+      // 1. Solicitudes de cambio de rol (perfil)
+      if (user) {
+        try {
+          const res = await fetch(ENDPOINTS.solicitudesCambioRol)
+          const data = await res.json()
+          const myResponses = data.filter((s: any) => 
+            String(s.usuarioId) === String(user.id) && s.estado !== 'Pendiente'
+          )
+          if (myResponses.length > 0) {
+            const latest = myResponses.sort((a: any, b: any) => 
+              new Date(b.fechaRespuesta || b.fechaSolicitud).getTime() - new Date(a.fechaRespuesta || a.fechaSolicitud).getTime()
+            )[0]
+            const seenId = localStorage.getItem(`seen_sol_${user.id}`)
+            
+            if (location.pathname === '/perfil') {
+              // Si está en el perfil, marcar como leída inmediatamente
+              localStorage.setItem(`seen_sol_${user.id}`, latest.id)
+              setHasProfileNotif(false)
+            } else if (seenId !== latest.id) {
+              setHasProfileNotif(true)
+            }
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
+      // 2. Mensajes de contacto
+      try {
+        const res = await fetch(ENDPOINTS.contactMessages)
+        const data = await res.json()
+        const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]')
+        
+        const myResponded = data.filter((m: any) => {
+          const matchedByEmail = user?.email && m.correo && 
+                                m.correo.toLowerCase() === user.email.toLowerCase()
+          const matchedByLocal = m.id && savedIds.includes(m.id)
+          return (matchedByEmail || matchedByLocal) && m.estado === 'Respondido'
+        })
+
+        if (myResponded.length > 0) {
+          const latest = myResponded.sort((a: any, b: any) => 
+            new Date(b.fechaRespuesta || b.fechaEnvio).getTime() - new Date(a.fechaRespuesta || a.fechaEnvio).getTime()
+          )[0]
+          const seenKey = user ? `seen_msg_${user.id}` : 'seen_msg_anon'
+          const seenId = localStorage.getItem(seenKey)
+
+          if (location.pathname === '/contacto') {
+            // Si está en contacto, marcar como leída inmediatamente
+            localStorage.setItem(seenKey, latest.id)
+            setHasContactNotif(false)
+          } else if (seenId !== latest.id) {
+            setHasContactNotif(true)
+          } else {
+            setHasContactNotif(false)
+          }
+        } else {
+          setHasContactNotif(false)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    checkNotifications()
+  }, [user, location.pathname])
 
   return (
     <nav className="navbar">
@@ -65,7 +133,7 @@ const Navbar: React.FC = () => {
       {/* Hamburger button — visible only on mobile/tablet */}
       <button
         className={`navbar-hamburger ${menuOpen ? 'active' : ''}`}
-        onClick={toggleMenu}
+        onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle menu"
       >
         <span></span>
@@ -104,6 +172,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link to="/contacto" className={`navbar-link ${isActive('/contacto') ? 'active' : ''}`}>
             Contáctanos
+            {hasContactNotif && user?.role !== 'Administrador' && <span className="navbar-dot"></span>}
           </Link>
         </li>
 
@@ -147,6 +216,7 @@ const Navbar: React.FC = () => {
                 )}
               </div>
               Perfil
+              {hasProfileNotif && user?.role !== 'Administrador' && <span className="navbar-dot"></span>}
             </Link>
           </li>
         )}

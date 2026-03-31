@@ -1,6 +1,5 @@
 .stats-bar {
-    background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);
-    padding: 1.875rem 3.75rem;
+background: linear-gradient(32deg, #061A02 0%, #022405 43%, #36EB60 95%);    padding: 1.875rem 3.75rem;
     display: flex;
     justify-content: center;
     gap: 5rem;
@@ -14,17 +13,17 @@
     font-family: 'Playfair Display', serif;
     font-size: 2.125rem;
     font-weight: 900;
-    color: var(--blanco);
+ color: var(--blanco);
     margin-bottom: 0.25rem;
 }
 
 .stat-label {
     font-size: 0.8125rem !important;
-    color: #ffffff !important;
+  color: #ffffff !important;
     text-transform: uppercase;
     letter-spacing: 0.09375rem;
     font-weight: 800 !important;
-    text-shadow: 0 0 0.5rem rgba(0,0,0,0.8), 0 0.125rem 0.25rem rgba(0,0,0,0.6) !important;
+   text-shadow: 0 0 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6) !important;
     opacity: 1 !important;
 }
 

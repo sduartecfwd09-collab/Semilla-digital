@@ -5,6 +5,7 @@
 aside.admin-sidebar {
     width: 15.625rem !important;
     min-height: calc(100vh - 4.375rem) !important; /* Adjusted for top Navbar */
+    overflow-y: auto !important;
     background: linear-gradient(180deg, #061A02 0%, #022405 43%, #36EB60 95%) !important;
     border-right: none !important;
     padding: 2.5rem 0.75rem !important;
@@ -14,6 +15,21 @@ aside.admin-sidebar {
     top: 4.375rem !important; 
     z-index: 50 !important;
     box-shadow: 0.9375rem 0 3.125rem rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom scrollbar for admin sidebar */
+aside.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+aside.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+aside.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* New Profile Section */
@@ -84,7 +100,7 @@ aside.admin-sidebar {
 .sidebar-nav {
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.6rem !important;
+    gap: 1.25rem !important;
     width: 100% !important;
 }
 

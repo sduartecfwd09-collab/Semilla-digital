@@ -28,7 +28,6 @@ export const PRODUCTOS_CATALOGO: ProductoCatalogo[] = [
   { nombre: 'Chile Dulce', emoji: '🫑', categoria: 'Verduras' },
   { nombre: 'Elote', emoji: '🌽', categoria: 'Verduras' },
   { nombre: 'Lechuga Americana', emoji: '🥬', categoria: 'Verduras' },
-  { nombre: 'Papa Blanca', emoji: '🥔', categoria: 'Verduras' },
   { nombre: 'Pepino', emoji: '🥒', categoria: 'Verduras' },
   { nombre: 'Repollo Verde', emoji: '🥬', categoria: 'Verduras' },
   { nombre: 'Tomate', emoji: '🍅', categoria: 'Verduras' },
@@ -68,6 +67,7 @@ export const PRODUCTOS_CATALOGO: ProductoCatalogo[] = [
   { nombre: 'Garbanzos', emoji: '🫘', categoria: 'Granos' },
 
   // ── Tubérculos ────────────────────────────────────────────────
+  { nombre: 'Papa Blanca', emoji: '🥔', categoria: 'Tubérculos' },
   { nombre: 'Yuca', emoji: '🥔', categoria: 'Tubérculos' },
   { nombre: 'Camote', emoji: '🍠', categoria: 'Tubérculos' },
   { nombre: 'Ñampí', emoji: '🥔', categoria: 'Tubérculos' },

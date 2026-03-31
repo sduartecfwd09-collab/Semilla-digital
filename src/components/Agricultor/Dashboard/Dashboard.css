@@ -211,3 +211,20 @@
   font-size: 0.95rem;
   text-align: center;
 }
+
+.dashboard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dashboard-tag {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #bbf7d0;
+}

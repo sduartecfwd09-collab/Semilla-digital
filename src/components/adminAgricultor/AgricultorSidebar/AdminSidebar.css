@@ -4,8 +4,26 @@
   border-right: none !important;
   display: flex !important;
   flex-direction: column !important;
-  min-height: 100vh !important;
-  box-shadow: 0.625rem 0 2.5rem rgba(0, 0, 0, 0.2) !important;
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow-y: auto !important;
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom scrollbar for agricultor sidebar */
+.agricultor-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.agricultor-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.agricultor-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+.agricultor-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .agricultor-sidebar-header {
@@ -32,7 +50,7 @@
 }
 
 .agricultor-sidebar-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6) !important;
   margin-top: 0.4rem;
   font-weight: 600;

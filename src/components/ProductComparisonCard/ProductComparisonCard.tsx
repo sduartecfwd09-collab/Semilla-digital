@@ -32,11 +32,15 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
   const lowestPriceNumeric = Math.min(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
   const maxPrice = Math.max(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
 
+  // Eliminar cualquier '· Por ...' embebido en la descripción que contradiga la unidad real
+  const cleanDescription = product.description
+    ? product.description.replace(/\s*[·•]\s*[Pp]or\s+\w+/g, '').trim()
+    : ''
+
   return (
     <div className="product-comp-card">
       {/* Card header */}
       <div className="product-comp-header">
-        <span className="product-comp-emoji"><CategoryIcon categoria={product.category} size={24} /></span>
         <div>
           <div className="product-comp-name">
             {product.name}
@@ -55,7 +59,7 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
               </span>
             )}
           </div>
-          <div className="product-comp-desc">{product.description}</div>
+          <div className="product-comp-desc">{cleanDescription}</div>
         </div>
         <div className="product-comp-price-summary">
           <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
