@@ -162,6 +162,15 @@
       "password": "123412343",
       "role": "Usuario",
       "status": "Activo"
+    },
+    {
+      "id": "3e66",
+      "name": "Samir García González",
+      "email": "arciafwd@gmail.com",
+      "password": "123456789",
+      "role": "Agricultor",
+      "status": "Activo",
+      "feriaId": "5"
     }
   ],
   "ferias": [
@@ -1159,20 +1168,20 @@
       "id": "95be",
       "userId": "62fa",
       "nombre": "Pepino",
-      "emoji": "🥒",
+      "emoji": "Verduras",
       "descripcion": "",
       "categoria": "Verduras",
       "imagen": "",
       "disponible": false,
       "provincia": "San José",
       "direccionPuesto": "San José",
-      "unidad": "Unidad",
+      "unidad": "Caja",
       "precios": [
         {
           "feriaId": 1,
           "feriaNombre": "Feria Local",
           "provincia": "San José",
-          "precio": 100
+          "precio": 200
         }
       ]
     },
@@ -1226,7 +1235,7 @@
       "descripcion": "",
       "categoria": "Verduras",
       "imagen": "",
-      "disponible": true,
+      "disponible": false,
       "provincia": "Puntarenas",
       "direccionPuesto": "eeff",
       "unidad": "Kilogramo",
@@ -1465,6 +1474,48 @@
       ],
       "provincia": "Alajuela",
       "direccionPuesto": ""
+    },
+    {
+      "id": "4772",
+      "userId": "3e66",
+      "nombre": "Cebolla Seca",
+      "emoji": "Verduras",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "unidad": "Gramo",
+      "precios": [
+        {
+          "feriaId": "5",
+          "feriaNombre": "Feria de Cartago",
+          "provincia": "Cartago",
+          "precio": 200
+        }
+      ],
+      "provincia": "Heredia",
+      "direccionPuesto": ""
+    },
+    {
+      "id": "3777",
+      "userId": "3e66",
+      "nombre": "Cebolla Seca",
+      "emoji": "Verduras",
+      "descripcion": "",
+      "categoria": "Verduras",
+      "imagen": "",
+      "disponible": true,
+      "unidad": "Kilogramo",
+      "precios": [
+        {
+          "feriaId": "5",
+          "feriaNombre": "Feria de Cartago",
+          "provincia": "Cartago",
+          "precio": 50
+        }
+      ],
+      "provincia": "Heredia",
+      "direccionPuesto": ""
     }
   ],
   "solicitudesCambioRol": [
@@ -1654,6 +1705,17 @@
       "motivoRespuesta": "jnnnnnnnnnnn",
       "fechaSolicitud": "2026-03-29T06:08:49.507Z",
       "fechaRespuesta": "2026-03-29T06:09:33.385Z"
+    },
+    {
+      "id": "ea37",
+      "usuarioId": "3e66",
+      "nombreDelPuesto": "San Carleño",
+      "correoUsuario": "arciafwd@gmail.com",
+      "rolSolicitado": "Agricultor",
+      "estado": "Aprobada",
+      "motivoRespuesta": "porque si",
+      "fechaSolicitud": "2026-03-31T02:58:14.142Z",
+      "fechaRespuesta": "2026-03-31T03:02:45.160Z"
     }
   ],
   "puestosAgricultor": [
@@ -2172,6 +2234,38 @@
       "metodosCultivo": "",
       "redesSociales": "",
       "fechaRegistro": "2026-03-29T06:08:49.488Z"
+    },
+    {
+      "id": "4cca",
+      "usuarioId": "3e66",
+      "nombrePuesto": "San Carleño",
+      "descripcion": "Tomates cebolla",
+      "ubicacion": [
+        "Feria de Cartago"
+      ],
+      "feriaId": "5",
+      "tiposProducto": [
+        "Verduras"
+      ],
+      "fotosNombres": [
+        "descarga bombo.jpg"
+      ],
+      "fotosBase64": [
+        "data:image/jpeg;base64,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"
+      ],
+      "telefono": "98796865",
+      "email": "arciafwd@gmail.com",
+      "horarios": "Sábado de 07:00 a 13:00",
+      "horariosList": [
+        {
+          "dia": "Sábado",
+          "inicio": "07:00",
+          "fin": "13:00"
+        }
+      ],
+      "metodosCultivo": "100% organicos",
+      "redesSociales": "",
+      "fechaRegistro": "2026-03-31T02:58:14.086Z"
     }
   ],
   "contactMessages": [
@@ -2229,6 +2323,18 @@
       "fechaEnvio": "2026-03-30T22:24:53.492Z",
       "fechaRespuesta": "",
       "estado": "Pendiente"
+    },
+    {
+      "id": "c15d",
+      "nombre": "Samir García González",
+      "correo": "arciafwd@gmail.com",
+      "telefono": "12355822",
+      "mensaje": "Genial, me encantaron las recetas, son espectaculares, 100% recomendadas",
+      "respuesta": "muchas gracias¡¡",
+      "fechaEnvio": "2026-03-31T02:55:04.348Z",
+      "fechaRespuesta": "2026-03-31T03:05:32.282Z",
+      "estado": "Respondido"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
