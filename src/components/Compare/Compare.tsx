@@ -3,6 +3,7 @@ import Navbar from '../Navbar'
 import SidebarFilters from '../SidebarFilters'
 import ProductComparisonCard from '../ProductComparisonCard'
 import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/ProductComparisonCard'
+import ProductModal from '../ProductModal/ProductModal'
 import Footer from '../Footer'
 import './Compare.css'
 import { ENDPOINTS } from '../../services/api.config'
@@ -31,6 +32,7 @@ const Compare: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProvince, setSelectedProvince] = useState('Todas las provincias')
   const [sortOrder, setSortOrder] = useState('menor')
+  const [selectedProduct, setSelectedProduct] = useState<ProductComparisonData | null>(null)
   
   const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
@@ -287,7 +289,9 @@ const Compare: React.FC = () => {
           {filteredProducts.length > 0 ? (
             <div className="filtered-products-list">
               {filteredProducts.map((product: ProductComparisonData, index: number) => (
-                <ProductComparisonCard key={product.name + index} product={product} />
+                <div key={product.name + index} onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
+                  <ProductComparisonCard product={product} />
+                </div>
               ))}
             </div>
           ) : (
@@ -300,6 +304,13 @@ const Compare: React.FC = () => {
           )}
         </div>
       </div>
+
+      {selectedProduct && (
+        <ProductModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
+      )}
 
       <Footer />
     </div>

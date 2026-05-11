@@ -13,6 +13,7 @@ const AgricultorSidebar: React.FC = () => {
     { path: '/agricultor', icon: '📊', label: 'Dashboard' },
     { path: '/agricultor/productos', icon: '🛒', label: 'Mis Productos' },
     { path: '/agricultor/ferias', icon: '🏪', label: 'Mi Feria' },
+    { path: '/agricultor/ganancias', icon: '💰', label: 'Ganancias' },
   ]
 
   return (

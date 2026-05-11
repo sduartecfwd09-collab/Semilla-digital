@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
+import CartDrawer from '../Cart/CartDrawer'
 import './Navbar.css'
 import { ENDPOINTS } from '../../services/api.config'
 
@@ -9,6 +11,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
+  const { getItemCount, setIsCartOpen } = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Close menu on route change
@@ -221,6 +224,18 @@ const Navbar: React.FC = () => {
           </li>
         )}
 
+        {/* Cart Icon */}
+        <li>
+          <button className="navbar-cart-btn" onClick={() => setIsCartOpen(true)} aria-label="Abrir carrito" style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', fontSize: '1.2rem', padding: '0.5rem' }}>
+            🛒
+            {getItemCount() > 0 && (
+              <span style={{ position: 'absolute', top: 0, right: 0, background: '#e11d48', color: 'white', fontSize: '0.65rem', fontWeight: 'bold', width: '1.1rem', height: '1.1rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {getItemCount()}
+              </span>
+            )}
+          </button>
+        </li>
+
         <li>
           {user ? (
             <button className="navbar-cta-logout" onClick={handleLogout} title="Cerrar sesión">
@@ -237,6 +252,7 @@ const Navbar: React.FC = () => {
           )}
         </li>
       </ul>
+      <CartDrawer />
     </nav>
   )
 }
