@@ -24,7 +24,7 @@
   --lima: #36EB60;        
   --tierra: #d97706;      
   --rojo: #e11d48;
-  --crema: #ffffff;
+  --crema: var(--blanco);
   --blanco: #ffffff;
   --gris: #374151;
   --fondo: #052e16;
