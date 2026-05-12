@@ -8,7 +8,7 @@ import Footer from "../../Footer/Footer";
 import "./Ganancias.css";
 
 interface CostosData {
-  [productoId: string]: number;
+  [productoNombre: string]: number;
 }
 
 const Ganancias: React.FC = () => {
@@ -52,9 +52,9 @@ const Ganancias: React.FC = () => {
     fetchProductos();
   }, [user]);
 
-  const handleCostoChange = (id: string, value: string) => {
+  const handleCostoChange = (nombre: string, value: string) => {
     const numValue = parseInt(value) || 0;
-    const newCostos = { ...costos, [id]: numValue };
+    const newCostos = { ...costos, [nombre]: numValue };
     setCostos(newCostos);
     if (user?.id) {
       localStorage.setItem(`costos_${user.id}`, JSON.stringify(newCostos));
@@ -69,7 +69,7 @@ const Ganancias: React.FC = () => {
   // Cálculos para la tabla y gráficas
   const productosData = productos.map((p) => {
     const precioVenta = p.precios[0]?.precio || 0;
-    const costoEst = costos[String(p.id)] || 0;
+    const costoEst = costos[p.nombre] || 0;
     const ganancia = Math.max(0, precioVenta - costoEst);
     const margenPct = precioVenta > 0 ? (ganancia / precioVenta) * 100 : 0;
 
@@ -197,7 +197,7 @@ const Ganancias: React.FC = () => {
                               </div>
                             </div>
                             <div className="chart-label" title={d.nombre}>
-                              {d.emoji}
+                              {d.nombre}
                             </div>
                           </div>
                         );
@@ -278,7 +278,7 @@ const Ganancias: React.FC = () => {
                                 }}
                               ></span>
                               <span className="legend-text">
-                                {d.emoji} {d.nombre}
+                                {d.nombre}
                               </span>
                               <span className="legend-value">
                                 {(
@@ -342,10 +342,10 @@ const Ganancias: React.FC = () => {
                                 <input
                                   type="number"
                                   className="costo-input"
-                                  value={costos[String(d.id)] || ""}
+                                  value={costos[d.nombre] || ""}
                                   onChange={(e) =>
                                     handleCostoChange(
-                                      String(d.id),
+                                      d.nombre,
                                       e.target.value,
                                     )
                                   }

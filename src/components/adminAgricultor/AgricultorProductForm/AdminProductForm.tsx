@@ -96,7 +96,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         setFormData({ ...formData, nombre: value })
       }
     } else if (name === 'categoria') {
-      setFormData({ ...formData, categoria: value, emoji: value })
+      setFormData({ ...formData, categoria: value })
     } else {
       setFormData({ ...formData, [name]: value })
     }
@@ -139,7 +139,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         nombre: formData.nombre.trim(),
         descripcion: formData.descripcion?.trim() || '',
         direccionPuesto: formData.direccionPuesto?.trim() || '',
-        emoji: formData.categoria, 
+        emoji: formData.emoji || '📦', 
         precios 
       })
       Swal.fire({
