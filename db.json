@@ -656,6 +656,55 @@
       "location": "La Unión, Tres Ríos",
       "schedule": "Sábados, 05:00 - 13:00",
       "ubicacion": "https://www.google.com/maps/search/Feria+del+Agricultor+Tres+Rios"
+    },
+    {
+      "id": "2fdc",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "b2fa",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "f390",
+      "name": "Feria de Guanacaste centro",
+      "province": "Guanacaste",
+      "location": "Distrito Central, Guanacaste",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "ded1",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "6823",
+      "name": "Feria de Puntarenas centro",
+      "province": "Puntarenas",
+      "location": "Distrito Central, Puntarenas",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "4ff9",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
+    },
+    {
+      "id": "92c3",
+      "name": "Feria de Limón centro",
+      "province": "Limón",
+      "location": "Distrito Central, Limón",
+      "schedule": "Sábados, 05:00 - 13:00"
     }
   ],
   "recetas": [
