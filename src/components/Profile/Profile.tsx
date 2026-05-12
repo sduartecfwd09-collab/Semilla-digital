@@ -6,6 +6,7 @@ import Footer from '../Footer';
 import { validateEmail } from '../../utils/validation';
 import { ENDPOINTS } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import './Profile.css';
 
 // Iconos SVG para el ojo (mostrar/ocultar contraseña)
@@ -28,6 +29,7 @@ const EyeOffIcon = () => (
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateUserInContext } = useAuth();
+  const { proformas } = useCart();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
@@ -627,7 +629,45 @@ const Profile: React.FC = () => {
             </div>
           </form>
 
-          {(userData.role?.toLowerCase() === 'usuario' || !userData.role) && (
+          {/* Historial de Compras */}
+          <div className="profile-purchase-history">
+            <div className="separator"></div>
+            <h3>🛒 Mi Historial de Compras</h3>
+            {proformas.length === 0 ? (
+              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '10px' }}>Aún no tienes compras o presupuestos generados.</p>
+            ) : (
+              <div className="purchase-list">
+                {proformas.map((p) => (
+                  <div className="purchase-item" key={p.id}>
+                    <div className="purchase-header">
+                      <span className="purchase-id">{p.id}</span>
+                      <span className="purchase-date">{p.fecha}</span>
+                    </div>
+                    <div className="purchase-body">
+                      <ul className="purchase-items-list">
+                        {p.items.map((item, i) => (
+                          <li key={i}>
+                            {item.emoji} {item.nombre} (x{item.cantidad}) - ₡{(item.precio * item.cantidad).toLocaleString()}
+                          </li>
+                        ))}
+                      </ul>
+                      {p.delivery && (
+                        <div className="purchase-delivery">
+                          🚚 Envío a: {p.delivery.direccion} ({p.delivery.provincia}) - ₡{p.delivery.costoEnvio.toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="purchase-footer">
+                      <strong>Total:</strong> <span>₡{p.total.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Solicitud para ser Agricultor - Solo se muestra si NO es Agricultor ni Admin */}
+          {(!userData.role || (userData.role.toLowerCase() !== 'agricultor' && userData.role.toLowerCase() !== 'administrador')) && (
             <div className="role-request-section">
               <div className="separator"></div>
               <div className="role-request-content">

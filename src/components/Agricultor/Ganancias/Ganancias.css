@@ -51,6 +51,37 @@
   margin-bottom: 1.5rem;
 }
 
+/* Selector de Gráfica */
+.chart-toggle-group {
+  display: flex;
+  background: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.chart-toggle-btn {
+  padding: 0.4rem 1.25rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-toggle-btn.active {
+  background: white;
+  color: #052e16;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-toggle-btn:hover:not(.active) {
+  color: #1e293b;
+  background: rgba(255,255,255,0.5);
+}
+
 .ganancias-section-title {
   font-family: 'Outfit', sans-serif;
   font-size: 1.25rem;
@@ -144,6 +175,98 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Gráfico de Pastel / Donut */
+.pie-chart-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 1rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pie-chart-container {
+  max-width: 18rem;
+  margin: 0 auto;
+}
+
+.pie-chart-svg {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.pie-segment {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.pie-segment:hover {
+  transform: scale(1.05);
+  transform-origin: center;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.legend-item:hover {
+  background: #f8fafc;
+}
+
+.legend-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-value {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #3B9C3A;
+  font-family: 'Outfit', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 48rem) {
+  .pie-chart-wrapper {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .pie-chart-container {
+    max-width: 14rem;
+  }
 }
 
 /* Tabla de márgenes */
