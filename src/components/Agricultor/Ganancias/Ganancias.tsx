@@ -1,4 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip,
+  type ChartData,
+  type ChartOptions,
+} from "chart.js";
+import { BarChart3, Calculator, PieChart } from "lucide-react";
+import { Pie } from "react-chartjs-2";
 import { useAuth } from "../../context/AuthContext";
 import { getProductosByUser, Producto } from "../../../servers/ProductService";
 import AgricultorSidebar from "../../adminAgricultor/AgricultorSidebar";
@@ -7,9 +17,28 @@ import Navbar from "../../Navbar/Navbar";
 import Footer from "../../Footer/Footer";
 import "./Ganancias.css";
 
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 interface CostosData {
   [productoNombre: string]: number;
 }
+
+const chartColors = [
+  "#2f8f46",
+  "#6b8f3d",
+  "#b7791f",
+  "#4f7f6f",
+  "#8a6f35",
+  "#2f6f3e",
+  "#9a6b2f",
+  "#5f7f42",
+];
+
+const currencyFormatter = new Intl.NumberFormat("es-CR", {
+  style: "currency",
+  currency: "CRC",
+  maximumFractionDigits: 0,
+});
 
 const Ganancias: React.FC = () => {
   const { user } = useAuth();
@@ -18,12 +47,12 @@ const Ganancias: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState<"bar" | "pie">(() => {
     return (
-      (localStorage.getItem("agromap_ganancias_chart_type") as "bar" | "pie") ||
-      "bar"
+      (localStorage.getItem("agromap_ganancias_chart_type") as
+        | "bar"
+        | "pie") || "bar"
     );
   });
 
-  // Cargar datos cuando el usuario esté disponible
   useEffect(() => {
     if (user?.id) {
       try {
@@ -66,7 +95,6 @@ const Ganancias: React.FC = () => {
     localStorage.setItem("agromap_ganancias_chart_type", type);
   };
 
-  // Cálculos para la tabla y gráficas
   const productosData = productos.map((p) => {
     const precioVenta = p.precios[0]?.precio || 0;
     const costoEst = costos[p.nombre] || 0;
@@ -87,15 +115,12 @@ const Ganancias: React.FC = () => {
     };
   });
 
-  // Ordenar por ganancia para el gráfico (top 5 o similar)
   const chartData = [...productosData]
     .sort((a, b) => b.ganancia - a.ganancia)
     .slice(0, 8);
 
   const maxGanancia = Math.max(...chartData.map((d) => d.ganancia), 1000);
-
-  // Resumen
-  const totalGananciaEstimada = chartData.reduce(
+  const totalGananciaEstimada = productosData.reduce(
     (sum, d) => sum + d.ganancia,
     0,
   );
@@ -103,6 +128,58 @@ const Ganancias: React.FC = () => {
     chartData.length > 0
       ? chartData.reduce((sum, d) => sum + d.margenPct, 0) / chartData.length
       : 0;
+  const hasPieData = chartData.some((d) => d.ganancia > 0);
+
+  const pieChartData: ChartData<"pie", number[], string> = {
+    labels: chartData.map((d) => d.nombre),
+    datasets: [
+      {
+        data: chartData.map((d) => d.ganancia),
+        backgroundColor: chartData.map(
+          (_, i) => chartColors[i % chartColors.length],
+        ),
+        borderColor: "#ffffff",
+        borderWidth: 4,
+        hoverBorderColor: "#f7f3ea",
+        hoverOffset: 10,
+      },
+    ],
+  };
+
+  const pieChartOptions: ChartOptions<"pie"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "70%",
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 900,
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "#17351f",
+        titleColor: "#ffffff",
+        bodyColor: "#ffffff",
+        borderColor: "#d8c7a3",
+        borderWidth: 1,
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          label: (context) => {
+            const value = context.parsed || 0;
+            const percent =
+              totalGananciaEstimada > 0
+                ? (value / totalGananciaEstimada) * 100
+                : 0;
+            return ` ${currencyFormatter.format(value)} (${percent.toFixed(1)}%)`;
+          },
+        },
+      },
+    },
+  };
 
   return (
     <>
@@ -124,7 +201,6 @@ const Ganancias: React.FC = () => {
               </p>
             ) : (
               <div className="ganancias-page">
-                {/* Stats */}
                 <div className="ganancias-stats-grid">
                   <div className="ganancias-stat-card">
                     <div className="ganancias-stat-title">
@@ -135,9 +211,23 @@ const Ganancias: React.FC = () => {
                     </div>
                   </div>
                   <div className="ganancias-stat-card">
+                    <div className="ganancias-stat-title">
+                      Ganancia Estimada
+                    </div>
+                    <div className="ganancias-stat-value success">
+                      {currencyFormatter.format(totalGananciaEstimada)}
+                    </div>
+                  </div>
+                  <div className="ganancias-stat-card">
                     <div className="ganancias-stat-title">Margen Promedio</div>
                     <div
-                      className={`ganancias-stat-value ${promedioMargen >= 40 ? "success" : promedioMargen >= 20 ? "warning" : ""}`}
+                      className={`ganancias-stat-value ${
+                        promedioMargen >= 40
+                          ? "success"
+                          : promedioMargen >= 20
+                            ? "warning"
+                            : ""
+                      }`}
                     >
                       {promedioMargen.toFixed(1)}%
                     </div>
@@ -146,32 +236,35 @@ const Ganancias: React.FC = () => {
                     <div className="ganancias-stat-title">
                       Producto más rentable
                     </div>
-                    <div
-                      className="ganancias-stat-value success"
-                      style={{ fontSize: "1.4rem", marginTop: "0.4rem" }}
-                    >
+                    <div className="ganancias-stat-value success ganancias-stat-product">
                       {chartData[0]?.nombre || "N/A"}
                     </div>
                   </div>
                 </div>
 
-                {/* Gráfica */}
                 <div className="ganancias-section">
                   <div className="ganancias-section-header">
                     <h2 className="ganancias-section-title">
-                      📊 Visualización de Ganancias
+                      <BarChart3 size={22} aria-hidden="true" />
+                      Visualización de Ganancias
                     </h2>
                     <div className="chart-toggle-group">
                       <button
-                        className={`chart-toggle-btn ${chartType === "bar" ? "active" : ""}`}
+                        className={`chart-toggle-btn ${
+                          chartType === "bar" ? "active" : ""
+                        }`}
                         onClick={() => handleChartTypeChange("bar")}
                       >
+                        <BarChart3 size={17} aria-hidden="true" />
                         Barras
                       </button>
                       <button
-                        className={`chart-toggle-btn ${chartType === "pie" ? "active" : ""}`}
+                        className={`chart-toggle-btn ${
+                          chartType === "pie" ? "active" : ""
+                        }`}
                         onClick={() => handleChartTypeChange("pie")}
                       >
+                        <PieChart size={17} aria-hidden="true" />
                         Pastel
                       </button>
                     </div>
@@ -180,8 +273,12 @@ const Ganancias: React.FC = () => {
                   {chartType === "bar" ? (
                     <div className="ganancias-chart-container">
                       <div className="chart-y-axis">
-                        <span>₡{maxGanancia}</span>
-                        <span>₡{Math.round(maxGanancia / 2)}</span>
+                        <span>{currencyFormatter.format(maxGanancia)}</span>
+                        <span>
+                          {currencyFormatter.format(
+                            Math.round(maxGanancia / 2),
+                          )}
+                        </span>
                         <span>0</span>
                       </div>
                       {chartData.map((d) => {
@@ -193,7 +290,8 @@ const Ganancias: React.FC = () => {
                               style={{ height: `${heightPct}%` }}
                             >
                               <div className="chart-bar-tooltip">
-                                {d.nombre}: ₡{d.ganancia} ganancia
+                                {d.nombre}:{" "}
+                                {currencyFormatter.format(d.ganancia)} ganancia
                               </div>
                             </div>
                             <div className="chart-label" title={d.nombre}>
@@ -206,86 +304,43 @@ const Ganancias: React.FC = () => {
                   ) : (
                     <div className="pie-chart-wrapper">
                       <div className="pie-chart-container">
-                        <svg viewBox="0 0 100 100" className="pie-chart-svg">
-                          {(() => {
-                            let cumulativePercent = 0;
-                            const colors = [
-                              "#3B9C3A",
-                              "#2d7a2d",
-                              "#52b788",
-                              "#052e16",
-                              "#718096",
-                              "#374151",
-                              "#1e293b",
-                              "#166534",
-                            ];
-
-                            return chartData.map((d, i) => {
-                              const percent =
-                                (d.ganancia / totalGananciaEstimada) * 100;
-                              const startX = Math.cos(
-                                (2 * Math.PI * cumulativePercent) / 100,
-                              );
-                              const startY = Math.sin(
-                                (2 * Math.PI * cumulativePercent) / 100,
-                              );
-                              cumulativePercent += percent;
-                              const endX = Math.cos(
-                                (2 * Math.PI * cumulativePercent) / 100,
-                              );
-                              const endY = Math.sin(
-                                (2 * Math.PI * cumulativePercent) / 100,
-                              );
-
-                              const largeArcFlag = percent > 50 ? 1 : 0;
-                              const pathData = `M 50 50 L ${50 + 40 * startX} ${50 + 40 * startY} A 40 40 0 ${largeArcFlag} 1 ${50 + 40 * endX} ${50 + 40 * endY} Z`;
-
-                              return (
-                                <g key={d.id} className="pie-segment">
-                                  <path
-                                    d={pathData}
-                                    fill={colors[i % colors.length]}
-                                  />
-                                  <title>
-                                    {d.nombre}: {percent.toFixed(1)}%
-                                  </title>
-                                </g>
-                              );
-                            });
-                          })()}
-                          <circle cx="50" cy="50" r="20" fill="white" />{" "}
-                          {/* Donut effect */}
-                        </svg>
+                        {hasPieData ? (
+                          <>
+                            <Pie data={pieChartData} options={pieChartOptions} />
+                            <div className="pie-chart-center">
+                              <span>Total</span>
+                              <strong>
+                                {currencyFormatter.format(
+                                  totalGananciaEstimada,
+                                )}
+                              </strong>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="pie-empty-state">
+                            Ingresá costos menores al precio de venta para ver
+                            el gráfico.
+                          </div>
+                        )}
                       </div>
                       <div className="pie-legend">
                         {chartData.map((d, i) => {
-                          const colors = [
-                            "#3B9C3A",
-                            "#2d7a2d",
-                            "#52b788",
-                            "#052e16",
-                            "#718096",
-                            "#374151",
-                            "#1e293b",
-                            "#166534",
-                          ];
+                          const percent =
+                            totalGananciaEstimada > 0
+                              ? (d.ganancia / totalGananciaEstimada) * 100
+                              : 0;
                           return (
                             <div key={d.id} className="legend-item">
                               <span
                                 className="legend-dot"
                                 style={{
-                                  backgroundColor: colors[i % colors.length],
+                                  backgroundColor:
+                                    chartColors[i % chartColors.length],
                                 }}
                               ></span>
-                              <span className="legend-text">
-                                {d.nombre}
-                              </span>
+                              <span className="legend-text">{d.nombre}</span>
                               <span className="legend-value">
-                                {(
-                                  (d.ganancia / totalGananciaEstimada) *
-                                  100
-                                ).toFixed(1)}
-                                %
+                                {percent.toFixed(1)}%
                               </span>
                             </div>
                           );
@@ -295,13 +350,13 @@ const Ganancias: React.FC = () => {
                   )}
                 </div>
 
-                {/* Tabla de Costos */}
                 <div className="ganancias-section">
                   <div className="ganancias-section-header">
                     <h2 className="ganancias-section-title">
-                      💵 Calculadora de Márgenes
+                      <Calculator size={22} aria-hidden="true" />
+                      Calculadora de Márgenes
                     </h2>
-                    <p style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                    <p className="ganancias-section-description">
                       Ingresá tu costo estimado para calcular el margen.
                     </p>
                   </div>
@@ -327,17 +382,11 @@ const Ganancias: React.FC = () => {
                               </div>
                             </td>
                             <td>
-                              ₡{d.precioVenta.toLocaleString()} /{" "}
+                              {currencyFormatter.format(d.precioVenta)} /{" "}
                               {d.unidad || "U"}
                             </td>
                             <td>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "0.25rem",
-                                }}
-                              >
+                              <div className="costo-input-wrapper">
                                 <span>₡</span>
                                 <input
                                   type="number"
@@ -349,18 +398,17 @@ const Ganancias: React.FC = () => {
                                       e.target.value,
                                     )
                                   }
-                                  placeholder="Ej: 500"
+                                  placeholder="0.00"
                                   min="0"
                                 />
                               </div>
                             </td>
                             <td
-                              style={{
-                                fontWeight: 700,
-                                color: d.ganancia > 0 ? "#052e16" : "#94a3b8",
-                              }}
+                              className={`ganancia-cell ${
+                                d.ganancia > 0 ? "positive" : ""
+                              }`}
                             >
-                              ₡{d.ganancia.toLocaleString()}
+                              {currencyFormatter.format(d.ganancia)}
                             </td>
                             <td>
                               <span className={`margen-badge ${d.margenClase}`}>
