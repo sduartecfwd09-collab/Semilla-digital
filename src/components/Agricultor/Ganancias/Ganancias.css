@@ -1,270 +1,507 @@
 .ganancias-page {
   padding: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #263323;
 }
 
-/* Stats Cards Section */
 .ganancias-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .ganancias-stat-card {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #fbf8ef 100%);
+  border: 1px solid #e4dcc7;
+  border-radius: 0.5rem;
+  padding: 1.35rem;
+  box-shadow: 0 0.45rem 1.25rem rgba(47, 76, 48, 0.08);
 }
 
-.ganancias-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-}
-
-.ganancias-stat-card.primary { border-left: 6px solid #3B9C3A; }
-.ganancias-stat-card.accent { border-left: 6px solid #fbbf24; }
-.ganancias-stat-card.info { border-left: 6px solid #3b82f6; }
-
-.stat-icon {
-  font-size: 2.25rem;
-  background: #f8fafc;
-  width: 4rem;
-  height: 4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1rem;
-}
-
-.stat-info {
-  flex: 1;
-  min-width: 0;
+.ganancias-stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.3rem;
+  background: linear-gradient(180deg, #2f8f46, #b7791f);
 }
 
 .ganancias-stat-title {
-  color: #64748b;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  text-transform: none;
-  letter-spacing: normal;
+  color: #5d6b55;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04rem;
+  margin-bottom: 0.55rem;
 }
 
 .ganancias-stat-value {
-  font-size: 2.2rem;
+  font-size: 1.85rem;
   font-weight: 800;
-  color: #1e293b;
-  line-height: 1;
+  color: #17351f;
+  font-family: "Outfit", sans-serif;
+  line-height: 1.15;
 }
 
 .ganancias-stat-value.success {
-  color: #166534;
+  color: #2f8f46;
 }
 
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.ganancias-stat-value.warning {
+  color: #b7791f;
 }
 
-/* Section Containers */
+.ganancias-stat-product {
+  font-size: 1.25rem;
+  margin-top: 0.4rem;
+  overflow-wrap: anywhere;
+}
+
 .ganancias-section {
-  background: white;
-  border-radius: 1.5rem;
-  border: 1px solid #e2e8f0;
-  padding: 2rem;
-  margin-bottom: 2.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.ganancias-section.main-chart {
-  background: linear-gradient(to bottom, #ffffff, #fdfdfd);
+  background: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid #e6decc;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0.65rem 1.75rem rgba(47, 76, 48, 0.07);
 }
 
 .ganancias-section-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
   gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .ganancias-section-title {
-  font-size: 1.5rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 1.22rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #17351f;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   margin: 0;
 }
 
-.section-subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin-top: 0.25rem;
+.ganancias-section-title svg {
+  color: #2f8f46;
+  flex: 0 0 auto;
 }
 
-/* Chart Area */
-.chart-display-area {
-  padding: 1rem;
-  background: #fcfcfc;
-  border-radius: 1rem;
-  border: 1px dashed #e2e8f0;
+.ganancias-section-description {
+  font-size: 0.95rem;
+  color: #5d6b55;
+  margin: 0;
+  max-width: 28rem;
 }
 
-/* Chart Toggle Controls */
 .chart-toggle-group {
   display: flex;
-  background: #f1f5f9;
-  padding: 0.35rem;
-  border-radius: 0.75rem;
+  background: #f7f3ea;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e1d7bf;
 }
 
 .chart-toggle-btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.35rem;
+  padding: 0.45rem 1rem;
+  border: 0;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #5d6b55;
   background: transparent;
-  border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .chart-toggle-btn.active {
-  background: white;
-  color: #166534;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: #ffffff;
+  color: #17351f;
+  box-shadow: 0 0.2rem 0.55rem rgba(47, 76, 48, 0.12);
 }
 
-/* Table Styling */
+.chart-toggle-btn:hover:not(.active) {
+  color: #17351f;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.ganancias-chart-container {
+  height: 18rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  padding-left: 4.25rem;
+  background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+  border: 1px solid #efe7d5;
+  border-radius: 0.5rem;
+}
+
+.chart-y-axis {
+  position: absolute;
+  left: 0.9rem;
+  top: 1rem;
+  bottom: 2.5rem;
+  width: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #74806c;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.chart-bar-group {
+  flex: 1;
+  min-width: 2.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.chart-bar {
+  width: min(3rem, 72%);
+  min-height: 0.25rem;
+  background: linear-gradient(180deg, #74b65f 0%, #2f8f46 100%);
+  border-radius: 0.5rem 0.5rem 0.2rem 0.2rem;
+  border: 1px solid rgba(23, 53, 31, 0.08);
+  transition: transform 0.25s ease, filter 0.25s ease;
+  position: relative;
+}
+
+.chart-bar:hover {
+  filter: brightness(1.04);
+  transform: scaleY(1.02);
+}
+
+.chart-bar-tooltip {
+  position: absolute;
+  top: -2.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17351f;
+  color: #ffffff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.chart-bar:hover .chart-bar-tooltip {
+  opacity: 1;
+}
+
+.chart-label {
+  position: absolute;
+  bottom: -1.55rem;
+  font-size: 0.78rem;
+  color: #5d6b55;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pie-chart-wrapper {
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) minmax(14rem, 0.9fr);
+  gap: 1.5rem;
+  align-items: center;
+  padding: 0.75rem;
+  background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+  border: 1px solid #efe7d5;
+  border-radius: 0.5rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pie-chart-container {
+  position: relative;
+  height: 20rem;
+  max-width: 22rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.pie-chart-center {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  min-height: 5rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.pie-chart-center span {
+  color: #74806c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04rem;
+}
+
+.pie-chart-center strong {
+  color: #17351f;
+  font-family: "Outfit", sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.pie-empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  color: #5d6b55;
+  font-weight: 700;
+  background: #fbf8ef;
+  border: 1px dashed #d8c7a3;
+  border-radius: 0.5rem;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #efe7d5;
+  background: rgba(255, 255, 255, 0.76);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.legend-item:hover {
+  background: #ffffff;
+  border-color: #d8c7a3;
+}
+
+.legend-dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #263323;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-value {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #2f8f46;
+  font-family: "Outfit", sans-serif;
+}
+
 .ganancias-table-container {
   overflow-x: auto;
-  border-radius: 1rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #efe7d5;
+  border-radius: 0.5rem;
 }
 
 .ganancias-table {
   width: 100%;
   border-collapse: collapse;
+  text-align: left;
+  background: #ffffff;
 }
 
 .ganancias-table th {
-  background: #f8fafc;
-  padding: 1.25rem 1rem;
-  text-align: left;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
+  padding: 1rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #5d6b55;
+  background: #fbf8ef;
+  border-bottom: 1px solid #e6decc;
+  white-space: nowrap;
 }
 
 .ganancias-table td {
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 1.1rem; /* Larger font for farmers */
-  color: #1e293b;
+  padding: 1rem;
+  border-bottom: 1px solid #f2ead9;
+  vertical-align: middle;
+  color: #263323;
+}
+
+.ganancias-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .ganancias-table tr:hover td {
-  background: #f0fdf4;
+  background: #fffdf8;
 }
 
-.font-bold { font-weight: 700; }
-.text-secondary { color: #64748b; font-size: 0.95rem; }
-.text-profit { color: #166534; }
-.text-muted { color: #94a3b8; }
-
-/* Inputs in Table */
-.input-with-currency {
+.product-cell {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #fff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 0.5rem;
-  padding: 0 0.75rem;
-  width: fit-content;
-  transition: border-color 0.2s;
+  gap: 0.75rem;
 }
 
-.input-with-currency:focus-within {
-  border-color: #3B9C3A;
-  box-shadow: 0 0 0 3px rgba(59, 156, 58, 0.1);
+.product-cell-name {
+  font-weight: 800;
+  color: #17351f;
 }
 
-.input-with-currency span {
-  font-weight: 700;
-  color: #64748b;
+.costo-input-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.35rem;
+  padding: 0 0.45rem;
+  border: 1px solid #d8c7a3;
+  border-radius: 0.45rem;
+  background: #fffdf8;
+  color: #5d6b55;
+  font-weight: 800;
 }
 
 .costo-input {
-  border: none;
-  padding: 0.6rem 0;
-  width: 7rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  outline: none;
+  width: 6.5rem;
+  padding: 0.45rem 0.25rem;
+  border: 0;
+  background: transparent;
   font-family: inherit;
-}
-
-/* Badges */
-.margen-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  font-weight: 800;
   font-size: 0.95rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  color: #17351f;
 }
 
-.margen-badge.excelente { background: #dcfce7; color: #166534; }
-.margen-badge.bueno { background: #fef3c7; color: #92400e; }
-.margen-badge.bajo { background: #fee2e2; color: #991b1b; }
-
-/* Empty & Loading States */
-.loading-container, .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  text-align: center;
-  background: white;
-  border-radius: 1.5rem;
-  border: 1px dashed #cbd5e1;
+.costo-input:focus {
+  outline: none;
 }
 
-.empty-icon { font-size: 4rem; margin-bottom: 1rem; }
-.empty-state h3 { font-size: 1.5rem; color: #0f172a; margin-bottom: 0.5rem; }
-.empty-state p { color: #64748b; max-width: 300px; }
-
-.spinner {
-  width: 3rem;
-  height: 3rem;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3B9C3A;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+.costo-input-wrapper:focus-within {
+  border-color: #2f8f46;
+  box-shadow: 0 0 0 0.2rem rgba(47, 143, 70, 0.14);
 }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.ganancia-cell {
+  font-weight: 800;
+  color: #74806c;
+}
 
-/* Mobile Adjustments */
-@media (max-width: 640px) {
-  .ganancias-page { padding: 1rem; }
-  .ganancias-section { padding: 1.25rem; }
-  .ganancias-stat-value { font-size: 1.75rem; }
-  .ganancias-section-header { flex-direction: column; align-items: stretch; }
+.ganancia-cell.positive {
+  color: #17351f;
+}
+
+.margen-badge {
+  padding: 0.38rem 0.65rem;
+  border-radius: 2rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.margen-badge.excelente {
+  background: #e4f6df;
+  color: #1f6f32;
+}
+
+.margen-badge.bueno {
+  background: #fff1cf;
+  color: #8a560e;
+}
+
+.margen-badge.bajo {
+  background: #fde5dc;
+  color: #9a3412;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 64rem) {
+  .ganancias-section-header {
+    flex-direction: column;
+  }
+
+  .chart-toggle-group {
+    width: 100%;
+  }
+
+  .chart-toggle-btn {
+    flex: 1;
+  }
+
+  .pie-chart-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 48rem) {
+  .ganancias-page {
+    padding: 1rem;
+  }
+
+  .ganancias-section {
+    padding: 1rem;
+  }
+
+  .ganancias-chart-container {
+    gap: 0.55rem;
+    padding-left: 3.75rem;
+  }
+
+  .pie-chart-container {
+    height: 16rem;
+  }
+
+  .ganancias-table th,
+  .ganancias-table td {
+    padding: 0.85rem;
+  }
 }

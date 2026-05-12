@@ -1,16 +1,44 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip,
+  type ChartData,
+  type ChartOptions,
+} from "chart.js";
+import { BarChart3, Calculator, PieChart } from "lucide-react";
+import { Pie } from "react-chartjs-2";
 import { useAuth } from "../../context/AuthContext";
 import { getProductosByUser, Producto } from "../../../servers/ProductService";
 import AgricultorSidebar from "../../adminAgricultor/AgricultorSidebar";
 import AdminHeader from "../../adminAgricultor/AgricultorHeader";
 import Navbar from "../../Navbar/Navbar";
 import Footer from "../../Footer/Footer";
-import GananciasChart from "./GananciasChart";
 import "./Ganancias.css";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface CostosData {
   [productoNombre: string]: number;
 }
+
+const chartColors = [
+  "#2f8f46",
+  "#6b8f3d",
+  "#b7791f",
+  "#4f7f6f",
+  "#8a6f35",
+  "#2f6f3e",
+  "#9a6b2f",
+  "#5f7f42",
+];
+
+const currencyFormatter = new Intl.NumberFormat("es-CR", {
+  style: "currency",
+  currency: "CRC",
+  maximumFractionDigits: 0,
+});
 
 const Ganancias: React.FC = () => {
   const { user } = useAuth();
@@ -19,12 +47,12 @@ const Ganancias: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState<"bar" | "pie">(() => {
     return (
-      (localStorage.getItem("agromap_ganancias_chart_type") as "bar" | "pie") ||
-      "bar"
+      (localStorage.getItem("agromap_ganancias_chart_type") as
+        | "bar"
+        | "pie") || "bar"
     );
   });
 
-  // Cargar datos cuando el usuario esté disponible
   useEffect(() => {
     if (user?.id) {
       try {
@@ -67,41 +95,91 @@ const Ganancias: React.FC = () => {
     localStorage.setItem("agromap_ganancias_chart_type", type);
   };
 
-  // Cálculos para la tabla y gráficas
-  const productosData = useMemo(() => {
-    return productos.map((p) => {
-      const precioVenta = p.precios[0]?.precio || 0;
-      const costoEst = costos[p.nombre] || 0;
-      const ganancia = Math.max(0, precioVenta - costoEst);
-      const margenPct = precioVenta > 0 ? (ganancia / precioVenta) * 100 : 0;
+  const productosData = productos.map((p) => {
+    const precioVenta = p.precios[0]?.precio || 0;
+    const costoEst = costos[p.nombre] || 0;
+    const ganancia = Math.max(0, precioVenta - costoEst);
+    const margenPct = precioVenta > 0 ? (ganancia / precioVenta) * 100 : 0;
 
-      let margenClase = "bajo";
-      if (margenPct >= 40) margenClase = "excelente";
-      else if (margenPct >= 20) margenClase = "bueno";
+    let margenClase = "bajo";
+    if (margenPct >= 40) margenClase = "excelente";
+    else if (margenPct >= 20) margenClase = "bueno";
 
-      return {
-        ...p,
-        precioVenta,
-        costoEst,
-        ganancia,
-        margenPct,
-        margenClase,
-      };
-    });
-  }, [productos, costos]);
+    return {
+      ...p,
+      precioVenta,
+      costoEst,
+      ganancia,
+      margenPct,
+      margenClase,
+    };
+  });
 
-  // Datos para las gráficas (Top 8 por ganancia)
-  const chartDataItems = useMemo(() => {
-    return [...productosData]
-      .sort((a, b) => b.ganancia - a.ganancia)
-      .slice(0, 8);
-  }, [productosData]);
+  const chartData = [...productosData]
+    .sort((a, b) => b.ganancia - a.ganancia)
+    .slice(0, 8);
 
+  const maxGanancia = Math.max(...chartData.map((d) => d.ganancia), 1000);
+  const totalGananciaEstimada = productosData.reduce(
+    (sum, d) => sum + d.ganancia,
+    0,
+  );
   const promedioMargen =
-    productosData.length > 0
-      ? productosData.reduce((sum, d) => sum + d.margenPct, 0) /
-        productosData.length
+    chartData.length > 0
+      ? chartData.reduce((sum, d) => sum + d.margenPct, 0) / chartData.length
       : 0;
+  const hasPieData = chartData.some((d) => d.ganancia > 0);
+
+  const pieChartData: ChartData<"pie", number[], string> = {
+    labels: chartData.map((d) => d.nombre),
+    datasets: [
+      {
+        data: chartData.map((d) => d.ganancia),
+        backgroundColor: chartData.map(
+          (_, i) => chartColors[i % chartColors.length],
+        ),
+        borderColor: "#ffffff",
+        borderWidth: 4,
+        hoverBorderColor: "#f7f3ea",
+        hoverOffset: 10,
+      },
+    ],
+  };
+
+  const pieChartOptions: ChartOptions<"pie"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "70%",
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 900,
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "#17351f",
+        titleColor: "#ffffff",
+        bodyColor: "#ffffff",
+        borderColor: "#d8c7a3",
+        borderWidth: 1,
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          label: (context) => {
+            const value = context.parsed || 0;
+            const percent =
+              totalGananciaEstimada > 0
+                ? (value / totalGananciaEstimada) * 100
+                : 0;
+            return ` ${currencyFormatter.format(value)} (${percent.toFixed(1)}%)`;
+          },
+        },
+      },
+    },
+  };
 
   return (
     <>
@@ -110,160 +188,231 @@ const Ganancias: React.FC = () => {
         <AgricultorSidebar />
         <div className="admin-main">
           <AdminHeader
-            title="Panel de Ganancias"
-            subtitle="Análisis simplificado de tus ingresos por cada producto"
+            title="Margen de Ganancias"
+            subtitle="Analizá la rentabilidad de tus productos"
           />
           <div className="admin-content">
             {loading ? (
-              <div className="loading-container">
-                <div className="spinner"></div>
-                <p>Cargando tus datos financieros...</p>
-              </div>
+              <p>Cargando datos...</p>
             ) : productos.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">📂</span>
-                <h3>Sin productos activos</h3>
-                <p>
-                  Agregá productos con precios en el inventario para ver tus
-                  márgenes aquí.
-                </p>
-              </div>
+              <p>
+                No tienes productos registrados con precios. Agrega productos
+                primero.
+              </p>
             ) : (
               <div className="ganancias-page">
-                {/* Resumen Superior - Accesible y Claro */}
                 <div className="ganancias-stats-grid">
-                  <div className="ganancias-stat-card primary">
-                    <div className="stat-icon">📈</div>
-                    <div className="stat-info">
-                      <div className="ganancias-stat-title">
-                        Margen Promedio
-                      </div>
-                      <div
-                        className={`ganancias-stat-value ${promedioMargen >= 20 ? "success" : ""}`}
-                      >
-                        {promedioMargen.toFixed(1)}%
-                      </div>
+                  <div className="ganancias-stat-card">
+                    <div className="ganancias-stat-title">
+                      Productos Analizados
+                    </div>
+                    <div className="ganancias-stat-value">
+                      {productosData.length}
                     </div>
                   </div>
-
-                  <div className="ganancias-stat-card accent">
-                    <div className="stat-icon">⭐</div>
-                    <div className="stat-info">
-                      <div className="ganancias-stat-title">Más Rentable</div>
-                      <div
-                        className="ganancias-stat-value success truncate"
-                        title={chartDataItems[0]?.nombre}
-                        >
-                        {chartDataItems[0]?.nombre || "N/A"}
-                      </div>
+                  <div className="ganancias-stat-card">
+                    <div className="ganancias-stat-title">
+                      Ganancia Estimada
+                    </div>
+                    <div className="ganancias-stat-value success">
+                      {currencyFormatter.format(totalGananciaEstimada)}
                     </div>
                   </div>
-
-                  <div className="ganancias-stat-card info">
-                    <div className="stat-icon">📦</div>
-                    <div className="stat-info">
-                      <div className="ganancias-stat-title">
-                        Productos en Análisis
-                      </div>
-                      <div className="ganancias-stat-value">
-                        {productosData.length}
-                      </div>
+                  <div className="ganancias-stat-card">
+                    <div className="ganancias-stat-title">Margen Promedio</div>
+                    <div
+                      className={`ganancias-stat-value ${
+                        promedioMargen >= 40
+                          ? "success"
+                          : promedioMargen >= 20
+                            ? "warning"
+                            : ""
+                      }`}
+                    >
+                      {promedioMargen.toFixed(1)}%
+                    </div>
+                  </div>
+                  <div className="ganancias-stat-card">
+                    <div className="ganancias-stat-title">
+                      Producto más rentable
+                    </div>
+                    <div className="ganancias-stat-value success ganancias-stat-product">
+                      {chartData[0]?.nombre || "N/A"}
                     </div>
                   </div>
                 </div>
 
-                {/* Sección Visualización */}
-                <div className="ganancias-section main-chart">
+                <div className="ganancias-section">
                   <div className="ganancias-section-header">
-                    <div>
-                      <h2 className="ganancias-section-title">
-                        Visualización de Ganancias
-                      </h2>
-                      <p className="section-subtitle">
-                        Comparativa de ingresos netos por producto
-                      </p>
-                    </div>
+                    <h2 className="ganancias-section-title">
+                      <BarChart3 size={22} aria-hidden="true" />
+                      Visualización de Ganancias
+                    </h2>
                     <div className="chart-toggle-group">
                       <button
-                        className={`chart-toggle-btn ${chartType === "bar" ? "active" : ""}`}
+                        className={`chart-toggle-btn ${
+                          chartType === "bar" ? "active" : ""
+                        }`}
                         onClick={() => handleChartTypeChange("bar")}
                       >
+                        <BarChart3 size={17} aria-hidden="true" />
                         Barras
                       </button>
                       <button
-                        className={`chart-toggle-btn ${chartType === "pie" ? "active" : ""}`}
+                        className={`chart-toggle-btn ${
+                          chartType === "pie" ? "active" : ""
+                        }`}
                         onClick={() => handleChartTypeChange("pie")}
                       >
+                        <PieChart size={17} aria-hidden="true" />
                         Pastel
                       </button>
                     </div>
                   </div>
 
-                  <div className="chart-display-area">
-                    <GananciasChart type={chartType} items={chartDataItems} />
-                  </div>
+                  {chartType === "bar" ? (
+                    <div className="ganancias-chart-container">
+                      <div className="chart-y-axis">
+                        <span>{currencyFormatter.format(maxGanancia)}</span>
+                        <span>
+                          {currencyFormatter.format(
+                            Math.round(maxGanancia / 2),
+                          )}
+                        </span>
+                        <span>0</span>
+                      </div>
+                      {chartData.map((d) => {
+                        const heightPct = (d.ganancia / maxGanancia) * 100;
+                        return (
+                          <div className="chart-bar-group" key={d.id}>
+                            <div
+                              className="chart-bar"
+                              style={{ height: `${heightPct}%` }}
+                            >
+                              <div className="chart-bar-tooltip">
+                                {d.nombre}:{" "}
+                                {currencyFormatter.format(d.ganancia)} ganancia
+                              </div>
+                            </div>
+                            <div className="chart-label" title={d.nombre}>
+                              {d.nombre}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="pie-chart-wrapper">
+                      <div className="pie-chart-container">
+                        {hasPieData ? (
+                          <>
+                            <Pie data={pieChartData} options={pieChartOptions} />
+                            <div className="pie-chart-center">
+                              <span>Total</span>
+                              <strong>
+                                {currencyFormatter.format(
+                                  totalGananciaEstimada,
+                                )}
+                              </strong>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="pie-empty-state">
+                            Ingresá costos menores al precio de venta para ver
+                            el gráfico.
+                          </div>
+                        )}
+                      </div>
+                      <div className="pie-legend">
+                        {chartData.map((d, i) => {
+                          const percent =
+                            totalGananciaEstimada > 0
+                              ? (d.ganancia / totalGananciaEstimada) * 100
+                              : 0;
+                          return (
+                            <div key={d.id} className="legend-item">
+                              <span
+                                className="legend-dot"
+                                style={{
+                                  backgroundColor:
+                                    chartColors[i % chartColors.length],
+                                }}
+                              ></span>
+                              <span className="legend-text">{d.nombre}</span>
+                              <span className="legend-value">
+                                {percent.toFixed(1)}%
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Calculadora de Márgenes */}
                 <div className="ganancias-section">
                   <div className="ganancias-section-header">
-                    <div>
-                      <h2 className="ganancias-section-title">
-                        Calculadora de Costos
-                      </h2>
-                      <p className="section-subtitle">
-                        Ajustá tus costos para ver la ganancia real
-                      </p>
-                    </div>
+                    <h2 className="ganancias-section-title">
+                      <Calculator size={22} aria-hidden="true" />
+                      Calculadora de Márgenes
+                    </h2>
+                    <p className="ganancias-section-description">
+                      Ingresá tu costo estimado para calcular el margen.
+                    </p>
                   </div>
-
                   <div className="ganancias-table-container">
                     <table className="ganancias-table">
                       <thead>
                         <tr>
                           <th>Producto</th>
                           <th>Precio Venta</th>
-                          <th>Costo de Producción</th>
+                          <th>Costo Estimado</th>
                           <th>Ganancia Neta</th>
-                          <th>Estado Margen</th>
+                          <th>Margen</th>
                         </tr>
                       </thead>
                       <tbody>
                         {productosData.map((d) => (
                           <tr key={d.id}>
-                            <td className="font-bold">{d.nombre}</td>
-                            <td className="text-secondary">
-                              ₡{d.precioVenta.toLocaleString()}{" "}
-                              <small>/ {d.unidad || "U"}</small>
+                            <td>
+                              <div className="product-cell">
+                                <span className="product-cell-name">
+                                  {d.nombre}
+                                </span>
+                              </div>
                             </td>
                             <td>
-                              <div className="input-with-currency">
+                              {currencyFormatter.format(d.precioVenta)} /{" "}
+                              {d.unidad || "U"}
+                            </td>
+                            <td>
+                              <div className="costo-input-wrapper">
                                 <span>₡</span>
                                 <input
                                   type="number"
                                   className="costo-input"
                                   value={costos[d.nombre] || ""}
                                   onChange={(e) =>
-                                    handleCostoChange(d.nombre, e.target.value)
+                                    handleCostoChange(
+                                      d.nombre,
+                                      e.target.value,
+                                    )
                                   }
-                                  placeholder="0.00"
+                                  placeholder="Ej: 500"
                                   min="0"
                                 />
                               </div>
                             </td>
                             <td
-                              className={`font-bold ${d.ganancia > 0 ? "text-profit" : "text-muted"}`}
+                              className={`ganancia-cell ${
+                                d.ganancia > 0 ? "positive" : ""
+                              }`}
                             >
-                              ₡{d.ganancia.toLocaleString()}
+                              {currencyFormatter.format(d.ganancia)}
                             </td>
                             <td>
                               <span className={`margen-badge ${d.margenClase}`}>
-                                {d.margenPct.toFixed(1)}%{" "}
-                                {d.margenPct >= 40
-                                  ? ""
-                                  : d.margenPct >= 20
-                                    ? "🟡"
-                                    : "⚠️"}
+                                {d.margenPct.toFixed(1)}%
                               </span>
                             </td>
                           </tr>
