@@ -119,6 +119,14 @@
       "password": "123456789",
       "role": "Usuario",
       "status": "Activo"
+    },
+    {
+      "id": "b888",
+      "name": "Muriel",
+      "email": "muriel@gmail.com",
+      "password": "1234567",
+      "role": "Usuario",
+      "status": "Activo"
     }
   ],
   "ferias": [
