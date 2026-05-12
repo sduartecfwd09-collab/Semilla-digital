@@ -112,7 +112,7 @@ const Ganancias: React.FC = () => {
           <AdminHeader
             title="Panel de Ganancias"
             subtitle="Análisis simplificado de tus ingresos por cada producto"
-           />
+          />
           <div className="admin-content">
             {loading ? (
               <div className="loading-container">
