@@ -89,14 +89,14 @@ const RegisterForm: React.FC = () => {
       })
 
       // Auto-login tras registro exitoso
-      const loginSuccess = await login(formData.email, formData.password)
-      if (loginSuccess) {
+      const loginResult = await login(formData.email, formData.password)
+      if (loginResult.success) {
         navigate('/')
       } else {
         // Si por alguna razón falla el login automático, redirigir al login
         navigate('/login', { state: { message: 'Registro exitoso. Inicia sesión para continuar.' } })
       }
-    } catch (err) {
+    } catch {
       setError('Error al registrar usuario. Intenta nuevamente.')
     } finally {
       setLoading(false)

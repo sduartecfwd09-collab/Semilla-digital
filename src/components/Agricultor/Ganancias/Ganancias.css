@@ -1,0 +1,359 @@
+.ganancias-page {
+  padding: 1.5rem;
+}
+
+.ganancias-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ganancias-stat-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.02);
+}
+
+.ganancias-stat-title {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.ganancias-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #052e16;
+  font-family: 'Outfit', sans-serif;
+}
+
+.ganancias-stat-value.success { color: #3B9C3A; }
+.ganancias-stat-value.warning { color: #d97706; }
+
+.ganancias-section {
+  background: white;
+  border-radius: 1.25rem;
+  border: 1px solid #f1f5f9;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ganancias-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Selector de Gráfica */
+.chart-toggle-group {
+  display: flex;
+  background: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.chart-toggle-btn {
+  padding: 0.4rem 1.25rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-toggle-btn.active {
+  background: white;
+  color: #052e16;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-toggle-btn:hover:not(.active) {
+  color: #1e293b;
+  background: rgba(255,255,255,0.5);
+}
+
+.ganancias-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Gráfica SVG */
+.ganancias-chart-container {
+  height: 18rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  padding-left: 3rem;
+}
+
+.chart-y-axis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 2rem;
+  width: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.chart-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.chart-bar {
+  width: 3rem;
+  background: linear-gradient(to top, #2d7a2d, #3B9C3A);
+  border-radius: 0.5rem 0.5rem 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.chart-bar:hover {
+  background: linear-gradient(to top, #3B9C3A, #52b788);
+  transform: scaleY(1.02);
+}
+
+.chart-bar-tooltip {
+  position: absolute;
+  top: -2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.chart-bar:hover .chart-bar-tooltip {
+  opacity: 1;
+}
+
+.chart-label {
+  position: absolute;
+  bottom: -1.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Gráfico de Pastel / Donut */
+.pie-chart-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 1rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pie-chart-container {
+  max-width: 18rem;
+  margin: 0 auto;
+}
+
+.pie-chart-svg {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.pie-segment {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.pie-segment:hover {
+  transform: scale(1.05);
+  transform-origin: center;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.legend-item:hover {
+  background: #f8fafc;
+}
+
+.legend-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-value {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #3B9C3A;
+  font-family: 'Outfit', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 48rem) {
+  .pie-chart-wrapper {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .pie-chart-container {
+    max-width: 14rem;
+  }
+}
+
+/* Tabla de márgenes */
+.ganancias-table-container {
+  overflow-x: auto;
+}
+
+.ganancias-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ganancias-table th {
+  padding: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  border-bottom: 2px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.ganancias-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+}
+
+.ganancias-table tr:hover td {
+  background: #fafbfc;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-cell-emoji {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #f0fdf4;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.product-cell-name {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.costo-input {
+  width: 6rem;
+  padding: 0.4rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.35rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.costo-input:focus {
+  outline: none;
+  border-color: #3B9C3A;
+}
+
+.margen-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-block;
+}
+
+.margen-badge.excelente {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.margen-badge.bueno {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.margen-badge.bajo {
+  background: #fee2e2;
+  color: #991b1b;
+}

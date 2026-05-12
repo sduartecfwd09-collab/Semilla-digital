@@ -11,7 +11,7 @@ export const fetchFeriasFallback = async (): Promise<Feria[]> => {
     if (!response.ok) throw new Error("Error fetching fallback ferias");
     const data = await response.json();
 
-    return data.map((item: any) => ({
+    return data.map((item: { id: string | number; name: string; location: string; province: string; schedule: string }) => ({
       id: String(item.id),
       nombre: item.name,
       direccion: item.location,

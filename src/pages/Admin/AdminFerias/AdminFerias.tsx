@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
 import Swal from 'sweetalert2'
 import './AdminFerias.css'
+import { Fair } from '../../../types'
 
 const AdminFerias = () => {
-    const [fairs, setFairs] = useState<any[]>([])
+    const [fairs, setFairs] = useState<Fair[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [provinceFilter, setProvinceFilter] = useState('Todas')
@@ -32,7 +33,7 @@ const AdminFerias = () => {
         }
     }
 
-    const handleEditClick = (feria: any) => {
+    const handleEditClick = (feria: Fair) => {
         setFormData({ ...feria })
         setIsEditing(true)
         setSelectedFeria(feria)

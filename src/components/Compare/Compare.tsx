@@ -3,9 +3,28 @@ import Navbar from '../Navbar'
 import SidebarFilters from '../SidebarFilters'
 import ProductComparisonCard from '../ProductComparisonCard'
 import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/ProductComparisonCard'
+import ProductModal from '../ProductModal/ProductModal'
 import Footer from '../Footer'
 import './Compare.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { normalizeProductName, getCanonicalName, findInCatalog } from '../../utils/productCatalog'
+
+interface APIProducto {
+  id?: string | number
+  categoria?: string
+  category?: string
+  emoji?: string
+  nombre?: string
+  name?: string
+  descripcion?: string
+  description?: string
+  unidad?: string
+  direccionPuesto?: string
+  disponible?: boolean
+  lowestPrice?: string
+  rows?: ComparisonRow[]
+  precios?: Array<{ feriaNombre?: string; provincia?: string; precio?: number }>
+}
 
 const Compare: React.FC = () => {
   const [allProducts, setAllProducts] = useState<ProductComparisonData[]>([])
@@ -13,19 +32,30 @@ const Compare: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProvince, setSelectedProvince] = useState('Todas las provincias')
   const [sortOrder, setSortOrder] = useState('menor')
+  const [selectedProduct, setSelectedProduct] = useState<ProductComparisonData | null>(null)
   
   const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
   useEffect(() => {
-    fetch(ENDPOINTS.productos)
-      .then(res => res.json())
-      .then((data: any[]) => {
-        const availableData = data.filter((p: any) => p.disponible !== false);
+    Promise.all([
+      fetch(ENDPOINTS.productos).then(res => res.json()),
+      fetch(ENDPOINTS.ferias).then(res => res.json())
+    ])
+      .then(([productsData, feriasData]: [APIProducto[], any[]]) => {
+        // Normalizar ferias para tener nombres consistentes
+        const normalizedFerias = feriasData.map(f => ({
+          ...f,
+          nombre: f.nombre || f.name || "Feria sin nombre",
+          provincia: f.provincia || f.province || "Otras"
+        }));
+
+        const availableData = productsData.filter((p) => p.disponible !== false);
+        
         // Mapeamos los productos de la API a la estructura que espera la UI
         const mappedData: ProductComparisonData[] = availableData.map(p => {
           const prices = p.precios || [];
           const minPrice = prices.length > 0 
-            ? Math.min(...prices.map((pr: any) => pr.precio)) 
+            ? Math.min(...prices.map((pr) => pr.precio ?? 0)) 
             : 0;
 
           return {
@@ -35,17 +65,64 @@ const Compare: React.FC = () => {
             description: p.descripcion || p.description || '',
             unit: p.unidad || 'Unidad',
             lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
-            rows: p.rows ? p.rows : prices.map((pr: any) => ({
-              feriaName: pr.feriaNombre,
-              feriaLocation: `${pr.provincia}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
-              province: pr.provincia,
-              price: `₡${pr.precio.toLocaleString()}`,
-              priceNumeric: pr.precio,
-              barWidth: 100 // El ancho se recalcula en el componente Card
-            }))
+            rows: p.rows ? p.rows : prices.map((pr: any) => {
+              // Buscar feria si no tiene el nombre guardado directamente en el objeto de precio
+              const relatedFeria = normalizedFerias.find(f => String(f.id) === String(pr.feriaId));
+              const feriaName = pr.feriaNombre || (relatedFeria ? relatedFeria.nombre : 'Feria Local');
+              const province = pr.provincia || (relatedFeria ? relatedFeria.provincia : (p as any).provincia || '');
+              
+              return {
+                feriaName: feriaName,
+                feriaLocation: `${province}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+                province: province,
+                price: `₡${(pr.precio ?? 0).toLocaleString()}`,
+                priceNumeric: pr.precio ?? 0,
+                barWidth: 100 // El ancho se recalcula en el componente Card
+              };
+            })
           }
         });
-        setAllProducts(mappedData)
+
+        
+        // Agrupar productos por nombre normalizado para evitar duplicados
+        // (Elotes, elote, Elote → mismo grupo usando catálogo canónico)
+        const groupedMap = new Map<string, ProductComparisonData>()
+        mappedData.forEach(product => {
+          const key = normalizeProductName(product.name)
+          const canonicalName = getCanonicalName(product.name)
+          const catalogEntry = findInCatalog(product.name)
+          const existing = groupedMap.get(key)
+          if (existing) {
+            // Concatenar rows (ferias/precios) del producto duplicado
+            existing.rows = [...existing.rows, ...product.rows]
+            // Deduplicar rows con misma feria + ubicación + precio
+            const seen = new Set<string>()
+            existing.rows = existing.rows.filter(r => {
+              const id = `${r.feriaName}-${r.feriaLocation}-${r.priceNumeric}`
+              if (seen.has(id)) return false
+              seen.add(id)
+              return true
+            })
+            // Recalcular precio más bajo
+            const minP = Math.min(...existing.rows.map(r => r.priceNumeric))
+            existing.lowestPrice = `₡${minP.toLocaleString()}`
+            // Llenar descripción/unidad si faltaban en el primero
+            if (!existing.description && product.description) existing.description = product.description
+            if (!existing.unit && product.unit) existing.unit = product.unit
+            // Usar emoji del catálogo si está disponible
+            if (catalogEntry) existing.emoji = catalogEntry.emoji
+          } else {
+            groupedMap.set(key, {
+              ...product,
+              name: canonicalName,
+              emoji: catalogEntry ? catalogEntry.emoji : product.emoji,
+              category: catalogEntry ? catalogEntry.categoria : product.category,
+              rows: [...product.rows],
+            })
+          }
+        })
+
+        setAllProducts(Array.from(groupedMap.values()))
         setLoading(false)
       })
       .catch(err => {
@@ -62,9 +139,11 @@ const Compare: React.FC = () => {
 
     // Búsqueda inteligente: si no hay resultados en la categoría actual, 
     // pero sí en otra, cambiamos de categoría automáticamente
-    const matchingProducts = allProducts.filter((p: ProductComparisonData) => 
-      p.name.toLowerCase().includes(query.toLowerCase())
-    )
+    const normalizedQuery = normalizeProductName(query)
+    const matchingProducts = allProducts.filter((p: ProductComparisonData) => {
+      const normalizedName = normalizeProductName(p.name)
+      return normalizedName.includes(normalizedQuery)
+    })
 
     if (matchingProducts.length > 0) {
       const currentCategoryHasMatches = matchingProducts.some((p: ProductComparisonData) => p.category === activeCategory)
@@ -95,7 +174,13 @@ const Compare: React.FC = () => {
     .filter((p: ProductComparisonData) => {
       if (p.rows.length === 0) return false;
       if (activeCategory !== 'Todos' && p.category !== activeCategory) return false;
-      if (searchQuery !== '' && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      
+      if (searchQuery !== '') {
+        const normalizedQuery = normalizeProductName(searchQuery)
+        const normalizedName = normalizeProductName(p.name)
+        if (!normalizedName.includes(normalizedQuery)) return false
+      }
+      
       return true;
     })
     .sort((a: ProductComparisonData, b: ProductComparisonData) => {
@@ -204,7 +289,9 @@ const Compare: React.FC = () => {
           {filteredProducts.length > 0 ? (
             <div className="filtered-products-list">
               {filteredProducts.map((product: ProductComparisonData, index: number) => (
-                <ProductComparisonCard key={product.name + index} product={product} />
+                <div key={product.name + index} onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
+                  <ProductComparisonCard product={product} />
+                </div>
               ))}
             </div>
           ) : (
@@ -217,6 +304,13 @@ const Compare: React.FC = () => {
           )}
         </div>
       </div>
+
+      {selectedProduct && (
+        <ProductModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
+      )}
 
       <Footer />
     </div>

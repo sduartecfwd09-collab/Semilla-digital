@@ -10,6 +10,7 @@ import FeriasPage from '../pages/Ferias';
 import RecetasPage from '../pages/Recetas';
 import RegistroAgricultorPage from '../pages/RegistroAgricultor';
 import ContactUs from '../components/ContactUs/ContactUs';
+import ProformaPage from '../components/Proforma/ProformaPage';
 
 // Páginas de Administración (Unidas desde el merge)
 import AdminDashboard from '../pages/Admin/AdminDashboard';
@@ -25,8 +26,9 @@ import AdminLayout from '../components/admin/AdminLayout';
 // Páginas de Agricultor (Unidas desde el merge)
 import Dashboard from '../components/Agricultor/Dashboard/Dashboard'
 import MisProductos from '../components/Agricultor/MisProductos/index'
-import MisFerias from '../components/Agricultor/MisFerias/index'
+import MisFerias from '../components/Agricultor/MisFerias/MisFerias'
 import Configuracion from '../components/Agricultor/Configuracion/index'
+import Ganancias from '../components/Agricultor/Ganancias/Ganancias'
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
 
 const Routing: React.FC = () => {
@@ -41,6 +43,7 @@ const Routing: React.FC = () => {
         <Route path="/ferias" element={<FeriasPage />} />
         <Route path="/recetas" element={<RecetasPage />} />
         <Route path="/contacto" element={<ContactUs />} />
+        <Route path="/proforma" element={<ProformaPage />} />
         
         {/* Rutas de Usuario */}
         <Route path="/perfil" element={<Profile />} />
@@ -78,13 +81,14 @@ const Routing: React.FC = () => {
           <Route path="productos" element={<MisProductos />} />
           <Route path="ferias" element={<MisFerias />} />
           <Route path="config" element={<Configuracion />} />
+          <Route path="ganancias" element={<Ganancias />} />
         </Route>
 
         {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
-  );
-};
+  )
+}
 
 export default Routing

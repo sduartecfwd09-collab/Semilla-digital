@@ -6,12 +6,30 @@ import Footer from '../Footer';
 import { validateEmail } from '../../utils/validation';
 import { ENDPOINTS } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import './Profile.css';
+
+// Iconos SVG para el ojo (mostrar/ocultar contraseña)
+const EyeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+    <line x1="1" y1="1" x2="23" y2="23"></line>
+  </svg>
+);
+
 
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateUserInContext } = useAuth();
+  const { proformas } = useCart();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
@@ -72,13 +90,16 @@ const Profile: React.FC = () => {
           ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
           
           if (userRequests.length > 0) {
-            // Priorizamos: Aprobada > Rechazada > Pendiente
+            // Priorizamos: Aprobada > Pendiente > Rechazada
             let activeRequest = userRequests[0];
             const aprobada = userRequests.find((r: any) => r.estado === 'Aprobada');
+            const pendiente = userRequests.find((r: any) => r.estado === 'Pendiente');
             const rechazada = userRequests.find((r: any) => r.estado === 'Rechazada');
             
             if (aprobada) {
               activeRequest = aprobada;
+            } else if (pendiente) {
+              activeRequest = pendiente;
             } else if (rechazada) {
               activeRequest = rechazada;
             }
@@ -167,7 +188,7 @@ const Profile: React.FC = () => {
       // Verificar si el correo ya está en uso por OTRO usuario
       const usersRes = await fetch(ENDPOINTS.usuarios);
       const allUsers = await usersRes.json();
-      const emailExists = allUsers.some((u: any) => u.email === userData.email && u.id !== userData.id);
+      const emailExists = allUsers.some((u: { email: string; id: string }) => u.email === userData.email && u.id !== userData.id);
 
       if (emailExists) {
         Swal.fire({
@@ -184,9 +205,9 @@ const Profile: React.FC = () => {
 
       const updatedData = {
         ...fullUserData,
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
       };
 
       const response = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
@@ -210,7 +231,7 @@ const Profile: React.FC = () => {
           showConfirmButton: false
         });
       }
-    } catch (error) {
+    } catch {
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -311,7 +332,7 @@ const Profile: React.FC = () => {
           throw new Error('Error al enviar la solicitud');
         }
       }
-    } catch (error) {
+    } catch {
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -337,22 +358,34 @@ const Profile: React.FC = () => {
 
     if (isConfirmed) {
       try {
+        // Borrar la solicitud de cambio de rol
         await fetch(`${ENDPOINTS.solicitudesCambioRol}/${requestId}`, {
           method: 'DELETE',
         });
+
+        // Borrar la información del puesto asociado (puestosAgricultor)
+        const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+        const todosPuestos = await puestosRes.json();
+        const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
+        
+        // Elimar todos sus puestos (normalmente debería ser solo uno)
+        await Promise.all(misPuestos.map((p: any) => 
+          fetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
+        ));
         
         setRequestStatus(null);
         setHasPendingRequest(false);
         setRequestId('');
         
-        Swal.fire(
-          'Cancelada',
-          'Tu solicitud ha sido cancelada exitosamente.',
-          'success'
-        );
+        Swal.fire({
+          icon: 'success',
+          title: 'Solicitud cancelada',
+          text: 'Tu solicitud y toda la información asociada han sido borradas correctamente.',
+          confirmButtonColor: 'var(--verde-claro)',
+        });
       } catch (error) {
         console.error('Error al cancelar solicitud:', error);
-        Swal.fire('Error', 'No se pudo cancelar la solicitud', 'error');
+        Swal.fire('Error', 'No se pudo cancelar la solicitud por completo.', 'error');
       }
     }
   };
@@ -360,20 +393,52 @@ const Profile: React.FC = () => {
   const handleConvertirseEnAgricultor = async () => {
     try {
       setLoading(true);
+      
+      // Obtener datos del puesto solicitado y la feria asignada
+      const [userRes, puestosRes, feriasRes] = await Promise.all([
+        fetch(`${ENDPOINTS.usuarios}/${userData.id}`),
+        fetch(ENDPOINTS.puestosAgricultor),
+        fetch(ENDPOINTS.ferias)
+      ]);
+      
+      const currentFullUser = await userRes.json();
+      const allPuestos = await puestosRes.json();
+      const allFerias = await feriasRes.json();
+      
+      const miPuesto = allPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id)).pop();
+      const feriasSolicitadas = miPuesto?.ubicacion || [];
+      const feriaAsignada = allFerias.find((f: any) => String(f.id) === String(currentFullUser.feriaId));
+      
+      let mensajeFeria = '';
+      if (feriaAsignada) {
+        const feriaName = feriaAsignada.name || feriaAsignada.nombre || '';
+        const fueSolicitada = Array.isArray(feriasSolicitadas) 
+          ? feriasSolicitadas.includes(feriaName)
+          : feriasSolicitadas === feriaName;
+          
+        if (feriaName) {
+          if (fueSolicitada) {
+            mensajeFeria = `\n\nTu solicitud para vender en la feria de ${feriaName} ha sido aceptada.`;
+          } else {
+            mensajeFeria = `\n\nSe te ha asignado la feria de ${feriaName} para tus ventas.`;
+          }
+        }
+      }
+
       await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'Agricultor' })
       });
 
-      const fullUserResponse = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
-      const fullUserData = await fullUserResponse.json();
-      localStorage.setItem('user', JSON.stringify(fullUserData));
+      const updatedUserRes = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const updatedUserData = await updatedUserRes.json();
+      localStorage.setItem('user', JSON.stringify(updatedUserData));
 
       Swal.fire({
         icon: 'success',
         title: '¡Felicidades!',
-        text: 'Bienvenido a tu nuevo perfil de Agricultor en AgroMap.',
+        text: `Bienvenido a tu nuevo perfil de Agricultor en AgroMap.${mensajeFeria}`,
         confirmButtonColor: 'var(--verde-claro)',
       }).then(() => {
         window.location.href = '/agricultor';
@@ -564,7 +629,45 @@ const Profile: React.FC = () => {
             </div>
           </form>
 
-          {(userData.role?.toLowerCase() === 'usuario' || !userData.role) && (
+          {/* Historial de Compras */}
+          <div className="profile-purchase-history">
+            <div className="separator"></div>
+            <h3>🛒 Mi Historial de Compras</h3>
+            {proformas.length === 0 ? (
+              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '10px' }}>Aún no tienes compras o presupuestos generados.</p>
+            ) : (
+              <div className="purchase-list">
+                {proformas.map((p) => (
+                  <div className="purchase-item" key={p.id}>
+                    <div className="purchase-header">
+                      <span className="purchase-id">{p.id}</span>
+                      <span className="purchase-date">{p.fecha}</span>
+                    </div>
+                    <div className="purchase-body">
+                      <ul className="purchase-items-list">
+                        {p.items.map((item, i) => (
+                          <li key={i}>
+                            {item.emoji} {item.nombre} (x{item.cantidad}) - ₡{(item.precio * item.cantidad).toLocaleString()}
+                          </li>
+                        ))}
+                      </ul>
+                      {p.delivery && (
+                        <div className="purchase-delivery">
+                          🚚 Envío a: {p.delivery.direccion} ({p.delivery.provincia}) - ₡{p.delivery.costoEnvio.toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="purchase-footer">
+                      <strong>Total:</strong> <span>₡{p.total.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Solicitud para ser Agricultor - Solo se muestra si NO es Agricultor ni Admin */}
+          {(!userData.role || (userData.role.toLowerCase() !== 'agricultor' && userData.role.toLowerCase() !== 'administrador')) && (
             <div className="role-request-section">
               <div className="separator"></div>
               <div className="role-request-content">
@@ -625,7 +728,7 @@ const Profile: React.FC = () => {
                     <button 
                       type="button" 
                       className="role-request-btn"
-                      onClick={() => navigate('/registro-agricultor')}
+                      onClick={() => navigate('/registro-agricultor?reset=true')}
                     >
                       Enviar nueva solicitud
                     </button>

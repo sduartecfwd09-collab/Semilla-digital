@@ -1,8 +1,7 @@
 import React from 'react'
 import { Producto } from '../../../servers/ProductService'
-import AdminProductCard from '../../adminAgricultor/AgricultorProductCard'
+import AdminProductCard from '../AgricultorProductCard/AdminProductCard'
 import './AdminProductList.css'
-
 
 interface AdminProductListProps {
   productos: Producto[]

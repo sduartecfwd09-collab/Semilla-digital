@@ -18,13 +18,13 @@ const LoginForm: React.FC = () => {
     setLoading(true)
 
     try {
-      const success = await login(email, password)
-      if (success) {
+      const result = await login(email, password)
+      if (result.success) {
         navigate('/admin')
       } else {
         setError('Email o contraseña incorrectos')
       }
-    } catch (err) {
+    } catch {
       setError('Error al iniciar sesión. Intenta nuevamente.')
     } finally {
       setLoading(false)

@@ -1,13 +1,36 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
+import CartDrawer from '../Cart/CartDrawer'
 import './Navbar.css'
+import { ENDPOINTS } from '../../services/api.config'
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
+  const { getItemCount, setIsCartOpen } = useCart()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+  const [hasProfileNotif, setHasProfileNotif] = useState(false)
+  const [hasContactNotif, setHasContactNotif] = useState(false)
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -35,13 +58,93 @@ const Navbar: React.FC = () => {
     }
   }
 
+  useEffect(() => {
+    const checkNotifications = async () => {
+      // 1. Solicitudes de cambio de rol (perfil)
+      if (user) {
+        try {
+          const res = await fetch(ENDPOINTS.solicitudesCambioRol)
+          const data = await res.json()
+          const myResponses = data.filter((s: any) => 
+            String(s.usuarioId) === String(user.id) && s.estado !== 'Pendiente'
+          )
+          if (myResponses.length > 0) {
+            const latest = myResponses.sort((a: any, b: any) => 
+              new Date(b.fechaRespuesta || b.fechaSolicitud).getTime() - new Date(a.fechaRespuesta || a.fechaSolicitud).getTime()
+            )[0]
+            const seenId = localStorage.getItem(`seen_sol_${user.id}`)
+            
+            if (location.pathname === '/perfil') {
+              // Si está en el perfil, marcar como leída inmediatamente
+              localStorage.setItem(`seen_sol_${user.id}`, latest.id)
+              setHasProfileNotif(false)
+            } else if (seenId !== latest.id) {
+              setHasProfileNotif(true)
+            }
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
+      // 2. Mensajes de contacto
+      try {
+        const res = await fetch(ENDPOINTS.contactMessages)
+        const data = await res.json()
+        const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]')
+        
+        const myResponded = data.filter((m: any) => {
+          const matchedByEmail = user?.email && m.correo && 
+                                m.correo.toLowerCase() === user.email.toLowerCase()
+          const matchedByLocal = m.id && savedIds.includes(m.id)
+          return (matchedByEmail || matchedByLocal) && m.estado === 'Respondido'
+        })
+
+        if (myResponded.length > 0) {
+          const latest = myResponded.sort((a: any, b: any) => 
+            new Date(b.fechaRespuesta || b.fechaEnvio).getTime() - new Date(a.fechaRespuesta || a.fechaEnvio).getTime()
+          )[0]
+          const seenKey = user ? `seen_msg_${user.id}` : 'seen_msg_anon'
+          const seenId = localStorage.getItem(seenKey)
+
+          if (location.pathname === '/contacto') {
+            // Si está en contacto, marcar como leída inmediatamente
+            localStorage.setItem(seenKey, latest.id)
+            setHasContactNotif(false)
+          } else if (seenId !== latest.id) {
+            setHasContactNotif(true)
+          } else {
+            setHasContactNotif(false)
+          }
+        } else {
+          setHasContactNotif(false)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    checkNotifications()
+  }, [user, location.pathname])
+
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo" onClick={handleScrollToTop}>
         Agro<span>Map</span>
       </Link>
 
-      <ul className="navbar-links">
+      {/* Hamburger button — visible only on mobile/tablet */}
+      <button
+        className={`navbar-hamburger ${menuOpen ? 'active' : ''}`}
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li>
           <Link 
             to="/" 
@@ -72,6 +175,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link to="/contacto" className={`navbar-link ${isActive('/contacto') ? 'active' : ''}`}>
             Contáctanos
+            {hasContactNotif && user?.role !== 'Administrador' && <span className="navbar-dot"></span>}
           </Link>
         </li>
 
@@ -115,9 +219,22 @@ const Navbar: React.FC = () => {
                 )}
               </div>
               Perfil
+              {hasProfileNotif && user?.role !== 'Administrador' && <span className="navbar-dot"></span>}
             </Link>
           </li>
         )}
+
+        {/* Cart Icon */}
+        <li>
+          <button className="navbar-cart-btn" onClick={() => setIsCartOpen(true)} aria-label="Abrir carrito" style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', fontSize: '1.2rem', padding: '0.5rem' }}>
+            🛒
+            {getItemCount() > 0 && (
+              <span style={{ position: 'absolute', top: 0, right: 0, background: '#e11d48', color: 'white', fontSize: '0.65rem', fontWeight: 'bold', width: '1.1rem', height: '1.1rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {getItemCount()}
+              </span>
+            )}
+          </button>
+        </li>
 
         <li>
           {user ? (
@@ -135,6 +252,7 @@ const Navbar: React.FC = () => {
           )}
         </li>
       </ul>
+      <CartDrawer />
     </nav>
   )
 }

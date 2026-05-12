@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
 import Swal from 'sweetalert2'
 import './AdminRecetas.css'
+import { Recipe } from '../../../types'
 
 // Este componente gestiona las recetas de temporada, permitiendo CRUD (Crear, Leer, Actualizar, Borrar)
 const AdminRecetas = () => {
-    const [recipes, setRecipes] = useState<any[]>([])
+    const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
@@ -38,7 +39,7 @@ const AdminRecetas = () => {
     }
 
     // Preparar el modal para editar una receta existente
-    const handleEditClick = (recipe: any) => {
+    const handleEditClick = (recipe: Recipe) => {
         setSelectedRecipe(recipe)
         setFormData({
             ...recipe,
@@ -87,7 +88,9 @@ const AdminRecetas = () => {
 
         const recipeData = {
             ...formData,
-            time: `${formData.time} min`, // Siempre guardar con ' min'
+            title: formData.title.trim(),
+            description: formData.description.trim(),
+            time: `${formData.time.trim()} min`, // Siempre guardar con ' min'
             ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(i => i !== ''),
             steps: formData.steps.split('\n').map(s => s.trim()).filter(s => s !== '')
         }
@@ -148,14 +151,6 @@ const AdminRecetas = () => {
                                     {recipe.ingredients && recipe.ingredients.map((ing: string, i: number) => (
                                         <span className="ingredient-tag" key={i}>{ing}</span>
                                     ))}
-                                </div>
-                                <div className="recipe-steps" style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#4b5563', maxHeight: '100px', overflowY: 'auto' }}>
-                                    <strong>Paso a paso:</strong>
-                                    <ol style={{ paddingLeft: '1.2rem', marginTop: '0.5rem', marginBottom: 0 }}>
-                                        {recipe.steps && recipe.steps.map((step: string, i: number) => (
-                                            <li key={i} style={{ marginBottom: '0.25rem' }}>{step}</li>
-                                        ))}
-                                    </ol>
                                 </div>
                                 <div className="recipe-card-actions">
                                     <button className="btn-recipe-action btn-edit-recipe" onClick={() => handleEditClick(recipe)}>

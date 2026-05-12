@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -6,14 +6,9 @@ import Recipes from '../components/Recipes'
 import './Pages.css'
 
 const RecetasPage: React.FC = () => {
-  const [isJoined, setIsJoined] = useState(false)
-
-  useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (user) {
-      setIsJoined(true)
-    }
-  }, [])
+  const [isJoined] = useState(() => {
+    return !!localStorage.getItem('user')
+  })
 
   return (
     <div className="recetas-page page-container">

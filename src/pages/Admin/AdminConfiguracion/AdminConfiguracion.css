@@ -1,6 +1,6 @@
 .config-container {
     padding: 0.5rem 2rem 2.5rem 2rem;
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -20,7 +20,7 @@
 .config-header h1 {
     font-size: 2.25rem;
     font-weight: 800;
-    letter-spacing: -1px;
+    letter-spacing: -0.0625rem;
     margin: 0;
 }
 
@@ -28,7 +28,7 @@
     background-color: var(--surface-color);
     padding: 2rem;
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
+    border: 0.0625rem solid var(--border-color);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -38,7 +38,7 @@
     font-size: 1.25rem;
     margin: 0;
     color: var(--primary-color);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 0.0625rem solid var(--border-color);
     padding-bottom: 1rem;
 }
 

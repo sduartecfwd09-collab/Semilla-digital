@@ -1,22 +1,22 @@
 /* ─── Admin Contactos ─── */
 .admin-contactos-container {
-  padding: 10px 0;
+  padding: 0.625rem 0;
 }
 
 .admin-contactos-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .admin-contactos-header h1 {
   font-size: 2.5rem;
   font-weight: 900;
   color: #052e16;
-  margin: 0 0 8px;
+  margin: 0 0 0.5rem;
   font-family: 'Playfair Display', serif;
 }
 
@@ -29,32 +29,32 @@
 
 .admin-contactos-stats {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .admin-contactos-stat {
   padding: 1.2rem 2rem;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   text-align: center;
-  min-width: 120px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  min-width: 7.5rem;
+  box-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.05);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.02);
   transition: all 0.3s ease;
 }
 
 .admin-contactos-stat:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.9375rem 2.1875rem rgba(0, 0, 0, 0.08);
 }
 
 .admin-contactos-stat.pending {
   background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border-bottom: 4px solid #fbbf24;
+  border-bottom: 0.25rem solid #fbbf24;
 }
 
 .admin-contactos-stat.responded {
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border-bottom: 4px solid #4ade80;
+  border-bottom: 0.25rem solid #4ade80;
 }
 
 .stat-number {
@@ -69,23 +69,23 @@
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03125rem;
 }
 
 /* ─── Filters ─── */
 .admin-contactos-filters {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
 
 .admin-contactos-search {
   flex: 1;
-  min-width: 250px;
+  min-width: 15.625rem;
   padding: 1rem 1.5rem;
-  border: 2px solid #edf2f7;
-  border-radius: 15px;
+  border: 0.125rem solid #edf2f7;
+  border-radius: 0.9375rem;
   font-size: 1rem;
   background: #fbfbfc;
   transition: all 0.3s ease;
@@ -95,18 +95,18 @@
   outline: none;
   border-color: #3B9C3A;
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(59, 156, 58, 0.08);
+  box-shadow: 0 0 0 0.25rem rgba(59, 156, 58, 0.08);
 }
 
 .admin-contactos-filter-btns {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .admin-contactos-filter-btn {
   padding: 0.75rem 1.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 50px;
+  border: 0.0625rem solid #e2e8f0;
+  border-radius: 3.125rem;
   background: #fff;
   cursor: pointer;
   font-size: 0.9rem;
@@ -124,14 +124,14 @@
   background: #3B9C3A;
   color: #fff;
   border-color: #3B9C3A;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.2);
 }
 
 /* ─── Loading / Empty ─── */
 .admin-contactos-loading,
 .admin-contactos-empty {
   text-align: center;
-  padding: 40px 20px;
+  padding: 2.5rem 1.25rem;
   color: #64748b;
   font-size: 0.95rem;
 }
@@ -140,21 +140,21 @@
 .admin-contactos-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .admin-contacto-card {
   background: #fff;
-  border-radius: 24px;
-  padding: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  border: 0.0625rem solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.03);
   transition: all 0.4s ease;
 }
 
 .admin-contacto-card:hover {
   transform: scale(1.01);
-  box-shadow: 0 15px 50px rgba(0,0,0,0.06);
+  box-shadow: 0 0.9375rem 3.125rem rgba(0,0,0,0.06);
 }
 
 .admin-contacto-card.responded {
@@ -169,20 +169,20 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .admin-contacto-user-info {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   align-items: flex-start;
 }
 
 .admin-contacto-avatar {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background: linear-gradient(135deg, #052e16 0%, #3B9C3A 100%);
   color: #ffffff;
@@ -192,8 +192,8 @@
   font-weight: 800;
   font-size: 1.2rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(59, 156, 58, 0.2);
-  border: 2px solid #ffffff;
+  box-shadow: 0 0.25rem 0.75rem rgba(59, 156, 58, 0.2);
+  border: 0.125rem solid #ffffff;
 }
 
 .admin-contacto-user-info h3 {
@@ -204,14 +204,14 @@
 }
 
 .admin-contacto-user-info p {
-  margin: 2px 0 0;
+  margin: 0.125rem 0 0;
   font-size: 0.8rem;
   color: #64748b;
 }
 
 .admin-contacto-whatsapp {
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 0.25rem;
   font-size: 0.78rem;
   color: #25D366;
   text-decoration: none;
@@ -227,14 +227,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .admin-contacto-status {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 1.25rem;
 }
 
 .admin-contacto-status.status-pending {
@@ -254,9 +254,9 @@
 
 .admin-contacto-message {
   background: #f8fafc;
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 12px;
+  border-radius: 0.625rem;
+  padding: 0.875rem;
+  margin-bottom: 0.75rem;
 }
 
 .admin-contacto-message p {
@@ -269,23 +269,23 @@
 
 .admin-contacto-response {
   background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 15px;
+  border: 0.0625rem solid #bbf7d0;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.9375rem;
   position: relative;
 }
 
 .admin-contacto-response::after {
   content: '';
   position: absolute;
-  top: -8px;
-  left: 30px;
-  width: 15px;
-  height: 15px;
+  top: -0.5rem;
+  left: 1.875rem;
+  width: 0.9375rem;
+  height: 0.9375rem;
   background: #f0fdf4;
-  border-left: 1px solid #bbf7d0;
-  border-top: 1px solid #bbf7d0;
+  border-left: 0.0625rem solid #bbf7d0;
+  border-top: 0.0625rem solid #bbf7d0;
   transform: rotate(45deg);
 }
 
@@ -293,11 +293,11 @@
   display: block;
   font-size: 0.78rem;
   color: #166534;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .admin-contacto-response p {
-  margin: 0 0 6px;
+  margin: 0 0 0.375rem;
   font-size: 0.88rem;
   color: #1e293b;
   line-height: 1.5;
@@ -306,19 +306,19 @@
 
 /* ─── Reply Form ─── */
 .admin-contacto-reply-form {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .admin-contacto-reply-form textarea {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
+  padding: 0.75rem 0.875rem;
+  border: 0.09375rem solid #e2e8f0;
+  border-radius: 0.625rem;
   font-size: 0.9rem;
   font-family: inherit;
   background: #f8fafc;
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
   box-sizing: border-box;
   transition: all 0.2s;
 }
@@ -326,31 +326,31 @@
 .admin-contacto-reply-form textarea:focus {
   outline: none;
   border-color: #2d8a42;
-  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(45, 138, 66, 0.1);
   background: #fff;
 }
 
 .admin-contacto-reply-actions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: flex-end;
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 /* ─── Action Buttons ─── */
 .admin-contacto-actions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: flex-end;
 }
 
 .admin-contacto-btn {
   padding: 0.7rem 1.5rem;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   font-size: 0.85rem;
   font-weight: 800; /* Increased weight for legibility */
   cursor: pointer;
-  border: 2px solid; /* Made border thicker and consistent */
+  border: 0.125rem solid; /* Made border thicker and consistent */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: #ffffff; /* Default background */
 }
@@ -364,19 +364,19 @@
   background: #3B9C3A;
   color: #ffffff;
   border-color: #3B9C3A;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .admin-contactos-stat.submit, .admin-contacto-btn.submit {
   background: #3B9C3A;
   color: #fff;
   border-color: #3B9C3A;
-  box-shadow: 0 4px 15px rgba(59, 156, 58, 0.2);
+  box-shadow: 0 0.25rem 0.9375rem rgba(59, 156, 58, 0.2);
 }
 
 .admin-contacto-btn.submit:hover {
   background: #2d7a2d;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .admin-contacto-btn.cancel {
@@ -387,7 +387,7 @@
 
 .admin-contacto-btn.cancel:hover {
   background: #e2e8f0;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .admin-contacto-btn.delete {
@@ -399,5 +399,5 @@
   background: #dc2626;
   color: #ffffff;
   border-color: #dc2626;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }

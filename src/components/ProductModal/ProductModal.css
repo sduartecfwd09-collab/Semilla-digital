@@ -1,0 +1,217 @@
+.product-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13, 40, 24, 0.5);
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeInModal 0.2s ease;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.product-modal {
+  background: white;
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+  animation: scaleInModal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleInModal {
+  from { transform: scale(0.92) translateY(1rem); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.product-modal-hero {
+  background: linear-gradient(135deg, #052e16, #1b4332);
+  padding: 2.5rem 2rem 2rem;
+  position: relative;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.product-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.product-modal-close:hover {
+  background: rgba(255,255,255,0.3);
+  transform: rotate(90deg);
+}
+
+.product-modal-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.product-modal-category {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: #a7f3d0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.product-modal-title {
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.03rem;
+}
+
+.product-modal-desc {
+  color: #a7f3d0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.product-modal-body {
+  padding: 1.75rem 2rem 2rem;
+}
+
+.product-modal-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.product-modal-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+}
+
+.product-modal-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #f1f5f9;
+  background: #fafbfc;
+  transition: all 0.2s;
+}
+
+.product-modal-price-row:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.04);
+}
+
+.product-modal-price-row.best {
+  border-color: #3B9C3A;
+  background: #f0fdf4;
+}
+
+.product-modal-price-feria {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.product-modal-price-location {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.product-modal-price-value {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #052e16;
+}
+
+.product-modal-price-best-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #3B9C3A;
+  background: #dcfce7;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3rem;
+  margin-left: 0.5rem;
+}
+
+.product-modal-add-btn {
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(135deg, #3B9C3A, #2d7a2d);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0.25rem 0.75rem rgba(59, 156, 58, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.product-modal-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.25rem rgba(59, 156, 58, 0.4);
+}
+
+.product-modal-add-btn.added {
+  background: #10b981;
+  pointer-events: none;
+}
+
+@media (max-width: 48rem) {
+  .product-modal {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+
+  .product-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .product-modal-hero {
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: 1.25rem 1.25rem 0 0;
+  }
+
+  .product-modal-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+}

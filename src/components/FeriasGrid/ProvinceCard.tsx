@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Building2, Trees, Mountain, Sun, Ship, Palmtree, MapPin } from 'lucide-react';
 import { Provincia } from '../../types/province.types';
 import FeriaItem from './FeriaItem';
 
@@ -6,14 +7,14 @@ interface ProvinceCardProps {
   provincia: Provincia;
 }
 
-const provinceEmojis: Record<string, string> = {
-  'San José': '🏢',
-  'Alajuela': '🍊',
-  'Cartago': '⛰️',
-  'Heredia': '🌋',
-  'Guanacaste': '🌞',
-  'Puntarenas': '🚢',
-  'Limón': '🌴'
+const provinceIconMap: Record<string, { icon: React.ReactNode; color: string }> = {
+  'San José':    { icon: <Building2 size={22} strokeWidth={1.8} />, color: '#5c6bc0' },
+  'Alajuela':    { icon: <Sun       size={22} strokeWidth={1.8} />, color: '#ef6c00' },
+  'Cartago':     { icon: <Mountain  size={22} strokeWidth={1.8} />, color: '#546e7a' },
+  'Heredia':     { icon: <Trees     size={22} strokeWidth={1.8} />, color: '#2e7d32' },
+  'Guanacaste':  { icon: <Sun       size={22} strokeWidth={1.8} />, color: '#f9a825' },
+  'Puntarenas':  { icon: <Ship      size={22} strokeWidth={1.8} />, color: '#0277bd' },
+  'Limón':       { icon: <Palmtree  size={22} strokeWidth={1.8} />, color: '#00695c' },
 };
 
 const ProvinceCard: React.FC<ProvinceCardProps> = ({ provincia }) => {
@@ -26,7 +27,12 @@ const ProvinceCard: React.FC<ProvinceCardProps> = ({ provincia }) => {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="province-card-main">
-          <span className="province-emoji">{provinceEmojis[provincia.nombre] || '📍'}</span>
+          <span
+            className="province-emoji"
+            style={{ color: provinceIconMap[provincia.nombre]?.color ?? '#888' }}
+          >
+            {provinceIconMap[provincia.nombre]?.icon ?? <MapPin size={22} strokeWidth={1.8} />}
+          </span>
           <div className="province-card-info">
             <h3 className="province-card-name">{provincia.nombre}</h3>
             <p className="province-card-count">{provincia.cantidadFerias} ferias disponibles</p>

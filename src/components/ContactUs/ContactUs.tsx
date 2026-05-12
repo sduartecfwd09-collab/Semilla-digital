@@ -32,6 +32,13 @@ const ContactUs: React.FC = () => {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        nombre: user.name || user.nombre || '',
+        correo: user.email || ''
+      }));
+    }
     fetchMyMessages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -44,9 +51,15 @@ const ContactUs: React.FC = () => {
       // Obtener los IDs guardados localmente para usuarios no registrados
       const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
 
-      const mine = data.filter(
-        (m) => (user && m.correo === user.email) || (m.id && savedIds.includes(m.id))
-      );
+      const mine = data.filter((m) => {
+        if (user) {
+          // Si el usuario está logueado, solo ver los de su correo (ignorando mayúsculas)
+          return m.correo.toLowerCase() === user.email.toLowerCase();
+        } else {
+          // Si es anónimo, ver los de su dispositivo local
+          return m.id && savedIds.includes(m.id);
+        }
+      });
       setMyMessages(mine.sort((a, b) => 
         new Date(b.fechaEnvio).getTime() - new Date(a.fechaEnvio).getTime()
       ));
@@ -57,12 +70,20 @@ const ContactUs: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    // Si es el campo teléfono, solo permitir números y máximo 8 dígitos
+    if (name === 'telefono') {
+      const onlyNums = value.replace(/[^0-9]/g, '');
+      if (onlyNums.length <= 8) {
+        setFormData(prev => ({ ...prev, [name]: onlyNums }));
+      }
+      return;
+    }
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const validatePhone = (phone: string): boolean => {
     const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length >= 8 && cleaned.length <= 12;
+    return cleaned.length === 8;
   };
 
   const validateEmail = (email: string): boolean => {
@@ -91,7 +112,13 @@ const ContactUs: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditingMessageId(null);
-    setFormData({ nombre: '', correo: '', telefono: '', mensaje: '' });
+    setFormData(prev => ({
+      ...prev,
+      telefono: '',
+      mensaje: '',
+      nombre: user ? (user.name || user.nombre || '') : '',
+      correo: user ? user.email : ''
+    }));
   };
 
   const handleDeleteMessage = async (id: string) => {
@@ -135,9 +162,9 @@ const ContactUs: React.FC = () => {
     const telefono = formData.telefono.trim();
     const mensaje = formData.mensaje.trim();
 
-    if (!nombre || nombre.length < 3) return Swal.fire('Error', 'El nombre debe tener al menos 3 caracteres.', 'error');
+    if (!nombre) return Swal.fire('Error', 'El nombre debe tener al menos 3 caracteres.', 'error');
     if (!validateEmail(correo)) return Swal.fire('Error', 'Por favor, ingresa un correo electrónico válido.', 'error');
-    if (!validatePhone(telefono)) return Swal.fire('Error', 'El teléfono debe tener entre 8 y 12 dígitos.', 'error');
+    if (!validatePhone(telefono)) return Swal.fire('Error', 'El teléfono debe tener exactamente 8 dígitos numéricos.', 'error');
     if (!mensaje || mensaje.length < 10) return Swal.fire('Error', 'El mensaje debe tener al menos 10 caracteres.', 'error');
 
     setSubmitting(true);
@@ -193,7 +220,13 @@ const ContactUs: React.FC = () => {
             localStorage.setItem('agromap_my_messages', JSON.stringify(savedIds));
           }
 
-          setFormData({ nombre: '', correo: '', telefono: '', mensaje: '' });
+          setFormData(prev => ({
+            ...prev,
+            telefono: '',
+            mensaje: '',
+            nombre: user ? (user.name || user.nombre || '') : '',
+            correo: user ? user.email : ''
+          }));
           Swal.fire({
             icon: 'success',
             title: '¡Mensaje enviado!',
@@ -267,6 +300,8 @@ const ContactUs: React.FC = () => {
                     onChange={handleChange}
                     placeholder="tucorreo@ejemplo.com"
                     maxLength={100}
+                    disabled={!!user}
+                    style={user ? { backgroundColor: '#f0f0f0', cursor: 'not-allowed', color: '#666' } : {}}
                   />
                 </div>
 
@@ -279,7 +314,7 @@ const ContactUs: React.FC = () => {
                     value={formData.telefono}
                     onChange={handleChange}
                     placeholder="88887777"
-                    maxLength={12}
+                    maxLength={8}
                   />
                 </div>
               </div>

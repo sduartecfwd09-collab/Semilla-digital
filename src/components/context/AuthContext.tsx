@@ -18,7 +18,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<{ success: boolean; role?: string }>
   logout: () => void
   updateUserInContext: (updatedUser: Partial<User>) => void
   isAuthenticated: boolean
@@ -51,13 +51,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(JSON.parse(storedUser))
       } catch (error) {
         console.error('Error al parsear usuario:', error)
-        localStorage.removeItem('user')
       }
     }
     setIsLoading(false)
   }, [])
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+
+
+  const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
     try {
       // Normalizamos el email para la búsqueda
       const targetEmail = email.toLowerCase().trim()
@@ -65,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Obtenemos todos los usuarios para filtrar manualmente (más fiable que los query params)
       const response = await fetch(ENDPOINTS.usuarios)
-      if (!response.ok) return false
+      if (!response.ok) return { success: false }
       
       const allUsers = await response.json()
       
@@ -90,12 +91,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userToStore)
         localStorage.setItem('user', JSON.stringify(userToStore))
-        return true
+        return { success: true, role: authenticatedUser.role }
       }
-      return false
-    } catch (error) {
-      console.error('Error en login:', error)
-      return false
+      return { success: false }
+    } finally {
+      setIsLoading(false)
     }
   }
 

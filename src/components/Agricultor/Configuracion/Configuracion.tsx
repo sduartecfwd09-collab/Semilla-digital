@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminAgricultor/AgricultorSidebar'
 import AdminHeader from '../../adminAgricultor/AgricultorHeader'
+import Footer from '../../Footer/Footer'
 import { updateUser } from '../../../servers/AuthService'
 import './Configuracion.css'
 
@@ -174,6 +175,7 @@ const Configuracion: React.FC = () => {
             <p>Sistema de gestión para feriantes</p>
           </div>
         </div>
+        <Footer />
       </div>
       </div>
     </>

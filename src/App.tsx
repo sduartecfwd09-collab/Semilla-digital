@@ -4,12 +4,9 @@ import Routing from './routes/Routing'
 const App: React.FC = () => {
 
   return (
-    <>
     <div className="app-container">
       <Routing/>
-      
     </div>
-    </>
   )
 }
 

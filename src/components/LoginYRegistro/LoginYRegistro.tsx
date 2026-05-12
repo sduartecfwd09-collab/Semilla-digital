@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link } from 'react-router-dom'
@@ -39,20 +40,20 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (loginPassword.length <= 6) {
+    if (loginPassword.length < 8) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña inválida',
-        text: 'La contraseña debe tener más de 6 caracteres.',
+        text: 'La contraseña debe tener mínimo 8 caracteres.',
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
     }
     
     try {
-      const success = await login(loginEmail, loginPassword)
+      const result = await login(loginEmail, loginPassword)
 
-      if (success) {
+      if (result.success) {
         Swal.fire({
           icon: 'success',
           title: '¡Bienvenido a AgroMap!',
@@ -61,7 +62,13 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          navigate('/')
+          if (result.role === 'Administrador' || result.role === 'Admin') {
+            navigate('/admin')
+          } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
+            navigate('/agricultor')
+          } else {
+            navigate('/')
+          }
         })
       } else {
         Swal.fire({
@@ -72,6 +79,7 @@ const Auth: React.FC = () => {
         })
       }
     } catch (error) {
+      console.error('Error en login:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -98,11 +106,11 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (trimmedPassword.length <= 6) {
+    if (trimmedPassword.length < 8) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña insegura',
-        text: 'La contraseña debe tener más de 6 dígitos de longitud.',
+        text: 'La contraseña debe tener mínimo 8 dígitos de longitud.',
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
@@ -134,7 +142,7 @@ const Auth: React.FC = () => {
       const resCheck = await fetch(`${ENDPOINTS.usuarios}`)
       const allUsers = await resCheck.json()
       
-      const emailExists = allUsers.some((u: any) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
+      const emailExists = allUsers.some((u: { email: string }) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
       if (emailExists) {
         Swal.fire({
           icon: 'error',
@@ -172,6 +180,7 @@ const Auth: React.FC = () => {
         })
       }
     } catch (error) {
+      console.error('Error en registro:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error de servidor',
@@ -181,25 +190,15 @@ const Auth: React.FC = () => {
     }
   }
 
-  // Iconos SVG para el ojo (mostrar/ocultar contraseña)
-  const EyeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-  )
-
-  const EyeOffIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-      <line x1="1" y1="1" x2="23" y2="23"></line>
-    </svg>
-  )
 
   return (
     <div className="auth-container">
       {/* SECCIÓN IZQUIERDA */}
       <div className="auth-left">
+        <Link to="/" className="auth-back-btn" style={{ marginTop: 0, marginBottom: '2rem' }}>
+          <span>←</span> Volver al inicio
+        </Link>
+
         <Link to="/" className="auth-logo-link">
           <div className="auth-logo">
             <span className="logo-agro">Agro</span><span className="logo-map">Map</span>
@@ -238,9 +237,6 @@ const Auth: React.FC = () => {
           </div>
         </div>
 
-        <Link to="/" className="auth-back-btn">
-          <span>←</span> Volver al inicio
-        </Link>
       </div>
 
       {/* SECCIÓN DERECHA */}
@@ -296,6 +292,7 @@ const Auth: React.FC = () => {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value.trim())}
                       autoComplete="current-password"
+                      maxLength={20}
                       required
                     />
                     <button 
@@ -303,7 +300,7 @@ const Auth: React.FC = () => {
                       className="password-toggle"
                       onClick={() => setShowLoginPass(!showLoginPass)}
                     >
-                      {showLoginPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showLoginPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -371,13 +368,14 @@ const Auth: React.FC = () => {
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       autoComplete="new-password"
+                      maxLength={20}
                     />
                     <button 
                       type="button" 
                       className="password-toggle"
                       onClick={() => setShowRegPass(!showRegPass)}
                     >
-                      {showRegPass ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -392,13 +390,14 @@ const Auth: React.FC = () => {
                       value={regConfirm}
                       onChange={(e) => setRegConfirm(e.target.value)}
                       autoComplete="new-password"
+                      maxLength={20}
                     />
                     <button 
                       type="button" 
                       className="password-toggle"
                       onClick={() => setShowRegConfirm(!showRegConfirm)}
                     >
-                      {showRegConfirm ? <EyeOffIcon /> : <EyeIcon />}
+                      {showRegConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>

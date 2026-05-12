@@ -3,6 +3,7 @@ import { api } from '../../../services/api';
 import Swal from 'sweetalert2';
 import { useAuth } from '../../context/AuthContext';
 
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
 interface UserModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -53,9 +54,19 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
         try {
             let result;
             if (isEditing && userToEdit.id) {
-                result = await api.updateUser(userToEdit.id, formData);
+                result = await api.updateUser(userToEdit.id, {
+                    ...formData,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password?.trim() || ''
+                });
             } else {
-                result = await api.createUser(formData);
+                result = await api.createUser({
+                    ...formData,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    password: formData.password?.trim() || ''
+                });
             }
             onSuccess(result);
             onClose();

@@ -2,12 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
 import Swal from 'sweetalert2'
 import './AdminPrecios.css'
+import { Price, Product } from '../../../types'
+
+interface MergedPrice extends Price {
+    productName?: string
+    productIcon?: string
+    unit?: string
+}
 
 const AdminPrecios = () => {
-    const [prices, setPrices] = useState<any[]>([])
+    const [prices, setPrices] = useState<MergedPrice[]>([])
     const [loading, setLoading] = useState(true)
     const [showEditModal, setShowEditModal] = useState(false)
-    const [selectedPrice, setSelectedPrice] = useState<any>(null)
+    const [selectedPrice, setSelectedPrice] = useState<MergedPrice | null>(null)
     const [newPriceValue, setNewPriceValue] = useState<string>('')
 
     useEffect(() => {
@@ -23,8 +30,8 @@ const AdminPrecios = () => {
             ])
 
             // Combinar datos del producto (icono, nombre, unidad) en los registros de precios
-            const mergedPrices = pricesData.map((p: any) => {
-                const product = productsData.find((prod: any) => prod.id === p.productId) as any
+            const mergedPrices = pricesData.map((p: Price) => {
+                const product = productsData.find((prod: Product) => prod.id === p.productId)
                 return {
                     ...p,
                     productName: product?.nombre || 'Producto desconocido',
@@ -42,7 +49,7 @@ const AdminPrecios = () => {
         }
     }
 
-    const handleEditClick = (priceItem: any) => {
+    const handleEditClick = (priceItem: MergedPrice) => {
         setSelectedPrice(priceItem)
         setNewPriceValue(priceItem.price.toString())
         setShowEditModal(true)
