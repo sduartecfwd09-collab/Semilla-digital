@@ -1658,6 +1658,46 @@
       ],
       "provincia": "Cartago",
       "direccionPuesto": ""
+    },
+    {
+      "userId": "fQR2eJPFWf8",
+      "nombre": "Piña",
+      "emoji": "🍍",
+      "descripcion": "",
+      "categoria": "Frutas",
+      "imagen": "",
+      "disponible": true,
+      "unidad": "Unidad",
+      "precios": [
+        {
+          "feriaId": "7",
+          "feriaNombre": "Feria Esparza",
+          "provincia": "Puntarenas",
+          "precio": 750
+        }
+      ],
+      "direccionPuesto": "",
+      "id": "qnBb8SZkvJ0"
+    },
+    {
+      "userId": "fQR2eJPFWf8",
+      "nombre": "Miel de Abeja",
+      "emoji": "🍯",
+      "descripcion": "",
+      "categoria": "Otros",
+      "imagen": "",
+      "disponible": true,
+      "unidad": "Botella",
+      "precios": [
+        {
+          "feriaId": "7",
+          "feriaNombre": "Feria Esparza",
+          "provincia": "Puntarenas",
+          "precio": 1100
+        }
+      ],
+      "direccionPuesto": "",
+      "id": "LfCYRCdQGV8"
     }
   ],
   "solicitudesCambioRol": [
@@ -2409,7 +2449,8 @@
       "redesSociales": "",
       "fechaRegistro": "2026-03-31T03:45:10.044Z"
     }
-  ],  "contactMessages": [
+  ],
+  "contactMessages": [
     {
       "id": "f9a8",
       "nombre": "Rocío Duran",
@@ -2465,5 +2506,6 @@
       "fechaRespuesta": "2026-03-31T03:53:57.315Z",
       "estado": "Respondido"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
