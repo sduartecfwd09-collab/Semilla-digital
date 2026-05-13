@@ -1,0 +1,29 @@
+Composición y Funcionamiento de la Calculadora de Márgenes
+
+Ubicación del código:
+src/components/Agricultor/Ganancias/Ganancias.tsx (Líneas 353-423)
+
+1. Composición Técnica:
+   - Framework: React (TypeScript).
+   - Estado Local (Hooks): 
+     * useState: Para gestionar los costos ingresados (costos), la lista de productos (productos) y el estado de carga (loading).
+     * useEffect: Para la recuperación inicial de datos desde el servidor y la persistencia local.
+   - Componentes UI:
+     * Una tabla interactiva (HTML <table>) que despliega los productos del agricultor.
+     * Inputs de tipo numérico para la entrada de costos estimados.
+     * Badges (etiquetas) de colores que indican la salud del margen (excelente, bueno, bajo).
+   - Iconografía: Utiliza la librería 'lucide-react' (icono Calculator).
+   - Estilos: Definidos en 'Ganancias.css'.
+
+2. Funcionamiento Lógico:
+   - Persistencia: Los costos ingresados se guardan automáticamente en el 'localStorage' del navegador, vinculados al ID del usuario (costos_${user.id}), para que no se pierdan al recargar la página.
+   - Lógica de Cálculo:
+     * Ganancia Neta: Se obtiene restando el Costo Estimado (ingresado por el usuario) al Precio de Venta (proveniente de la base de datos).
+     * Margen (%): Se calcula como (Ganancia / Precio de Venta) * 100.
+   - Reactividad: Al cambiar un costo en el input, React recalcula instantáneamente los valores de toda la tabla y actualiza los gráficos (Barras/Pastel) superiores.
+   - Formateo: Utiliza 'Intl.NumberFormat' para mostrar los montos en moneda local (Colones costarricenses - CRC).
+
+3. Interacción del Usuario:
+   - El usuario visualiza sus productos activos.
+   - Introduce el costo de producción en la columna "Costo Estimado".
+   - El sistema responde visualmente cambiando el color del margen (Verde para excelente, Naranja para bueno, Rojo/Gris para bajo) y actualizando la "Ganancia Neta".

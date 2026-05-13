@@ -197,8 +197,12 @@ const Navbar: React.FC = () => {
         )}
 
         {user && (
-          <li>
-            <Link to="/perfil" className={`navbar-link ${isActive('/perfil') ? 'active' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <li className="navbar-item-perfil" style={{ zIndex: 110 }}>
+            <Link 
+              to="/perfil" 
+              className={`navbar-link ${location.pathname === '/perfil' ? 'active' : ''}`} 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+            >
               <div className="navbar-avatar-mini" style={{
                 width: '28px',
                 height: '28px',
@@ -210,12 +214,14 @@ const Navbar: React.FC = () => {
                 fontSize: '12px',
                 fontWeight: 'bold',
                 overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.3)'
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white',
+                pointerEvents: 'none'
               }}>
                 {user.avatar ? (
                   <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  user.name ? user.name.charAt(0).toUpperCase() : 'U'
+                  (user.name || user.nombre || 'U').charAt(0).toUpperCase()
                 )}
               </div>
               Perfil
