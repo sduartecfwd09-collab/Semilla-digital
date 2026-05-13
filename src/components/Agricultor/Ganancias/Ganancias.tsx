@@ -1,12 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  ArcElement,
-  Chart as ChartJS,
-  Legend,
-  Tooltip,
-  type ChartData,
-  type ChartOptions,
-} from "chart.js";
 import { BarChart3, Calculator, PieChart } from "lucide-react";
 import { Pie } from "react-chartjs-2";
 import { useAuth } from "../../context/AuthContext";
@@ -15,30 +7,15 @@ import AgricultorSidebar from "../../adminAgricultor/AgricultorSidebar";
 import AdminHeader from "../../adminAgricultor/AgricultorHeader";
 import Navbar from "../../Navbar/Navbar";
 import Footer from "../../Footer/Footer";
+import {
+  chartColors,
+  currencyFormatter,
+  getPieChartData,
+  getPieChartOptions,
+  type CostosData,
+} from "./GananciasConfig";
 import "./Ganancias.css";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-interface CostosData {
-  [productoNombre: string]: number;
-}
-
-const chartColors = [
-  "#2f8f46",
-  "#6b8f3d",
-  "#b7791f",
-  "#4f7f6f",
-  "#8a6f35",
-  "#2f6f3e",
-  "#9a6b2f",
-  "#5f7f42",
-];
-
-const currencyFormatter = new Intl.NumberFormat("es-CR", {
-  style: "currency",
-  currency: "CRC",
-  maximumFractionDigits: 0,
-});
 
 const Ganancias: React.FC = () => {
   const { user } = useAuth();
@@ -47,9 +24,8 @@ const Ganancias: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState<"bar" | "pie">(() => {
     return (
-      (localStorage.getItem("agromap_ganancias_chart_type") as
-        | "bar"
-        | "pie") || "bar"
+      (localStorage.getItem("agromap_ganancias_chart_type") as "bar" | "pie") ||
+      "bar"
     );
   });
 
@@ -130,56 +106,7 @@ const Ganancias: React.FC = () => {
       : 0;
   const hasPieData = chartData.some((d) => d.ganancia > 0);
 
-  const pieChartData: ChartData<"pie", number[], string> = {
-    labels: chartData.map((d) => d.nombre),
-    datasets: [
-      {
-        data: chartData.map((d) => d.ganancia),
-        backgroundColor: chartData.map(
-          (_, i) => chartColors[i % chartColors.length],
-        ),
-        borderColor: "#ffffff",
-        borderWidth: 4,
-        hoverBorderColor: "#f7f3ea",
-        hoverOffset: 10,
-      },
-    ],
-  };
 
-  const pieChartOptions: ChartOptions<"pie"> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: "70%",
-    animation: {
-      animateRotate: true,
-      animateScale: true,
-      duration: 900,
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: "#17351f",
-        titleColor: "#ffffff",
-        bodyColor: "#ffffff",
-        borderColor: "#d8c7a3",
-        borderWidth: 1,
-        padding: 12,
-        displayColors: true,
-        callbacks: {
-          label: (context) => {
-            const value = context.parsed || 0;
-            const percent =
-              totalGananciaEstimada > 0
-                ? (value / totalGananciaEstimada) * 100
-                : 0;
-            return ` ${currencyFormatter.format(value)} (${percent.toFixed(1)}%)`;
-          },
-        },
-      },
-    },
-  };
 
   return (
     <>
@@ -306,7 +233,10 @@ const Ganancias: React.FC = () => {
                       <div className="pie-chart-container">
                         {hasPieData ? (
                           <>
-                            <Pie data={pieChartData} options={pieChartOptions} />
+                            <Pie
+                              data={getPieChartData(chartData)}
+                              options={getPieChartOptions(totalGananciaEstimada)}
+                            />
                             <div className="pie-chart-center">
                               <span>Total</span>
                               <strong>
@@ -393,10 +323,7 @@ const Ganancias: React.FC = () => {
                                   className="costo-input"
                                   value={costos[d.nombre] || ""}
                                   onChange={(e) =>
-                                    handleCostoChange(
-                                      d.nombre,
-                                      e.target.value,
-                                    )
+                                    handleCostoChange(d.nombre, e.target.value)
                                   }
                                   placeholder="Ej: 500"
                                   min="0"
