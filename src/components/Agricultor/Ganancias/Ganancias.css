@@ -1,11 +1,12 @@
 .ganancias-page {
-  padding: 1.5rem;
+  padding: 1.5rem 0;
   color: #263323;
+  margin: 0 -1rem; /* Expand into parent padding */
 }
 
 .ganancias-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -13,11 +14,16 @@
 .ganancias-stat-card {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #fbf8ef 100%);
+  background: #fbf8ef;
   border: 1px solid #e4dcc7;
   border-radius: 0.5rem;
-  padding: 1.35rem;
-  box-shadow: 0 0.45rem 1.25rem rgba(47, 76, 48, 0.08);
+  padding: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.ganancias-stat-card:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
 }
 
 .ganancias-stat-card::before {
@@ -63,8 +69,8 @@
   background: #ffffff;
   border-radius: 0.5rem;
   border: 1px solid #e6decc;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
   box-shadow: 0 0.65rem 1.75rem rgba(47, 76, 48, 0.07);
 }
 
@@ -96,7 +102,7 @@
   font-size: 0.95rem;
   color: #5d6b55;
   margin: 0;
-  max-width: 28rem;
+  max-width: 100%;
 }
 
 .chart-toggle-group {
@@ -239,10 +245,10 @@
 
 .pie-chart-container {
   position: relative;
-  height: 20rem;
-  max-width: 22rem;
+  height: 22rem;
+  max-width: 100%;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .pie-chart-center {
@@ -344,28 +350,58 @@
   border-radius: 0.5rem;
 }
 
+/* Balanced column distribution to ensure uniform cell sizes */
 .ganancias-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   background: #ffffff;
+  table-layout: fixed; /* Force fixed widths for balance */
 }
 
+.ganancias-table th,
+.ganancias-table td {
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid #efe7d5;
+  vertical-align: middle;
+  color: #263323;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Define proportional widths for all columns */
+.ganancias-table th:nth-child(1) { width: 13%; } /* Producto */
+.ganancias-table th:nth-child(2) { width: 13%; } /* Precio Venta */
+.ganancias-table th:nth-child(3) { width: 12%; } /* Cantidad */
+.ganancias-table th:nth-child(4) { width: 15%; } /* Costo Estimado */
+.ganancias-table th:nth-child(5) { width: 13%; } /* Ganancia Unidad */
+.ganancias-table th:nth-child(6) { width: 12%; } /* Total Bruto */
+.ganancias-table th:nth-child(7) { width: 12%; } /* Total Neto */
+.ganancias-table th:nth-child(8) { width: 10%; } /* Margen (%) */
+
 .ganancias-table th {
-  padding: 1rem;
-  font-size: 0.84rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  color: #5d6b55;
-  background: #fbf8ef;
-  border-bottom: 1px solid #e6decc;
-  white-space: nowrap;
+  color: #17351f;
+  background: #f1ede1;
+  border-bottom: 2px solid #d8c7a3;
+  text-transform: uppercase;
+  letter-spacing: 0.01rem;
+  white-space: normal; /* Allow titles to wrap if needed in fixed layout */
+  line-height: 1.2;
 }
 
 .ganancias-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #f2ead9;
-  vertical-align: middle;
-  color: #263323;
+  white-space: nowrap;
+}
+
+.ganancias-table td:first-child {
+  white-space: normal;
+}
+
+.ganancias-table tbody tr:nth-child(even) {
+  background: #fdfbf7;
 }
 
 .ganancias-table tbody tr:last-child td {
@@ -373,7 +409,8 @@
 }
 
 .ganancias-table tr:hover td {
-  background: #fffdf8;
+  background: #f7f3ea;
+  transition: background 0.15s;
 }
 
 .product-cell {
@@ -388,30 +425,34 @@
 }
 
 .costo-input-wrapper {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  min-height: 2.35rem;
-  padding: 0 0.45rem;
+  gap: 0.2rem;
+  min-height: 2.1rem;
+  padding: 0 0.4rem;
   border: 1px solid #d8c7a3;
-  border-radius: 0.45rem;
-  background: #fffdf8;
-  color: #5d6b55;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  color: #2f8f46;
   font-weight: 800;
+  transition: all 0.2s ease;
+  width: 100%; /* Fill the cell */
 }
 
 .costo-input {
-  width: 6.5rem;
-  padding: 0.45rem 0.25rem;
+  width: 100%;
+  padding: 0.3rem 0;
   border: 0;
   background: transparent;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   color: #17351f;
 }
 
 .costo-input:focus {
   outline: none;
+  border-color: #2f8f46;
+  box-shadow: 0 0 0 2px rgba(47,143,70,0.2);
 }
 
 .costo-input-wrapper:focus-within {
@@ -431,7 +472,7 @@
 .margen-badge {
   padding: 0.38rem 0.65rem;
   border-radius: 2rem;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 900;
   display: inline-block;
   white-space: nowrap;
@@ -503,5 +544,183 @@
   .ganancias-table th,
   .ganancias-table td {
     padding: 0.85rem;
+  }
+}
+
+/* ── New styles: projections, exports, escenarios, alignment ── */
+
+.ganancias-stat-projected {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Specific column alignments to ensure headers and data stay in line */
+.ganancias-table th:nth-child(2),
+.ganancias-table td:nth-child(2),
+.ganancias-table th:nth-child(5),
+.ganancias-table td:nth-child(5),
+.ganancias-table th:nth-child(6),
+.ganancias-table td:nth-child(6),
+.ganancias-table th:nth-child(7),
+.ganancias-table td:nth-child(7) {
+  text-align: right !important;
+}
+
+.ganancias-table th:nth-child(3),
+.ganancias-table td:nth-child(3),
+.ganancias-table th:nth-child(4),
+.ganancias-table td:nth-child(4),
+.ganancias-table th:nth-child(8),
+.ganancias-table td:nth-child(8) {
+  text-align: center !important;
+}
+
+.ganancias-table th:nth-child(1),
+.ganancias-table td:nth-child(1) {
+  text-align: left !important;
+}
+
+.export-btn {
+  background: #fff;
+  border: 1px solid #2f8f46;
+  color: #2f8f46;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.export-btn:hover {
+  background: #f0faf3;
+}
+
+.escenarios-panel {
+  margin-bottom: 16px;
+}
+
+.escenarios-toggle {
+  background: none;
+  border: 1px solid #d8c7a3;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a3f2f;
+  width: 100%;
+  text-align: left;
+}
+
+.escenarios-toggle:hover {
+  background: #faf8f3;
+}
+
+.escenarios-content {
+  padding: 16px;
+  background: #faf8f3;
+  border: 1px solid #e8dfc8;
+  border-radius: 0 0 8px 8px;
+  margin-top: -1px;
+}
+
+.escenario-save-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.escenario-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #d0c8b0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.escenario-input:focus {
+  border-color: #2f8f46;
+  outline: none;
+}
+
+.escenarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.escenario-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #e0d8c0;
+  border-radius: 8px;
+}
+
+.escenario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.escenario-info span {
+  font-size: 12px;
+  color: #888;
+}
+
+.escenario-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.escenario-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.escenario-btn.save {
+  background: #2f8f46;
+  color: #fff;
+}
+
+.escenario-btn.save:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.escenario-btn.load {
+  background: #e8f5ec;
+  color: #2f8f46;
+}
+
+.escenario-btn.delete {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.escenarios-empty {
+  color: #aaa;
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+@media (max-width: 768px) {
+  .ganancias-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .ganancias-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
