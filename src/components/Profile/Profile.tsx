@@ -23,6 +23,7 @@ const Profile: React.FC = () => {
   const [userData, setUserData] = useState({
     id: '',
     name: '',
+    nombre: '',
     email: '',
     role: '',
     status: '',
@@ -57,7 +58,8 @@ const Profile: React.FC = () => {
       .then(data => {
         const userInfo = {
           id: data.id,
-          name: data.name,
+          name: data.name || data.nombre || '',
+          nombre: data.nombre || data.name || '',
           email: data.email,
           role: data.role,
           status: data.status,
