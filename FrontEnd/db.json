@@ -2506,6 +2506,5 @@
       "fechaRespuesta": "2026-03-31T03:53:57.315Z",
       "estado": "Respondido"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }
