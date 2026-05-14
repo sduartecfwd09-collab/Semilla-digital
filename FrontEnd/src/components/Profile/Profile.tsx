@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import { validateEmail } from '../../utils/validation';
-import { ENDPOINTS } from '../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import './Profile.css';
@@ -53,7 +53,7 @@ const Profile: React.FC = () => {
     if (!currentId) return;
 
     // Fetch fresh data from server
-    fetch(`${ENDPOINTS.usuarios}/${currentId}`)
+    authFetch(`${ENDPOINTS.usuarios}/${currentId}`)
       .then(res => res.json())
       .then(data => {
         const userInfo = {
@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
         setUserData(userInfo);
         setOriginalData({...userInfo});
         
-        return fetch(ENDPOINTS.solicitudesCambioRol);
+        return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
       .then(res => res?.json())
       .then(allRequests => {
@@ -176,7 +176,7 @@ const Profile: React.FC = () => {
 
     try {
       // Verificar si el correo ya está en uso por OTRO usuario
-      const usersRes = await fetch(ENDPOINTS.usuarios);
+      const usersRes = await authFetch(ENDPOINTS.usuarios);
       const allUsers = await usersRes.json();
       const emailExists = allUsers.some((u: { email: string; id: string }) => u.email === userData.email && u.id !== userData.id);
 
@@ -190,7 +190,7 @@ const Profile: React.FC = () => {
         return;
       }
 
-      const fullUserResponse = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const fullUserResponse = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
       const fullUserData = await fullUserResponse.json();
 
       const updatedData = {
@@ -200,7 +200,7 @@ const Profile: React.FC = () => {
         password: trimmedPassword,
       };
 
-      const response = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
+      const response = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData)
@@ -257,7 +257,7 @@ const Profile: React.FC = () => {
         updateUserInContext({ avatar: base64Image });
         
         // Guardamos en el servidor
-        await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
+        await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ avatar: base64Image })
@@ -302,7 +302,7 @@ const Profile: React.FC = () => {
           fechaSolicitud: new Date().toISOString()
         };
 
-        const response = await fetch(ENDPOINTS.solicitudesCambioRol, {
+        const response = await authFetch(ENDPOINTS.solicitudesCambioRol, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newRequest)
@@ -349,18 +349,18 @@ const Profile: React.FC = () => {
     if (isConfirmed) {
       try {
         // Borrar la solicitud de cambio de rol
-        await fetch(`${ENDPOINTS.solicitudesCambioRol}/${requestId}`, {
+        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${requestId}`, {
           method: 'DELETE',
         });
 
         // Borrar la información del puesto asociado (puestosAgricultor)
-        const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+        const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
         const todosPuestos = await puestosRes.json();
         const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
         
         // Elimar todos sus puestos (normalmente debería ser solo uno)
         await Promise.all(misPuestos.map((p: any) => 
-          fetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
+          authFetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
         ));
         
         setRequestStatus(null);
@@ -386,9 +386,9 @@ const Profile: React.FC = () => {
       
       // Obtener datos del puesto solicitado y la feria asignada
       const [userRes, puestosRes, feriasRes] = await Promise.all([
-        fetch(`${ENDPOINTS.usuarios}/${userData.id}`),
-        fetch(ENDPOINTS.puestosAgricultor),
-        fetch(ENDPOINTS.ferias)
+        authFetch(`${ENDPOINTS.usuarios}/${userData.id}`),
+        authFetch(ENDPOINTS.puestosAgricultor),
+        authFetch(ENDPOINTS.ferias)
       ]);
       
       const currentFullUser = await userRes.json();
@@ -415,13 +415,13 @@ const Profile: React.FC = () => {
         }
       }
 
-      await fetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
+      await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'Agricultor' })
       });
 
-      const updatedUserRes = await fetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const updatedUserRes = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
       const updatedUserData = await updatedUserRes.json();
       localStorage.setItem('user', JSON.stringify(updatedUserData));
 

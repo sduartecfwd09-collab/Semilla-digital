@@ -7,5 +7,22 @@ export const ENDPOINTS = {
   solicitudesCambioRol: `${API_BASE_URL}/solicitudesCambioRol`,
   puestosAgricultor: `${API_BASE_URL}/puestosAgricultor`,
   productos: `${API_BASE_URL}/productos`,
-  contactMessages: `${API_BASE_URL}/contactMessages`
+  contactMessages: `${API_BASE_URL}/contactMessages`,
+  authLogin: `${API_BASE_URL}/auth/login`,
+  authRegister: `${API_BASE_URL}/auth/register`
+};
+
+export const authFetch = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('token');
+  const headers = new Headers(options.headers);
+  
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+  
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  return fetch(url, { ...options, headers });
 };

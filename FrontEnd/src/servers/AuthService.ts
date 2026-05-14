@@ -31,8 +31,8 @@ export const register = async (data: RegisterData): Promise<User> => {
   const newUser = {
     email: data.email,
     password: data.password,
-    role: 'admin_feriante',
-    nombre: data.nombre,
+    role: 'Agricultor',
+    name: data.nombre,
     feriaId: data.feriaId,
     puestoInfo: {
       numero: data.puestoNumero,
@@ -40,26 +40,30 @@ export const register = async (data: RegisterData): Promise<User> => {
     },
   }
 
-  const response = await fetch(`${BASE_URL}/usuarios`, {
+  const response = await fetch(`${API_BASE_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newUser),
   })
 
+  if (response.status === 409) {
+    throw new Error('EmailAlreadyExists')
+  }
+
   if (!response.ok) {
     throw new Error('Error al registrar usuario')
   }
 
-  return response.json()
+  const result = await response.json();
+  return result.user || result;
 }
 
 /**
- * Verifica si un email ya existe
+ * Verifica si un email ya existe (Mock para compatibilidad)
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
-  const response = await fetch(`${BASE_URL}/usuarios?email=${email}`)
-  const users = await response.json()
-  return users.length > 0
+  // El backend maneja esto directamente en el endpoint /auth/register devolviendo 409
+  return false;
 }
 
 /**

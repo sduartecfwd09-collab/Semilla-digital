@@ -6,12 +6,20 @@ const API_URL = API_BASE_URL;
 export const api = {
     // Envoltorio genérico para peticiones fetch
     async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+        const token = localStorage.getItem('token');
+        const headers = new Headers(options.headers);
+
+        if (!headers.has('Content-Type')) {
+            headers.set('Content-Type', 'application/json');
+        }
+
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+
         const response = await fetch(`${API_URL}${endpoint}`, {
             ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers,
         });
         if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
         return response.json();

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../../services/api'
-import { ENDPOINTS } from '../../../services/api.config'
+import { ENDPOINTS, authFetch } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
 import { normalizeProductName } from '../../../utils/productCatalog'
 import './AdminDashboard.css'
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
             // Obtener solicitudes reales para el contador de pendientes
             let pendingCount = 0;
             try {
-                const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
+                const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
                 if (solRes.ok) {
                     const solicitudes = await solRes.json();
                     pendingCount = solicitudes.filter((s: any) => s.estado === 'Pendiente').length;
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
             let contactosCount = 0;
             let pendingContactosCount = 0;
             try {
-                const contactRes = await fetch(ENDPOINTS.contactMessages);
+                const contactRes = await authFetch(ENDPOINTS.contactMessages);
                 if (contactRes.ok) {
                     const contactos = await contactRes.json();
                     contactosCount = contactos.length;

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api.config'
+import { API_BASE_URL, authFetch } from '../services/api.config'
 
 const BASE_URL = API_BASE_URL
 
@@ -26,7 +26,7 @@ export interface Producto {
  * Obtiene todos los productos de un usuario específico
  */
 export const getProductosByUser = async (userId: string | number): Promise<Producto[]> => {
-  const response = await fetch(`${BASE_URL}/productos?userId=${userId}`)
+  const response = await authFetch(`${BASE_URL}/productos?userId=${userId}`)
   if (!response.ok) {
     throw new Error('Error al obtener productos')
   }
@@ -37,7 +37,7 @@ export const getProductosByUser = async (userId: string | number): Promise<Produ
  * Crea un nuevo producto para un usuario
  */
 export const createProducto = async (producto: Producto): Promise<Producto> => {
-  const response = await fetch(`${BASE_URL}/productos`, {
+  const response = await authFetch(`${BASE_URL}/productos`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(producto),
@@ -54,7 +54,7 @@ export const createProducto = async (producto: Producto): Promise<Producto> => {
  * Actualiza un producto existente
  */
 export const updateProducto = async (id: string | number, producto: Producto): Promise<Producto> => {
-  const response = await fetch(`${BASE_URL}/productos/${id}`, {
+  const response = await authFetch(`${BASE_URL}/productos/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(producto),
@@ -71,7 +71,7 @@ export const updateProducto = async (id: string | number, producto: Producto): P
  * Actualiza parcialmente un producto
  */
 export const patchProducto = async (id: string | number, updates: Partial<Producto>): Promise<Producto> => {
-  const response = await fetch(`${BASE_URL}/productos/${id}`, {
+  const response = await authFetch(`${BASE_URL}/productos/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
@@ -88,7 +88,7 @@ export const patchProducto = async (id: string | number, updates: Partial<Produc
  * Elimina un producto
  */
 export const deleteProducto = async (id: string | number): Promise<void> => {
-  const response = await fetch(`${BASE_URL}/productos/${id}`, {
+  const response = await authFetch(`${BASE_URL}/productos/${id}`, {
     method: 'DELETE',
   })
 
@@ -101,7 +101,7 @@ export const deleteProducto = async (id: string | number): Promise<void> => {
  * Obtiene un producto por ID
  */
 export const getProductoById = async (id: string | number): Promise<Producto> => {
-  const response = await fetch(`${BASE_URL}/productos/${id}`)
+  const response = await authFetch(`${BASE_URL}/productos/${id}`)
   
   if (!response.ok) {
     throw new Error('Producto no encontrado')

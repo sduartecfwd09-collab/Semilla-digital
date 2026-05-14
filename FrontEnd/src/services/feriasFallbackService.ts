@@ -11,13 +11,13 @@ export const fetchFeriasFallback = async (): Promise<Feria[]> => {
     if (!response.ok) throw new Error("Error fetching fallback ferias");
     const data = await response.json();
 
-    return data.map((item: { id: string | number; name: string; location: string; province: string; schedule: string }) => ({
+    return data.map((item: any) => ({
       id: String(item.id),
-      nombre: item.name,
-      direccion: item.location,
-      provincia: item.province,
-      dias: item.schedule.split(",")[0] || "No especificado",
-      horario: item.schedule.split(",")[1]?.trim() || "No especificado",
+      nombre: item.nombre || item.name || "Feria sin nombre",
+      direccion: item.direccion || item.location || "Ubicación no especificada",
+      provincia: item.provincia || item.province || "Otras",
+      dias: item.dias || (item.schedule && item.schedule.split(',')[0]) || "No especificado",
+      horario: item.horario || (item.schedule && item.schedule.split(',')[1]?.trim()) || "No especificado",
       source: "fallback",
     }));
   } catch (error) {

@@ -138,23 +138,7 @@ const Auth: React.FC = () => {
     }
 
     try {
-      // Verificamos si el correo ya existe (para evitar duplicados)
-      const resCheck = await fetch(`${ENDPOINTS.usuarios}`)
-      const allUsers = await resCheck.json()
-      
-      const emailExists = allUsers.some((u: { email: string }) => u.email.toLowerCase() === trimmedEmail.toLowerCase())
-      if (emailExists) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Correo en uso',
-          text: 'Ya existe una cuenta registrada con este correo electrónico.',
-          confirmButtonColor: 'var(--verde-claro)',
-        })
-        return
-      }
-
-      // Creamos el nuevo usuario
-      const response = await fetch(`${ENDPOINTS.usuarios}`, {
+      const response = await fetch(`${ENDPOINTS.authRegister}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -175,8 +159,22 @@ const Auth: React.FC = () => {
           timer: 2500,
           showConfirmButton: false,
         }).then(() => {
-          // Redirigir al formulario de login (cambiando el estado isLogin a true)
           setIsLogin(true)
+        })
+      } else if (response.status === 409) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Correo en uso',
+          text: 'Ya existe una cuenta registrada con este correo electrónico.',
+          confirmButtonColor: 'var(--verde-claro)',
+        })
+      } else {
+        const errorData = await response.json();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de registro',
+          text: errorData.error || 'Hubo un problema al registrar la cuenta.',
+          confirmButtonColor: 'var(--verde-claro)',
         })
       }
     } catch (error) {

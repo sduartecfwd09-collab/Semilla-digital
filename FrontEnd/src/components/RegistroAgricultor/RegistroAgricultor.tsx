@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import './RegistroAgricultor.css';
 import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
-import { ENDPOINTS } from '../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { validateEmail } from '../../utils/validation';
 import ProductIcon from '../../utils/productIcons';
 import CategoryIcon from '../CategoryIcon/CategoryIcon';
@@ -91,7 +91,7 @@ const RegistroAgricultor: React.FC = () => {
       try {
         setLoading(true);
         // Cargar ferias y deduplicar
-        const feriasRes = await fetch(ENDPOINTS.ferias);
+        const feriasRes = await authFetch(ENDPOINTS.ferias);
         const dataFerias = await feriasRes.json();
         
         // Deduplicar ferias por nombre para evitar repeticiones visuales
@@ -107,7 +107,7 @@ const RegistroAgricultor: React.FC = () => {
           }
   
           // Buscar puesto existente
-          const puestoRes = await fetch(ENDPOINTS.puestosAgricultor);
+          const puestoRes = await authFetch(ENDPOINTS.puestosAgricultor);
           const todosPuestos = await puestoRes.json();
           const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
   
@@ -130,7 +130,7 @@ const RegistroAgricultor: React.FC = () => {
           }
   
           // Buscar solicitud pendiente
-          const solRes = await fetch(ENDPOINTS.solicitudesCambioRol);
+          const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
           const todasSolicitudes = await solRes.json();
           const misSolicitudes = todasSolicitudes.filter(
             (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
@@ -293,7 +293,7 @@ const RegistroAgricultor: React.FC = () => {
 
       if (puestoId) {
         // Actualizar puesto existente
-        const puestoRes = await fetch(`${ENDPOINTS.puestosAgricultor}/${puestoId}`, {
+        const puestoRes = await authFetch(`${ENDPOINTS.puestosAgricultor}/${puestoId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(puestoData)
@@ -301,7 +301,7 @@ const RegistroAgricultor: React.FC = () => {
         if (!puestoRes.ok) throw new Error('Error al actualizar puesto');
       } else {
         // Crear puesto nuevo
-        const puestoRes = await fetch(ENDPOINTS.puestosAgricultor, {
+        const puestoRes = await authFetch(ENDPOINTS.puestosAgricultor, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(puestoData)
@@ -337,7 +337,7 @@ const RegistroAgricultor: React.FC = () => {
           fechaSolicitud: new Date().toISOString()
         };
   
-        const solRes = await fetch(ENDPOINTS.solicitudesCambioRol, {
+        const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(solicitudData)
@@ -350,7 +350,7 @@ const RegistroAgricultor: React.FC = () => {
       } else {
         // Si ya existía una solicitud (modo edición), nos aseguramos de que esté en Pendiente
         // y actualizamos sus datos básicos
-        const solRes = await fetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitudId}`, {
+        const solRes = await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitudId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

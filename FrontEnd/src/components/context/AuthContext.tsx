@@ -60,23 +60,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
     try {
-      // Normalizamos el email para la búsqueda
+      setIsLoading(true);
       const targetEmail = email.toLowerCase().trim()
       const targetPassword = password.trim()
 
-      // Obtenemos todos los usuarios para filtrar manualmente (más fiable que los query params)
-      const response = await fetch(ENDPOINTS.usuarios)
+      const response = await fetch(ENDPOINTS.authLogin, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: targetEmail, password: targetPassword })
+      });
+
       if (!response.ok) return { success: false }
       
-      const allUsers = await response.json()
+      const authData = await response.json()
       
-      // Buscamos un usuario que coincida (email ignorando mayúsculas)
-      const authenticatedUser = allUsers.find((u: any) => 
-        u.email.toLowerCase() === targetEmail && 
-        u.password === targetPassword
-      )
-
-      if (authenticatedUser) {
+      if (authData.token && authData.user) {
+        const authenticatedUser = authData.user;
         // Guardar en estado y localStorage (sin password por seguridad)
         const userToStore: User = {
           id: String(authenticatedUser.id),
@@ -91,9 +90,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userToStore)
         localStorage.setItem('user', JSON.stringify(userToStore))
+        localStorage.setItem('token', authData.token)
         return { success: true, role: authenticatedUser.role }
       }
       return { success: false }
+    } catch (error) {
+      console.error('Error en login:', error);
+      return { success: false };
     } finally {
       setIsLoading(false)
     }

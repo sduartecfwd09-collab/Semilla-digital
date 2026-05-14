@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { ENDPOINTS } from '../../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../../services/api.config';
 import '../AdminUsuarios/AdminUsuarios.css'; // Reutilizamos estilos
 
 interface Solicitud {
@@ -32,8 +32,8 @@ const AdminSolicitudes: React.FC = () => {
     try {
       setLoading(true);
       const [solRes, userRes] = await Promise.all([
-        fetch(ENDPOINTS.solicitudesCambioRol),
-        fetch(ENDPOINTS.usuarios)
+        authFetch(ENDPOINTS.solicitudesCambioRol),
+        authFetch(ENDPOINTS.usuarios)
       ]);
       
       const solData: Solicitud[] = await solRes.json();
@@ -103,7 +103,7 @@ const AdminSolicitudes: React.FC = () => {
 
     try {
       // 1. Actualizar la solicitud con estado, motivo y fecha de respuesta
-      await fetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}`, {
+      await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,12 +116,12 @@ const AdminSolicitudes: React.FC = () => {
       // 2. Si es aprobada, asignar la feria automáticamente al usuario desde su puesto
       if (nuevoEstado === 'Aprobada' && solicitud.usuarioId) {
         try {
-          const puestosRes = await fetch(ENDPOINTS.puestosAgricultor);
+          const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
           const puestos = await puestosRes.json();
           const miPuesto = puestos.find((p: any) => String(p.usuarioId) === String(solicitud.usuarioId));
           
           if (miPuesto && miPuesto.feriaId) {
-            await fetch(`${ENDPOINTS.usuarios}/${solicitud.usuarioId}`, {
+            await authFetch(`${ENDPOINTS.usuarios}/${solicitud.usuarioId}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ feriaId: miPuesto.feriaId })
@@ -147,7 +147,7 @@ const AdminSolicitudes: React.FC = () => {
           Swal.showLoading();
         }
       });
-      const res = await fetch(`${ENDPOINTS.puestosAgricultor}`);
+      const res = await authFetch(`${ENDPOINTS.puestosAgricultor}`);
       const puestos = await res.json();
       const puestoUsuario = puestos.filter((p: any) => String(p.usuarioId) === String(solicitud.usuarioId)).pop();
 

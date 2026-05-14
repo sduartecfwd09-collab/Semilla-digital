@@ -70,14 +70,6 @@ const RegisterForm: React.FC = () => {
     setLoading(true)
 
     try {
-      // Verificar si el email ya existe
-      const emailExists = await checkEmailExists(formData.email)
-      if (emailExists) {
-        setError('Este email ya está registrado')
-        setLoading(false)
-        return
-      }
-
       // Registrar usuario
       await register({
         email: formData.email,
@@ -96,8 +88,12 @@ const RegisterForm: React.FC = () => {
         // Si por alguna razón falla el login automático, redirigir al login
         navigate('/login', { state: { message: 'Registro exitoso. Inicia sesión para continuar.' } })
       }
-    } catch {
-      setError('Error al registrar usuario. Intenta nuevamente.')
+    } catch (err: any) {
+      if (err.message === 'EmailAlreadyExists') {
+        setError('Este email ya está registrado')
+      } else {
+        setError('Error al registrar usuario. Intenta nuevamente.')
+      }
     } finally {
       setLoading(false)
     }
