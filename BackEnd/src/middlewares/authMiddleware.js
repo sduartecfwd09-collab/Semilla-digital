@@ -7,25 +7,25 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
   try {
+    let token = null;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
+    // 1. Intentar obtener token del header Authorization
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } 
+    // 2. Intentar obtener token de la cookie si no está en el header
+    else if (req.cookies && req.cookies.agromap_token) {
+      token = req.cookies.agromap_token;
+    }
+
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Acceso denegado: no se proporcionó un token de autenticación',
+        message: 'Acceso denegado: no se proporcionó un token de autenticación (Header o Cookie)',
       });
     }
 
-    // Formato esperado: "Bearer <token>"
-    const parts = authHeader.split(' ');
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return res.status(401).json({
-        success: false,
-        message: 'Formato de token inválido. Use: Bearer <token>',
-      });
-    }
-
-    const token = parts[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Adjuntar el payload decodificado a req.user

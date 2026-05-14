@@ -48,4 +48,15 @@ router.use('/proformas',
   require('./proformaRoutes')
 );
 
+// ── RBAC & Auditoría (nuevas rutas) ─────────────────────────────
+router.use('/permisos',
+  verifyToken,
+  require('./permisoRoutes')
+);
+
+router.use('/auditoria',
+  verifyToken,
+  require('./auditRoutes')
+);
+
 module.exports = router;

@@ -35,6 +35,11 @@ const models = {
   RecetaIngrediente: require('./RecetaIngrediente')(sequelize),
   MensajeContacto: require('./MensajeContacto')(sequelize),
   Proforma: require('./Proforma')(sequelize),
+  // ── RBAC & Auditoría (nuevos) ──────────────────────────────
+  Modulo: require('./Modulo')(sequelize),
+  Permiso: require('./Permiso')(sequelize),
+  RolePermiso: require('./RolePermiso')(sequelize),
+  AuditLog: require('./AuditLog')(sequelize),
 };
 
 // Inicialización de asociaciones

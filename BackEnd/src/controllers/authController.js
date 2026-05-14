@@ -3,17 +3,31 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Usuario, Role } = require('../models');
 const { Op } = require('sequelize');
+const permisoService = require('../services/permisoService');
+
 
 const JWT_SECRET  = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '8h';
 
 // Helper: genera el token firmado
-const signToken = (usuario, roleName) =>
-  jwt.sign(
-    { id: usuario.id, email: usuario.email, role: roleName },
+// Helper: genera el token firmado con permisos incluidos
+const signToken = async (usuario, roleName) => {
+  // Obtener permisos del rol para incluirlos en el JWT (optimización)
+  const permisos = await permisoService.getPermisosByRoleId(usuario.roleId);
+  
+  return jwt.sign(
+    { 
+      id: usuario.id, 
+      email: usuario.email, 
+      role: roleName,
+      roleId: usuario.roleId,
+      permisos // Inyectamos el array de claves de permisos
+    },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES }
   );
+};
+
 
 // Helper: usuario sin password
 const safeUser = (usuario, roleName) => {
@@ -51,7 +65,15 @@ const login = async (req, res) => {
     }
 
     const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
-    const token = signToken(usuario, roleName);
+    const token = await signToken(usuario, roleName);
+
+    // Configurar cookie segura
+    res.cookie('agromap_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 8 * 60 * 60 * 1000 // 8 horas
+    });
 
     return res.json({
       token,
@@ -62,6 +84,7 @@ const login = async (req, res) => {
     return res.status(500).json({ error: 'Error en el proceso de login.' });
   }
 };
+
 
 // ── POST /auth/register ───────────────────────────────────────────────────────
 const register = async (req, res) => {
@@ -99,7 +122,15 @@ const register = async (req, res) => {
       puestoInfo: puestoInfo || null,
     });
 
-    const token = signToken(usuario, roleName);
+    const token = await signToken(usuario, roleName);
+
+    // Configurar cookie
+    res.cookie('agromap_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 8 * 60 * 60 * 1000
+    });
 
     return res.status(201).json({
       token,
@@ -110,6 +141,7 @@ const register = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
 
 // ── GET /auth/me ──────────────────────────────────────────────────────────────
 const me = async (req, res) => {

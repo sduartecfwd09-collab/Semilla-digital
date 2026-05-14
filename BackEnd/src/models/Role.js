@@ -31,6 +31,14 @@ module.exports = (sequelize) => {
       foreignKey: "roleId",
       as: "usuarios",
     });
+
+    // RBAC: Un rol tiene muchos permisos (N:M)
+    Role.belongsToMany(models.Permiso, {
+      through: models.RolePermiso,
+      foreignKey: 'role_id',
+      otherKey: 'permiso_id',
+      as: 'permisos',
+    });
   };
 
   return Role;
