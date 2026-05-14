@@ -1,52 +1,79 @@
-'use strict';
+// ============================================================
+// Modelo: Feria
+// Tabla: ferias
+// Descripción: Ferias del agricultor / mercados locales
+// ============================================================
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const Feria = sequelize.define('Feria', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  // El frontend usa tanto 'nombre' como 'name' — guardamos ambos o normalizamos
-  nombre: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El nombre de la feria no puede estar vacío.' },
+module.exports = (sequelize) => {
+  const Feria = sequelize.define('Feria', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  provincia: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'La provincia no puede estar vacía.' },
-      isIn: {
-        args: [['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón', 'Otras']],
-        msg: 'La provincia no es válida.',
+    nombre: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    direccion_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'direcciones',
+        key: 'id',
       },
     },
-  },
-  direccion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  // Días en que opera la feria (ej: "Sábados", "Viernes y Sábados")
-  dias: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    defaultValue: 'Sábados',
-  },
-  // Horario (ej: "05:00 - 13:00")
-  horario: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    defaultValue: '05:00 - 13:00',
-  },
-}, {
-  tableName: 'ferias',
-  timestamps: true,
-});
+    dias: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    horario: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    source: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'ferias',
+    timestamps: true,
+  });
 
-module.exports = Feria;
+  Feria.associate = (models) => {
+    // Una feria tiene una dirección (1:1)
+    Feria.belongsTo(models.Direccion, {
+      foreignKey: 'direccion_id',
+      as: 'direccion',
+    });
+
+    // Una feria tiene muchos usuarios
+    Feria.hasMany(models.Usuario, {
+      foreignKey: 'feria_id',
+      as: 'usuarios',
+    });
+
+    // Una feria tiene muchos puestos (vía tabla intermedia)
+    Feria.belongsToMany(models.PuestoAgricultor, {
+      through: models.PuestoFeria,
+      foreignKey: 'feria_id',
+      otherKey: 'puesto_id',
+      as: 'puestos',
+    });
+
+    // Una feria tiene muchas ofertas de productos
+    Feria.hasMany(models.OfertaProducto, {
+      foreignKey: 'feria_id',
+      as: 'ofertaProductos',
+    });
+
+    // Relación directa con puestos de agricultor
+    Feria.hasMany(models.PuestoAgricultor, {
+      foreignKey: 'feria_id',
+      as: 'puestosDirectos',
+    });
+  };
+
+  return Feria;
+};

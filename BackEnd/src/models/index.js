@@ -1,40 +1,51 @@
 'use strict';
-const sequelize = require('../config/database');
-const Usuario = require('./Usuario');
-const Feria = require('./Feria');
-const PuestoAgricultor = require('./PuestoAgricultor');
-const Producto = require('./Producto');
-const Precio = require('./Precio');
-const Receta = require('./Receta');
-const SolicitudCambioRol = require('./SolicitudCambioRol');
-const ContactMessage = require('./ContactMessage');
+const { Sequelize } = require('sequelize');
+const config = require('../../Config/config'); // Usa la config de Coto
 
-// ── Asociaciones ──────────────────────────────────────────────────────────────
+const env = process.env.NODE_ENV || 'development';
+const dbConfig = config[env];
 
-// Usuario → PuestoAgricultor (1:N)
-Usuario.hasMany(PuestoAgricultor, { foreignKey: 'usuarioId', as: 'puestos', onDelete: 'CASCADE' });
-PuestoAgricultor.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'usuario' });
+const sequelize = new Sequelize(
+  dbConfig.database,
+  dbConfig.username,
+  dbConfig.password,
+  {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    dialect: dbConfig.dialect,
+    logging: dbConfig.logging,
+    define: dbConfig.define,
+  }
+);
 
-// Usuario → Producto (1:N)
-Usuario.hasMany(Producto, { foreignKey: 'userId', as: 'productos', onDelete: 'CASCADE' });
-Producto.belongsTo(Usuario, { foreignKey: 'userId', as: 'usuario' });
+const models = {
+  Role: require('./Role')(sequelize),
+  Provincia: require('./Provincia')(sequelize),
+  Canton: require('./Canton')(sequelize),
+  Distrito: require('./Distrito')(sequelize),
+  Direccion: require('./Direccion')(sequelize),
+  Usuario: require('./Usuario')(sequelize),
+  Feria: require('./Feria')(sequelize),
+  Producto: require('./Producto')(sequelize),
+  Receta: require('./Receta')(sequelize),
+  SolicitudCambioRol: require('./SolicitudCambioRol')(sequelize),
+  PuestoAgricultor: require('./PuestoAgricultor')(sequelize),
+  PuestoFeria: require('./PuestoFeria')(sequelize),
+  OfertaProducto: require('./OfertaProducto')(sequelize),
+  RecetaIngrediente: require('./RecetaIngrediente')(sequelize),
+  MensajeContacto: require('./MensajeContacto')(sequelize),
+  Proforma: require('./Proforma')(sequelize),
+};
 
-// Producto → Precio (1:N)
-Producto.hasMany(Precio, { foreignKey: 'productoId', as: 'precios', onDelete: 'CASCADE' });
-Precio.belongsTo(Producto, { foreignKey: 'productoId', as: 'producto' });
-
-// Usuario → SolicitudCambioRol (1:N)
-Usuario.hasMany(SolicitudCambioRol, { foreignKey: 'usuarioId', as: 'solicitudes', onDelete: 'CASCADE' });
-SolicitudCambioRol.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'usuario' });
+// Inicialización de asociaciones
+Object.values(models).forEach((model) => {
+  if (typeof model.associate === 'function') {
+    model.associate(models);
+  }
+});
 
 module.exports = {
   sequelize,
-  Usuario,
-  Feria,
-  PuestoAgricultor,
-  Producto,
-  Precio,
-  Receta,
-  SolicitudCambioRol,
-  ContactMessage,
+  Sequelize,
+  ...models,
 };

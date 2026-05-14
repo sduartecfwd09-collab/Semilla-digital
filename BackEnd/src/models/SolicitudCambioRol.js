@@ -1,71 +1,75 @@
-'use strict';
+// ============================================================
+// Modelo: SolicitudCambioRol
+// Tabla: solicitudes_cambio_rol
+// Descripción: Solicitudes de usuarios para cambiar de rol
+// ============================================================
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const SolicitudCambioRol = sequelize.define('SolicitudCambioRol', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  usuarioId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: 'usuarios', key: 'id' },
-    validate: {
-      notNull: { msg: 'El usuarioId es obligatorio.' },
-      isInt: { msg: 'El usuarioId debe ser un número entero.' },
+module.exports = (sequelize) => {
+  const SolicitudCambioRol = sequelize.define('SolicitudCambioRol', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  nombreDelPuesto: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El nombre del puesto no puede estar vacío.' },
-    },
-  },
-  correoUsuario: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      isEmail: { msg: 'El correo del usuario no tiene un formato válido.' },
-      notEmpty: { msg: 'El correo no puede estar vacío.' },
-    },
-  },
-  rolSolicitado: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    defaultValue: 'Agricultor',
-  },
-  estado: {
-    type: DataTypes.ENUM('Pendiente', 'Aprobada', 'Rechazada'),
-    allowNull: false,
-    defaultValue: 'Pendiente',
-    validate: {
-      isIn: {
-        args: [['Pendiente', 'Aprobada', 'Rechazada']],
-        msg: 'El estado debe ser Pendiente, Aprobada o Rechazada.',
+    usuario_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'usuarios',
+        key: 'id',
       },
     },
-  },
-  motivoRespuesta: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  fechaSolicitud: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  fechaRespuesta: {
-    type: DataTypes.DATE,
-    allowNull: true,
-    defaultValue: null,
-  },
-}, {
-  tableName: 'solicitudesCambioRol',
-  timestamps: true,
-});
+    nombre_usuario: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    nombre_del_puesto: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    correo_usuario: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    rol_solicitado: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    estado: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'Pendiente',
+      validate: {
+        isIn: [['Pendiente', 'Aprobada', 'Rechazada']],
+      },
+    },
+    fecha_solicitud: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    motivo_respuesta: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    fecha_respuesta: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'solicitudes_cambio_rol',
+    timestamps: true,
+  });
 
-module.exports = SolicitudCambioRol;
+  SolicitudCambioRol.associate = (models) => {
+    // Una solicitud pertenece a un usuario
+    SolicitudCambioRol.belongsTo(models.Usuario, {
+      foreignKey: 'usuario_id',
+      as: 'usuario',
+      onDelete: 'CASCADE',
+    });
+  };
+
+  return SolicitudCambioRol;
+};

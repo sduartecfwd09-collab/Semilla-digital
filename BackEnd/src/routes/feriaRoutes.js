@@ -1,11 +1,18 @@
-'use strict';
 const router = require('express').Router();
 const ctrl = require('../controllers/feriaController');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-router.get('/',       ctrl.getAll);
-router.get('/:id',    ctrl.getById);
-router.post('/',      ctrl.create);
-router.put('/:id',    ctrl.update);
-router.delete('/:id', ctrl.remove);
+// GET  /api/ferias       → Listar todas (público)
+// GET  /api/ferias/:id   → Obtener por ID (público)
+// POST /api/ferias       → Crear (solo Administrador)
+// PUT  /api/ferias/:id   → Actualizar (solo Administrador)
+// DEL  /api/ferias/:id   → Eliminar (solo Administrador)
+
+router.get('/', ctrl.getAll);
+router.get('/:id', ctrl.getById);
+router.post('/', verifyToken, authorizeRoles('Administrador'), ctrl.create);
+router.put('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

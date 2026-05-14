@@ -5,36 +5,41 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('usuarios', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
       name: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: Sequelize.STRING(150),
+        allowNull: false,
       },
       nombre: {
         type: Sequelize.STRING,
         allowNull: true,
       },
       email: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(200),
         allowNull: false,
         unique: true,
       },
       password: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(255),
         allowNull: false,
       },
-      role: {
-        type: Sequelize.STRING,
+      role_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
-        defaultValue: 'Usuario',
+        references: {
+          model: 'roles',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       status: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: Sequelize.ENUM('Activo', 'Inactivo'),
+        allowNull: false,
         defaultValue: 'Activo',
       },
       avatar: {
@@ -51,8 +56,12 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
+      puesto_info: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
       direccion_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'direcciones',

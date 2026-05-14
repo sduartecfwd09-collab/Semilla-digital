@@ -1,110 +1,48 @@
-'use strict';
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const PuestoAgricultor = sequelize.define('PuestoAgricultor', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  usuarioId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: 'usuarios', key: 'id' },
-    validate: {
-      notNull: { msg: 'El usuarioId es obligatorio.' },
-      isInt: { msg: 'El usuarioId debe ser un número entero.' },
+module.exports = (sequelize) => {
+  const PuestoAgricultor = sequelize.define('PuestoAgricultor', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  nombrePuesto: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El nombre del puesto no puede estar vacío.' },
+    usuario_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+      references: { model: 'usuarios', key: 'id' },
     },
-  },
-  descripcion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  // Array de strings con ubicaciones ["Nombre Feria"]
-  ubicacion: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: [],
-  },
-  telefono: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-    defaultValue: '',
-  },
-  email: {
-    type: DataTypes.STRING(200),
-    allowNull: true,
-    defaultValue: '',
-    validate: {
-      isEmailOrEmpty(value) {
-        if (value && value.trim() !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          throw new Error('El email del puesto no tiene un formato válido.');
-        }
-      },
+    feria_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: 'direcciones', key: 'id' },
     },
-  },
-  // Horarios como string combinado o como lista
-  horarios: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  // Lista de horarios estructurada [{dia, inicio, fin}]
-  horariosList: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: [],
-  },
-  feriaId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: null,
-  },
-  // Tipos de producto que vende
-  tiposProducto: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: [],
-  },
-  // Nombres de fotos subidas
-  fotosNombres: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: [],
-  },
-  // Fotos en base64
-  fotosBase64: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: [],
-  },
-  metodosCultivo: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  redesSociales: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  fechaRegistro: {
-    type: DataTypes.DATE,
-    allowNull: true,
-    defaultValue: DataTypes.NOW,
-  },
-}, {
-  tableName: 'puestosAgricultor',
-  timestamps: true,
-});
+    nombre_puesto: { type: DataTypes.STRING, allowNull: false },
+    descripcion: { type: DataTypes.TEXT, allowNull: true },
+    telefono: { type: DataTypes.STRING, allowNull: true },
+    email: { type: DataTypes.STRING, allowNull: true },
+    horarios: { type: DataTypes.STRING, allowNull: true },
+    horarios_list: { type: DataTypes.JSON, allowNull: true },
+    tipos_producto: { type: DataTypes.JSON, allowNull: true },
+    metodos_cultivo: { type: DataTypes.TEXT, allowNull: true },
+    redes_sociales: { type: DataTypes.STRING, allowNull: true },
+    fotos_base64: { type: DataTypes.JSON, allowNull: true },
+    fotos_nombres: { type: DataTypes.JSON, allowNull: true },
+    fecha_registro: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
+  }, {
+    tableName: 'puestos_agricultor',
+    timestamps: true,
+  });
 
-module.exports = PuestoAgricultor;
+  PuestoAgricultor.associate = (models) => {
+    PuestoAgricultor.belongsTo(models.Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+    PuestoAgricultor.belongsTo(models.Feria, { foreignKey: 'feria_id', as: 'feriaPrincipal' });
+    PuestoAgricultor.belongsTo(models.Direccion, { foreignKey: 'direccion_id', as: 'direccion' });
+    PuestoAgricultor.belongsToMany(models.Feria, {
+      through: models.PuestoFeria, foreignKey: 'puesto_id', otherKey: 'feria_id', as: 'ferias',
+    });
+  };
+
+  return PuestoAgricultor;
+};

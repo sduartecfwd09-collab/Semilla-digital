@@ -1,27 +1,28 @@
 'use strict';
 const jwt = require('jsonwebtoken');
-const { Usuario } = require('../models');
+const bcrypt = require('bcrypt');
+const { Usuario, Role } = require('../models');
 const { Op } = require('sequelize');
 
 const JWT_SECRET  = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '8h';
 
 // Helper: genera el token firmado
-const signToken = (usuario) =>
+const signToken = (usuario, roleName) =>
   jwt.sign(
-    { id: usuario.id, email: usuario.email, role: usuario.role },
+    { id: usuario.id, email: usuario.email, role: roleName },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES }
   );
 
 // Helper: usuario sin password
-const safeUser = (usuario) => {
-  const { password, ...rest } = usuario.toJSON();
-  return rest;
+const safeUser = (usuario, roleName) => {
+  const userJson = usuario.toJSON();
+  delete userJson.password;
+  return { ...userJson, role: roleName }; // Inyectamos el nombre del rol para el frontend
 };
 
 // ── POST /auth/login ──────────────────────────────────────────────────────────
-// Body: { email, password }
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -32,14 +33,16 @@ const login = async (req, res) => {
 
     const usuario = await Usuario.findOne({
       where: { email: email.toLowerCase().trim() },
+      include: [{ model: Role, as: 'rol' }]
     });
 
     if (!usuario) {
       return res.status(401).json({ error: 'Credenciales incorrectas.' });
     }
 
-    // Comparación directa (sin bcrypt, igual que el frontend original)
-    if (usuario.password !== password.trim()) {
+    // Comparación con bcrypt
+    const isMatch = await bcrypt.compare(password.trim(), usuario.password);
+    if (!isMatch) {
       return res.status(401).json({ error: 'Credenciales incorrectas.' });
     }
 
@@ -47,11 +50,12 @@ const login = async (req, res) => {
       return res.status(403).json({ error: 'Tu cuenta está inactiva. Contacta al administrador.' });
     }
 
-    const token = signToken(usuario);
+    const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
+    const token = signToken(usuario, roleName);
 
     return res.json({
       token,
-      user: safeUser(usuario),
+      user: safeUser(usuario, roleName),
     });
   } catch (error) {
     console.error('[Auth] login:', error);
@@ -60,7 +64,6 @@ const login = async (req, res) => {
 };
 
 // ── POST /auth/register ───────────────────────────────────────────────────────
-// Body: { name, email, password, role?, status? }
 const register = async (req, res) => {
   try {
     const { name, email, password, role, status, feriaId, puestoInfo } = req.body;
@@ -76,40 +79,48 @@ const register = async (req, res) => {
       return res.status(409).json({ error: 'Ya existe una cuenta registrada con este correo electrónico.' });
     }
 
+    // Buscar el ID del rol solicitado
+    const roleName = role || 'Usuario';
+    const dbRole = await Role.findOne({ where: { nombre: roleName } });
+    if (!dbRole) {
+      return res.status(400).json({ error: 'El rol especificado no es válido.' });
+    }
+
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(password.trim(), 10);
+
     const usuario = await Usuario.create({
       name:     name.trim(),
       email:    email.toLowerCase().trim(),
-      password: password.trim(),
-      role:     role   || 'Usuario',
+      password: hashedPassword,
+      roleId:   dbRole.id,
       status:   status || 'Activo',
       feriaId:  feriaId || null,
       puestoInfo: puestoInfo || null,
     });
 
-    const token = signToken(usuario);
+    const token = signToken(usuario, roleName);
 
     return res.status(201).json({
       token,
-      user: safeUser(usuario),
+      user: safeUser(usuario, roleName),
     });
   } catch (error) {
     console.error('[Auth] register:', error);
-    const msg =
-      error.name === 'SequelizeValidationError'
-        ? error.errors.map((e) => e.message).join(' | ')
-        : error.message;
-    return res.status(400).json({ error: msg });
+    return res.status(400).json({ error: error.message });
   }
 };
 
 // ── GET /auth/me ──────────────────────────────────────────────────────────────
-// Requiere Authorization: Bearer <token>
 const me = async (req, res) => {
   try {
-    // req.user viene del middleware verifyToken
-    const usuario = await Usuario.findByPk(req.user.id);
+    const usuario = await Usuario.findByPk(req.user.id, {
+        include: [{ model: Role, as: 'rol' }]
+    });
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-    return res.json(safeUser(usuario));
+    
+    const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
+    return res.json(safeUser(usuario, roleName));
   } catch (error) {
     console.error('[Auth] me:', error);
     return res.status(500).json({ error: 'Error al obtener el perfil.' });

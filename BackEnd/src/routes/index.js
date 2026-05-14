@@ -3,39 +3,49 @@ const express = require('express');
 const router  = express.Router();
 const { verifyToken, requireRole } = require('../middlewares/auth');
 
-// ── Rutas públicas ────────────────────────────────────────────────────────────
-router.use('/auth',      require('./authRoutes'));
+// ── Rutas públicas ──────────────────────────────────────────────
+router.use('/auth',       require('./authRoutes'));
+router.use('/ferias',     require('./feriaRoutes'));
+router.use('/productos',  require('./productoRoutes'));
+router.use('/recetas',    require('./recetaRoutes'));
+router.use('/provincias', require('./provinciaRoutes'));
+router.use('/cantones',   require('./cantonRoutes'));
+router.use('/distritos',  require('./distritoRoutes'));
 
-// El frontend muestra ferias, productos y recetas sin login
-router.use('/ferias',    require('./feriaRoutes'));
-router.use('/productos', require('./productoRoutes'));
-router.use('/recetas',   require('./recetaRoutes'));
-router.use('/precios',   require('./precioRoutes'));
-
-// POST /contactMessages es público (formulario de contacto sin login)
-router.post('/contactMessages', require('../controllers/contactMessageController').create);
-
-// ── Rutas que requieren token válido ──────────────────────────────────────────
+// ── Rutas protegidas ────────────────────────────────────────────
 router.use('/usuarios',
   verifyToken,
   require('./usuarioRoutes')
 );
 
-router.use('/puestosAgricultor',
+router.use('/puestos',
   verifyToken,
   require('./puestoAgricultorRoutes')
 );
 
-router.use('/solicitudesCambioRol',
+router.use('/solicitudes',
   verifyToken,
   require('./solicitudCambioRolRoutes')
 );
 
-// GET/PATCH/DELETE de mensajes: solo Admin o Agricultor autenticados
-router.use('/contactMessages',
+router.use('/direcciones',
   verifyToken,
-  requireRole('Administrador', 'Agricultor'),
-  require('./contactMessageRoutes')
+  require('./direccionRoutes')
+);
+
+router.use('/ofertas',
+  verifyToken,
+  require('./ofertaProductoRoutes')
+);
+
+router.use('/mensajes',
+  verifyToken,
+  require('./mensajeContactoRoutes')
+);
+
+router.use('/proformas',
+  verifyToken,
+  require('./proformaRoutes')
 );
 
 module.exports = router;

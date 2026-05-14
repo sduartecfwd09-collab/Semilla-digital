@@ -11,7 +11,7 @@ module.exports = {
         // Formato: PRO-<timestamp> — se genera en el controller/service
       },
       usuario_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'usuarios',
@@ -38,7 +38,7 @@ module.exports = {
         allowNull: false,
       },
       direccion_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'direcciones',

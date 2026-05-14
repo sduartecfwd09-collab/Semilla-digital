@@ -15,7 +15,7 @@ module.exports = {
         allowNull: false,
       },
       direccion_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'direcciones',

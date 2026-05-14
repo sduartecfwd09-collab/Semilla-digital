@@ -1,143 +1,83 @@
-'use strict';
-const { PuestoAgricultor, Usuario, Feria } = require('../models');
+// ============================================================
+// Controller: PuestoAgricultor
+// Descripción: Orquesta las peticiones HTTP para puestos
+//              de agricultor
+// ============================================================
+const puestoService = require('../services/puestoAgricultorService');
 
-const formatValidationErrors = (error) => {
-  if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-    return error.errors.map((e) => e.message).join(' | ');
-  }
-  return error.message;
-};
-
-// GET /puestosAgricultor  o  GET /puestosAgricultor?usuarioId=X
 const getAll = async (req, res) => {
   try {
-    const where = {};
-    if (req.query.usuarioId) {
-      where.usuarioId = req.query.usuarioId;
-    }
-
-    const puestos = await PuestoAgricultor.findAll({
-      where,
-      order: [['fechaRegistro', 'DESC']],
-    });
-    return res.json(puestos);
+    const data = await puestoService.findAll(req.query);
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[PuestoAgricultor] getAll:', error);
-    return res.status(500).json({ error: 'Error al obtener los puestos.' });
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-// GET /puestosAgricultor/:id
 const getById = async (req, res) => {
   try {
-    const puesto = await PuestoAgricultor.findByPk(req.params.id);
-    if (!puesto) return res.status(404).json({ error: 'Puesto no encontrado.' });
-    return res.json(puesto);
+    const data = await puestoService.findById(req.params.id);
+    if (!data) {
+      return res.status(404).json({ success: false, message: 'Puesto no encontrado' });
+    }
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[PuestoAgricultor] getById:', error);
-    return res.status(500).json({ error: 'Error al obtener el puesto.' });
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-// POST /puestosAgricultor
+const getByUsuario = async (req, res) => {
+  try {
+    const data = await puestoService.findByUsuario(req.params.usuarioId);
+    if (!data) {
+      return res.status(404).json({ success: false, message: 'Este usuario no tiene un puesto registrado' });
+    }
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
+
+const getByFeria = async (req, res) => {
+  try {
+    const data = await puestoService.findByFeria(req.params.feriaId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
+
 const create = async (req, res) => {
   try {
-    const {
-      usuarioId, nombrePuesto, descripcion, ubicacion,
-      telefono, email, horarios, horariosList, feriaId,
-      tiposProducto, fotosNombres, fotosBase64,
-      metodosCultivo, redesSociales, fechaRegistro,
-    } = req.body;
-
-    if (!usuarioId || !nombrePuesto) {
-      return res.status(400).json({ error: 'Los campos usuarioId y nombrePuesto son obligatorios.' });
-    }
-
-    const puesto = await PuestoAgricultor.create({
-      usuarioId,
-      nombrePuesto: nombrePuesto.trim(),
-      descripcion: descripcion?.trim() || '',
-      ubicacion: Array.isArray(ubicacion) ? ubicacion : [],
-      telefono: telefono || '',
-      email: email || '',
-      horarios: horarios || '',
-      horariosList: Array.isArray(horariosList) ? horariosList : [],
-      feriaId: feriaId || null,
-      tiposProducto: Array.isArray(tiposProducto) ? tiposProducto : [],
-      fotosNombres: Array.isArray(fotosNombres) ? fotosNombres : [],
-      fotosBase64: Array.isArray(fotosBase64) ? fotosBase64 : [],
-      metodosCultivo: metodosCultivo || '',
-      redesSociales: redesSociales || '',
-      fechaRegistro: fechaRegistro || new Date(),
-    });
-
-    return res.status(201).json(puesto);
+    const data = await puestoService.create(req.body);
+    return res.status(201).json({ success: true, data });
   } catch (error) {
-    console.error('[PuestoAgricultor] create:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// PUT /puestosAgricultor/:id  (reemplazo completo)
 const update = async (req, res) => {
   try {
-    const puesto = await PuestoAgricultor.findByPk(req.params.id);
-    if (!puesto) return res.status(404).json({ error: 'Puesto no encontrado.' });
-
-    const {
-      nombrePuesto, descripcion, ubicacion,
-      telefono, email, horarios, horariosList, feriaId,
-      tiposProducto, fotosNombres, fotosBase64,
-      metodosCultivo, redesSociales,
-    } = req.body;
-
-    await puesto.update({
-      nombrePuesto: nombrePuesto ? nombrePuesto.trim() : puesto.nombrePuesto,
-      descripcion: descripcion !== undefined ? descripcion.trim() : puesto.descripcion,
-      ubicacion: Array.isArray(ubicacion) ? ubicacion : puesto.ubicacion,
-      telefono: telefono !== undefined ? telefono : puesto.telefono,
-      email: email !== undefined ? email : puesto.email,
-      horarios: horarios !== undefined ? horarios : puesto.horarios,
-      horariosList: Array.isArray(horariosList) ? horariosList : puesto.horariosList,
-      feriaId: feriaId !== undefined ? feriaId : puesto.feriaId,
-      tiposProducto: Array.isArray(tiposProducto) ? tiposProducto : puesto.tiposProducto,
-      fotosNombres: Array.isArray(fotosNombres) ? fotosNombres : puesto.fotosNombres,
-      fotosBase64: Array.isArray(fotosBase64) ? fotosBase64 : puesto.fotosBase64,
-      metodosCultivo: metodosCultivo !== undefined ? metodosCultivo : puesto.metodosCultivo,
-      redesSociales: redesSociales !== undefined ? redesSociales : puesto.redesSociales,
-    });
-
-    return res.json(puesto);
+    const data = await puestoService.update(req.params.id, req.body);
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[PuestoAgricultor] update:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// PATCH /puestosAgricultor/:id  (actualización parcial)
-const patch = async (req, res) => {
-  try {
-    const puesto = await PuestoAgricultor.findByPk(req.params.id);
-    if (!puesto) return res.status(404).json({ error: 'Puesto no encontrado.' });
-    await puesto.update(req.body);
-    return res.json(puesto);
-  } catch (error) {
-    console.error('[PuestoAgricultor] patch:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
-  }
-};
-
-// DELETE /puestosAgricultor/:id
 const remove = async (req, res) => {
   try {
-    const puesto = await PuestoAgricultor.findByPk(req.params.id);
-    if (!puesto) return res.status(404).json({ error: 'Puesto no encontrado.' });
-    await puesto.destroy();
-    return res.json({ message: 'Puesto eliminado correctamente.' });
+    await puestoService.remove(req.params.id);
+    return res.status(200).json({ success: true, data: { message: 'Puesto eliminado correctamente' } });
   } catch (error) {
-    console.error('[PuestoAgricultor] remove:', error);
-    return res.status(500).json({ error: 'Error al eliminar el puesto.' });
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-module.exports = { getAll, getById, create, update, patch, remove };
+module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove };

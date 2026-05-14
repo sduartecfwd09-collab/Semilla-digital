@@ -1,80 +1,108 @@
 'use strict';
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const Usuario = sequelize.define('Usuario', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  name: {
-    type: DataTypes.STRING(150),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El nombre no puede estar vacío.' },
-      len: { args: [2, 150], msg: 'El nombre debe tener entre 2 y 150 caracteres.' },
+module.exports = (sequelize) => {
+  const Usuario = sequelize.define('Usuario', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  email: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    unique: { msg: 'Este correo electrónico ya está registrado.' },
-    validate: {
-      isEmail: { msg: 'El correo electrónico no tiene un formato válido.' },
-      notEmpty: { msg: 'El correo no puede estar vacío.' },
+    name: {
+      type: DataTypes.STRING(150),
+      allowNull: false,
     },
-  },
-  password: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'La contraseña no puede estar vacía.' },
-      len: { args: [3, 255], msg: 'La contraseña debe tener al menos 3 caracteres.' },
+    nombre: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-  },
-  role: {
-    type: DataTypes.ENUM('Administrador', 'Agricultor', 'Usuario'),
-    allowNull: false,
-    defaultValue: 'Usuario',
-    validate: {
-      isIn: {
-        args: [['Administrador', 'Agricultor', 'Usuario']],
-        msg: 'El rol debe ser Administrador, Agricultor o Usuario.',
+    email: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
       },
     },
-  },
-  status: {
-    type: DataTypes.ENUM('Activo', 'Inactivo'),
-    allowNull: false,
-    defaultValue: 'Activo',
-    validate: {
-      isIn: {
-        args: [['Activo', 'Inactivo']],
-        msg: 'El estado debe ser Activo o Inactivo.',
+    password: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'roles',
+        key: 'id',
       },
     },
-  },
-  avatar: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: null,
-  },
-  // ID de la feria asignada al agricultor (referencia lógica, no FK estricta para mantener compatibilidad)
-  feriaId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: null,
-  },
-  // Información adicional del puesto almacenada como JSON (uso interno del frontend)
-  puestoInfo: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    defaultValue: null,
-  },
-}, {
-  tableName: 'usuarios',
-  timestamps: true,
-});
+    status: {
+      type: DataTypes.ENUM('Activo', 'Inactivo'),
+      allowNull: false,
+      defaultValue: 'Activo',
+    },
+    avatar: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    feriaId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    puesto_info: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    direccionId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'usuarios',
+    timestamps: true,
+  });
 
-module.exports = Usuario;
+  Usuario.associate = (models) => {
+    // Un usuario tiene un rol (RBAC)
+    Usuario.belongsTo(models.Role, {
+      foreignKey: 'roleId',
+      as: 'rol',
+    });
+
+    Usuario.belongsTo(models.Feria, {
+      foreignKey: 'feriaId',
+      as: 'feria',
+    });
+
+    Usuario.belongsTo(models.Direccion, {
+      foreignKey: 'direccionId',
+      as: 'direccion',
+    });
+
+    Usuario.hasMany(models.Producto, {
+      foreignKey: 'user_id',
+      as: 'productos',
+      onDelete: 'CASCADE',
+    });
+
+    Usuario.hasMany(models.SolicitudCambioRol, {
+      foreignKey: 'usuario_id',
+      as: 'solicitudesCambioRol',
+      onDelete: 'CASCADE',
+    });
+
+    Usuario.hasOne(models.PuestoAgricultor, {
+      foreignKey: 'usuario_id',
+      as: 'puestoAgricultor',
+      onDelete: 'CASCADE',
+    });
+
+    Usuario.hasMany(models.Proforma, {
+      foreignKey: 'usuario_id',
+      as: 'proformas',
+      onDelete: 'SET NULL',
+    });
+  };
+
+  return Usuario;
+};

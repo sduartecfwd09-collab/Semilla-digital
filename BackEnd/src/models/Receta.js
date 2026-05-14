@@ -1,74 +1,58 @@
-'use strict';
+// ============================================================
+// Modelo: Receta
+// Tabla: recetas
+// Descripción: Recetas de cocina con ingredientes y pasos
+// ============================================================
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const Receta = sequelize.define('Receta', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  title: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El título de la receta no puede estar vacío.' },
-      len: { args: [2, 200], msg: 'El título debe tener entre 2 y 200 caracteres.' },
+module.exports = (sequelize) => {
+  const Receta = sequelize.define('Receta', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'La descripción no puede estar vacía.' },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-  },
-  // Array de strings ["ingrediente 1", "ingrediente 2"]
-  ingredients: {
-    type: DataTypes.JSON,
-    allowNull: false,
-    defaultValue: [],
-    validate: {
-      isArray(value) {
-        if (!Array.isArray(value)) throw new Error('Los ingredientes deben ser un arreglo.');
-        if (value.length === 0) throw new Error('Debe incluir al menos un ingrediente.');
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    ingredients: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    steps: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    difficulty: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isIn: [['Fácil', 'Medio', 'Difícil']],
       },
     },
-  },
-  // Array de pasos ["Paso 1...", "Paso 2..."]
-  steps: {
-    type: DataTypes.JSON,
-    allowNull: false,
-    defaultValue: [],
-    validate: {
-      isArray(value) {
-        if (!Array.isArray(value)) throw new Error('Los pasos deben ser un arreglo.');
-        if (value.length === 0) throw new Error('Debe incluir al menos un paso.');
-      },
+    time: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-  },
-  difficulty: {
-    type: DataTypes.ENUM('Fácil', 'Media', 'Difícil'),
-    allowNull: false,
-    defaultValue: 'Fácil',
-    validate: {
-      isIn: {
-        args: [['Fácil', 'Media', 'Difícil']],
-        msg: 'La dificultad debe ser Fácil, Media o Difícil.',
-      },
-    },
-  },
-  // Tiempo como string "30 min"
-  time: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El tiempo no puede estar vacío.' },
-    },
-  },
-}, {
-  tableName: 'recetas',
-  timestamps: true,
-});
+  }, {
+    tableName: 'recetas',
+    timestamps: true,
+  });
 
-module.exports = Receta;
+  Receta.associate = (models) => {
+    // Una receta puede tener muchos productos como ingredientes (vía tabla intermedia)
+    Receta.belongsToMany(models.Producto, {
+      through: models.RecetaIngrediente,
+      foreignKey: 'receta_id',
+      otherKey: 'producto_id',
+      as: 'productosIngredientes',
+    });
+  };
+
+  return Receta;
+};

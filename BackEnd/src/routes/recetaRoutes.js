@@ -1,11 +1,20 @@
-'use strict';
 const router = require('express').Router();
 const ctrl = require('../controllers/recetaController');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-router.get('/',       ctrl.getAll);
-router.get('/:id',    ctrl.getById);
-router.post('/',      ctrl.create);
-router.put('/:id',    ctrl.update);
-router.delete('/:id', ctrl.remove);
+// ── PÚBLICAS ────────────────────────────────────────────────
+// GET  /api/recetas       → Listar todas (con filtros via query)
+// GET  /api/recetas/:id   → Obtener por ID
+router.get('/', ctrl.getAll);
+router.get('/:id', ctrl.getById);
+
+// ── PROTEGIDAS (solo Administrador) ─────────────────────────
+// POST   /api/recetas       → Crear receta
+// PUT    /api/recetas/:id   → Actualizar receta
+// DELETE /api/recetas/:id   → Eliminar receta
+router.post('/', verifyToken, authorizeRoles('Administrador'), ctrl.create);
+router.put('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

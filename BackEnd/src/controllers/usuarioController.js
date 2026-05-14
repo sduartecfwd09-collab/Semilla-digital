@@ -1,147 +1,207 @@
-'use strict';
-const { Usuario } = require('../models');
-const { Op } = require('sequelize');
+// ============================================================
+// Controller: Usuario
+// Descripción: Orquesta las peticiones HTTP para usuarios
+//              Incluye login con JWT
+// ============================================================
+const jwt = require("jsonwebtoken");
+const usuarioService = require("../services/usuarioService");
 
-// ── Helper: formatear errores de validación de Sequelize ──────────────────────
-const formatValidationErrors = (error) => {
-  if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
-    return error.errors.map((e) => e.message).join(' | ');
-  }
-  return error.message;
-};
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// GET /usuarios
+// ── CRUD ────────────────────────────────────────────────────
+
 const getAll = async (req, res) => {
   try {
-    const usuarios = await Usuario.findAll({
-      order: [['createdAt', 'DESC']],
-    });
-    return res.json(usuarios);
+    const data = await usuarioService.findAll();
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[Usuario] getAll:', error);
-    return res.status(500).json({ error: 'Error al obtener usuarios.' });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error interno del servidor" });
   }
 };
 
-// GET /usuarios/:id
 const getById = async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-    return res.json(usuario);
+    const data = await usuarioService.findById(req.params.id);
+    if (!data) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Usuario no encontrado" });
+    }
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[Usuario] getById:', error);
-    return res.status(500).json({ error: 'Error al obtener el usuario.' });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error interno del servidor" });
   }
 };
 
-// POST /usuarios
 const create = async (req, res) => {
   try {
-    const { name, email, password, role, status, avatar, feriaId, puestoInfo } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Los campos name, email y password son obligatorios.' });
-    }
-
-    // Verificar email único
-    const existing = await Usuario.findOne({ where: { email: email.toLowerCase().trim() } });
-    if (existing) {
-      return res.status(409).json({ error: 'Ya existe una cuenta registrada con este correo electrónico.' });
-    }
-
-    const usuario = await Usuario.create({
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      password: password.trim(),
-      role: role || 'Usuario',
-      status: status || 'Activo',
-      avatar: avatar || null,
-      feriaId: feriaId || null,
-      puestoInfo: puestoInfo || null,
-    });
-
-    return res.status(201).json(usuario);
+    const data = await usuarioService.create(req.body);
+    return res.status(201).json({ success: true, data });
   } catch (error) {
-    console.error('[Usuario] create:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// PUT /usuarios/:id  (reemplazo completo)
 const update = async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-
-    const { name, email, password, role, status, avatar, feriaId, puestoInfo } = req.body;
-
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Los campos name y email son obligatorios.' });
-    }
-
-    // Verificar email único excluyendo al propio usuario
-    const existing = await Usuario.findOne({
-      where: { email: email.toLowerCase().trim(), id: { [Op.ne]: usuario.id } },
-    });
-    if (existing) {
-      return res.status(409).json({ error: 'Este correo electrónico ya está registrado por otro usuario.' });
-    }
-
-    await usuario.update({
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      password: password && password.trim() ? password.trim() : usuario.password,
-      role: role || usuario.role,
-      status: status || usuario.status,
-      avatar: avatar !== undefined ? avatar : usuario.avatar,
-      feriaId: feriaId !== undefined ? feriaId : usuario.feriaId,
-      puestoInfo: puestoInfo !== undefined ? puestoInfo : usuario.puestoInfo,
-    });
-
-    return res.json(usuario);
+    const data = await usuarioService.update(req.params.id, req.body);
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[Usuario] update:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    if (error.message.includes("no encontrad")) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// PATCH /usuarios/:id  (actualización parcial — avatar, role, feriaId, etc.)
-const patch = async (req, res) => {
-  try {
-    const usuario = await Usuario.findByPk(req.params.id);
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-
-    // Si se envía email, verificar unicidad
-    if (req.body.email) {
-      const existing = await Usuario.findOne({
-        where: { email: req.body.email.toLowerCase().trim(), id: { [Op.ne]: usuario.id } },
-      });
-      if (existing) {
-        return res.status(409).json({ error: 'Este correo electrónico ya está registrado por otro usuario.' });
-      }
-      req.body.email = req.body.email.toLowerCase().trim();
-    }
-
-    await usuario.update(req.body);
-    return res.json(usuario);
-  } catch (error) {
-    console.error('[Usuario] patch:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
-  }
-};
-
-// DELETE /usuarios/:id
 const remove = async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-    await usuario.destroy();
-    return res.json({ message: 'Usuario eliminado correctamente.' });
+    await usuarioService.remove(req.params.id);
+    return res
+      .status(200)
+      .json({
+        success: true,
+        data: { message: "Usuario eliminado correctamente" },
+      });
   } catch (error) {
-    console.error('[Usuario] remove:', error);
-    return res.status(500).json({ error: 'Error al eliminar el usuario.' });
+    if (error.message.includes("no encontrado")) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ success: false, message: "Error interno del servidor" });
   }
 };
 
-module.exports = { getAll, getById, create, update, patch, remove };
+const changeStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!status) {
+      return res
+        .status(400)
+        .json({ success: false, message: "El status es requerido" });
+    }
+    const data = await usuarioService.changeStatus(req.params.id, status);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error.message.includes("no encontrad")) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// ── AUTH ─────────────────────────────────────────────────────
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email y contraseña son requeridos" });
+    }
+
+    // Delega la validación de credenciales al service
+    const usuario = await usuarioService.validatePassword(email, password);
+
+    // Genera el token JWT
+    const token = jwt.sign(
+      { id: usuario.id, email: usuario.email, role: usuario.role },
+      JWT_SECRET,
+      { expiresIn: "8h" },
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        token,
+        usuario: {
+          id: usuario.id,
+          name: usuario.name,
+          nombre: usuario.nombre,
+          email: usuario.email,
+          role: usuario.role,
+          status: usuario.status,
+          avatar: usuario.avatar,
+        },
+      },
+    });
+  } catch (error) {
+    // Errores de credenciales inválidas (lanzados por el service)
+    if (
+      error.message.includes("Credenciales") ||
+      error.message.includes("no encontrad") ||
+      error.message.includes("inválid")
+    ) {
+      return res.status(401).json({ success: false, message: error.message });
+    }
+    return res
+      .status(500)
+      .json({ success: false, message: "Error interno del servidor" });
+  }
+};
+
+const register = async (req, res) => {
+  try {
+    const data = await usuarioService.register(req.body);
+
+    // Genera token automáticamente al registrarse
+    const token = jwt.sign(
+      { id: data.id, email: data.email, role: data.role },
+      JWT_SECRET,
+      { expiresIn: "8h" },
+    );
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        token,
+        usuario: {
+          id: data.id,
+          name: data.name,
+          nombre: data.nombre,
+          email: data.email,
+          role: data.role,
+          status: data.status,
+        },
+      },
+    });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+const getProfile = async (req, res) => {
+  try {
+    // req.user viene del middleware de autenticación
+    const data = await usuarioService.findById(req.user.id);
+    if (!data) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Usuario no encontrado" });
+    }
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Error interno del servidor" });
+  }
+};
+
+module.exports = {
+  getAll,
+  getById,
+  create,
+  update,
+  remove,
+  changeStatus,
+  login,
+  register,
+  getProfile,
+};

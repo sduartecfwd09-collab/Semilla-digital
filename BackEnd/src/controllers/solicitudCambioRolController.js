@@ -1,116 +1,92 @@
-'use strict';
-const { SolicitudCambioRol, Usuario, PuestoAgricultor } = require('../models');
+// ============================================================
+// Controller: SolicitudCambioRol
+// Descripción: Orquesta las peticiones HTTP para solicitudes
+//              de cambio de rol
+// ============================================================
+const solicitudService = require('../services/solicitudCambioRolService');
 
-const formatValidationErrors = (error) => {
-  if (error.name === 'SequelizeValidationError') {
-    return error.errors.map((e) => e.message).join(' | ');
-  }
-  return error.message;
-};
-
-// GET /solicitudesCambioRol
 const getAll = async (req, res) => {
   try {
-    const solicitudes = await SolicitudCambioRol.findAll({
-      order: [['fechaSolicitud', 'DESC']],
-    });
-    return res.json(solicitudes);
+    const data = await solicitudService.findAll(req.query);
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[SolicitudCambioRol] getAll:', error);
-    return res.status(500).json({ error: 'Error al obtener las solicitudes.' });
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-// GET /solicitudesCambioRol/:id
 const getById = async (req, res) => {
   try {
-    const sol = await SolicitudCambioRol.findByPk(req.params.id);
-    if (!sol) return res.status(404).json({ error: 'Solicitud no encontrada.' });
-    return res.json(sol);
+    const data = await solicitudService.findById(req.params.id);
+    if (!data) {
+      return res.status(404).json({ success: false, message: 'Solicitud no encontrada' });
+    }
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[SolicitudCambioRol] getById:', error);
-    return res.status(500).json({ error: 'Error al obtener la solicitud.' });
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-// POST /solicitudesCambioRol
+const getByUsuario = async (req, res) => {
+  try {
+    const data = await solicitudService.findByUsuario(req.params.usuarioId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
+
 const create = async (req, res) => {
   try {
-    const {
-      usuarioId, nombreDelPuesto, correoUsuario,
-      rolSolicitado, estado, motivoRespuesta, fechaSolicitud,
-    } = req.body;
-
-    if (!usuarioId || !nombreDelPuesto || !correoUsuario) {
-      return res.status(400).json({
-        error: 'Los campos usuarioId, nombreDelPuesto y correoUsuario son obligatorios.',
-      });
-    }
-
-    const solicitud = await SolicitudCambioRol.create({
-      usuarioId,
-      nombreDelPuesto: nombreDelPuesto.trim(),
-      correoUsuario: correoUsuario.trim(),
-      rolSolicitado: rolSolicitado || 'Agricultor',
-      estado: estado || 'Pendiente',
-      motivoRespuesta: motivoRespuesta || '',
-      fechaSolicitud: fechaSolicitud || new Date(),
-    });
-
-    return res.status(201).json(solicitud);
+    const data = await solicitudService.create(req.body);
+    return res.status(201).json({ success: true, data });
   } catch (error) {
-    console.error('[SolicitudCambioRol] create:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// PATCH /solicitudesCambioRol/:id
-// Usado para: actualizar estado (Aprobada/Rechazada) y también para editar datos pendientes
-const patch = async (req, res) => {
+const approve = async (req, res) => {
   try {
-    const sol = await SolicitudCambioRol.findByPk(req.params.id);
-    if (!sol) return res.status(404).json({ error: 'Solicitud no encontrada.' });
-
-    const { estado, motivoRespuesta, fechaRespuesta, nombreDelPuesto, correoUsuario } = req.body;
-
-    await sol.update({
-      estado: estado || sol.estado,
-      motivoRespuesta: motivoRespuesta !== undefined ? motivoRespuesta : sol.motivoRespuesta,
-      fechaRespuesta: fechaRespuesta || (estado && estado !== 'Pendiente' ? new Date() : sol.fechaRespuesta),
-      nombreDelPuesto: nombreDelPuesto ? nombreDelPuesto.trim() : sol.nombreDelPuesto,
-      correoUsuario: correoUsuario ? correoUsuario.trim() : sol.correoUsuario,
-    });
-
-    // Si se aprueba, actualizar el rol del usuario automáticamente
-    if (estado === 'Aprobada' && sol.usuarioId) {
-      try {
-        await Usuario.update(
-          { role: sol.rolSolicitado || 'Agricultor' },
-          { where: { id: sol.usuarioId } }
-        );
-      } catch (e) {
-        console.warn('[SolicitudCambioRol] No se pudo actualizar el rol del usuario:', e.message);
-      }
-    }
-
-    return res.json(sol);
+    const data = await solicitudService.approve(req.params.id, req.body);
+    return res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('[SolicitudCambioRol] patch:', error);
-    return res.status(400).json({ error: formatValidationErrors(error) });
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// DELETE /solicitudesCambioRol/:id
+const reject = async (req, res) => {
+  try {
+    const data = await solicitudService.reject(req.params.id, req.body);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 const remove = async (req, res) => {
   try {
-    const sol = await SolicitudCambioRol.findByPk(req.params.id);
-    if (!sol) return res.status(404).json({ error: 'Solicitud no encontrada.' });
-    await sol.destroy();
-    return res.json({ message: 'Solicitud eliminada correctamente.' });
+    await solicitudService.remove(req.params.id);
+    return res.status(200).json({ success: true, data: { message: 'Solicitud eliminada correctamente' } });
   } catch (error) {
-    console.error('[SolicitudCambioRol] remove:', error);
-    return res.status(500).json({ error: 'Error al eliminar la solicitud.' });
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 };
 
-module.exports = { getAll, getById, create, patch, remove };
+const getPendientes = async (req, res) => {
+  try {
+    const data = await solicitudService.findPendientes();
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { getAll, getById, getByUsuario, getPendientes, create, approve, reject, remove };

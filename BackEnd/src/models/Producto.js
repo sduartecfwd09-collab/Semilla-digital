@@ -1,77 +1,83 @@
-'use strict';
+// ============================================================
+// Modelo: Producto
+// Tabla: productos
+// Descripción: Productos agrícolas ofrecidos por los agricultores
+// ============================================================
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 
-const Producto = sequelize.define('Producto', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: 'usuarios', key: 'id' },
-    validate: {
-      notNull: { msg: 'El userId es obligatorio.' },
-      isInt: { msg: 'El userId debe ser un número entero.' },
+module.exports = (sequelize) => {
+  const Producto = sequelize.define('Producto', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  nombre: {
-    type: DataTypes.STRING(200),
-    allowNull: false,
-    validate: {
-      notEmpty: { msg: 'El nombre del producto no puede estar vacío.' },
-      len: { args: [1, 200], msg: 'El nombre debe tener entre 1 y 200 caracteres.' },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'usuarios',
+        key: 'id',
+      },
     },
-  },
-  // Emoji representativo de la categoría
-  emoji: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    defaultValue: '📦',
-  },
-  descripcion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  categoria: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    defaultValue: 'Otros',
-    validate: {
-      notEmpty: { msg: 'La categoría no puede estar vacía.' },
+    nombre: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-  },
-  imagen: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-  disponible: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
-  unidad: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    defaultValue: 'Kilogramo',
-  },
-  provincia: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
-    defaultValue: '',
-  },
-  direccionPuesto: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: '',
-  },
-}, {
-  tableName: 'productos',
-  timestamps: true,
-});
+    categoria: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isIn: [['Verduras', 'Frutas', 'Hierbas', 'Tubérculos', 'Granos', 'Proteína', 'Lácteos']],
+      },
+    },
+    emoji: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    descripcion: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    disponible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    unidad: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    imagen: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  }, {
+    tableName: 'productos',
+    timestamps: true,
+  });
 
-module.exports = Producto;
+  Producto.associate = (models) => {
+    // Un producto pertenece a un usuario (agricultor)
+    Producto.belongsTo(models.Usuario, {
+      foreignKey: 'user_id',
+      as: 'usuario',
+      onDelete: 'CASCADE',
+    });
+
+    // Un producto puede estar en muchas ofertas
+    Producto.hasMany(models.OfertaProducto, {
+      foreignKey: 'producto_id',
+      as: 'ofertas',
+    });
+
+    // Un producto puede estar en muchas recetas (vía tabla intermedia)
+    Producto.belongsToMany(models.Receta, {
+      through: models.RecetaIngrediente,
+      foreignKey: 'producto_id',
+      otherKey: 'receta_id',
+      as: 'recetas',
+    });
+  };
+
+  return Producto;
+};
