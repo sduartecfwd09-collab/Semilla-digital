@@ -1,0 +1,24 @@
+const router = require('express').Router();
+const ctrl = require('../Controllers/ofertaProductoController');
+const { verifyToken } = require('../Middleware/authMiddleware');
+const { authorizeRoles } = require('../Middleware/roleMiddleware');
+
+// ── PÚBLICAS ────────────────────────────────────────────────
+// GET  /api/ofertas                       → Listar todas
+// GET  /api/ofertas/feria/:feriaId        → Por feria
+// GET  /api/ofertas/producto/:productoId  → Por producto
+// GET  /api/ofertas/:id                   → Por ID
+router.get('/', ctrl.getAll);
+router.get('/feria/:feriaId', ctrl.getByFeria);
+router.get('/producto/:productoId', ctrl.getByProducto);
+router.get('/:id', ctrl.getById);
+
+// ── PROTEGIDAS (Agricultor | Administrador) ─────────────────
+// POST   /api/ofertas       → Crear oferta
+// PUT    /api/ofertas/:id   → Actualizar oferta
+// DELETE /api/ofertas/:id   → Eliminar oferta
+router.post('/', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.create);
+router.put('/:id', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.remove);
+
+module.exports = router;

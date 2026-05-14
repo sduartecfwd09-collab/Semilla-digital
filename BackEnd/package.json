@@ -10,17 +10,8 @@
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "test:coverage": "jest --runInBand --forceExit --detectOpenHandles --coverage"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "src/controllers/**/*.js",
-      "src/middlewares/**/*.js",
-      "src/models/**/*.js"
-    ]
-  },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -32,6 +23,7 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.0.2",
+    "sequelize-cli": "^6.6.5",
     "supertest": "^7.0.0"
   }
 }
