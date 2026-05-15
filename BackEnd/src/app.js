@@ -9,6 +9,7 @@ const routes  = require('./routes');
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { sequelize } = require('./models');
 
+
 const app  = express();
 const PORT = process.env.PORT || 3002;
 
