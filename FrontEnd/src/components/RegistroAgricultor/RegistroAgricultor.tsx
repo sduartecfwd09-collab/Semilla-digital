@@ -92,13 +92,22 @@ const RegistroAgricultor: React.FC = () => {
         setLoading(true);
         // Cargar ferias y deduplicar
         const feriasRes = await authFetch(ENDPOINTS.ferias);
-        const dataFerias = await feriasRes.json();
+        const dataFeriasRaw = await feriasRes.json();
+        const dataFerias = dataFeriasRaw.data || dataFeriasRaw;
         
         // Deduplicar ferias por nombre para evitar repeticiones visuales
         const feriasUnicas = dataFerias.filter((feria: any, index: number, self: any[]) =>
-          index === self.findIndex((f) => f.name === feria.name)
+          index === self.findIndex((f) => (f.name || f.nombre) === (feria.name || feria.nombre))
         );
-          setFerias(feriasUnicas);
+        
+        // Mapear nombres para asegurar compatibilidad
+        const feriasMapped = feriasUnicas.map((f: any) => ({
+          ...f,
+          name: f.nombre || f.name,
+          location: f.direccion?.canton?.nombre || f.location || '',
+          province: f.direccion?.provincia?.nombre || f.province || ''
+        }));
+        setFerias(feriasMapped);
   
           // Si estamos en modo reinicio (nueva solicitud tras rechazo), no cargamos datos existentes
           if (isReset) {
@@ -108,7 +117,8 @@ const RegistroAgricultor: React.FC = () => {
   
           // Buscar puesto existente
           const puestoRes = await authFetch(ENDPOINTS.puestosAgricultor);
-          const todosPuestos = await puestoRes.json();
+          const todosPuestosRaw = await puestoRes.json();
+          const todosPuestos = todosPuestosRaw.data || todosPuestosRaw;
           const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
   
           if (misPuestos.length > 0) {
@@ -131,7 +141,8 @@ const RegistroAgricultor: React.FC = () => {
   
           // Buscar solicitud pendiente
           const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
-          const todasSolicitudes = await solRes.json();
+          const todasSolicitudesRaw = await solRes.json();
+          const todasSolicitudes = todasSolicitudesRaw.data || todasSolicitudesRaw;
           const misSolicitudes = todasSolicitudes.filter(
             (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
           );
@@ -274,21 +285,21 @@ const RegistroAgricultor: React.FC = () => {
       const fotosBase64 = fotos.map(f => f.preview);
 
       const puestoData = {
-        usuarioId: userId,
-        nombrePuesto: nombrePuesto.trim(),
+        usuario_id: userId,
+        nombre_puesto: nombrePuesto.trim(),
         descripcion: descripcion.trim(),
         ubicacion: [ubicacionNombre],
-        feriaId: selectedFeriaId,
-        tiposProducto,
-        fotosNombres,
-        fotosBase64,
+        feria_id: selectedFeriaId,
+        tipos_producto: tiposProducto,
+        fotos_nombres: fotosNombres,
+        fotos_base64: fotosBase64,
         telefono: telefono.trim(),
         email: email.trim(),
         horarios: horariosList.length > 0 ? horariosList.map(h => `${h.dia} de ${h.inicio} a ${h.fin}`).join(', ') : '',
-        horariosList: horariosList,
-        metodosCultivo: metodosCultivo.trim(),
-        redesSociales: redesSociales.trim(),
-        fechaRegistro: new Date().toISOString()
+        horarios_list: horariosList,
+        metodos_cultivo: metodosCultivo.trim(),
+        redes_sociales: redesSociales.trim(),
+        fecha_registro: new Date().toISOString()
       };
 
       if (puestoId) {
@@ -308,7 +319,7 @@ const RegistroAgricultor: React.FC = () => {
         });
         if (!puestoRes.ok) throw new Error('Error al guardar puesto');
         const nuevoPuesto = await puestoRes.json();
-        setPuestoId(nuevoPuesto.id);
+        setPuestoId(nuevoPuesto.data ? nuevoPuesto.data.id : nuevoPuesto.id);
       }
   
       // Si el usuario es un AGRICULTOR ya activo, NO creamos ni actualizamos solicitudes.
@@ -328,13 +339,13 @@ const RegistroAgricultor: React.FC = () => {
       // Crear o actualizar solicitud de cambio de rol (Solo para Usuario/Cliente)
       if (!solicitudId) {
         const solicitudData = {
-          usuarioId: userId,
-          nombreDelPuesto: nombrePuesto.trim(),
-          correoUsuario: email.trim(),
-          rolSolicitado: 'Agricultor',
+          usuario_id: userId,
+          nombre_del_puesto: nombrePuesto.trim(),
+          correo_usuario: email.trim(),
+          rol_solicitado: 'Agricultor',
           estado: 'Pendiente',
-          motivoRespuesta: '',
-          fechaSolicitud: new Date().toISOString()
+          motivo_respuesta: '',
+          fecha_solicitud: new Date().toISOString()
         };
   
         const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol, {
@@ -346,7 +357,8 @@ const RegistroAgricultor: React.FC = () => {
         if (!solRes.ok) throw new Error('Error al crear solicitud');
         
         const nuevaSolicitud = await solRes.json();
-        setSolicitudId(nuevaSolicitud.id);
+        // The backend returns { success: true, data: { id: ... } }
+        setSolicitudId(nuevaSolicitud.data ? nuevaSolicitud.data.id : nuevaSolicitud.id);
       } else {
         // Si ya existía una solicitud (modo edición), nos aseguramos de que esté en Pendiente
         // y actualizamos sus datos básicos
@@ -354,10 +366,10 @@ const RegistroAgricultor: React.FC = () => {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            nombreDelPuesto: nombrePuesto.trim(),
-            correoUsuario: email.trim(),
+            nombre_del_puesto: nombrePuesto.trim(),
+            correo_usuario: email.trim(),
             estado: 'Pendiente',
-            fechaSolicitud: new Date().toISOString()
+            fecha_solicitud: new Date().toISOString()
           })
         });
         if (!solRes.ok) throw new Error('Error al actualizar solicitud');
