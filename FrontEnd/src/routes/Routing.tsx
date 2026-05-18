@@ -31,6 +31,11 @@ import Configuracion from '../components/Agricultor/Configuracion/index'
 import Ganancias from '../components/Agricultor/Ganancias/Ganancias'
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
 
+// Rutas de Delivery
+import DeliveryDashboard from '../components/Delivery/DeliveryDashboard';
+import ClientDeliveryTracker from '../components/Delivery/ClientDeliveryTracker';
+import RegistroDelivery from '../components/Delivery/RegistroDelivery';
+
 const Routing: React.FC = () => {
   return (
     <Router>
@@ -83,6 +88,35 @@ const Routing: React.FC = () => {
           <Route path="config" element={<Configuracion />} />
           <Route path="ganancias" element={<Ganancias />} />
         </Route>
+
+        {/* Rutas de Tracker de Cliente (Protegido para Usuario) */}
+        <Route 
+          path="/delivery/track/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['Usuario', 'Administrador']}>
+              <ClientDeliveryTracker />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/registro-delivery" 
+          element={
+            <ProtectedRoute allowedRoles={['Usuario', 'Cliente']}>
+              <RegistroDelivery />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Rutas de Repartidor (Protegido por rol 'DRIVER') */}
+        <Route 
+          path="/driver" 
+          element={
+            <ProtectedRoute allowedRoles={['DRIVER']}>
+              <DeliveryDashboard />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/" replace />} />

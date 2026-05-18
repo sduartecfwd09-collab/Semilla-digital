@@ -59,4 +59,10 @@ router.use('/auditoria',
   require('./auditRoutes')
 );
 
+// ── Delivery ────────────────────────────────────────────────────────────
+router.use('/delivery',
+  verifyToken,
+  require('./deliveryRoutes')
+);
+
 module.exports = router;

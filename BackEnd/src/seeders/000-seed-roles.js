@@ -6,6 +6,7 @@ module.exports = {
       { id: 1, nombre: 'Administrador', descripcion: 'Control total del sistema', created_at: new Date(), updated_at: new Date() },
       { id: 2, nombre: 'Agricultor', descripcion: 'Vendedor en ferias', created_at: new Date(), updated_at: new Date() },
       { id: 3, nombre: 'Usuario', descripcion: 'Cliente o usuario general', created_at: new Date(), updated_at: new Date() },
+      { id: 4, nombre: 'DRIVER', descripcion: 'Repartidor de pedidos', created_at: new Date(), updated_at: new Date() },
     ];
 
     // Verificar si ya existen

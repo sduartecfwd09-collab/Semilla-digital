@@ -33,14 +33,11 @@ const Profile: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [hasPendingRequest, setHasPendingRequest] = useState(false);
-  const [requestStatus, setRequestStatus] = useState<string | null>(null);
-  const [requestMotivo, setRequestMotivo] = useState<string>('');
-  const [requestId, setRequestId] = useState<string>('');
+  const [agricultorRequest, setAgricultorRequest] = useState<any>(null);
+  const [driverRequest, setDriverRequest] = useState<any>(null);
   const [originalData, setOriginalData] = useState({...userData});
 
   useEffect(() => {
-    // Si no hay usuario y ya terminó de cargar el context, vamos a auth
     if (!user) {
       const stored = localStorage.getItem('user');
       if (!stored) {
@@ -52,7 +49,6 @@ const Profile: React.FC = () => {
     const currentId = user?.id || JSON.parse(localStorage.getItem('user') || '{}').id;
     if (!currentId) return;
 
-    // Fetch fresh data from server
     authFetch(`${ENDPOINTS.usuarios}/${currentId}`)
       .then(res => res.json())
       .then(data => {
@@ -73,33 +69,23 @@ const Profile: React.FC = () => {
         return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
       .then(res => res?.json())
-      .then(allRequests => {
-        if (allRequests) {
+      .then(allRequestsRaw => {
+        const allRequests = allRequestsRaw?.data || allRequestsRaw;
+        if (allRequests && Array.isArray(allRequests)) {
           const userRequests = allRequests.filter(
-            (r: any) => String(r.usuarioId) === String(currentId)
-          ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
+            (r: any) => String(r.usuario_id || r.usuarioId) === String(currentId)
+          );
           
-          if (userRequests.length > 0) {
-            // Priorizamos: Aprobada > Pendiente > Rechazada
-            let activeRequest = userRequests[0];
-            const aprobada = userRequests.find((r: any) => r.estado === 'Aprobada');
-            const pendiente = userRequests.find((r: any) => r.estado === 'Pendiente');
-            const rechazada = userRequests.find((r: any) => r.estado === 'Rechazada');
-            
-            if (aprobada) {
-              activeRequest = aprobada;
-            } else if (pendiente) {
-              activeRequest = pendiente;
-            } else if (rechazada) {
-              activeRequest = rechazada;
-            }
+          const agRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Agricultor' || r.rolSolicitado === 'Agricultor')
+            .sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
+          if (agRequests.length > 0) {
+            setAgricultorRequest(agRequests[0]);
+          }
 
-            setRequestStatus(activeRequest.estado);
-            setRequestMotivo(activeRequest.motivoRespuesta || '');
-            setRequestId(activeRequest.id || '');
-            if (activeRequest.estado === 'Pendiente') {
-              setHasPendingRequest(true);
-            }
+          const drRequests = userRequests.filter((r: any) => r.rol_solicitado === 'DRIVER' || r.rolSolicitado === 'DRIVER')
+            .sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
+          if (drRequests.length > 0) {
+            setDriverRequest(drRequests[0]);
           }
         }
         setLoading(false);
@@ -278,62 +264,11 @@ const Profile: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleRoleRequest = async () => {
-    try {
-      const result = await Swal.fire({
-        title: '¿Solicitar perfil de Agricultor?',
-        text: 'Tu solicitud será enviada al administrador para su aprobación.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: 'var(--verde-claro)',
-        cancelButtonColor: '#718096',
-        confirmButtonText: 'Sí, enviar solicitud',
-        cancelButtonText: 'Cancelar'
-      });
 
-      if (result.isConfirmed) {
-        const newRequest = {
-          usuarioId: userData.id,
-          nombreUsuario: userData.name,
-          correoUsuario: userData.email,
-          rolSolicitado: 'Agricultor',
-          estado: 'Pendiente',
-          motivoRespuesta: '',
-          fechaSolicitud: new Date().toISOString()
-        };
-
-        const response = await authFetch(ENDPOINTS.solicitudesCambioRol, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newRequest)
-        });
-
-        if (response.ok) {
-          setHasPendingRequest(true);
-          setRequestStatus('Pendiente');
-          
-          Swal.fire({
-            icon: 'success',
-            title: 'Solicitud enviada',
-            text: 'Tu petición de cambio de rol ha sido registrada y será revisada por un administrador.',
-            confirmButtonColor: 'var(--verde-claro)',
-          });
-        } else {
-          throw new Error('Error al enviar la solicitud');
-        }
-      }
-    } catch {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo procesar la solicitud en este momento.',
-        confirmButtonColor: 'var(--verde-claro)',
-      });
-    }
-  };
 
   const handleCancelarSolicitud = async () => {
-    if (!requestId) return;
+    const reqId = agricultorRequest?.id;
+    if (!reqId) return;
 
     const { isConfirmed } = await Swal.fire({
       title: '¿Estás seguro?',
@@ -348,24 +283,19 @@ const Profile: React.FC = () => {
 
     if (isConfirmed) {
       try {
-        // Borrar la solicitud de cambio de rol
-        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${requestId}`, {
+        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, {
           method: 'DELETE',
         });
 
-        // Borrar la información del puesto asociado (puestosAgricultor)
         const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
         const todosPuestos = await puestosRes.json();
         const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
         
-        // Elimar todos sus puestos (normalmente debería ser solo uno)
         await Promise.all(misPuestos.map((p: any) => 
           authFetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
         ));
         
-        setRequestStatus(null);
-        setHasPendingRequest(false);
-        setRequestId('');
+        setAgricultorRequest(null);
         
         Swal.fire({
           icon: 'success',
@@ -380,11 +310,43 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleCancelarSolicitudDriver = async () => {
+    const reqId = driverRequest?.id;
+    if (!reqId) return;
+
+    const { isConfirmed } = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Se cancelará esta solicitud para ser Repartidor.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#718096',
+      confirmButtonText: 'Sí, cancelar solicitud',
+      cancelButtonText: 'Volver'
+    });
+
+    if (isConfirmed) {
+      try {
+        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, {
+          method: 'DELETE',
+        });
+        setDriverRequest(null);
+        Swal.fire({
+          icon: 'success',
+          title: 'Solicitud cancelada',
+          text: 'Tu solicitud de repartidor ha sido cancelada correctamente.',
+          confirmButtonColor: 'var(--verde-claro)',
+        });
+      } catch (error) {
+        console.error('Error al cancelar solicitud de repartidor:', error);
+        Swal.fire('Error', 'No se pudo cancelar la solicitud.', 'error');
+      }
+    }
+  };
+
   const handleConvertirseEnAgricultor = async () => {
     try {
       setLoading(true);
-      
-      // Obtener datos del puesto solicitado y la feria asignada
       const [userRes, puestosRes, feriasRes] = await Promise.all([
         authFetch(`${ENDPOINTS.usuarios}/${userData.id}`),
         authFetch(ENDPOINTS.puestosAgricultor),
@@ -432,6 +394,34 @@ const Profile: React.FC = () => {
         confirmButtonColor: 'var(--verde-claro)',
       }).then(() => {
         window.location.href = '/agricultor';
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'No se pudo actualizar tu perfil.', 'error');
+      setLoading(false);
+    }
+  };
+
+  const handleConvertirseEnDriver = async () => {
+    try {
+      setLoading(true);
+      await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'DRIVER' })
+      });
+
+      const updatedUserRes = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const updatedUserData = await updatedUserRes.json();
+      localStorage.setItem('user', JSON.stringify(updatedUserData));
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Felicidades!',
+        text: 'Bienvenido a tu nuevo perfil de Repartidor en AgroMap.',
+        confirmButtonColor: 'var(--verde-claro)',
+      }).then(() => {
+        window.location.href = '/driver';
       });
     } catch (error) {
       console.error(error);
@@ -663,7 +653,7 @@ const Profile: React.FC = () => {
               <div className="role-request-content">
                 <h3>Solicitud para ser Agricultor</h3>
                 
-                {requestStatus === 'Pendiente' && (
+                {agricultorRequest && (agricultorRequest.estado === 'Pendiente' || agricultorRequest.estado === 'Pendiente') && (
                   <>
                     <p>Tu solicitud está siendo revisada por un administrador. Podés actualizar la información de tu puesto si lo necesitás.</p>
                     <div className="request-status-badge pending">
@@ -690,10 +680,10 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {requestStatus === 'Aprobada' && (
+                {agricultorRequest && (agricultorRequest.estado === 'Aprobada' || agricultorRequest.estado === 'Aprobada') && (
                   <>
                     <p><strong>¡Felicidades!</strong> Tu solicitud ha sido aprobada por el administrador.</p>
-                    {requestMotivo && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{requestMotivo}"</p>}
+                    {agricultorRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{agricultorRequest.motivo_respuesta}"</p>}
                     <div className="request-status-badge approved" style={{backgroundColor: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
                       <span>✅ Aprobada</span>
                     </div>
@@ -708,10 +698,10 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {requestStatus === 'Rechazada' && (
+                {agricultorRequest && (agricultorRequest.estado === 'Rechazada' || agricultorRequest.estado === 'Rechazada') && (
                   <>
                     <p>Tu solicitud ha sido rechazada.</p>
-                    {requestMotivo && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{requestMotivo}"</p>}
+                    {agricultorRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{agricultorRequest.motivo_respuesta}"</p>}
                     <div className="request-status-badge rejected" style={{backgroundColor: '#fef2f2', color: '#991b1b', borderColor: '#fecaca', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
                       <span>❌ Rechazada</span>
                     </div>
@@ -725,7 +715,7 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {!requestStatus && (
+                {!agricultorRequest && (
                   <>
                     <p>Completá el formulario con los datos de tu puesto para solicitar el cambio de rol a Agricultor. Un administrador revisará tu solicitud.</p>
                     <button 
@@ -734,6 +724,91 @@ const Profile: React.FC = () => {
                       onClick={() => navigate('/registro-agricultor')}
                     >
                       Solicitar ser Agricultor
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Solicitud para ser Repartidor - Solo se muestra si NO es Driver ni Admin */}
+          {(!userData.role || (userData.role.toLowerCase() !== 'driver' && userData.role.toLowerCase() !== 'administrador')) && (
+            <div className="role-request-section">
+              <div className="separator"></div>
+              <div className="role-request-content">
+                <h3>Solicitud para ser Repartidor (Delivery)</h3>
+                
+                {driverRequest && (driverRequest.estado === 'Pendiente' || driverRequest.estado === 'Pendiente') && (
+                  <>
+                    <p>Tu solicitud está siendo revisada por un administrador. Podés actualizar la información de tu vehículo si lo necesitás.</p>
+                    <div className="request-status-badge pending">
+                      <span>⏳ Solicitud pendiente de aprobación</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                      <button 
+                        type="button" 
+                        className="role-request-btn"
+                        onClick={() => navigate('/registro-delivery')}
+                        style={{ flex: 1 }}
+                      >
+                        Editar solicitud
+                      </button>
+                      <button 
+                        type="button" 
+                        className="role-request-btn"
+                        style={{ flex: 1, backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}
+                        onClick={handleCancelarSolicitudDriver}
+                      >
+                        Cancelar solicitud
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {driverRequest && (driverRequest.estado === 'Aprobada' || driverRequest.estado === 'Aprobada') && (
+                  <>
+                    <p><strong>¡Felicidades!</strong> Tu solicitud ha sido aprobada por el administrador.</p>
+                    {driverRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{driverRequest.motivo_respuesta}"</p>}
+                    <div className="request-status-badge approved" style={{backgroundColor: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
+                      <span>✅ Aprobada</span>
+                    </div>
+                    <button 
+                      type="button" 
+                      className="save-btn"
+                      onClick={handleConvertirseEnDriver}
+                      style={{width: '100%', maxWidth: '300px', margin: '0 auto', display: 'block'}}
+                    >
+                      Convertirse en repartidor
+                    </button>
+                  </>
+                )}
+
+                {driverRequest && (driverRequest.estado === 'Rechazada' || driverRequest.estado === 'Rechazada') && (
+                  <>
+                    <p>Tu solicitud ha sido rechazada.</p>
+                    {driverRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{driverRequest.motivo_respuesta}"</p>}
+                    <div className="request-status-badge rejected" style={{backgroundColor: '#fef2f2', color: '#991b1b', borderColor: '#fecaca', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
+                      <span>❌ Rechazada</span>
+                    </div>
+                    <button 
+                      type="button" 
+                      className="role-request-btn"
+                      onClick={() => navigate('/registro-delivery?reset=true')}
+                    >
+                      Enviar nueva solicitud
+                    </button>
+                  </>
+                )}
+
+                {!driverRequest && (
+                  <>
+                    <p>Completá el formulario con los datos de tu vehículo para solicitar el cambio de rol a Repartidor. Un administrador revisará tu solicitud.</p>
+                    <button 
+                      type="button" 
+                      className="role-request-btn"
+                      onClick={() => navigate('/registro-delivery')}
+                    >
+                      Solicitar ser Repartidor
                     </button>
                   </>
                 )}

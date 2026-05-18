@@ -1,0 +1,54 @@
+.registro-delivery-page {
+  background-color: #f4f7f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.registro-delivery-container {
+  flex: 1;
+  padding: 3rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.registro-delivery-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.registro-delivery-form {
+  padding: 2.5rem;
+}
+
+.registro-delivery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .registro-delivery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.registro-delivery-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.registro-delivery-actions button {
+  flex: 1;
+  min-height: 56px;
+  border-radius: 28px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}

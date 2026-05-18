@@ -8,9 +8,29 @@ const routes  = require('./routes');
 
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { sequelize } = require('./models');
+const http = require('http');
+const socket = require('./socket');
 
 const app  = express();
 const PORT = process.env.PORT || 3002;
+const server = http.createServer(app);
+const io = socket.init(server);
+
+io.on('connection', (client) => {
+  console.log('🔗 Cliente conectado a WebSocket:', client.id);
+  
+  client.on('joinOrder', (orderId) => {
+    client.join(`order_${orderId}`);
+  });
+  
+  client.on('joinDriver', (driverId) => {
+    client.join(`driver_${driverId}`);
+  });
+
+  client.on('disconnect', () => {
+    console.log('❌ Cliente desconectado:', client.id);
+  });
+});
 
 // ── Middlewares globales ──────────────────────────────────────────────────────
 app.use(cors({
@@ -56,7 +76,7 @@ if (process.env.NODE_ENV !== 'test') {
       console.log('✅ Conexión a MySQL establecida');
       await sequelize.sync({ alter: true });
       console.log('✅ Modelos sincronizados con la base de datos');
-      app.listen(PORT, () => {
+      server.listen(PORT, () => {
         console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
         console.log('   Presiona Ctrl+C para detener\n');
       });

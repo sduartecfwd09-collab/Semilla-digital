@@ -40,6 +40,11 @@ const models = {
   Permiso: require('./Permiso')(sequelize),
   RolePermiso: require('./RolePermiso')(sequelize),
   AuditLog: require('./AuditLog')(sequelize),
+  // ── Delivery Module ──────────────────────────────
+  DeliveryDriver: require('./DeliveryDriver')(sequelize),
+  DeliveryOrder: require('./DeliveryOrder')(sequelize),
+  DriverLocation: require('./DriverLocation')(sequelize),
+  DeliveryRating: require('./DeliveryRating')(sequelize),
 };
 
 // Inicialización de asociaciones

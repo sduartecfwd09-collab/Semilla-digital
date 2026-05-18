@@ -3,7 +3,7 @@
 // Descripción: Lógica de negocio para solicitudes de cambio
 //              de rol (flujo de aprobación admin)
 // ============================================================
-const { SolicitudCambioRol, Usuario } = require('../models');
+const { SolicitudCambioRol, Usuario, DeliveryDriver } = require('../models');
 
 const findAll = async (query = {}) => {
   const where = {};
@@ -76,6 +76,18 @@ const approve = async (id, data = {}) => {
 
   // Actualizar el rol del usuario
   await solicitud.usuario.update({ role: solicitud.rol_solicitado });
+
+  // Si el rol solicitado es DRIVER, creamos el repartidor correspondiente
+  if (solicitud.rol_solicitado === 'DRIVER') {
+    await DeliveryDriver.findOrCreate({
+      where: { usuario_id: solicitud.usuario_id },
+      defaults: {
+        vehicle_type: solicitud.vehicle_type,
+        license_plate: solicitud.license_plate,
+        status: 'inactive',
+      }
+    });
+  }
 
   // Actualizar la solicitud
   await solicitud.update({
