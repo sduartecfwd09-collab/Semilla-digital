@@ -44,10 +44,10 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
   useEffect(() => {
     // Cargar productos para actualizar los conteos de categorías
     fetch(ENDPOINTS.productos)
-      .then(res => res.json())
-      .then((productosData: ProductFromAPI[]) => {
+      .then(json => {
+        const productosData = json.success ? json.data : json;
         const counts: Record<string, number> = {};
-        const availableProducts = productosData.filter((p) => p.disponible !== false);
+        const availableProducts = (productosData || []).filter((p: any) => p.disponible !== false);
         
         // Deduplicar por nombre normalizado (igual que en el comparador)
         const uniqueProducts = new Map<string, string>(); // normalizedName -> category

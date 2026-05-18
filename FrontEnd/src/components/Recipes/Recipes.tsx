@@ -20,9 +20,10 @@ const Recipes: React.FC = () => {
   useEffect(() => {
     fetch(ENDPOINTS.recetas)
       .then(res => res.json())
-      .then(data => {
-        setRecipes(data)
-        setLoading(false)
+      .then(json => {
+        const data = json.success ? json.data : json;
+        setRecipes(Array.isArray(data) ? data : []);
+        setLoading(false);
       })
       .catch(err => {
         console.error('Error fetching recipes:', err)

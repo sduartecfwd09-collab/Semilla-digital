@@ -117,7 +117,7 @@ const MisProductos: React.FC = () => {
   // Filtrar productos
   const filteredProducts = productos
     .filter((p) =>
-      p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      (p.nombre || '').toLowerCase().includes(searchTerm.toLowerCase())
     )
 
   return (

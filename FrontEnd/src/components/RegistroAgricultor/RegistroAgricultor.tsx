@@ -8,6 +8,7 @@ import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { validateEmail } from '../../utils/validation';
 import ProductIcon from '../../utils/productIcons';
 import CategoryIcon from '../CategoryIcon/CategoryIcon';
+import { useFerias } from '../../hooks/useFerias';
 
 // Opciones de tipo de productos
 const TIPOS_PRODUCTO = [
@@ -30,6 +31,49 @@ interface HorarioItem {
   inicio: string;
   fin: string;
 }
+
+// Función auxiliar para comprimir imágenes usando canvas
+const compressImage = (file: File, maxWidth: number = 800, maxHeight: number = 800, quality: number = 0.75): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(event.target?.result as string);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 
 const RegistroAgricultor: React.FC = () => {
   const navigate = useNavigate();
@@ -57,6 +101,7 @@ const RegistroAgricultor: React.FC = () => {
   const [fotosExistentes, setFotosExistentes] = useState<string[]>([]);
   const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
+  const [nombreUsuario, setNombreUsuario] = useState('');
 
   // Campos opcionales
   const [horariosList, setHorariosList] = useState<HorarioItem[]>([]);
@@ -65,6 +110,20 @@ const RegistroAgricultor: React.FC = () => {
 
   // Estados de expansión de secciones
   const [feriaExpanded, setFeriaExpanded] = useState(false);
+
+  const { allFerias, loading: loadingFerias } = useFerias();
+
+  useEffect(() => {
+    if (allFerias && allFerias.length > 0) {
+      const dataFerias = allFerias.map((f: any) => ({
+        ...f,
+        name: f.nombre,
+        location: f.direccion,
+        province: f.provincia
+      }));
+      setFerias(dataFerias);
+    }
+  }, [allFerias]);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -85,20 +144,12 @@ const RegistroAgricultor: React.FC = () => {
     const currentUserId = cachedUser.id;
     setUserId(currentUserId);
     setEmail(cachedUser.email || '');
+    setNombreUsuario(cachedUser.name || cachedUser.nombre || '');
 
-    // Cargar datos existentes y ferias
+    // Cargar datos existentes
     const cargarDatos = async () => {
       try {
         setLoading(true);
-        // Cargar ferias y deduplicar
-        const feriasRes = await authFetch(ENDPOINTS.ferias);
-        const dataFerias = await feriasRes.json();
-        
-        // Deduplicar ferias por nombre para evitar repeticiones visuales
-        const feriasUnicas = dataFerias.filter((feria: any, index: number, self: any[]) =>
-          index === self.findIndex((f) => f.name === feria.name)
-        );
-          setFerias(feriasUnicas);
   
           // Si estamos en modo reinicio (nueva solicitud tras rechazo), no cargamos datos existentes
           if (isReset) {
@@ -108,32 +159,37 @@ const RegistroAgricultor: React.FC = () => {
   
           // Buscar puesto existente
           const puestoRes = await authFetch(ENDPOINTS.puestosAgricultor);
-          const todosPuestos = await puestoRes.json();
-          const misPuestos = todosPuestos.filter((p: { usuarioId: string | number }) => String(p.usuarioId) === String(currentUserId));
+          const jsonPuestos = await puestoRes.json();
+          const todosPuestos = jsonPuestos.success ? jsonPuestos.data : jsonPuestos;
+          const misPuestos = (todosPuestos || []).filter((p: any) => String(p.usuarioId || p.usuario_id) === String(currentUserId));
   
           if (misPuestos.length > 0) {
             const puesto = misPuestos[misPuestos.length - 1];
             setPuestoId(puesto.id);
-            setNombrePuesto(puesto.nombrePuesto || '');
+            setNombrePuesto(puesto.nombrePuesto || puesto.nombre_puesto || '');
             setDescripcion(puesto.descripcion || '');
-            setSelectedFeriaId(String(puesto.feriaId || ''));
-            setTiposProducto(puesto.tiposProducto || []);
-            const fotosGuardadas = puesto.fotosNombres || (puesto.logoNombre ? [puesto.logoNombre] : []);
+            setSelectedFeriaId(String(puesto.feriaId || puesto.feria_id || ''));
+            setTiposProducto(puesto.tiposProducto || puesto.tipos_producto || []);
+            const fotosN = puesto.fotosNombres || puesto.fotos_nombres || [];
+            const logoN = puesto.logoNombre || puesto.logo_nombre;
+            const fotosGuardadas = fotosN.length > 0 ? fotosN : (logoN ? [logoN] : []);
             setFotosExistentes(fotosGuardadas);
             setTelefono(puesto.telefono || '');
             setEmail(puesto.email || cachedUser.email || '');
-            if (puesto.horariosList && Array.isArray(puesto.horariosList)) {
-              setHorariosList(puesto.horariosList);
+            if (puesto.horariosList || puesto.horarios_list) {
+              const hList = puesto.horariosList || puesto.horarios_list;
+              if (Array.isArray(hList)) setHorariosList(hList);
             }
-            setMetodosCultivo(puesto.metodosCultivo || '');
-            setRedesSociales(puesto.redesSociales || '');
+            setMetodosCultivo(puesto.metodosCultivo || puesto.metodos_cultivo || '');
+            setRedesSociales(puesto.redesSociales || puesto.redes_sociales || '');
           }
   
           // Buscar solicitud pendiente
           const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
-          const todasSolicitudes = await solRes.json();
-          const misSolicitudes = todasSolicitudes.filter(
-            (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
+          const jsonSols = await solRes.json();
+          const todasSolicitudes = jsonSols.success ? jsonSols.data : jsonSols;
+          const misSolicitudes = (todasSolicitudes || []).filter(
+            (s: any) => String(s.usuarioId || s.usuario_id) === String(currentUserId) && s.estado === 'Pendiente'
           );
           if (misSolicitudes.length > 0) {
             setSolicitudEnviada(true);
@@ -183,12 +239,18 @@ const RegistroAgricultor: React.FC = () => {
 
     const archivosASubir = archivosValidos.slice(0, disponibles);
 
-    const leerArchivo = (file: File): Promise<FotoPreview> => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({ file, preview: reader.result as string });
-        reader.readAsDataURL(file);
-      });
+    const leerArchivo = async (file: File): Promise<FotoPreview> => {
+      try {
+        const compressed = await compressImage(file);
+        return { file, preview: compressed };
+      } catch (error) {
+        console.error('Error al comprimir imagen, usando original:', error);
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ file, preview: reader.result as string });
+          reader.readAsDataURL(file);
+        });
+      }
     };
 
     const nuevasFotos = await Promise.all(archivosASubir.map(leerArchivo));
@@ -208,12 +270,20 @@ const RegistroAgricultor: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validaciones obligatorias
-    if (!nombrePuesto.trim() || !descripcion.trim() || !selectedFeriaId || tiposProducto.length === 0 || (fotos.length === 0 && fotosExistentes.length === 0) || !telefono.trim()) {
+    // Validaciones obligatorias detalladas
+    const camposFaltantes: string[] = [];
+    if (!nombrePuesto.trim()) camposFaltantes.push('Nombre del puesto');
+    if (!selectedFeriaId) camposFaltantes.push('Feria');
+    if (!descripcion.trim()) camposFaltantes.push('Descripción');
+    if (tiposProducto.length === 0) camposFaltantes.push('Tipo de productos');
+    if (fotos.length === 0 && fotosExistentes.length === 0) camposFaltantes.push('Fotos del puesto');
+    if (!telefono.trim()) camposFaltantes.push('Teléfono');
+
+    if (camposFaltantes.length > 0) {
       Swal.fire({
         icon: 'warning',
-        title: 'Campos incompletos',
-        text: 'Por favor, completá todos los campos obligatorios del formulario.',
+        title: 'Campos obligatorios incompletos',
+        text: `Por favor, completá los siguientes campos obligatorios: ${camposFaltantes.join(', ')}.`,
         confirmButtonColor: 'var(--verde-claro)',
       });
       return;
@@ -298,7 +368,10 @@ const RegistroAgricultor: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(puestoData)
         });
-        if (!puestoRes.ok) throw new Error('Error al actualizar puesto');
+        if (!puestoRes.ok) {
+          const errData = await puestoRes.json();
+          throw new Error(errData.message || 'Error al actualizar puesto');
+        }
       } else {
         // Crear puesto nuevo
         const puestoRes = await authFetch(ENDPOINTS.puestosAgricultor, {
@@ -306,9 +379,13 @@ const RegistroAgricultor: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(puestoData)
         });
-        if (!puestoRes.ok) throw new Error('Error al guardar puesto');
+        if (!puestoRes.ok) {
+          const errData = await puestoRes.json();
+          throw new Error(errData.message || 'Error al guardar puesto');
+        }
         const nuevoPuesto = await puestoRes.json();
-        setPuestoId(nuevoPuesto.id);
+        const realPuesto = nuevoPuesto.success ? nuevoPuesto.data : nuevoPuesto;
+        setPuestoId(realPuesto.id);
       }
   
       // Si el usuario es un AGRICULTOR ya activo, NO creamos ni actualizamos solicitudes.
@@ -329,6 +406,7 @@ const RegistroAgricultor: React.FC = () => {
       if (!solicitudId) {
         const solicitudData = {
           usuarioId: userId,
+          nombreUsuario: nombreUsuario,
           nombreDelPuesto: nombrePuesto.trim(),
           correoUsuario: email.trim(),
           rolSolicitado: 'Agricultor',
@@ -343,10 +421,14 @@ const RegistroAgricultor: React.FC = () => {
           body: JSON.stringify(solicitudData)
         });
   
-        if (!solRes.ok) throw new Error('Error al crear solicitud');
+        if (!solRes.ok) {
+          const errData = await solRes.json();
+          throw new Error(errData.message || 'Error al crear solicitud');
+        }
         
         const nuevaSolicitud = await solRes.json();
-        setSolicitudId(nuevaSolicitud.id);
+        const realSolicitud = nuevaSolicitud.success ? nuevaSolicitud.data : nuevaSolicitud;
+        setSolicitudId(realSolicitud.id);
       } else {
         // Si ya existía una solicitud (modo edición), nos aseguramos de que esté en Pendiente
         // y actualizamos sus datos básicos
@@ -354,13 +436,17 @@ const RegistroAgricultor: React.FC = () => {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            nombreUsuario: nombreUsuario,
             nombreDelPuesto: nombrePuesto.trim(),
             correoUsuario: email.trim(),
             estado: 'Pendiente',
             fechaSolicitud: new Date().toISOString()
           })
         });
-        if (!solRes.ok) throw new Error('Error al actualizar solicitud');
+        if (!solRes.ok) {
+          const errData = await solRes.json();
+          throw new Error(errData.message || 'Error al actualizar solicitud');
+        }
       }
 
       setSolicitudEnviada(true);
@@ -376,13 +462,13 @@ const RegistroAgricultor: React.FC = () => {
         navigate(role === 'Agricultor' ? '/agricultor' : '/perfil');
       });
   
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error detallado en handleSubmit:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Hubo un problema al procesar tu solicitud. Intentá de nuevo.',
-        footer: 'Asegurate de que las imágenes no sean demasiado pesadas.',
+        text: error.message || 'Hubo un problema al procesar tu solicitud. Intentá de nuevo.',
+        footer: 'Detalle para depuración: ' + (error.message || ''),
         confirmButtonColor: 'var(--verde-claro)',
       });
     } finally {
@@ -390,7 +476,7 @@ const RegistroAgricultor: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading || loadingFerias) {
     return (
       <div className="profile-page-loading">
         <p>Cargando...</p>

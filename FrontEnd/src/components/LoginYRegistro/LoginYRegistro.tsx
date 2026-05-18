@@ -62,6 +62,7 @@ const Auth: React.FC = () => {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
+          localStorage.setItem('agromap_password_temp', loginPassword); // Guardar para poder mostrarla en el perfil
           if (result.role === 'Administrador' || result.role === 'Admin') {
             navigate('/admin')
           } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
@@ -159,6 +160,7 @@ const Auth: React.FC = () => {
           timer: 2500,
           showConfirmButton: false,
         }).then(() => {
+          localStorage.setItem('agromap_password_temp', trimmedPassword); // Guardar temporalmente
           setIsLogin(true)
         })
       } else if (response.status === 409) {

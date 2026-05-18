@@ -55,16 +55,19 @@ const Profile: React.FC = () => {
     // Fetch fresh data from server
     authFetch(`${ENDPOINTS.usuarios}/${currentId}`)
       .then(res => res.json())
-      .then(data => {
+      .then(json => {
+        const data = json.success ? json.data : json;
+        const localPassword = localStorage.getItem('agromap_password_temp') || '••••••••';
+        
         const userInfo = {
           id: data.id,
           name: data.name || data.nombre || '',
           nombre: data.nombre || data.name || '',
           email: data.email,
-          role: data.role,
+          role: data.role || data.rol?.nombre || '',
           status: data.status,
-          password: data.password || '',
-          confirmPassword: data.password || '',
+          password: localPassword,
+          confirmPassword: localPassword,
           avatar: data.avatar || user?.avatar || ''
         };
         setUserData(userInfo);
@@ -73,9 +76,10 @@ const Profile: React.FC = () => {
         return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
       .then(res => res?.json())
-      .then(allRequests => {
-        if (allRequests) {
-          const userRequests = allRequests.filter(
+      .then(json => {
+        if (json) {
+          const allRequests = json.success ? json.data : json;
+          const userRequests = (allRequests || []).filter(
             (r: any) => String(r.usuarioId) === String(currentId)
           ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
           
@@ -121,6 +125,8 @@ const Profile: React.FC = () => {
       setUserData(originalData);
     }
     setIsEditing(!isEditing);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
 
@@ -133,11 +139,11 @@ const Profile: React.FC = () => {
     const trimmedPassword = userData.password.trim();
     const trimmedConfirm = userData.confirmPassword.trim();
 
-    if (!trimmedName || !trimmedEmail || !trimmedPassword || !trimmedConfirm) {
+    if (!trimmedName || !trimmedEmail) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
-        text: 'Por favor, completá todos los datos del perfil.',
+        text: 'Por favor, completá tu nombre y correo.',
         confirmButtonColor: 'var(--verde-claro)',
       });
       return;
@@ -154,51 +160,47 @@ const Profile: React.FC = () => {
       return;
     }
 
-    if (trimmedPassword.length <= 6) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Contraseña insegura',
-        text: 'La contraseña debe tener más de 6 dígitos de longitud.',
-        confirmButtonColor: 'var(--verde-claro)',
-      });
-      return;
-    }
-
-    if (trimmedPassword !== trimmedConfirm) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error de contraseña',
-        text: 'Las contraseñas no coinciden.',
-        confirmButtonColor: 'var(--verde-claro)',
-      });
-      return;
-    }
-
-    try {
-      // Verificar si el correo ya está en uso por OTRO usuario
-      const usersRes = await authFetch(ENDPOINTS.usuarios);
-      const allUsers = await usersRes.json();
-      const emailExists = allUsers.some((u: { email: string; id: string }) => u.email === userData.email && u.id !== userData.id);
-
-      if (emailExists) {
+    if (trimmedPassword || trimmedConfirm) {
+      if (trimmedPassword.length <= 6) {
         Swal.fire({
-          icon: 'error',
-          title: 'Correo en uso',
-          text: 'Este correo electrónico ya está registrado por otro usuario.',
+          icon: 'warning',
+          title: 'Contraseña insegura',
+          text: 'La contraseña debe tener más de 6 dígitos de longitud.',
           confirmButtonColor: 'var(--verde-claro)',
         });
         return;
       }
 
-      const fullUserResponse = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
-      const fullUserData = await fullUserResponse.json();
+      if (trimmedPassword !== trimmedConfirm) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de contraseña',
+          text: 'Las contraseñas no coinciden.',
+          confirmButtonColor: 'var(--verde-claro)',
+        });
+        return;
+      }
+    }
 
-      const updatedData = {
+    try {
+      // NOTA: La validación de correo duplicado ahora la maneja el backend directamente,
+      // ya que un usuario normal no tiene permisos para listar todos los usuarios.
+
+      const fullUserResponse = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
+      const fullUserJson = await fullUserResponse.json();
+      const fullUserData = fullUserJson.success ? fullUserJson.data : fullUserJson;
+
+      const updatedData: any = {
         ...fullUserData,
         name: trimmedName,
         email: trimmedEmail,
-        password: trimmedPassword,
       };
+
+      // Solo actualizar password si fue cambiado del actual
+      if (trimmedPassword && trimmedPassword !== '••••••••' && trimmedPassword !== originalData.password) {
+        updatedData.password = trimmedPassword;
+        localStorage.setItem('agromap_password_temp', trimmedPassword);
+      }
 
       const response = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PUT',
@@ -207,10 +209,21 @@ const Profile: React.FC = () => {
       });
 
       if (response.ok) {
-        const finalUser = await response.json();
+        const finalJson = await response.json();
+        const finalUser = finalJson.success ? finalJson.data : finalJson;
         updateUserInContext(finalUser);
-        setOriginalData(userData);
+        
+        const currentPass = localStorage.getItem('agromap_password_temp') || '••••••••';
+        const newOriginalData = {
+          ...userData,
+          password: currentPass,
+          confirmPassword: currentPass
+        };
+        setOriginalData(newOriginalData);
+        setUserData(newOriginalData);
         setIsEditing(false);
+        setShowPassword(false);
+        setShowConfirmPassword(false);
         
         Swal.fire({
           icon: 'success',
@@ -220,12 +233,25 @@ const Profile: React.FC = () => {
           timer: 2000,
           showConfirmButton: false
         });
+      } else {
+        const errorData = await response.json();
+        const errorMessage = errorData.message || errorData.error || 'Hubo un problema al actualizar tu perfil.';
+        if (errorMessage.toLowerCase().includes('unique') || errorMessage.toLowerCase().includes('existe')) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Correo en uso',
+            text: 'Este correo electrónico ya está registrado por otro usuario.',
+            confirmButtonColor: 'var(--verde-claro)',
+          });
+        } else {
+          throw new Error(errorMessage);
+        }
       }
-    } catch {
+    } catch (err: any) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Hubo un problema al actualizar tu perfil.',
+        text: err.message || 'Hubo un problema al actualizar tu perfil.',
         confirmButtonColor: 'var(--verde-claro)',
       });
     }
@@ -309,8 +335,11 @@ const Profile: React.FC = () => {
         });
 
         if (response.ok) {
+          const resJson = await response.json();
+          const createdSolicitud = resJson.success ? resJson.data : resJson;
           setHasPendingRequest(true);
           setRequestStatus('Pendiente');
+          setRequestId(createdSolicitud.id || '');
           
           Swal.fire({
             icon: 'success',
@@ -355,8 +384,9 @@ const Profile: React.FC = () => {
 
         // Borrar la información del puesto asociado (puestosAgricultor)
         const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
-        const todosPuestos = await puestosRes.json();
-        const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
+        const puestosJson = await puestosRes.json();
+        const todosPuestos = puestosJson.success ? puestosJson.data : puestosJson;
+        const misPuestos = (todosPuestos || []).filter((p: any) => String(p.usuarioId) === String(userData.id));
         
         // Elimar todos sus puestos (normalmente debería ser solo uno)
         await Promise.all(misPuestos.map((p: any) => 
@@ -391,9 +421,13 @@ const Profile: React.FC = () => {
         authFetch(ENDPOINTS.ferias)
       ]);
       
-      const currentFullUser = await userRes.json();
-      const allPuestos = await puestosRes.json();
-      const allFerias = await feriasRes.json();
+      const currentFullUserJson = await userRes.json();
+      const allPuestosJson = await puestosRes.json();
+      const allFeriasJson = await feriasRes.json();
+      
+      const currentFullUser = currentFullUserJson.success ? currentFullUserJson.data : currentFullUserJson;
+      const allPuestos = allPuestosJson.success ? allPuestosJson.data : allPuestosJson;
+      const allFerias = allFeriasJson.success ? allFeriasJson.data : allFeriasJson;
       
       const miPuesto = allPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id)).pop();
       const feriasSolicitadas = miPuesto?.ubicacion || [];
@@ -422,7 +456,8 @@ const Profile: React.FC = () => {
       });
 
       const updatedUserRes = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
-      const updatedUserData = await updatedUserRes.json();
+      const updatedUserJson = await updatedUserRes.json();
+      const updatedUserData = updatedUserJson.success ? updatedUserJson.data : updatedUserJson;
       localStorage.setItem('user', JSON.stringify(updatedUserData));
 
       Swal.fire({
@@ -534,22 +569,24 @@ const Profile: React.FC = () => {
                 <div className={`input-box ${!isEditing ? 'disabled' : ''}`}>
                   <span className="input-icon">🔒</span>
                   <input 
-                    type={showPassword ? "text" : "password"} 
+                    type={(!isEditing || !showPassword) ? "password" : "text"} 
                     name="password"
                     value={userData.password}
                     onChange={handleChange}
-                    placeholder="••••••••"
+                    placeholder="Contraseña"
                     readOnly={!isEditing}
                     autoComplete="new-password"
                   />
-                  <button 
-                    type="button" 
-                    className="password-toggle-profile"
-                    onClick={() => setShowPassword(!showPassword)}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
+                  {isEditing && (
+                    <button 
+                      type="button" 
+                      className="password-toggle-profile"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -563,7 +600,7 @@ const Profile: React.FC = () => {
                       name="confirmPassword"
                       value={userData.confirmPassword}
                       onChange={handleChange}
-                      placeholder="••••••••"
+                      placeholder="Confirmá nueva contraseña"
                       autoComplete="new-password"
                     />
                     <button 
@@ -578,17 +615,6 @@ const Profile: React.FC = () => {
                 </div>
               )}
 
-              <div className="input-group">
-                <label>Rol asignado</label>
-                <div className="input-box disabled">
-                  <span className="input-icon">🛡️</span>
-                  <input 
-                    type="text" 
-                    value={userData.role}
-                    readOnly
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="profile-actions">
@@ -656,8 +682,8 @@ const Profile: React.FC = () => {
             )}
           </div>
 
-          {/* Solicitud para ser Agricultor - Solo se muestra si NO es Agricultor ni Admin */}
-          {(!userData.role || (userData.role.toLowerCase() !== 'agricultor' && userData.role.toLowerCase() !== 'administrador')) && (
+          {/* Solicitud para ser Agricultor - Solo se muestra si el usuario es cliente ('Usuario') */}
+          {(userData.role && userData.role.toLowerCase() === 'usuario') && (
             <div className="role-request-section">
               <div className="separator"></div>
               <div className="role-request-content">

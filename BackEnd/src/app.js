@@ -56,6 +56,7 @@ if (process.env.NODE_ENV !== 'test') {
       console.log('✅ Conexión a MySQL establecida');
       await sequelize.sync({ alter: true });
       console.log('✅ Modelos sincronizados con la base de datos');
+
       app.listen(PORT, () => {
         console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
         console.log('   Presiona Ctrl+C para detener\n');

@@ -59,10 +59,10 @@ const Footer: React.FC = () => {
       {/* Bottom Bar */}
       <div className="footer-bottom">
         <p className="footer-copyright">
-          © {new Date().getFullYear()} AgroMap · Costa Rica · Proyecto Final de Graduación
+          © {new Date().getFullYear()} AgroMap · Costa Rica
         </p>
         <div className="footer-meta">
-          <span>AgroFeriados Team</span>
+          <span>SemillaDigital Team</span>
           <button 
             onClick={handleScrollToTop} 
             className="scroll-top-btn" 

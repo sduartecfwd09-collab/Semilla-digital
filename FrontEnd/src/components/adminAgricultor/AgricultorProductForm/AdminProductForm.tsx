@@ -48,6 +48,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     imagen: '',
     disponible: true,
     unidad: 'Kilogramo',
+    provincia: 'San José',
     precios: [],
   })
 
@@ -60,23 +61,31 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         const data = await getFerias()
         setFerias(data)
 
+        let initialProvincia = 'San José';
         if (producto && producto.precios && producto.precios.length > 0) {
-          setSelectedFeriaId(String(producto.precios[0].feriaId))
+          const pFeriaId = String(producto.precios[0].feriaId);
+          const pFeria = data.find((f: any) => String(f.id) === pFeriaId);
+          initialProvincia = pFeria?.provincia || producto.precios[0].provincia || 'San José';
+          
+          setSelectedFeriaId(pFeriaId)
           setPrecio(producto.precios[0].precio.toString())
         } else if (user?.feriaId) {
-          // Si es nuevo y tenemos feria asignada al usuario, la precargamos
+          const uFeria = data.find((f: any) => String(f.id) === String(user.feriaId));
+          initialProvincia = uFeria?.provincia || 'San José';
           setSelectedFeriaId(String(user.feriaId))
         }
+        
+        setFormData(prev => ({
+          ...prev,
+          ...(producto || {}),
+          provincia: initialProvincia
+        }));
       } catch (error) {
         console.error('Error al cargar ferias:', error)
       }
     }
 
     fetchFerias()
-
-    if (producto) {
-      setFormData(producto)
-    }
   }, [producto, userId])
 
   const handleChange = (
@@ -97,6 +106,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       }
     } else if (name === 'categoria') {
       setFormData({ ...formData, categoria: value })
+    } else if (name === 'provincia') {
+      setFormData({ ...formData, provincia: value })
+      setSelectedFeriaId('')
     } else {
       setFormData({ ...formData, [name]: value })
     }
@@ -154,6 +166,11 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       Swal.fire('Error', 'No se pudo guardar el producto', 'error');
     }
   }
+
+  const selectedProvincia = formData.provincia || 'San José'
+  const filteredFerias = ferias.filter(f => 
+    (f.provincia || '').toLowerCase().trim() === selectedProvincia.toLowerCase().trim()
+  )
 
   const categoryIconData = getCategoryIcon(formData.categoria)
 
@@ -240,10 +257,27 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               <label>Provincia</label>
               <select 
                 name="provincia" 
-                value={formData.provincia} 
+                value={formData.provincia || 'San José'} 
                 onChange={handleChange}
               >
                 {PROVINCIAS.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+
+            <div className="admin-product-form-group">
+              <label>Feria</label>
+              <select
+                name="feriaId"
+                value={selectedFeriaId}
+                onChange={(e) => setSelectedFeriaId(e.target.value)}
+                required
+              >
+                <option value="">— Seleccionar feria —</option>
+                {filteredFerias.map(f => (
+                  <option key={f.id} value={f.id}>
+                    {f.nombre}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -289,10 +323,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             </div>
           </div>
 
-<div style={{ display: 'none' }}>
-              <label>Feria (automática)</label>
-              <input type="hidden" value={selectedFeriaId} />
-           </div>
+
 
           <div className="admin-product-form-actions">
             <button type="button" onClick={onCancel} className="admin-product-form-btn-cancel">

@@ -41,16 +41,22 @@ const findPendientes = async () => {
 };
 
 const create = async (data) => {
-  if (!data.usuario_id) {
+  const usuario_id = data.usuario_id || data.usuarioId;
+  const rol_solicitado = data.rol_solicitado || data.rolSolicitado;
+  const nombre_del_puesto = data.nombre_del_puesto || data.nombreDelPuesto;
+  const correo_usuario = data.correo_usuario || data.correoUsuario;
+  const nombre_usuario = data.nombre_usuario || data.nombreUsuario;
+
+  if (!usuario_id) {
     throw new Error('El ID del usuario es requerido');
   }
-  if (!data.rol_solicitado) {
+  if (!rol_solicitado) {
     throw new Error('El rol solicitado es requerido');
   }
 
   // Verificar que no tenga una solicitud pendiente
   const pendiente = await SolicitudCambioRol.findOne({
-    where: { usuario_id: data.usuario_id, estado: 'Pendiente' },
+    where: { usuario_id, estado: 'Pendiente' },
   });
   if (pendiente) {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
@@ -58,9 +64,30 @@ const create = async (data) => {
 
   return await SolicitudCambioRol.create({
     ...data,
+    usuario_id,
+    rol_solicitado,
+    nombre_del_puesto,
+    correo_usuario,
+    nombre_usuario,
     estado: 'Pendiente',
     fecha_solicitud: new Date(),
   });
+};
+
+const update = async (id, data) => {
+  const solicitud = await SolicitudCambioRol.findByPk(id);
+  if (!solicitud) {
+    throw new Error('Solicitud no encontrada');
+  }
+
+  const updateData = { ...data };
+  
+  if (data.nombreUsuario !== undefined) updateData.nombre_usuario = data.nombreUsuario;
+  if (data.nombreDelPuesto !== undefined) updateData.nombre_del_puesto = data.nombreDelPuesto;
+  if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
+  if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
+
+  return await solicitud.update(updateData);
 };
 
 const approve = async (id, data = {}) => {
@@ -120,6 +147,7 @@ module.exports = {
   findByUsuario,
   findPendientes,
   create,
+  update,
   approve,
   reject,
   remove,

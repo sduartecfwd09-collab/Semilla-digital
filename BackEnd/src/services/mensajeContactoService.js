@@ -66,6 +66,17 @@ const reply = async (id, data) => {
   return mensaje;
 };
 
+const update = async (id, data) => {
+  const mensaje = await MensajeContacto.findByPk(id);
+  if (!mensaje) {
+    throw new Error('Mensaje no encontrado');
+  }
+  if (mensaje.estado === 'Respondido') {
+    throw new Error('No se puede editar un mensaje ya respondido');
+  }
+  return await mensaje.update(data);
+};
+
 const remove = async (id) => {
   const mensaje = await MensajeContacto.findByPk(id);
   if (!mensaje) {
@@ -75,4 +86,4 @@ const remove = async (id) => {
   return true;
 };
 
-module.exports = { findAll, findById, findPendientes, create, reply, remove };
+module.exports = { findAll, findById, findPendientes, create, reply, update, remove };

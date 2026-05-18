@@ -22,7 +22,11 @@ const handleResponse = async (res) => {
   }
   // DELETE devuelve 200 con cuerpo vacío en json-server
   const text = await res.text()
-  return text ? JSON.parse(text) : null
+  const parsed = text ? JSON.parse(text) : null
+  if (parsed && parsed.success !== undefined) {
+    return parsed.data;
+  }
+  return parsed;
 }
 
 // ─── PRODUCTOS ───────────────────────────────────────────────────
@@ -112,13 +116,23 @@ export const getFerias = async () => {
   const res = await fetch(`${BASE_URL}/ferias`)
   const data = await handleResponse(res)
   if (!data) return []
-  return data.map(f => ({
-    ...f,
-    nombre: f.nombre || f.name || "Feria sin nombre",
-    provincia: f.provincia || f.province || "Otras",
-    direccion: f.direccion || f.location || "Ubicación no especificada",
-    horario: f.horario || f.schedule || "Horario no disponible"
-  }))
+  return data.map(f => {
+    const rawProv = f.direccion?.provincia?.nombre || f.provincia || f.province || "Otras";
+    let provincia = rawProv;
+    if (!rawProv || rawProv === 'Otras') {
+      const nombreFeria = f.nombre || f.name || '';
+      const PROVINCIAS_CR = ["San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"];
+      const match = PROVINCIAS_CR.find(p => nombreFeria.toLowerCase().includes(p.toLowerCase()));
+      if (match) provincia = match;
+    }
+    return {
+      ...f,
+      nombre: f.nombre || f.name || "Feria sin nombre",
+      provincia,
+      direccion: f.direccion?.distrito?.nombre || f.direccion || f.location || "Ubicación no especificada",
+      horario: f.horario || f.schedule || "Horario no disponible"
+    };
+  })
 }
 
 /**
@@ -130,11 +144,19 @@ export const getFeriaById = async (id) => {
   const res = await fetch(`${BASE_URL}/ferias/${id}`)
   const f = await handleResponse(res)
   if (!f) return null
+  const rawProv = f.direccion?.provincia?.nombre || f.provincia || f.province || "Otras";
+  let provincia = rawProv;
+  if (!rawProv || rawProv === 'Otras') {
+    const nombreFeria = f.nombre || f.name || '';
+    const PROVINCIAS_CR = ["San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"];
+    const match = PROVINCIAS_CR.find(p => nombreFeria.toLowerCase().includes(p.toLowerCase()));
+    if (match) provincia = match;
+  }
   return {
     ...f,
     nombre: f.nombre || f.name || "Feria sin nombre",
-    provincia: f.provincia || f.province || "Otras",
-    direccion: f.direccion || f.location || "Ubicación no especificada",
+    provincia,
+    direccion: f.direccion?.distrito?.nombre || f.direccion || f.location || "Ubicación no especificada",
     horario: f.horario || f.schedule || "Horario no disponible"
   }
 }

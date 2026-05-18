@@ -32,8 +32,8 @@ const AdminProductos = () => {
         try {
             setLoading(true)
             const res = await fetch(`${API_BASE_URL}/productos`)
-            const data = await res.json()
-            setProducts(data)
+            const json = await res.json()
+            setProducts(json.success ? json.data : json)
         } catch (error) {
             console.error('Error fetching products:', error)
             Swal.fire('Error', 'No se pudieron cargar los productos.', 'error')
@@ -101,8 +101,8 @@ const AdminProductos = () => {
 
     // Filtra los productos basándose en el término de búsqueda
     const filteredProducts = products.filter(product =>
-        product.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.categoria?.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.categoria || '').toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     const finalProducts = filteredProducts;

@@ -17,8 +17,8 @@ router.get('/:id', ctrl.getById);
 // POST   /api/puestos       → Crear puesto
 // PUT    /api/puestos/:id   → Actualizar puesto
 // DELETE /api/puestos/:id   → Eliminar puesto
-router.post('/', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.create);
-router.put('/:id', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.update);
-router.delete('/:id', verifyToken, authorizeRoles('Agricultor', 'Administrador'), ctrl.remove);
+router.post('/', verifyToken, authorizeRoles('Agricultor', 'Administrador', 'Cliente', 'Usuario'), ctrl.create);
+router.put('/:id', verifyToken, authorizeRoles('Agricultor', 'Administrador', 'Cliente', 'Usuario'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

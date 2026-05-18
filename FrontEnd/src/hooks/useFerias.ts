@@ -16,15 +16,29 @@ const PROVINCIAS_COSTA_RICA = [
 
 const mergeFeriasData = (google: any[], fallback: any[]): Feria[] => {
   const combined = [...google, ...fallback];
-  return combined.map((f, index) => ({
-    id: f.id || `f-${index}`,
-    nombre: f.nombre || f.name || "Feria sin nombre",
-    direccion: f.direccion || f.location || "Ubicación no especificada",
-    provincia: f.provincia || f.province || "Otras",
-    dias: f.dias || (f.schedule && f.schedule.split(',')[0]) || "Sábados",
-    horario: f.horario || (f.schedule && f.schedule.split(',')[1]) || "Mañana",
-    source: f.source || "merged"
-  }));
+  return combined.map((f, index) => {
+    // Extraer provincia de diversas estructuras posibles (API Google vs API Backend)
+    const rawProv = f.provincia?.nombre || f.direccion?.provincia?.nombre || f.provincia || f.province || "Otras";
+    let provinciaNombre = rawProv;
+    if (!rawProv || rawProv === 'Otras') {
+      const nombreFeria = f.nombre || f.name || '';
+      const match = PROVINCIAS_COSTA_RICA.find(p => nombreFeria.toLowerCase().includes(p.toLowerCase()));
+      if (match) provinciaNombre = match;
+    }
+    const direccionTexto = f.direccion?.distrito?.nombre 
+      ? `${f.direccion.distrito.nombre}, ${f.direccion.canton?.nombre || ''}`
+      : (f.direccion || f.location || "Ubicación no especificada");
+
+    return {
+      id: f.id || `f-${index}`,
+      nombre: f.nombre || f.name || "Feria sin nombre",
+      direccion: direccionTexto,
+      provincia: provinciaNombre,
+      dias: f.dias || (f.schedule && f.schedule.split(',')[0]) || "Sábados",
+      horario: f.horario || (f.schedule && f.schedule.split(',')[1]) || "05:00 - 13:00",
+      source: f.source || "merged"
+    };
+  });
 };
 
 /**
@@ -67,8 +81,7 @@ export const useFerias = () => {
 
         setAllFerias(uniqueMergedData);
 
-        // Sincronización: Registrar nuevas ferias en db.json
-        // Solo si el nombre no existe EXACTAMENTE (para evitar duplicados infinitos)
+        // Sincronización: Registrar nuevas ferias en el backend
         const newFerias = uniqueMergedData.filter(m => 
           m.source === "google" &&
           !fallbackResults.some(f => 
@@ -83,13 +96,14 @@ export const useFerias = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  name: feria.nombre,
-                  province: feria.provincia,
-                  location: feria.direccion,
-                  schedule: `${feria.dias || 'Sábados'}, ${feria.horario || '05:00 - 13:00'}`,
+                  nombre: feria.nombre,
+                  provincia: feria.provincia,
+                  direccion: feria.direccion,
+                  dias: feria.dias,
+                  horario: feria.horario,
+                  source: 'google'
                 }),
               });
-              console.log(`Feria sincronizada: ${feria.nombre}`);
             } catch (syncErr) {
               console.error("Error al sincronizar feria:", syncErr);
             }

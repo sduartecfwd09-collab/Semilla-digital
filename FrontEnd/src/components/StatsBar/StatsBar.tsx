@@ -18,7 +18,8 @@ const StatsBar: React.FC = () => {
     // Obtenemos la cantidad de productos reales del db.json
     fetch(ENDPOINTS.productos)
       .then((res) => res.json())
-      .then((data) => {
+      .then((resData) => {
+        const data = resData.success ? resData.data : resData;
         if (Array.isArray(data)) {
           const availableData = data.filter((p: any) => p.disponible !== false);
           const uniqueProducts = new Set<string>();
@@ -40,11 +41,11 @@ const StatsBar: React.FC = () => {
 
   const stats: Stat[] = [
     { 
-      value: loadingFerias ? '...' : `${allFerias.length}+`, 
+      value: loadingFerias ? '...' : String(allFerias.length), 
       label: 'Ferias registradas' 
     },
     { 
-      value: loadingProducts ? '...' : `${productCount}+`, 
+      value: loadingProducts ? '...' : String(productCount), 
       label: 'Productos disponibles' 
     },
     { 

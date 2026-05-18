@@ -16,6 +16,11 @@ module.exports = (sequelize) => {
     feria_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      references: { model: 'ferias', key: 'id' },
+    },
+    direccion_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
       references: { model: 'direcciones', key: 'id' },
     },
     nombre_puesto: { type: DataTypes.STRING, allowNull: false },

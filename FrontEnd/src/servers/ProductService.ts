@@ -26,11 +26,12 @@ export interface Producto {
  * Obtiene todos los productos de un usuario específico
  */
 export const getProductosByUser = async (userId: string | number): Promise<Producto[]> => {
-  const response = await authFetch(`${BASE_URL}/productos?userId=${userId}`)
+  const response = await authFetch(`${BASE_URL}/productos/usuario/${userId}`)
   if (!response.ok) {
     throw new Error('Error al obtener productos')
   }
-  return response.json()
+  const json = await response.json()
+  return json.success ? json.data : json
 }
 
 /**
@@ -47,7 +48,8 @@ export const createProducto = async (producto: Producto): Promise<Producto> => {
     throw new Error('Error al crear producto')
   }
 
-  return response.json()
+  const json = await response.json()
+  return json.success ? json.data : json
 }
 
 /**
@@ -64,7 +66,8 @@ export const updateProducto = async (id: string | number, producto: Producto): P
     throw new Error('Error al actualizar producto')
   }
 
-  return response.json()
+  const json = await response.json()
+  return json.success ? json.data : json
 }
 
 /**
@@ -81,7 +84,8 @@ export const patchProducto = async (id: string | number, updates: Partial<Produc
     throw new Error('Error al actualizar producto')
   }
 
-  return response.json()
+  const json = await response.json()
+  return json.success ? json.data : json
 }
 
 /**
@@ -107,7 +111,8 @@ export const getProductoById = async (id: string | number): Promise<Producto> =>
     throw new Error('Producto no encontrado')
   }
 
-  return response.json()
+  const json = await response.json()
+  return json.success ? json.data : json
 }
 
 /**

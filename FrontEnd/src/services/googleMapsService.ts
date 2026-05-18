@@ -15,11 +15,29 @@ export const searchFeriasInGoogle = async (provincia: string): Promise<Feria[]> 
     return [
       {
         id: `google-${provincia}-1`,
-        nombre: `Feria de ${provincia} centro`,
+        nombre: `Feria de ${provincia} Centro`,
         direccion: `Distrito Central, ${provincia}`,
         provincia: provincia,
-        dias: "Sábados", // Esto suele faltar en Google Maps, por eso es importante el fallback
+        dias: "Sábados",
         horario: "05:00 - 13:00",
+        source: "google",
+      },
+      {
+        id: `google-${provincia}-2`,
+        nombre: `Feria de ${provincia} Norte`,
+        direccion: `Sector Norte, ${provincia}`,
+        provincia: provincia,
+        dias: "Viernes y Sábados",
+        horario: "06:00 - 14:00",
+        source: "google",
+      },
+      {
+        id: `google-${provincia}-3`,
+        nombre: `Feria de ${provincia} Sur`,
+        direccion: `Sector Sur, ${provincia}`,
+        provincia: provincia,
+        dias: "Domingos",
+        horario: "07:00 - 12:00",
         source: "google",
       },
     ];

@@ -11,6 +11,7 @@ router.use('/recetas',    require('./recetaRoutes'));
 router.use('/provincias', require('./provinciaRoutes'));
 router.use('/cantones',   require('./cantonRoutes'));
 router.use('/distritos',  require('./distritoRoutes'));
+router.use('/mensajes',   require('./mensajeContactoRoutes'));
 
 // ── Rutas protegidas ────────────────────────────────────────────
 router.use('/usuarios',
@@ -38,10 +39,7 @@ router.use('/ofertas',
   require('./ofertaProductoRoutes')
 );
 
-router.use('/mensajes',
-  verifyToken,
-  require('./mensajeContactoRoutes')
-);
+
 
 router.use('/proformas',
   verifyToken,

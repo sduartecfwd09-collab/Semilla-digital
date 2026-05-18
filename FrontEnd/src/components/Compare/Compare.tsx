@@ -41,15 +41,30 @@ const Compare: React.FC = () => {
       fetch(ENDPOINTS.productos).then(res => res.json()),
       fetch(ENDPOINTS.ferias).then(res => res.json())
     ])
-      .then(([productsData, feriasData]: [APIProducto[], any[]]) => {
-        // Normalizar ferias para tener nombres consistentes
-        const normalizedFerias = feriasData.map(f => ({
-          ...f,
-          nombre: f.nombre || f.name || "Feria sin nombre",
-          provincia: f.provincia || f.province || "Otras"
-        }));
+      .then(([productsRes, feriasRes]: [any, any]) => {
+        const productsData = productsRes.success ? productsRes.data : productsRes;
+        const feriasData = feriasRes.success ? feriasRes.data : feriasRes;
 
-        const availableData = productsData.filter((p) => p.disponible !== false);
+        // Normalizar ferias para tener nombres consistentes
+        const normalizedFerias = (feriasData || []).map((f: any) => {
+          const rawProv = f.direccion?.provincia?.nombre || f.provincia || f.province || "Otras";
+          let provincia = rawProv;
+          if (!rawProv || rawProv === 'Otras') {
+            const nombreFeria = f.nombre || f.name || '';
+            const PROVINCIAS_CR = ["San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"];
+            const match = PROVINCIAS_CR.find(p => nombreFeria.toLowerCase().includes(p.toLowerCase()));
+            if (match) provincia = match;
+          }
+          return {
+            ...f,
+            nombre: f.nombre || f.name || "Feria sin nombre",
+            name: f.nombre || f.name || "Feria sin nombre", // Asegurar compatibilidad
+            provincia,
+            location: f.direccion?.distrito?.nombre || f.location || "Localidad no especificada"
+          };
+        });
+
+        const availableData = (productsData || []).filter((p: any) => p.disponible !== false);
         
         // Mapeamos los productos de la API a la estructura que espera la UI
         const mappedData: ProductComparisonData[] = availableData.map(p => {
