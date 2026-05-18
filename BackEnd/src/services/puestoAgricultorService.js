@@ -12,6 +12,63 @@ const {
   Distrito,
 } = require('../models');
 
+const mapPuestoParaFrontend = (p) => {
+  if (!p) return null;
+  const raw = p.toJSON ? p.toJSON() : p;
+  
+  // Mapear fotos base64
+  let fotosBase64 = raw.fotos_base64;
+  if (typeof fotosBase64 === 'string') {
+    try {
+      fotosBase64 = JSON.parse(fotosBase64);
+    } catch (e) {
+      fotosBase64 = [];
+    }
+  }
+
+  // Mapear fotos nombres
+  let fotosNombres = raw.fotos_nombres;
+  if (typeof fotosNombres === 'string') {
+    try {
+      fotosNombres = JSON.parse(fotosNombres);
+    } catch (e) {
+      fotosNombres = [];
+    }
+  }
+
+  return {
+    id: raw.id,
+    usuarioId: raw.usuario_id,
+    feriaId: raw.feria_id,
+    direccionId: raw.direccion_id,
+    nombrePuesto: raw.nombre_puesto,
+    descripcion: raw.descripcion,
+    telefono: raw.telefono,
+    email: raw.email,
+    horarios: raw.horarios,
+    horariosList: raw.horarios_list,
+    tiposProducto: raw.tipos_producto,
+    metodosCultivo: raw.metodos_cultivo,
+    redesSociales: raw.redes_sociales,
+    fotosBase64: fotosBase64 || [],
+    fotosNombres: fotosNombres || [],
+    fechaRegistro: raw.fecha_registro,
+    ubicacion: raw.ubicacion || (raw.feriaPrincipal ? [raw.feriaPrincipal.nombre] : []),
+    createdAt: raw.createdAt || raw.created_at,
+    updatedAt: raw.updatedAt || raw.updated_at,
+    usuario: raw.usuario ? {
+      id: raw.usuario.id,
+      name: raw.usuario.name,
+      nombre: raw.usuario.nombre,
+      email: raw.usuario.email,
+      role: raw.usuario.role
+    } : null,
+    feriaPrincipal: raw.feriaPrincipal,
+    direccion: raw.direccion,
+    ferias: raw.ferias
+  };
+};
+
 const includeAll = [
   { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] },
   { model: Feria, as: 'feriaPrincipal' },
@@ -28,33 +85,37 @@ const includeAll = [
 ];
 
 const findAll = async (query = {}) => {
-  return await PuestoAgricultor.findAll({
+  const list = await PuestoAgricultor.findAll({
     include: includeAll,
     order: [['fecha_registro', 'DESC']],
   });
+  return list.map(mapPuestoParaFrontend);
 };
 
 const findById = async (id) => {
-  return await PuestoAgricultor.findByPk(id, {
+  const item = await PuestoAgricultor.findByPk(id, {
     include: includeAll,
   });
+  return mapPuestoParaFrontend(item);
 };
 
 const findByUsuario = async (usuarioId) => {
-  return await PuestoAgricultor.findOne({
+  const item = await PuestoAgricultor.findOne({
     where: { usuario_id: usuarioId },
     include: includeAll,
   });
+  return mapPuestoParaFrontend(item);
 };
 
 const findByFeria = async (feriaId) => {
-  return await PuestoAgricultor.findAll({
+  const list = await PuestoAgricultor.findAll({
     where: { feria_id: feriaId },
     include: [
       { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email'] },
     ],
     order: [['nombre_puesto', 'ASC']],
   });
+  return list.map(mapPuestoParaFrontend);
 };
 
 const create = async (data) => {
@@ -110,7 +171,7 @@ const create = async (data) => {
 
   console.log(">>> DEBUG PUESTO CREATE DATA:", createData);
 
-  return await PuestoAgricultor.create({
+  const created = await PuestoAgricultor.create({
     ...createData,
     usuario_id,
     nombre_puesto,
@@ -119,6 +180,7 @@ const create = async (data) => {
     fotos_nombres,
     fecha_registro: new Date(),
   });
+  return mapPuestoParaFrontend(created);
 };
 
 const update = async (id, data) => {
@@ -167,7 +229,8 @@ const update = async (id, data) => {
   console.log(">>> DEBUG PUESTO UPDATE DATA:", updateData);
   console.log(">>> DEBUG PUESTO ORIGINAL DATA:", data);
 
-  return await puesto.update(updateData);
+  const updated = await puesto.update(updateData);
+  return mapPuestoParaFrontend(updated);
 };
 
 const remove = async (id) => {

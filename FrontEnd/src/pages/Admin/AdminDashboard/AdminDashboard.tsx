@@ -90,7 +90,7 @@ const AdminDashboard = () => {
         <div className="dashboard-container">
             <header className="dashboard-header">
                 <h1>AgroMap Admin</h1>
-                <p>Bienvenido al Centro de Control de Semilla Digital</p>
+                <p>Bienvenido al Centro de Control de AgroMap</p>
             </header>
 
             <div className="stats-grid">

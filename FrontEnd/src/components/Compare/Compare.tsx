@@ -305,7 +305,7 @@ const Compare: React.FC = () => {
             <div className="filtered-products-list">
               {filteredProducts.map((product: ProductComparisonData, index: number) => (
                 <div key={product.name + index} onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
-                  <ProductComparisonCard product={product} />
+                  <ProductComparisonCard product={product} onSelect={() => setSelectedProduct(product)} />
                 </div>
               ))}
             </div>

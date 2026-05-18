@@ -44,6 +44,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
   useEffect(() => {
     // Cargar productos para actualizar los conteos de categorías
     fetch(ENDPOINTS.productos)
+      .then(res => res.json())
       .then(json => {
         const productosData = json.success ? json.data : json;
         const counts: Record<string, number> = {};

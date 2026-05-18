@@ -24,7 +24,9 @@ router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove)
 // ── USUARIO AUTENTICADO ─────────────────────────────────────
 // GET  /api/usuarios/:id    → Obtener por ID (autenticado)
 // PUT  /api/usuarios/:id    → Actualizar (autenticado)
+// PATCH /api/usuarios/:id   → Actualizar parcial (autenticado)
 router.get('/:id', verifyToken, ctrl.getById);
 router.put('/:id', verifyToken, ctrl.update);
+router.patch('/:id', verifyToken, ctrl.update);
 
 module.exports = router;

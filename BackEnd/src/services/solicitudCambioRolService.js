@@ -1,9 +1,30 @@
-// ============================================================
-// Service: SolicitudCambioRol
-// Descripción: Lógica de negocio para solicitudes de cambio
-//              de rol (flujo de aprobación admin)
-// ============================================================
-const { SolicitudCambioRol, Usuario } = require('../models');
+const { SolicitudCambioRol, Usuario, Role } = require('../models');
+
+const mapSolicitudParaFrontend = (s) => {
+  if (!s) return null;
+  const raw = s.toJSON ? s.toJSON() : s;
+  return {
+    id: raw.id,
+    usuarioId: raw.usuario_id,
+    nombreUsuario: raw.nombre_usuario,
+    nombreDelPuesto: raw.nombre_del_puesto,
+    correoUsuario: raw.correo_usuario,
+    rolSolicitado: raw.rol_solicitado,
+    estado: raw.estado,
+    fechaSolicitud: raw.fecha_solicitud,
+    motivoRespuesta: raw.motivo_respuesta,
+    fechaRespuesta: raw.fecha_respuesta,
+    createdAt: raw.createdAt || raw.created_at,
+    updatedAt: raw.updatedAt || raw.updated_at,
+    usuario: raw.usuario ? {
+      id: raw.usuario.id,
+      name: raw.usuario.name,
+      nombre: raw.usuario.nombre,
+      email: raw.usuario.email,
+      role: raw.usuario.role || (raw.usuario.rol ? raw.usuario.rol.nombre : 'Usuario')
+    } : null
+  };
+};
 
 const findAll = async (query = {}) => {
   const where = {};
@@ -12,32 +33,36 @@ const findAll = async (query = {}) => {
     where.estado = query.estado;
   }
 
-  return await SolicitudCambioRol.findAll({
+  const list = await SolicitudCambioRol.findAll({
     where,
     include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
     order: [['fecha_solicitud', 'DESC']],
   });
+  return list.map(mapSolicitudParaFrontend);
 };
 
 const findById = async (id) => {
-  return await SolicitudCambioRol.findByPk(id, {
+  const item = await SolicitudCambioRol.findByPk(id, {
     include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
   });
+  return mapSolicitudParaFrontend(item);
 };
 
 const findByUsuario = async (usuarioId) => {
-  return await SolicitudCambioRol.findAll({
+  const list = await SolicitudCambioRol.findAll({
     where: { usuario_id: usuarioId },
     order: [['fecha_solicitud', 'DESC']],
   });
+  return list.map(mapSolicitudParaFrontend);
 };
 
 const findPendientes = async () => {
-  return await SolicitudCambioRol.findAll({
+  const list = await SolicitudCambioRol.findAll({
     where: { estado: 'Pendiente' },
     include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
     order: [['fecha_solicitud', 'ASC']],
   });
+  return list.map(mapSolicitudParaFrontend);
 };
 
 const create = async (data) => {
@@ -62,7 +87,7 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
-  return await SolicitudCambioRol.create({
+  const created = await SolicitudCambioRol.create({
     ...data,
     usuario_id,
     rol_solicitado,
@@ -72,12 +97,21 @@ const create = async (data) => {
     estado: 'Pendiente',
     fecha_solicitud: new Date(),
   });
+  return mapSolicitudParaFrontend(created);
 };
 
 const update = async (id, data) => {
   const solicitud = await SolicitudCambioRol.findByPk(id);
   if (!solicitud) {
     throw new Error('Solicitud no encontrada');
+  }
+
+  // Redirigir si se aprueba o rechaza a través del método genérico update (PATCH /api/solicitudes/:id)
+  if (data.estado === 'Aprobada') {
+    return await approve(id, { motivo_respuesta: data.motivoRespuesta || data.motivo_respuesta });
+  }
+  if (data.estado === 'Rechazada') {
+    return await reject(id, { motivo_respuesta: data.motivoRespuesta || data.motivo_respuesta });
   }
 
   const updateData = { ...data };
@@ -87,7 +121,8 @@ const update = async (id, data) => {
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
   if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
 
-  return await solicitud.update(updateData);
+  const updated = await solicitud.update(updateData);
+  return mapSolicitudParaFrontend(updated);
 };
 
 const approve = async (id, data = {}) => {
@@ -101,17 +136,21 @@ const approve = async (id, data = {}) => {
     throw new Error('Solo se pueden aprobar solicitudes pendientes');
   }
 
-  // Actualizar el rol del usuario
-  await solicitud.usuario.update({ role: solicitud.rol_solicitado });
+  // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
+  const targetRoleName = solicitud.rol_solicitado === 'Vendedor' ? 'Agricultor' : solicitud.rol_solicitado;
+  const role = await Role.findOne({ where: { nombre: targetRoleName } });
+  if (role && solicitud.usuario) {
+    await solicitud.usuario.update({ roleId: role.id });
+  }
 
   // Actualizar la solicitud
-  await solicitud.update({
+  const approved = await solicitud.update({
     estado: 'Aprobada',
     motivo_respuesta: data.motivo_respuesta || 'Solicitud aprobada',
     fecha_respuesta: new Date(),
   });
 
-  return solicitud;
+  return mapSolicitudParaFrontend(approved);
 };
 
 const reject = async (id, data = {}) => {
@@ -123,13 +162,13 @@ const reject = async (id, data = {}) => {
     throw new Error('Solo se pueden rechazar solicitudes pendientes');
   }
 
-  await solicitud.update({
+  const rejected = await solicitud.update({
     estado: 'Rechazada',
     motivo_respuesta: data.motivo_respuesta || 'Solicitud rechazada',
     fecha_respuesta: new Date(),
   });
 
-  return solicitud;
+  return mapSolicitudParaFrontend(rejected);
 };
 
 const remove = async (id) => {

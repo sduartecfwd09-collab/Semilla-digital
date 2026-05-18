@@ -26,9 +26,10 @@ export interface ProductComparisonData {
 
 interface ProductComparisonCardProps {
   product: ProductComparisonData
+  onSelect?: () => void
 }
 
-const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }) => {
+const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product, onSelect }) => {
   const lowestPriceNumeric = Math.min(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
   const maxPrice = Math.max(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
 
@@ -61,9 +62,22 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           </div>
           <div className="product-comp-desc">{cleanDescription}</div>
         </div>
-        <div className="product-comp-price-summary">
-          <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
-          <div className="product-comp-min-price">{product.lowestPrice}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginLeft: 'auto', flexWrap: 'wrap' }}>
+          <div className="product-comp-price-summary">
+            <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
+            <div className="product-comp-min-price">{product.lowestPrice}</div>
+          </div>
+          {onSelect && (
+            <button 
+              className="product-comp-select-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              🛒 Seleccionar
+            </button>
+          )}
         </div>
       </div>
 

@@ -43,14 +43,25 @@ const ProformaPage: React.FC = () => {
   const handleGenerate = () => {
     if (items.length === 0) return
 
-    if (wantsDelivery && (!delivery.nombre.trim() || !delivery.telefono.trim() || !delivery.direccion.trim())) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Datos incompletos',
-        text: 'Completá los datos de delivery para generar la proforma.',
-        confirmButtonColor: '#3B9C3A',
-      })
-      return
+    if (wantsDelivery) {
+      if (!delivery.nombre.trim() || !delivery.telefono.trim() || !delivery.direccion.trim()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Datos incompletos',
+          text: 'Completá los datos de delivery para generar la proforma.',
+          confirmButtonColor: '#3B9C3A',
+        })
+        return
+      }
+      if (delivery.telefono.trim().length !== 8) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Teléfono inválido',
+          text: 'El número de teléfono debe tener exactamente 8 dígitos.',
+          confirmButtonColor: '#3B9C3A',
+        })
+        return
+      }
     }
 
     const proforma = saveProforma(wantsDelivery ? delivery : undefined)
@@ -150,8 +161,12 @@ const ProformaPage: React.FC = () => {
                     <input
                       type="tel"
                       value={delivery.telefono}
-                      onChange={e => setDelivery(prev => ({ ...prev, telefono: e.target.value }))}
-                      placeholder="8888-8888"
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 8);
+                        setDelivery(prev => ({ ...prev, telefono: val }));
+                      }}
+                      placeholder="88888888"
+                      maxLength={8}
                     />
                   </div>
                   <div className="proforma-field">
