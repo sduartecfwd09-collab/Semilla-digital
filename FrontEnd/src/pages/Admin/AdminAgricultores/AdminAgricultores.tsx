@@ -27,20 +27,25 @@ const AdminAgricultores = () => {
     const fetchData = async () => {
         try {
             setLoading(true)
-            const [users, puestos, allProducts, allFerias] = await Promise.all([
+            const [usersRaw, puestosRaw, allProductsRaw, allFeriasRaw] = await Promise.all([
                 api.getUsers(),
-                api.request<PuestoAgricultor[]>('/puestosAgricultor'),
-                api.request<any[]>('/productos'),
-                api.request<any[]>('/ferias')
-            ])
+                api.request<any>('/puestosAgricultor'),
+                api.request<any>('/productos'),
+                api.request<any>('/ferias')
+            ]) as any[]
+
+            const usersList = usersRaw.data ?? usersRaw ?? []
+            const puestosList = puestosRaw.data ?? puestosRaw ?? []
+            const productsList = allProductsRaw.data ?? allProductsRaw ?? []
+            const feriasList = allFeriasRaw.data ?? allFeriasRaw ?? []
 
             // Solo mostrar agricultores aprobados (role === 'Agricultor')
-            const agros = users
-                .filter((u: User) => u.role === 'Agricultor')
+            const agros = usersList
+                .filter((u: User) => (u.role ?? (u as any).rol?.nombre) === 'Agricultor')
                 .map((u: User) => {
-                    const puesto = puestos.find(p => p.usuarioId === u.id)
-                    const productos = allProducts.filter(p => String(p.userId) === String(u.id))
-                    const feria = allFerias.find(f => f.id === u.feriaId)
+                    const puesto = puestosList.find((p: any) => p.usuarioId === u.id)
+                    const productos = productsList.filter((p: any) => String(p.userId) === String(u.id))
+                    const feria = feriasList.find((f: any) => f.id === u.feriaId)
                     return {
                         ...u,
                         puesto: puesto || null,

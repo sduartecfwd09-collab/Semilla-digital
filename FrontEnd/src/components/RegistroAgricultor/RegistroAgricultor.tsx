@@ -140,11 +140,13 @@ const RegistroAgricultor: React.FC = () => {
           }
   
           // Buscar solicitud pendiente
-          const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
+          const solRes = await authFetch(`${ENDPOINTS.solicitudesCambioRol}/usuario/${currentUserId}`);
           const todasSolicitudesRaw = await solRes.json();
           const todasSolicitudes = todasSolicitudesRaw.data || todasSolicitudesRaw;
           const misSolicitudes = todasSolicitudes.filter(
-            (s: { usuarioId: string | number; estado: string }) => String(s.usuarioId) === String(currentUserId) && s.estado === 'Pendiente'
+            (s: any) => String(s.usuario_id ?? s.usuarioId) === String(currentUserId) && 
+                        (s.rol_solicitado ?? s.rolSolicitado ?? 'Agricultor') === 'Agricultor' &&
+                        s.estado === 'Pendiente'
           );
           if (misSolicitudes.length > 0) {
             setSolicitudEnviada(true);

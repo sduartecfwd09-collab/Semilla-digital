@@ -36,8 +36,24 @@ const AdminSolicitudes: React.FC = () => {
         authFetch(ENDPOINTS.usuarios)
       ]);
       
-      const solData: Solicitud[] = await solRes.json();
-      const userData: Usuario[] = await userRes.json();
+      const solDataRaw = await solRes.json();
+      const userDataRaw = await userRes.json();
+
+      const solList = solDataRaw.data ?? solDataRaw;
+      const userList = userDataRaw.data ?? userDataRaw;
+
+      const solData: Solicitud[] = Array.isArray(solList) ? solList.map((s: any) => ({
+        id: s.id,
+        usuarioId: s.usuario_id ?? s.usuarioId,
+        nombreDelPuesto: s.nombre_del_puesto ?? s.nombreDelPuesto ?? s.nombre_usuario ?? s.nombreUsuario ?? '',
+        correoUsuario: s.correo_usuario ?? s.correoUsuario ?? '',
+        rolSolicitado: s.rol_solicitado ?? s.rolSolicitado ?? '',
+        estado: s.estado,
+        fechaSolicitud: s.fecha_solicitud ?? s.fechaSolicitud ?? '',
+        motivoRespuesta: s.motivo_respuesta ?? s.motivoRespuesta
+      })) : [];
+
+      const userData: Usuario[] = Array.isArray(userList) ? userList : [];
       
       // Mapear usuarios por ID y por Correo para búsquedas flexibles
       const userMap: Record<string, Usuario> = {};
@@ -103,13 +119,16 @@ const AdminSolicitudes: React.FC = () => {
 
     try {
       // 1. Actualizar la solicitud con estado, motivo y fecha de respuesta
-      await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}`, {
+      const accion = nuevoEstado === 'Aprobada' ? 'aprobar' : 'rechazar';
+      await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}/${accion}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           estado: nuevoEstado,
           motivoRespuesta: motivo,
-          fechaRespuesta: new Date().toISOString()
+          motivo_respuesta: motivo,
+          fechaRespuesta: new Date().toISOString(),
+          fecha_respuesta: new Date().toISOString()
         })
       });
 

@@ -63,19 +63,21 @@ const RegistroDelivery: React.FC = () => {
         }
 
         // Buscar solicitud pendiente de DRIVER
-        const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
+        const solRes = await authFetch(`${ENDPOINTS.solicitudesCambioRol}/usuario/${cachedUser.id}`);
         const todasSolicitudesRaw = await solRes.json();
         const todasSolicitudes = todasSolicitudesRaw.data || todasSolicitudesRaw;
         const misSolicitudes = todasSolicitudes.filter(
-          (s: any) => String(s.usuarioId) === String(cachedUser.id) && s.rolSolicitado === 'DRIVER' && s.estado === 'Pendiente'
+          (s: any) => String(s.usuario_id ?? s.usuarioId) === String(cachedUser.id) && 
+                      (s.rol_solicitado ?? s.rolSolicitado) === 'DRIVER' && 
+                      s.estado === 'Pendiente'
         );
 
         if (misSolicitudes.length > 0) {
           const laSol = misSolicitudes[0];
           setSolicitudEnviada(true);
           setSolicitudId(laSol.id);
-          setVehicleType(laSol.vehicleType || 'Moto');
-          setLicensePlate(laSol.licensePlate || '');
+          setVehicleType(laSol.vehicle_type ?? laSol.vehicleType ?? 'Moto');
+          setLicensePlate(laSol.license_plate ?? laSol.licensePlate ?? '');
         }
       } catch (error) {
         console.error('Error al cargar datos de solicitud de delivery:', error);

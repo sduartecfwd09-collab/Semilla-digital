@@ -24,5 +24,28 @@ export const authFetch = async (url: string, options: RequestInit = {}) => {
     headers.set('Content-Type', 'application/json');
   }
 
-  return fetch(url, { ...options, headers });
+  const response = await fetch(url, { ...options, headers });
+
+  if (response.status === 401) {
+    if (!window.location.pathname.includes('/auth')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Redirigir de forma inmediata para limpiar la sesión expirada
+      import('sweetalert2').then((Swal) => {
+        Swal.default.fire({
+          icon: 'error',
+          title: 'Sesión expirada',
+          text: 'Tu sesión ha expirado. Por favor, iniciá sesión nuevamente.',
+          confirmButtonColor: 'var(--verde-claro)'
+        }).then(() => {
+          window.location.href = '/auth';
+        });
+      }).catch(() => {
+        window.location.href = '/auth';
+      });
+    }
+  }
+
+  return response;
 };

@@ -31,8 +31,9 @@ const AdminContactos: React.FC = () => {
     try {
       setLoading(true);
       const res = await fetch(ENDPOINTS.contactMessages);
-      const data: ContactMessage[] = await res.json();
-      setMessages(data.sort((a, b) => 
+      const rawData = await res.json();
+      const messageList: ContactMessage[] = rawData.data ?? rawData ?? [];
+      setMessages(messageList.sort((a, b) => 
         new Date(b.fechaEnvio).getTime() - new Date(a.fechaEnvio).getTime()
       ));
     } catch (error) {

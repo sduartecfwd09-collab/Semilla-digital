@@ -26,18 +26,23 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             setLoading(true)
-            const [users, products, recipes] = await Promise.all([
-                api.getUsers().catch(() => []),
-                api.getProducts().catch(() => []),
-                api.request<any[]>('/recetas').catch(() => [])
-            ])
+            const [usersRaw, productsRaw, recipesRaw] = await Promise.all([
+                api.getUsers().catch(() => ({ data: [] })),
+                api.getProducts().catch(() => ({ data: [] })),
+                api.request<any>('/recetas').catch(() => ({ data: [] }))
+            ]) as any[]
+
+            const users = usersRaw.data ?? usersRaw ?? []
+            const products = productsRaw.data ?? productsRaw ?? []
+            const recipes = recipesRaw.data ?? recipesRaw ?? []
 
             // Obtener solicitudes reales para el contador de pendientes
             let pendingCount = 0;
             try {
                 const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
                 if (solRes.ok) {
-                    const solicitudes = await solRes.json();
+                    const solicitudesRaw = await solRes.json();
+                    const solicitudes = solicitudesRaw.data ?? solicitudesRaw ?? [];
                     pendingCount = solicitudes.filter((s: any) => s.estado === 'Pendiente').length;
                 }
             } catch (e) {
@@ -50,7 +55,8 @@ const AdminDashboard = () => {
             try {
                 const contactRes = await authFetch(ENDPOINTS.contactMessages);
                 if (contactRes.ok) {
-                    const contactos = await contactRes.json();
+                    const contactosRaw = await contactRes.json();
+                    const contactos = contactosRaw.data ?? contactosRaw ?? [];
                     contactosCount = contactos.length;
                     pendingContactosCount = contactos.filter((c: any) => c.estado === 'Pendiente').length;
                 }
@@ -58,7 +64,7 @@ const AdminDashboard = () => {
                 console.warn('Error fetching contactos:', e);
             }
 
-            const agricultoresCount = users.filter((u: any) => u.role === 'Agricultor').length;
+            const agricultoresCount = users.filter((u: any) => (u.role ?? u.rol?.nombre) === 'Agricultor').length;
 
             setStats({
                 users: users.length,

@@ -117,6 +117,14 @@ const reject = async (id, data = {}) => {
   return solicitud;
 };
 
+const update = async (id, data) => {
+  const solicitud = await SolicitudCambioRol.findByPk(id);
+  if (!solicitud) {
+    throw new Error('Solicitud no encontrada');
+  }
+  return await solicitud.update(data);
+};
+
 const remove = async (id) => {
   const solicitud = await SolicitudCambioRol.findByPk(id);
   if (!solicitud) {
@@ -134,5 +142,6 @@ module.exports = {
   create,
   approve,
   reject,
+  update,
   remove,
 };

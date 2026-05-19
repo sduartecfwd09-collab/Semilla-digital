@@ -20,8 +20,9 @@ const AdminUsuarios = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true)
-            const data = await api.getUsers()
-            setUsers(data.filter((u: User) => u.role !== 'Administrador'))
+            const rawData: any = await api.getUsers()
+            const userList = rawData.data ?? rawData
+            setUsers(userList.filter((u: User) => u.role !== 'Administrador'))
         } catch (error) {
             console.error('Error al obtener usuarios:', error)
             Swal.fire('Error', 'No se pudieron cargar los usuarios. Verifica tu conexión.', 'error')

@@ -57,6 +57,12 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    role: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.rol ? this.rol.nombre : null;
+      }
+    }
   }, {
     tableName: 'usuarios',
     timestamps: true,
