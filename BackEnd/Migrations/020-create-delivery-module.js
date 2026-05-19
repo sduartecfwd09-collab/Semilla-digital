@@ -2,6 +2,18 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    const safeAddIndex = async (tableName, columns, options = {}) => {
+      try {
+        await queryInterface.addIndex(tableName, columns, options);
+      } catch (error) {
+        if (error.message.includes('Duplicate key name') || error.message.includes('already exists')) {
+          console.log(`[Migration Warning] Index on ${tableName} for [${columns.join(', ')}] already exists. Skipping.`);
+        } else {
+          throw error;
+        }
+      }
+    };
+
     // 1. delivery_drivers
     await queryInterface.createTable('delivery_drivers', {
       id: {
@@ -65,8 +77,8 @@ module.exports = {
       }
     });
 
-    await queryInterface.addIndex('delivery_drivers', ['user_id']);
-    await queryInterface.addIndex('delivery_drivers', ['status']);
+    await safeAddIndex('delivery_drivers', ['user_id']);
+    await safeAddIndex('delivery_drivers', ['status']);
 
     // 2. delivery_applications
     await queryInterface.createTable('delivery_applications', {
@@ -96,7 +108,7 @@ module.exports = {
         defaultValue: 'PENDING'
       },
       form_data: {
-        type: Sequelize.JSONB,
+        type: Sequelize.JSON,
         allowNull: true
       },
       submitted_at: {
@@ -134,9 +146,9 @@ module.exports = {
       }
     });
 
-    await queryInterface.addIndex('delivery_applications', ['user_id']);
-    await queryInterface.addIndex('delivery_applications', ['vehicle_type']);
-    await queryInterface.addIndex('delivery_applications', ['status']);
+    await safeAddIndex('delivery_applications', ['user_id']);
+    await safeAddIndex('delivery_applications', ['vehicle_type']);
+    await safeAddIndex('delivery_applications', ['status']);
 
     // 3. delivery_application_documents
     await queryInterface.createTable('delivery_application_documents', {
@@ -190,7 +202,7 @@ module.exports = {
       }
     });
 
-    await queryInterface.addIndex('delivery_application_documents', ['application_id']);
+    await safeAddIndex('delivery_application_documents', ['application_id']);
 
     // 4. delivery_orders
     await queryInterface.createTable('delivery_orders', {
@@ -201,10 +213,10 @@ module.exports = {
         allowNull: false
       },
       order_id: {
-        type: Sequelize.INTEGER, // Adjust if orders.id is not INTEGER
+        type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'orders', // Existing table
+          model: 'proformas',
           key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -302,9 +314,9 @@ module.exports = {
       }
     });
 
-    await queryInterface.addIndex('delivery_orders', ['order_id']);
-    await queryInterface.addIndex('delivery_orders', ['driver_id']);
-    await queryInterface.addIndex('delivery_orders', ['status']);
+    await safeAddIndex('delivery_orders', ['order_id']);
+    await safeAddIndex('delivery_orders', ['driver_id']);
+    await safeAddIndex('delivery_orders', ['status']);
 
     // 5. driver_locations
     await queryInterface.createTable('driver_locations', {
@@ -349,7 +361,7 @@ module.exports = {
       }
     });
 
-    await queryInterface.addIndex('driver_locations', ['driver_id', 'recorded_at']);
+    await safeAddIndex('driver_locations', ['driver_id', 'recorded_at']);
 
     // 6. delivery_ratings
     await queryInterface.createTable('delivery_ratings', {

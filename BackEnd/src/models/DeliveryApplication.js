@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
       defaultValue: 'PENDING'
     },
     form_data: {
-      type: DataTypes.JSONB,
+      type: DataTypes.JSON,
       allowNull: true
     },
     submitted_at: {

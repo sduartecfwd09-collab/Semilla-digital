@@ -10,10 +10,10 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     order_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'orders', // Or whatever your existing table for orders/proformas is
+        model: 'proformas',
         key: 'id'
       }
     },
@@ -103,7 +103,7 @@ module.exports = (sequelize) => {
   });
 
   DeliveryOrder.associate = (models) => {
-    // DeliveryOrder.belongsTo(models.Order, { foreignKey: 'order_id', as: 'order' }); // Replace Order with your actual model like Proforma if needed
+    DeliveryOrder.belongsTo(models.Proforma, { foreignKey: 'order_id', as: 'proforma' });
     DeliveryOrder.belongsTo(models.DeliveryDriver, { foreignKey: 'driver_id', as: 'driver' });
     DeliveryOrder.hasOne(models.DeliveryRating, { foreignKey: 'delivery_order_id', as: 'rating' });
   };
