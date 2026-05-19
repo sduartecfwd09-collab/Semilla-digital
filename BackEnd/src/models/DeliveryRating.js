@@ -1,44 +1,44 @@
+'use strict';
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const DeliveryRating = sequelize.define('DeliveryRating', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
+      allowNull: false
     },
-    driver_id: {
-      type: DataTypes.INTEGER,
+    delivery_order_id: {
+      type: DataTypes.UUID,
       allowNull: false,
-      references: { model: 'delivery_drivers', key: 'id' },
-      onDelete: 'CASCADE',
+      unique: true,
+      references: {
+        model: 'delivery_orders',
+        key: 'id'
+      }
     },
-    order_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: { model: 'delivery_orders', key: 'id' },
-      onDelete: 'CASCADE',
-    },
-    rating: {
+    score: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         min: 1,
-        max: 5,
-      },
+        max: 5
+      }
     },
     comment: {
       type: DataTypes.TEXT,
-      allowNull: true,
-    },
+      allowNull: true
+    }
   }, {
     tableName: 'delivery_ratings',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   DeliveryRating.associate = (models) => {
-    DeliveryRating.belongsTo(models.DeliveryDriver, { foreignKey: 'driver_id', as: 'driver' });
-    DeliveryRating.belongsTo(models.DeliveryOrder, { foreignKey: 'order_id', as: 'order' });
+    DeliveryRating.belongsTo(models.DeliveryOrder, { foreignKey: 'delivery_order_id', as: 'order' });
   };
 
   return DeliveryRating;

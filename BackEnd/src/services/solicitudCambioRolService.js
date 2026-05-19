@@ -4,6 +4,45 @@
 //              de rol (flujo de aprobación admin)
 // ============================================================
 const { SolicitudCambioRol, Usuario, DeliveryDriver } = require('../models');
+const fs = require('fs');
+const path = require('path');
+
+const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
+  if (!documentosBase64 || Object.keys(documentosBase64).length === 0) return null;
+  
+  const basePath = path.join(__dirname, '../../storage/delivery-applications', String(userId), vehicleType);
+  if (!fs.existsSync(basePath)) {
+    fs.mkdirSync(basePath, { recursive: true });
+  }
+
+  const filePaths = {};
+  for (const [docId, base64Str] of Object.entries(documentosBase64)) {
+    if (!base64Str) continue;
+    const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      if (base64Str.startsWith('http') || base64Str.startsWith('/')) {
+        filePaths[docId] = base64Str;
+      }
+      continue;
+    }
+    
+    const mimeType = matches[1];
+    const dataBuffer = Buffer.from(matches[2], 'base64');
+    let ext = 'pdf';
+    if (mimeType.includes('jpeg') || mimeType.includes('jpg')) ext = 'jpg';
+    else if (mimeType.includes('png')) ext = 'png';
+    else if (mimeType.includes('webp')) ext = 'webp';
+
+    const filename = `${docId}.${ext}`;
+    const fullPath = path.join(basePath, filename);
+    
+    fs.writeFileSync(fullPath, dataBuffer);
+    
+    // Guardamos la ruta relativa
+    filePaths[docId] = `/storage/delivery-applications/${userId}/${vehicleType}/${filename}`;
+  }
+  return filePaths;
+};
 
 const findAll = async (query = {}) => {
   const where = {};
@@ -54,6 +93,11 @@ const create = async (data) => {
   });
   if (pendiente) {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
+  }
+
+  if (data.documentos_base64 && data.vehicle_type) {
+    const savedPaths = saveBase64Documents(data.usuario_id, data.vehicle_type, data.documentos_base64);
+    if (savedPaths) data.documentos_base64 = savedPaths;
   }
 
   return await SolicitudCambioRol.create({
@@ -122,6 +166,19 @@ const update = async (id, data) => {
   if (!solicitud) {
     throw new Error('Solicitud no encontrada');
   }
+  
+  if (data.documentos_base64) {
+    const vType = data.vehicle_type || solicitud.vehicle_type;
+    const uId = data.usuario_id || solicitud.usuario_id;
+    if (vType && uId) {
+      const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
+      if (savedPaths) {
+        // Merge with existing paths if they exist
+        data.documentos_base64 = { ...(solicitud.documentos_base64 || {}), ...savedPaths };
+      }
+    }
+  }
+
   return await solicitud.update(data);
 };
 
