@@ -1,0 +1,822 @@
+/* =============================================
+   Registro Delivery – Premium Registration Flow
+   ============================================= */
+
+/* Page wrapper */
+.registro-delivery-page {
+  background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #ecfdf5 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.registro-delivery-container {
+  flex: 1;
+  padding: 2.5rem 1.25rem 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.registro-delivery-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 52rem;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 8px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8f0e9;
+  overflow: hidden;
+}
+
+/* ── Fade-in animation ── */
+.animate-fade {
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Header ── */
+.registro-delivery-card .profile-header {
+  text-align: center;
+  padding: 2.5rem 2.5rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.registro-delivery-card .profile-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.85rem;
+  color: var(--fondo, #052e16);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.registro-delivery-card .profile-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  max-width: 32rem;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ── Stepper / Progress ── */
+.delivery-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 2.5rem 2rem;
+  position: relative;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+}
+
+.stepper-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 2px solid #d1d5db;
+  background: #f9fafb;
+  color: #9ca3af;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stepper-step.active .stepper-circle {
+  background: var(--verde-claro, #2d7a2d);
+  border-color: var(--verde-claro, #2d7a2d);
+  color: white;
+  box-shadow: 0 4px 14px rgba(45, 122, 45, 0.3);
+}
+
+.stepper-step.completed .stepper-circle {
+  background: var(--accent-color, #52b788);
+  border-color: var(--accent-color, #52b788);
+  color: white;
+}
+
+.stepper-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.stepper-step.active .stepper-label,
+.stepper-step.completed .stepper-label {
+  color: var(--fondo, #052e16);
+  font-weight: 600;
+}
+
+.stepper-line {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 0.5rem;
+  align-self: flex-start;
+  margin-top: 1.2rem;
+  transition: background 0.4s;
+  min-width: 3rem;
+}
+
+.stepper-line.completed {
+  background: var(--accent-color, #52b788);
+}
+
+/* ── Vehicle Type Selection (Step 1) ── */
+.vehicle-selection-section {
+  padding: 0 2.5rem 2.5rem;
+}
+
+.vehicle-selection-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--fondo, #052e16);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.vehicle-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+  .vehicle-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vehicle-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.75rem 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.vehicle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.3s;
+}
+
+.vehicle-card:hover {
+  border-color: var(--accent-color, #52b788);
+  background: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(82, 183, 136, 0.12);
+}
+
+.vehicle-card.selected {
+  border-color: var(--verde-claro, #2d7a2d);
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  box-shadow: 0 6px 24px rgba(45, 122, 45, 0.15);
+}
+
+.vehicle-card.selected::before {
+  background: linear-gradient(90deg, var(--verde-claro, #2d7a2d), var(--accent-color, #52b788));
+}
+
+.vehicle-card-emoji {
+  font-size: 2.75rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.vehicle-card-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #374151;
+  text-align: center;
+}
+
+.vehicle-card.selected .vehicle-card-label {
+  color: var(--fondo, #052e16);
+}
+
+.vehicle-card-check {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--verde-claro, #2d7a2d);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vehicle-card.selected .vehicle-card-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.vehicle-continue-btn {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  margin: 0 auto;
+  padding: 0.9rem 2rem;
+  background: var(--verde-claro, #2d7a2d);
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.vehicle-continue-btn:hover:not(:disabled) {
+  background: var(--primary-light, #1b4332);
+  box-shadow: 0 6px 20px rgba(45, 122, 45, 0.3);
+  transform: translateY(-1px);
+}
+
+.vehicle-continue-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Form (Step 2) ── */
+.registro-delivery-form {
+  padding: 0 2.5rem 2.5rem;
+}
+
+.registro-delivery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .registro-delivery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.registro-delivery-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Section Title */
+.form-section-title {
+  grid-column: 1 / -1;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--fondo, #052e16);
+  padding-bottom: 0.5rem;
+  margin-top: 0.75rem;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section-title .section-icon {
+  font-size: 1.15rem;
+}
+
+/* ── Input Groups ── */
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.9rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.7rem;
+  background: #fafbfc;
+  transition: all 0.2s ease;
+  min-height: 2.9rem;
+}
+
+.input-box:focus-within {
+  border-color: var(--verde-claro, #2d7a2d);
+  box-shadow: 0 0 0 3px rgba(45, 122, 45, 0.08);
+  background: #fff;
+}
+
+.input-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.input-box input,
+.input-box select {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.925rem;
+  color: #1f2937;
+  outline: none;
+  padding: 0.65rem 0;
+}
+
+.input-box input::placeholder {
+  color: #9ca3af;
+}
+
+.input-box select {
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.3rem;
+}
+
+.input-error {
+  display: block;
+  font-size: 0.75rem;
+  color: #e11d48;
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+/* ── Document Upload Section ── */
+.documents-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .documents-upload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Document Upload Zone (Drag & Drop) ── */
+.doc-upload-zone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #fcfcfc;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+}
+
+.doc-upload-zone:hover {
+  border-color: var(--verde-claro, #2d7a2d);
+  background: #f0fdf4;
+}
+
+.doc-upload-zone.drag-over {
+  border-color: var(--verde, #3B9C3A);
+  background: #e6f7eb;
+  transform: scale(1.02);
+}
+
+.doc-upload-zone.loaded {
+  border-color: var(--accent-color, #52b788);
+  border-style: solid;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+  padding: 0.75rem;
+}
+
+.doc-upload-zone.error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.doc-file-input {
+  display: none;
+}
+
+.doc-upload-content {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.doc-pending-state .emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.doc-pending-state .label, .doc-error-state .label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.doc-pending-state .hint {
+  font-size: 0.7rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.doc-error-state .emoji {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.doc-error-state .error-msg {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.doc-error-state .hint {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.doc-loaded-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.doc-image-preview {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.pdf-preview {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  color: #ef4444;
+  border: 1px solid #e5e7eb;
+}
+
+.doc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 0.25rem;
+}
+
+.doc-meta .doc-filename {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fondo, #052e16);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.doc-meta button {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.doc-meta button:hover {
+  color: #ef4444;
+}
+
+/* ── Checkbox Confirmations ── */
+.confirmations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+.confirmation-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.7rem;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.confirmation-chip:hover {
+  border-color: var(--accent-color, #52b788);
+  background: #f0fdf4;
+}
+
+.confirmation-chip.checked {
+  background: #ecfdf5;
+  border-color: var(--verde-claro, #2d7a2d);
+}
+
+.confirmation-chip input[type="checkbox"] {
+  display: none;
+}
+
+.confirm-check-box {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #cbd5e0;
+  border-radius: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.confirmation-chip.checked .confirm-check-box {
+  background: var(--verde-claro, #2d7a2d);
+  border-color: var(--verde-claro, #2d7a2d);
+}
+
+.confirm-check-box svg {
+  display: none;
+}
+
+.confirmation-chip.checked .confirm-check-box svg {
+  display: block;
+}
+
+.confirm-label {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.confirmation-chip.checked .confirm-label {
+  color: var(--fondo, #052e16);
+  font-weight: 600;
+}
+
+.confirm-emoji {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+/* ── Bolso Oficial Section ── */
+.bolso-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.bolso-photo-upload {
+  border: 1.5px dashed #cbd5e0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: #fcfcfc;
+}
+
+.bolso-photo-upload:hover {
+  border-color: var(--verde-claro, #2d7a2d);
+  background: #f0fdf4;
+}
+
+.bolso-photo-upload.has-file {
+  border-color: var(--accent-color, #52b788);
+  border-style: solid;
+  background: #ecfdf5;
+}
+
+.bolso-photo-upload input[type="file"] {
+  display: none;
+}
+
+.bolso-preview-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.bolso-preview-container img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  border: 2px solid var(--accent-color, #52b788);
+}
+
+/* ── Action Buttons ── */
+.registro-delivery-actions {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.registro-delivery-actions button {
+  flex: 1;
+  min-height: 3.25rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  min-width: 10rem;
+}
+
+.save-btn {
+  background: var(--verde-claro, #2d7a2d);
+  color: white;
+  border: none;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: var(--primary-light, #1b4332);
+  box-shadow: 0 6px 20px rgba(45, 122, 45, 0.25);
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 1.5px solid #e5e7eb;
+}
+
+.cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.back-step-btn {
+  background: transparent;
+  color: var(--verde-claro, #2d7a2d);
+  border: 1.5px solid var(--verde-claro, #2d7a2d);
+}
+
+.back-step-btn:hover {
+  background: #f0fdf4;
+}
+
+/* ── Banner de estado ── */
+.solicitud-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin: 0 2.5rem 1.5rem;
+}
+
+.solicitud-status-banner.pending {
+  background: #fffaf0;
+  border: 1px solid #fbd38d;
+  color: #744210;
+}
+
+.solicitud-status-banner .status-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.solicitud-status-banner strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.solicitud-status-banner p {
+  font-size: 0.8rem;
+  color: #975a16;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Loading ── */
+.profile-page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .registro-delivery-card .profile-header {
+    padding: 1.75rem 1.25rem 0;
+  }
+
+  .registro-delivery-card .profile-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .delivery-stepper {
+    margin: 0 1.25rem 1.5rem;
+  }
+
+  .stepper-label {
+    font-size: 0.65rem;
+  }
+
+  .stepper-circle {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
+
+  .stepper-line {
+    margin-top: 1rem;
+    min-width: 1.5rem;
+  }
+
+  .vehicle-selection-section,
+  .registro-delivery-form {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .solicitud-status-banner {
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+  }
+
+  .registro-delivery-actions {
+    flex-direction: column;
+  }
+
+  .registro-delivery-actions button {
+    min-width: 100%;
+  }
+}

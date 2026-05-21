@@ -1,0 +1,283 @@
+/* =============================================
+   CameraCapture component styling (Premium theme)
+   ============================================= */
+
+.camera-capture-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.camera-capture-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.camera-capture-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Placeholder box */
+.camera-placeholder-box {
+  border: 2px dashed #cbd5e0;
+  border-radius: 1rem;
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  background: #fafbfc;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.camera-placeholder-box:hover {
+  border-color: var(--verde-claro, #2d7a2d);
+  background: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(45, 122, 45, 0.08);
+}
+
+.camera-placeholder-icon {
+  font-size: 2.75rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.camera-placeholder-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--fondo, #052e16);
+  margin-bottom: 0.25rem;
+}
+
+.camera-placeholder-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
+  max-width: 280px;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.camera-activate-btn {
+  background: var(--verde-claro, #2d7a2d);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(45, 122, 45, 0.2);
+}
+
+.camera-placeholder-box:hover .camera-activate-btn {
+  background: var(--primary-light, #1b4332);
+  box-shadow: 0 4px 10px rgba(45, 122, 45, 0.3);
+}
+
+/* Streaming state */
+.camera-streaming-box {
+  background: #000000;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  border: 1px solid #1f2937;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 320px;
+  background: #111827;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.live-video-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror view for natural selfie experience */
+}
+
+/* Oval overlay guideline to help user frame face */
+.camera-overlay-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 70%;
+  border: 2px dashed rgba(255, 255, 255, 0.65);
+  border-radius: 50% / 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s;
+}
+
+.video-wrapper:hover .camera-overlay-frame {
+  border-color: var(--accent-color, #52b788);
+}
+
+/* Captured state */
+.camera-preview-captured {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 2px solid var(--accent-color, #52b788);
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(82, 183, 136, 0.15);
+}
+
+.captured-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.captured-success-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(16, 185, 129, 0.95);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.badge-icon {
+  font-weight: 700;
+}
+
+/* Action buttons */
+.camera-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  width: 100%;
+  justify-content: center;
+  padding: 0 0.5rem 0.25rem;
+}
+
+.camera-btn {
+  border: none;
+  padding: 0.65rem 1.25rem;
+  border-radius: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 100px;
+}
+
+.capture-btn {
+  background: var(--verde-claro, #2d7a2d);
+  color: white;
+  flex: 2;
+  box-shadow: 0 4px 12px rgba(45, 122, 45, 0.2);
+}
+
+.capture-btn:hover {
+  background: var(--primary-light, #1b4332);
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  flex: 1;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.secondary-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1.5px solid #cbd5e0;
+  width: auto;
+}
+
+.secondary-btn:hover {
+  background: #e5e7eb;
+}
+
+/* Error state */
+.camera-error-box {
+  border: 2px dashed #f87171;
+  border-radius: 1rem;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  background: #fef2f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.camera-error-icon {
+  font-size: 2.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.camera-error-text {
+  font-size: 0.85rem;
+  color: #dc2626;
+  font-weight: 600;
+  max-width: 300px;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.retry-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.retry-btn:hover {
+  background: #dc2626;
+}
