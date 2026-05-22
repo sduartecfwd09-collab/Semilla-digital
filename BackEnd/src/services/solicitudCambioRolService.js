@@ -1,10 +1,9 @@
-<<<<<<< HEAD
 // ============================================================
 // Service: SolicitudCambioRol
 // Descripción: Lógica de negocio para solicitudes de cambio
 //              de rol (flujo de aprobación admin)
 // ============================================================
-const { SolicitudCambioRol, Usuario, DeliveryDriver } = require('../models');
+const { SolicitudCambioRol, Usuario, DeliveryDriver, Role } = require('../models');
 const fs = require('fs');
 const path = require('path');
 
@@ -43,8 +42,7 @@ const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
     filePaths[docId] = `/storage/delivery-applications/${userId}/${vehicleType}/${filename}`;
   }
   return filePaths;
-=======
-const { SolicitudCambioRol, Usuario, Role } = require('../models');
+};
 
 const mapSolicitudParaFrontend = (s) => {
   if (!s) return null;
@@ -70,7 +68,6 @@ const mapSolicitudParaFrontend = (s) => {
       role: raw.usuario.role || (raw.usuario.rol ? raw.usuario.rol.nombre : 'Usuario')
     } : null
   };
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
 };
 
 const findAll = async (query = {}) => {
@@ -134,7 +131,6 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
-<<<<<<< HEAD
   if (data.rol_solicitado === 'DRIVER' && !data.selfie_verificacion_url) {
     throw new Error('La selfie de verificación es obligatoria');
   }
@@ -145,10 +141,7 @@ const create = async (data) => {
   }
   delete data.documentos_base64;
 
-  return await SolicitudCambioRol.create({
-=======
   const created = await SolicitudCambioRol.create({
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
     ...data,
     usuario_id,
     rol_solicitado,

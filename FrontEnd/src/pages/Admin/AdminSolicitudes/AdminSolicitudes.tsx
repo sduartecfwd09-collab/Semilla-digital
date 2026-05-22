@@ -43,12 +43,8 @@ const AdminSolicitudes: React.FC = () => {
         authFetch(ENDPOINTS.usuarios)
       ]);
       
-<<<<<<< HEAD
-      const solDataRaw = await solRes.json();
-      const userDataRaw = await userRes.json();
-
-      const solList = solDataRaw.data ?? solDataRaw;
-      const userList = userDataRaw.data ?? userDataRaw;
+      const solList = (await unwrap(solRes)) || [];
+      const userList = (await unwrap(userRes)) || [];
 
       const solData: Solicitud[] = Array.isArray(solList) ? solList.map((s: any) => ({
         id: s.id,
@@ -62,10 +58,6 @@ const AdminSolicitudes: React.FC = () => {
       })) : [];
 
       const userData: Usuario[] = Array.isArray(userList) ? userList : [];
-=======
-      const solData: Solicitud[] = (await unwrap(solRes)) || [];
-      const userData: Usuario[] = (await unwrap(userRes)) || [];
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
       
       // Mapear usuarios por ID y por Correo para búsquedas flexibles
       const userMap: Record<string, Usuario> = {};
@@ -130,27 +122,16 @@ const AdminSolicitudes: React.FC = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-<<<<<<< HEAD
-      // 1. Actualizar la solicitud con estado, motivo y fecha de respuesta
-=======
       // 1. Llamar al endpoint dedicado de admin (aprobar/rechazar). El PATCH
       //    genérico /solicitudes/:id bloquea cambios de estado por seguridad.
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
       const accion = nuevoEstado === 'Aprobada' ? 'aprobar' : 'rechazar';
       await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}/${accion}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-<<<<<<< HEAD
         body: JSON.stringify({
-          estado: nuevoEstado,
           motivoRespuesta: motivo,
-          motivo_respuesta: motivo,
-          fechaRespuesta: new Date().toISOString(),
-          fecha_respuesta: new Date().toISOString()
+          motivo_respuesta: motivo
         })
-=======
-        body: JSON.stringify({ motivoRespuesta: motivo })
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
       });
 
       // 2. Si es aprobada, asignar la feria automáticamente al usuario desde su puesto

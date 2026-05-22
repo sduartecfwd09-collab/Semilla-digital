@@ -29,15 +29,10 @@ const Profile: React.FC = () => {
     status: '',
     avatar: ''
   });
-<<<<<<< HEAD
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agricultorRequest, setAgricultorRequest] = useState<any>(null);
   const [driverRequest, setDriverRequest] = useState<any>(null);
-  const [originalData, setOriginalData] = useState({...userData});
-
-  useEffect(() => {
-=======
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [requestMotivo, setRequestMotivo] = useState<string>('');
@@ -48,7 +43,6 @@ const Profile: React.FC = () => {
     let cancelled = false;
 
     // Si no hay usuario y ya terminó de cargar el context, vamos a auth
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
     if (!user) {
       const stored = localStorage.getItem('user');
       if (!stored) {
@@ -81,43 +75,26 @@ const Profile: React.FC = () => {
         return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
       .then(res => res?.json())
-<<<<<<< HEAD
-      .then(allRequestsRaw => {
-        const allRequests = allRequestsRaw?.data || allRequestsRaw;
-        if (allRequests && Array.isArray(allRequests)) {
-          const userRequests = allRequests.filter(
-            (r: any) => String(r.usuario_id || r.usuarioId) === String(currentId)
-          );
-          
-          const agRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Agricultor' || r.rolSolicitado === 'Agricultor')
-            .sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
-          if (agRequests.length > 0) {
-            setAgricultorRequest(agRequests[0]);
-          }
-=======
       .then(json => {
         if (cancelled) return;
         if (json) {
           const allRequests = json.success ? json.data : json;
           const userRequests = (allRequests || []).filter(
-            (r: any) => String(r.usuarioId) === String(currentId)
-          ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
+            (r: any) => String(r.usuario_id || r.usuarioId) === String(currentId)
+          ).sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
 
-          if (userRequests.length > 0) {
-            // Priorizamos: Aprobada > Pendiente > Rechazada
-            let activeRequest = userRequests[0];
-            const aprobada = userRequests.find((r: any) => r.estado === 'Aprobada');
-            const pendiente = userRequests.find((r: any) => r.estado === 'Pendiente');
-            const rechazada = userRequests.find((r: any) => r.estado === 'Rechazada');
-
-            if (aprobada) {
-              activeRequest = aprobada;
-            } else if (pendiente) {
-              activeRequest = pendiente;
-            } else if (rechazada) {
-              activeRequest = rechazada;
-            }
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
+          const agRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Agricultor' || r.rolSolicitado === 'Agricultor' || r.rol_solicitado === 'Productor' || r.rolSolicitado === 'Productor');
+          if (agRequests.length > 0) {
+            let activeRequest = agRequests[0];
+            const aprobada = agRequests.find((r: any) => r.estado === 'Aprobada');
+            const pendiente = agRequests.find((r: any) => r.estado === 'Pendiente');
+            const rechazada = agRequests.find((r: any) => r.estado === 'Rechazada');
+            if (aprobada) activeRequest = aprobada;
+            else if (pendiente) activeRequest = pendiente;
+            else if (rechazada) activeRequest = rechazada;
+            setAgricultorRequest(activeRequest);
+            setHasPendingRequest(true);
+          }
 
           const drRequests = userRequests.filter((r: any) => r.rol_solicitado === 'DRIVER' || r.rolSolicitado === 'DRIVER')
             .sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
@@ -369,9 +346,6 @@ const Profile: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-<<<<<<< HEAD
-
-=======
   const handleRoleRequest = async () => {
     try {
       const result = await Swal.fire({
@@ -428,7 +402,6 @@ const Profile: React.FC = () => {
       });
     }
   };
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
 
   const handleCancelarSolicitud = async () => {
     const reqId = agricultorRequest?.id;
@@ -451,17 +424,11 @@ const Profile: React.FC = () => {
           method: 'DELETE',
         });
 
-<<<<<<< HEAD
-        const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
-        const todosPuestos = await puestosRes.json();
-        const misPuestos = todosPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id));
-=======
         // Borrar la información del puesto asociado (puestosProductor)
         const puestosRes = await authFetch(ENDPOINTS.puestosProductor);
         const puestosJson = await puestosRes.json();
         const todosPuestos = puestosJson.success ? puestosJson.data : puestosJson;
         const misPuestos = (todosPuestos || []).filter((p: any) => String(p.usuarioId) === String(userData.id));
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
         
         await Promise.all(misPuestos.map((p: any) => 
           authFetch(`${ENDPOINTS.puestosProductor}/${p.id}`, { method: 'DELETE' })
@@ -482,7 +449,6 @@ const Profile: React.FC = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleCancelarSolicitudDriver = async () => {
     const reqId = driverRequest?.id;
     if (!reqId) return;
@@ -517,10 +483,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleConvertirseEnAgricultor = async () => {
-=======
   const handleConvertirseEnProductor = async () => {
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
     try {
       setLoading(true);
       const [userRes, puestosRes, feriasRes] = await Promise.all([

@@ -29,8 +29,7 @@ const AdminProductores = () => {
             setLoading(true)
             const [usersRaw, puestosRaw, allProductsRaw, allFeriasRaw] = await Promise.all([
                 api.getUsers(),
-<<<<<<< HEAD:FrontEnd/src/pages/Admin/AdminAgricultores/AdminAgricultores.tsx
-                api.request<any>('/puestosAgricultor'),
+                api.request<any>('/puestosProductor'),
                 api.request<any>('/productos'),
                 api.request<any>('/ferias')
             ]) as any[]
@@ -40,19 +39,9 @@ const AdminProductores = () => {
             const productsList = allProductsRaw.data ?? allProductsRaw ?? []
             const feriasList = allFeriasRaw.data ?? allFeriasRaw ?? []
 
-            // Solo mostrar agricultores aprobados (role === 'Agricultor')
-            const agros = usersList
-                .filter((u: User) => (u.role ?? (u as any).rol?.nombre) === 'Agricultor')
-=======
-                api.request<PuestoProductor[]>('/puestosProductor'),
-                api.request<any[]>('/productos'),
-                api.request<any[]>('/ferias')
-            ])
-
             // Solo mostrar productores aprobados (role === 'Productor')
-            const agros = users
-                .filter((u: User) => u.role === 'Productor')
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6:FrontEnd/src/pages/Admin/AdminProductores/AdminProductores.tsx
+            const agros = usersList
+                .filter((u: User) => (u.role ?? (u as any).rol?.nombre) === 'Productor')
                 .map((u: User) => {
                     const puesto = puestosList.find((p: any) => p.usuarioId === u.id)
                     const productos = productsList.filter((p: any) => String(p.userId) === String(u.id))
