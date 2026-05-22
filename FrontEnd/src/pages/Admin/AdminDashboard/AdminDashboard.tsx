@@ -32,12 +32,17 @@ const AdminDashboard = () => {
                 api.request<any[]>('/recetas').catch(() => [])
             ])
 
+            // Helper: el backend responde como { success, data: [...] }; lo desempaquetamos.
+            const unwrap = (json: any) =>
+                (json && json.success && Array.isArray(json.data)) ? json.data
+                : (Array.isArray(json) ? json : []);
+
             // Obtener solicitudes reales para el contador de pendientes
             let pendingCount = 0;
             try {
                 const solRes = await authFetch(ENDPOINTS.solicitudesCambioRol);
                 if (solRes.ok) {
-                    const solicitudes = await solRes.json();
+                    const solicitudes = unwrap(await solRes.json());
                     pendingCount = solicitudes.filter((s: any) => s.estado === 'Pendiente').length;
                 }
             } catch (e) {
@@ -50,7 +55,7 @@ const AdminDashboard = () => {
             try {
                 const contactRes = await authFetch(ENDPOINTS.contactMessages);
                 if (contactRes.ok) {
-                    const contactos = await contactRes.json();
+                    const contactos = unwrap(await contactRes.json());
                     contactosCount = contactos.length;
                     pendingContactosCount = contactos.filter((c: any) => c.estado === 'Pendiente').length;
                 }

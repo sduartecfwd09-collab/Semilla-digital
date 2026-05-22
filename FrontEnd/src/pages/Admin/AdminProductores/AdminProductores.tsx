@@ -29,7 +29,7 @@ const AdminProductores = () => {
             setLoading(true)
             const [users, puestos, allProducts, allFerias] = await Promise.all([
                 api.getUsers(),
-                api.request<PuestoProductor[]>('/puestosProductor'),
+                api.request<PuestoProductor[]>('/puestos'),
                 api.request<any[]>('/productos'),
                 api.request<any[]>('/ferias')
             ])
@@ -92,7 +92,7 @@ const AdminProductores = () => {
                 
                 // Eliminar puesto si existe
                 if (agro.puesto) {
-                    await api.request(`/puestosProductor/${agro.puesto.id}`, { method: 'DELETE' })
+                    await api.request(`/puestos/${agro.puesto.id}`, { method: 'DELETE' })
                 }
 
                 setProductores(productores.filter(a => a.id !== agro.id))
@@ -143,7 +143,7 @@ const AdminProductores = () => {
 
                 // Actualizar o crear puesto
                 if (selectedProductor.puesto) {
-                    puestoResult = await api.request(`/puestosProductor/${selectedProductor.puesto.id}`, {
+                    puestoResult = await api.request(`/puestos/${selectedProductor.puesto.id}`, {
                         method: 'PATCH',
                         body: JSON.stringify({
                             nombrePuesto: trimmedNombrePuesto,
@@ -153,7 +153,7 @@ const AdminProductores = () => {
                         })
                     })
                 } else {
-                    puestoResult = await api.request(`/puestosProductor`, {
+                    puestoResult = await api.request(`/puestos`, {
                         method: 'POST',
                         body: JSON.stringify({
                             usuarioId: selectedProductor.id,
@@ -181,7 +181,7 @@ const AdminProductores = () => {
                     status: 'Activo'
                 })
 
-                puestoResult = await api.request(`/puestosProductor`, {
+                puestoResult = await api.request(`/puestos`, {
                     method: 'POST',
                     body: JSON.stringify({
                         usuarioId: userResult.id,

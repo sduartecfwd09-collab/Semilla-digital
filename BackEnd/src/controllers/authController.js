@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { Usuario, Role } = require('../models');
 const { Op } = require('sequelize');
 const permisoService = require('../services/permisoService');
+const { sendMail } = require('../services/emailService');
 
 
 const JWT_SECRET  = process.env.JWT_SECRET;
@@ -174,4 +175,113 @@ const logout = (_req, res) => {
   return res.json({ success: true });
 };
 
-module.exports = { login, register, me, logout };
+
+// ── POST /auth/forgot-password ───────────────────────────────────────────────
+// Recibe un email. Si existe el usuario, genera un JWT con `purpose:'password-reset'`
+// (válido 30 min) y envía un link al correo. Si no hay SMTP configurado, el link
+// se imprime en la consola del backend (modo dev).
+//
+// IMPORTANTE: respondemos siempre 200 con el mismo mensaje, exista o no el email,
+// para no revelar qué cuentas están registradas (enumeración de usuarios).
+const forgotPassword = async (req, res) => {
+  try {
+    const email = (req.body.email || '').toLowerCase().trim();
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'El email es requerido.' });
+    }
+
+    const usuario = await Usuario.findOne({ where: { email } });
+    if (usuario) {
+      const token = jwt.sign(
+        { id: usuario.id, purpose: 'password-reset' },
+        process.env.JWT_SECRET,
+        { expiresIn: '30m' }
+      );
+      const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const resetUrl = `${frontend}/reset-password?token=${encodeURIComponent(token)}`;
+
+      const subject = 'AgroMap — Recuperación de contraseña';
+      const html = `
+        <div style="font-family: system-ui, sans-serif; max-width: 520px; margin: 0 auto;">
+          <h2 style="color: #166534;">Recuperación de contraseña</h2>
+          <p>Hola${usuario.name ? ` <strong>${usuario.name}</strong>` : ''},</p>
+          <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en AgroMap.
+             Si fuiste vos, hacé clic en el botón. El enlace expira en 30 minutos.</p>
+          <p style="margin: 28px 0;">
+            <a href="${resetUrl}"
+               style="background:#2d8a42;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;">
+              Restablecer contraseña
+            </a>
+          </p>
+          <p style="font-size: 0.9rem; color: #555;">
+            Si el botón no funciona, copiá y pegá este enlace en tu navegador:<br>
+            <span style="color:#2d8a42;">${resetUrl}</span>
+          </p>
+          <p style="font-size: 0.85rem; color: #888;">
+            Si no solicitaste este cambio, podés ignorar este mensaje.
+          </p>
+        </div>
+      `;
+      const text = `Para restablecer tu contraseña en AgroMap, abrí este enlace (válido 30 min):\n${resetUrl}\nSi no fuiste vos, ignorá este mensaje.`;
+
+      try {
+        await sendMail({ to: usuario.email, subject, html, text });
+      } catch (mailErr) {
+        console.error('[Auth] forgotPassword sendMail:', mailErr.message);
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: 'Si el correo está registrado, te enviamos un enlace para restablecer la contraseña.',
+    });
+  } catch (error) {
+    console.error('[Auth] forgotPassword:', error);
+    return res.status(500).json({ success: false, message: 'Error al procesar la solicitud.' });
+  }
+};
+
+
+// ── POST /auth/reset-password ────────────────────────────────────────────────
+// Recibe `{ token, newPassword }`. Valida el JWT (purpose='password-reset',
+// no expirado) y actualiza el password del usuario.
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body || {};
+    if (!token || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Token y nueva contraseña son requeridos.' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 8 caracteres.' });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+      const msg = e.name === 'TokenExpiredError'
+        ? 'El enlace expiró. Solicitá uno nuevo.'
+        : 'El enlace no es válido.';
+      return res.status(400).json({ success: false, message: msg });
+    }
+
+    if (payload.purpose !== 'password-reset' || !payload.id) {
+      return res.status(400).json({ success: false, message: 'El enlace no es válido.' });
+    }
+
+    const usuario = await Usuario.findByPk(payload.id);
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword.trim(), 10);
+    await usuario.update({ password: hashed });
+
+    return res.json({ success: true, message: 'Contraseña actualizada. Ya podés iniciar sesión.' });
+  } catch (error) {
+    console.error('[Auth] resetPassword:', error);
+    return res.status(500).json({ success: false, message: 'Error al restablecer la contraseña.' });
+  }
+};
+
+module.exports = { login, register, me, logout, forgotPassword, resetPassword };

@@ -1,6 +1,6 @@
 'use strict';
 const router = require('express').Router();
-const { login, register, me, logout } = require('../controllers/authController');
+const { login, register, me, logout, forgotPassword, resetPassword } = require('../controllers/authController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 
 // POST /auth/login    → credenciales → devuelve { token, user } y setea cookie httpOnly
@@ -14,5 +14,11 @@ router.get('/me', verifyToken, me);
 
 // POST /auth/logout   → limpia la cookie httpOnly
 router.post('/logout', logout);
+
+// POST /auth/forgot-password → { email } → envía link de recuperación (público)
+router.post('/forgot-password', forgotPassword);
+
+// POST /auth/reset-password  → { token, newPassword } → actualiza contraseña (público)
+router.post('/reset-password', resetPassword);
 
 module.exports = router;

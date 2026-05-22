@@ -35,7 +35,18 @@ const create = async (data) => {
   if (!data.nombre) {
     throw new Error('El nombre de la feria es requerido');
   }
-  return await Feria.create(data);
+
+  // Idempotente por nombre: si ya existe una feria con ese nombre la devolvemos
+  // en vez de duplicar. Esto permite que la sincronización desde el frontend
+  // (Google Maps → backend) se ejecute múltiples veces sin generar duplicados.
+  // Filtramos los campos que NO son atributos del modelo (provincia/direccion
+  // vienen como strings desde el frontend pero la tabla usa direccion_id).
+  const { provincia: _prov, direccion: _dir, ...modelData } = data;
+  const [feria] = await Feria.findOrCreate({
+    where: { nombre: data.nombre },
+    defaults: modelData,
+  });
+  return feria;
 };
 
 const update = async (id, data) => {

@@ -92,17 +92,19 @@ const Navbar: React.FC = () => {
         }
       }
 
-      // 2. Mensajes de contacto (solo admin tiene permiso de listar; usuarios
-      //    normales recibirán 401 y salimos silenciosamente)
+      // 2. Mensajes de contacto (buzón personal): consultamos `/mensajes/mios`
+      //    que ya viene filtrado por el JWT del backend. Para usuarios anónimos
+      //    no hay buzón remoto, así que salimos.
+      if (!user) return
       try {
-        const res = await authFetch(ENDPOINTS.contactMessages)
+        const res = await authFetch(ENDPOINTS.contactMessagesMine)
         if (!res.ok) return
         const json = await res.json()
         const data = (json && json.success ? json.data : json) || []
         const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]')
 
         const myResponded = data.filter((m: any) => {
-          const matchedByEmail = user?.email && m.correo && 
+          const matchedByEmail = user?.email && m.correo &&
                                 m.correo.toLowerCase() === user.email.toLowerCase()
           const matchedByLocal = m.id && savedIds.includes(m.id)
           return (matchedByEmail || matchedByLocal) && m.estado === 'Respondido'

@@ -70,7 +70,7 @@ const mapPuestoParaFrontend = (p) => {
 };
 
 const includeAll = [
-  { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] },
+  { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'roleId'] },
   { model: Feria, as: 'feriaPrincipal' },
   {
     model: Direccion,

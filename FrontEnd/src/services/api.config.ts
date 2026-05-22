@@ -12,8 +12,12 @@ export const ENDPOINTS = {
   puestosProductor: `${API_BASE_URL}/puestos`,
   productos: `${API_BASE_URL}/productos`,
   contactMessages: `${API_BASE_URL}/mensajes`,
+  // Solo los mensajes enviados por el usuario autenticado (buzón personal).
+  contactMessagesMine: `${API_BASE_URL}/mensajes/mios`,
   authLogin: `${API_BASE_URL}/auth/login`,
-  authRegister: `${API_BASE_URL}/auth/register`
+  authRegister: `${API_BASE_URL}/auth/register`,
+  authForgotPassword: `${API_BASE_URL}/auth/forgot-password`,
+  authResetPassword: `${API_BASE_URL}/auth/reset-password`,
 };
 
 export const authFetch = async (url: string, options: RequestInit = {}) => {
