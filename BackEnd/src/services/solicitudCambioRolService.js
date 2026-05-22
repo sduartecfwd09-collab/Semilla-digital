@@ -176,6 +176,18 @@ const update = async (id, data) => {
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
   if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
 
+  if (data.documentos_base64) {
+    const vType = data.vehicle_type || solicitud.vehicle_type;
+    const uId = data.usuario_id || solicitud.usuario_id;
+    if (vType && uId) {
+      const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
+      if (savedPaths) {
+        updateData.documentos_rutas = { ...(solicitud.documentos_rutas || {}), ...savedPaths };
+      }
+    }
+  }
+  delete updateData.documentos_base64;
+
   const updated = await solicitud.update(updateData);
   return mapSolicitudParaFrontend(updated);
 };
@@ -240,26 +252,7 @@ const reject = async (id, data = {}) => {
   return mapSolicitudParaFrontend(rejected);
 };
 
-const update = async (id, data) => {
-  const solicitud = await SolicitudCambioRol.findByPk(id);
-  if (!solicitud) {
-    throw new Error('Solicitud no encontrada');
-  }
 
-  if (data.documentos_base64) {
-    const vType = data.vehicle_type || solicitud.vehicle_type;
-    const uId = data.usuario_id || solicitud.usuario_id;
-    if (vType && uId) {
-      const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
-      if (savedPaths) {
-        data.documentos_rutas = { ...(solicitud.documentos_rutas || {}), ...savedPaths };
-      }
-    }
-  }
-  delete data.documentos_base64;
-
-  return await solicitud.update(data);
-};
 
 const remove = async (id) => {
   const solicitud = await SolicitudCambioRol.findByPk(id);
@@ -279,6 +272,5 @@ module.exports = {
   update,
   approve,
   reject,
-  update,
   remove,
 };
