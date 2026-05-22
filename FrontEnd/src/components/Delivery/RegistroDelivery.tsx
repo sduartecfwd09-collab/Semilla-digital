@@ -198,6 +198,7 @@ const RegistroDelivery: React.FC = () => {
     condicionesMecanicas: false, mochilaTermica: false, mochilaMarcaOficial: false,
     biciBuenEstado: false, biciMochilaTermica: false, biciMochilaOficial: false, biciTelefonoInternet: false,
   });
+  const [confirmationEvidences, setConfirmationEvidences] = useState<Record<string, DocFile | null>>({});
   const [bolsoConfirm, setBolsoConfirm] = useState(false);
   const [bolsoFoto, setBolsoFoto] = useState<DocFile | null>(null);
 
@@ -298,6 +299,11 @@ const RegistroDelivery: React.FC = () => {
       Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
       return false;
     }
+    const missingEvidences = CARRO_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+    if (missingEvidences.length > 0) {
+      Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+      return false;
+    }
     if (!bolsoConfirm) {
       Swal.fire({ icon: 'warning', title: 'Bolso oficial', text: 'Debés confirmar que contás con el bolso oficial.', confirmButtonColor: 'var(--verde-claro)' });
       return false;
@@ -347,6 +353,11 @@ const RegistroDelivery: React.FC = () => {
       Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
       return false;
     }
+    const missingEvidences = BICIMOTO_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+    if (missingEvidences.length > 0) {
+      Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+      return false;
+    }
     if (!bolsoConfirm) {
       Swal.fire({ icon: 'warning', title: 'Bolso oficial', text: 'Debés confirmar que contás con el bolso oficial.', confirmButtonColor: 'var(--verde-claro)' });
       return false;
@@ -368,6 +379,11 @@ const RegistroDelivery: React.FC = () => {
     const unchecked = BICI_CONFIRMATIONS.filter(c => !confirmations[c.key]);
     if (unchecked.length > 0) {
       Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos.', confirmButtonColor: 'var(--verde-claro)' });
+      return false;
+    }
+    const missingEvidences = BICI_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+    if (missingEvidences.length > 0) {
+      Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
       return false;
     }
     return true;
@@ -408,6 +424,10 @@ const RegistroDelivery: React.FC = () => {
               : BICI_DOCUMENTS.map(d => d.key);
         Object.entries(documents).forEach(([k, v]) => { if (v && v.status === 'loaded' && relevantKeys.includes(k)) docsBase64[k] = v.preview; });
         if (bolsoFoto && vehicleType !== 'Bicicleta') docsBase64['bolsoFoto'] = bolsoFoto.preview;
+
+        Object.entries(confirmationEvidences).forEach(([k, v]) => {
+          if (v && v.status === 'loaded') docsBase64[`evidencia_${k}`] = v.preview;
+        });
       }
 
       const solicitudData: Record<string, any> = {
@@ -753,14 +773,27 @@ const RegistroDelivery: React.FC = () => {
                     <div className="input-group full-width">
                       <div className="confirmations-grid">
                         {CARRO_CONFIRMATIONS.map(conf => (
-                          <label key={conf.key}
-                            className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                            <input type="checkbox" checked={confirmations[conf.key]}
-                              onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                            <span className="confirm-check-box"><CheckSvg /></span>
-                            <span className="confirm-emoji">{conf.emoji}</span>
-                            <span className="confirm-label">{conf.label}</span>
-                          </label>
+                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label
+                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                              <input type="checkbox" checked={confirmations[conf.key]}
+                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                              <span className="confirm-check-box"><CheckSvg /></span>
+                              <span className="confirm-emoji">{conf.emoji}</span>
+                              <span className="confirm-label">{conf.label}</span>
+                            </label>
+                            {confirmations[conf.key] && (
+                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                <DocumentUploader
+                                  docKey={`evidencia_${conf.key}`}
+                                  label={`Evidencia: ${conf.label}`}
+                                  emoji="📸"
+                                  fileData={confirmationEvidences[conf.key] || null}
+                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                />
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -776,14 +809,27 @@ const RegistroDelivery: React.FC = () => {
                     <div className="input-group full-width">
                       <div className="confirmations-grid">
                         {BICIMOTO_CONFIRMATIONS.map(conf => (
-                          <label key={conf.key}
-                            className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                            <input type="checkbox" checked={confirmations[conf.key]}
-                              onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                            <span className="confirm-check-box"><CheckSvg /></span>
-                            <span className="confirm-emoji">{conf.emoji}</span>
-                            <span className="confirm-label">{conf.label}</span>
-                          </label>
+                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label
+                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                              <input type="checkbox" checked={confirmations[conf.key]}
+                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                              <span className="confirm-check-box"><CheckSvg /></span>
+                              <span className="confirm-emoji">{conf.emoji}</span>
+                              <span className="confirm-label">{conf.label}</span>
+                            </label>
+                            {confirmations[conf.key] && (
+                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                <DocumentUploader
+                                  docKey={`evidencia_${conf.key}`}
+                                  label={`Evidencia: ${conf.label}`}
+                                  emoji="📸"
+                                  fileData={confirmationEvidences[conf.key] || null}
+                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                />
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -799,14 +845,27 @@ const RegistroDelivery: React.FC = () => {
                     <div className="input-group full-width">
                       <div className="confirmations-grid">
                         {BICI_CONFIRMATIONS.map(conf => (
-                          <label key={conf.key}
-                            className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                            <input type="checkbox" checked={confirmations[conf.key]}
-                              onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                            <span className="confirm-check-box"><CheckSvg /></span>
-                            <span className="confirm-emoji">{conf.emoji}</span>
-                            <span className="confirm-label">{conf.label}</span>
-                          </label>
+                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label
+                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                              <input type="checkbox" checked={confirmations[conf.key]}
+                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                              <span className="confirm-check-box"><CheckSvg /></span>
+                              <span className="confirm-emoji">{conf.emoji}</span>
+                              <span className="confirm-label">{conf.label}</span>
+                            </label>
+                            {confirmations[conf.key] && (
+                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                <DocumentUploader
+                                  docKey={`evidencia_${conf.key}`}
+                                  label={`Evidencia: ${conf.label}`}
+                                  emoji="📸"
+                                  fileData={confirmationEvidences[conf.key] || null}
+                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                />
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>

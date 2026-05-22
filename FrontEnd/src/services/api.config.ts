@@ -9,7 +9,8 @@ export const ENDPOINTS = {
   productos: `${API_BASE_URL}/productos`,
   contactMessages: `${API_BASE_URL}/mensajes`,
   authLogin: `${API_BASE_URL}/auth/login`,
-  authRegister: `${API_BASE_URL}/auth/register`
+  authRegister: `${API_BASE_URL}/auth/register`,
+  delivery: `${API_BASE_URL}/delivery`
 };
 
 export const authFetch = async (url: string, options: RequestInit = {}) => {

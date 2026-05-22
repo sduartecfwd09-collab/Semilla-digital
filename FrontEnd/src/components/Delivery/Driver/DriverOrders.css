@@ -1,0 +1,142 @@
+.driver-orders-page {
+  animation: fadeIn 0.4s ease;
+  font-family: 'DM Sans', sans-serif;
+  color: #fff;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+}
+
+.page-header p {
+  color: #a3b1a9;
+  margin: 0;
+}
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a3b1a9;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.filter-btn.active {
+  background: #36EB60;
+  color: #051A10;
+  border-color: #36EB60;
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.history-order-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.order-date {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.status-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+}
+
+.status-pill.delivered { background: rgba(54, 235, 96, 0.2); color: #36EB60; }
+.status-pill.cancelled { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+.status-pill.assigned, .status-pill.accepted, .status-pill.picked_up, .status-pill.in_transit { 
+  background: rgba(59, 130, 246, 0.2); color: #93c5fd; 
+}
+
+.route-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.route-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.route-row span {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #e5e7eb;
+}
+
+.card-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fee-earned {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fee-earned span {
+  color: #a3b1a9;
+  font-size: 0.9rem;
+}
+
+.fee-earned strong {
+  color: #36EB60;
+  font-size: 1.2rem;
+}
+
+.delivery-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+}

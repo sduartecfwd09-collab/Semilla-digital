@@ -35,6 +35,9 @@ import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
 import DeliveryDashboard from '../components/Delivery/DeliveryDashboard';
 import ClientDeliveryTracker from '../components/Delivery/ClientDeliveryTracker';
 import RegistroDelivery from '../components/Delivery/RegistroDelivery';
+import DriverLayout from '../components/Delivery/Driver/DriverLayout';
+import DriverOrders from '../components/Delivery/Driver/DriverOrders';
+import DriverEarnings from '../components/Delivery/Driver/DriverEarnings';
 
 const Routing: React.FC = () => {
   return (
@@ -108,15 +111,19 @@ const Routing: React.FC = () => {
           } 
         />
 
-        {/* Rutas de Repartidor (Protegido por rol 'DRIVER') */}
+        {/* Rutas de Repartidor (Protegido por rol 'DRIVER' o 'Repartidor') */}
         <Route 
           path="/driver" 
           element={
-            <ProtectedRoute allowedRoles={['DRIVER']}>
-              <DeliveryDashboard />
+            <ProtectedRoute allowedRoles={['DRIVER', 'Repartidor']}>
+              <DriverLayout />
             </ProtectedRoute>
           } 
-        />
+        >
+          <Route index element={<DeliveryDashboard />} />
+          <Route path="orders" element={<DriverOrders />} />
+          <Route path="earnings" element={<DriverEarnings />} />
+        </Route>
 
         {/* Redirección por defecto */}
         <Route path="*" element={<Navigate to="/" replace />} />

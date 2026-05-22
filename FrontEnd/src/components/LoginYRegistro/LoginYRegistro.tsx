@@ -66,6 +66,8 @@ const Auth: React.FC = () => {
             navigate('/admin')
           } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
             navigate('/agricultor')
+          } else if (result.role === 'Repartidor' || result.role === 'DRIVER') {
+            navigate('/driver')
           } else {
             navigate('/')
           }
