@@ -26,12 +26,25 @@ async function getSettings() {
 }
 
 // ── FEE CALCULATION ─────────────────────────────────────────────────────
-async function calculateDeliveryFee(distanceKm) {
+async function calculateDeliveryFee(distanceKm, cargoWeight = 0, providedSupplements = 0) {
   const settings = await getSettings();
   const baseCost = parseFloat(settings.base_cost);
   const kmRate = parseFloat(settings.km_rate);
+  
+  let supplements = parseFloat(providedSupplements) || 0;
+  // If weight > 10kg, add 500 colones per extra kg as a supplement
+  if (supplements === 0 && parseFloat(cargoWeight) > 10) {
+    supplements = (parseFloat(cargoWeight) - 10) * 500;
+  }
+  
   const totalCost = baseCost + (parseFloat(distanceKm) * kmRate);
-  return { baseCost, kmRate, totalCost: Math.round(totalCost) };
+  
+  return { 
+    baseCost, 
+    kmRate, 
+    supplements: Math.round(supplements),
+    totalCost: Math.round(totalCost) 
+  };
 }
 
 // ── DRIVER PROFILE ──────────────────────────────────────────────────────
@@ -69,12 +82,12 @@ async function getDriverStats(driverId) {
         delivered_at: { [Op.gte]: today },
       },
     }),
-    // Ganancias totales
-    DeliveryOrder.sum('total_cost', {
+    // Ganancias totales (usa driver_earnings que incluye suplementos y propinas)
+    DeliveryOrder.sum('driver_earnings', {
       where: { driver_id: driverId, status: 'DELIVERED' },
     }),
     // Ganancias hoy
-    DeliveryOrder.sum('total_cost', {
+    DeliveryOrder.sum('driver_earnings', {
       where: {
         driver_id: driverId,
         status: 'DELIVERED',
@@ -156,8 +169,11 @@ async function getOrderById(orderId) {
 }
 
 // ── CREATE ORDER ────────────────────────────────────────────────────────
-async function createOrder({ order_id, pickup_address, pickup_lat, pickup_lng, dropoff_address, dropoff_lat, dropoff_lng, distance_km }) {
-  const fee = await calculateDeliveryFee(distance_km || 0);
+async function createOrder({ order_id, pickup_address, pickup_lat, pickup_lng, dropoff_address, dropoff_lat, dropoff_lng, distance_km, cargo_weight, supplements, tips }) {
+  const fee = await calculateDeliveryFee(distance_km || 0, cargo_weight, supplements);
+  
+  const parsedTips = parseFloat(tips) || 0;
+  const driverEarnings = fee.totalCost + fee.supplements + parsedTips;
 
   const order = await DeliveryOrder.create({
     order_id,
@@ -168,6 +184,10 @@ async function createOrder({ order_id, pickup_address, pickup_lat, pickup_lng, d
     dropoff_lat,
     dropoff_lng,
     distance_km,
+    cargo_weight: parseFloat(cargo_weight) || 0,
+    supplements: fee.supplements,
+    tips: parsedTips,
+    driver_earnings: driverEarnings,
     base_cost: fee.baseCost,
     km_rate: fee.kmRate,
     total_cost: fee.totalCost,
@@ -178,7 +198,7 @@ async function createOrder({ order_id, pickup_address, pickup_lat, pickup_lng, d
 }
 
 // ── UPDATE ORDER STATUS ─────────────────────────────────────────────────
-async function updateOrderStatus(orderId, newStatus, driverId = null) {
+async function updateOrderStatus(orderId, newStatus, proofOfDeliveryUrl = null) {
   const order = await DeliveryOrder.findByPk(orderId);
   if (!order) return null;
 
@@ -206,7 +226,18 @@ async function updateOrderStatus(orderId, newStatus, driverId = null) {
   if (newStatus === 'ASSIGNED') order.assigned_at = now;
   if (newStatus === 'ACCEPTED') order.accepted_at = now;
   if (newStatus === 'PICKED_UP') order.picked_up_at = now;
-  if (newStatus === 'DELIVERED') order.delivered_at = now;
+  if (newStatus === 'DELIVERED') {
+    order.delivered_at = now;
+    if (proofOfDeliveryUrl) order.proof_of_delivery_url = proofOfDeliveryUrl;
+    
+    // Release earnings to driver's accumulated balance
+    if (order.driver_id && order.driver_earnings) {
+      await DeliveryDriver.increment('accumulated_balance', { 
+        by: parseFloat(order.driver_earnings),
+        where: { id: order.driver_id } 
+      });
+    }
+  }
 
   await order.save();
   return order;
@@ -298,9 +329,9 @@ async function getDriverEarnings(driverId) {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const [todayEarnings, weekEarnings, monthEarnings, todayCount, weekCount, monthCount, recentDeliveries] = await Promise.all([
-    DeliveryOrder.sum('total_cost', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfToday } } }),
-    DeliveryOrder.sum('total_cost', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfWeek } } }),
-    DeliveryOrder.sum('total_cost', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfMonth } } }),
+    DeliveryOrder.sum('driver_earnings', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfToday } } }),
+    DeliveryOrder.sum('driver_earnings', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfWeek } } }),
+    DeliveryOrder.sum('driver_earnings', { where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfMonth } } }),
     DeliveryOrder.count({ where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfToday } } }),
     DeliveryOrder.count({ where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfWeek } } }),
     DeliveryOrder.count({ where: { driver_id: driverId, status: 'DELIVERED', delivered_at: { [Op.gte]: startOfMonth } } }),
@@ -322,7 +353,7 @@ async function getDriverEarnings(driverId) {
       status: 'DELIVERED',
       delivered_at: { [Op.gte]: sevenDaysAgo }
     },
-    attributes: ['total_cost', 'delivered_at']
+    attributes: ['driver_earnings', 'delivered_at']
   });
 
   const weeklyChartData = Array(7).fill(0).map((_, i) => {
@@ -339,7 +370,7 @@ async function getDriverEarnings(driverId) {
     d.setHours(0, 0, 0, 0);
     const diffDays = Math.round((d - sevenDaysAgo) / (1000 * 60 * 60 * 24));
     if (diffDays >= 0 && diffDays < 7) {
-      weeklyChartData[diffDays].earnings += parseFloat(order.total_cost) || 0;
+      weeklyChartData[diffDays].earnings += parseFloat(order.driver_earnings) || 0;
     }
   });
 

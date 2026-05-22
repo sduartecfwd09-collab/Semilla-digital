@@ -74,6 +74,53 @@ module.exports = (sequelize) => {
       type: DataTypes.DECIMAL(8, 2),
       allowNull: true
     },
+    commerce_name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    delivery_notes: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    item_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 1
+    },
+    handling_tags: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    estimated_time_mins: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    subtotal_items: {
+      type: DataTypes.DECIMAL(8, 2),
+      allowNull: true
+    },
+    delivery_fee: {
+      type: DataTypes.DECIMAL(8, 2),
+      allowNull: true
+    },
+    total_customer_cost: {
+      type: DataTypes.DECIMAL(8, 2),
+      allowNull: true
+    },
+    tips: {
+      type: DataTypes.DECIMAL(8, 2),
+      allowNull: true,
+      defaultValue: 0
+    },
+    driver_earnings: {
+      type: DataTypes.DECIMAL(8, 2),
+      allowNull: true,
+      defaultValue: 0
+    },
+    proof_of_delivery_url: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     assignment_attempts: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -106,6 +153,7 @@ module.exports = (sequelize) => {
     DeliveryOrder.belongsTo(models.Proforma, { foreignKey: 'order_id', as: 'proforma' });
     DeliveryOrder.belongsTo(models.DeliveryDriver, { foreignKey: 'driver_id', as: 'driver' });
     DeliveryOrder.hasOne(models.DeliveryRating, { foreignKey: 'delivery_order_id', as: 'rating' });
+    DeliveryOrder.hasOne(models.DriverEarnings, { foreignKey: 'delivery_order_id', as: 'earnings_breakdown' });
   };
 
   return DeliveryOrder;

@@ -74,7 +74,7 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       await sequelize.authenticate();
       console.log('✅ Conexión a MySQL establecida');
-      // Sincronización automática desactivada en favor de migraciones controladas (más rápido y seguro)
+      // Sincronización automática desactivada (migración manual ya aplicada)
       // await sequelize.sync({ alter: true });
       // console.log('✅ Modelos sincronizados con la base de datos');
       server.listen(PORT, () => {

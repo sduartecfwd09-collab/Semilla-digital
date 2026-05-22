@@ -115,7 +115,7 @@ exports.getOrderById = async (req, res, next) => {
 
 exports.createOrder = async (req, res, next) => {
   try {
-    const { order_id, pickup_address, pickup_lat, pickup_lng, dropoff_address, dropoff_lat, dropoff_lng, distance_km } = req.body;
+    const { order_id, pickup_address, pickup_lat, pickup_lng, dropoff_address, dropoff_lat, dropoff_lng, distance_km, cargo_weight, supplements, tips } = req.body;
 
     if (!pickup_address || !dropoff_address) {
       return res.status(400).json({ success: false, message: 'Faltan datos obligatorios (pickup_address, dropoff_address)' });
@@ -130,6 +130,9 @@ exports.createOrder = async (req, res, next) => {
       dropoff_lat,
       dropoff_lng,
       distance_km: distance_km || 0,
+      cargo_weight: cargo_weight || 0,
+      supplements: supplements || 0,
+      tips: tips || 0,
     });
 
     // Dispatch BullMQ job (if available)
@@ -217,9 +220,9 @@ exports.rejectOrderByDriver = async (req, res, next) => {
 exports.updateOrderStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, proof_of_delivery_url } = req.body;
 
-    const order = await deliveryService.updateOrderStatus(id, status);
+    const order = await deliveryService.updateOrderStatus(id, status, proof_of_delivery_url);
     if (!order) return res.status(404).json({ success: false, message: 'Orden no encontrada' });
 
     // If delivered, decrement active orders on driver
@@ -318,11 +321,11 @@ exports.rateDelivery = async (req, res, next) => {
 // ── CALCULATE FEE (public endpoint) ─────────────────────────────────────
 exports.calculateFee = async (req, res, next) => {
   try {
-    const { distance_km } = req.query;
+    const { distance_km, cargo_weight, supplements } = req.query;
     if (!distance_km) {
       return res.status(400).json({ success: false, message: 'distance_km es requerido' });
     }
-    const fee = await deliveryService.calculateDeliveryFee(parseFloat(distance_km));
+    const fee = await deliveryService.calculateDeliveryFee(parseFloat(distance_km), parseFloat(cargo_weight) || 0, parseFloat(supplements) || 0);
     res.json({ success: true, data: fee });
   } catch (error) { next(error); }
 };

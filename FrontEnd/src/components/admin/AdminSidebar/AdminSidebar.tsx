@@ -65,6 +65,9 @@ const AdminSidebar = () => {
                 <NavLink to="/admin/contactos" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     ✉️ Contactos
                 </NavLink>
+                <NavLink to="/admin/repartidores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                    🛵 Repartidores
+                </NavLink>
             </nav>
         </aside>
     )

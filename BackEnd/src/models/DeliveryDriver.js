@@ -46,6 +46,11 @@ module.exports = (sequelize) => {
       defaultValue: 3,
       allowNull: false
     },
+    accumulated_balance: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0,
+      allowNull: false
+    },
     last_assigned_at: {
       type: DataTypes.DATE,
       allowNull: true

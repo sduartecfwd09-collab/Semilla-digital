@@ -196,6 +196,14 @@ const Navbar: React.FC = () => {
           </li>
         )}
 
+        {(user?.role === 'DRIVER' || user?.role === 'Repartidor') && (
+          <li>
+            <Link to="/driver" className={`navbar-link ${location.pathname.startsWith('/driver') ? 'active' : ''}`}>
+              Panel Delivery
+            </Link>
+          </li>
+        )}
+
         {user && (
           <li className="navbar-item-perfil" style={{ zIndex: 110 }}>
             <Link 

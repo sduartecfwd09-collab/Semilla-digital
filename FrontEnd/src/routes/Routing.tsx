@@ -21,6 +21,7 @@ import AdminProductos from '../pages/Admin/AdminProductos';
 import AdminRecetas from '../pages/Admin/AdminRecetas';
 import AdminConfiguracion from '../pages/Admin/AdminConfiguracion';
 import AdminContactos from '../pages/Admin/AdminContactos/AdminContactos';
+import AdminRepartidores from '../pages/Admin/AdminRepartidores/AdminRepartidores';
 import AdminLayout from '../components/admin/AdminLayout';
 
 // Páginas de Agricultor (Unidas desde el merge)
@@ -74,6 +75,7 @@ const Routing: React.FC = () => {
           <Route path="recetas" element={<AdminRecetas />} />
           <Route path="configuracion" element={<AdminConfiguracion />} />
           <Route path="contactos" element={<AdminContactos />} />
+          <Route path="repartidores" element={<AdminRepartidores />} />
         </Route>
 
         {/* Rutas de Agricultor (Protegido por rol 'Agricultor') */}

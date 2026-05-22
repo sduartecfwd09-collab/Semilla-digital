@@ -48,6 +48,7 @@ const models = {
   DeliveryApplication: require('./DeliveryApplication')(sequelize),
   DeliveryApplicationDocument: require('./DeliveryApplicationDocument')(sequelize),
   DeliverySetting: require('./DeliverySetting')(sequelize),
+  DriverEarnings: require('./DriverEarnings')(sequelize),
 };
 
 // Inicialización de asociaciones
