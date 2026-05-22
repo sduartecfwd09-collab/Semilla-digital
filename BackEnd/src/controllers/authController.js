@@ -67,11 +67,13 @@ const login = async (req, res) => {
     const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
     const token = await signToken(usuario, roleName);
 
-    // Configurar cookie segura
+    // Configurar cookie httpOnly. `sameSite: 'lax'` permite el flujo
+    // cross-port localhost (frontend en :5173, backend en :3002).
+    // En producción con dominios distintos, ajustar a 'none' + secure: true.
     res.cookie('agromap_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 8 * 60 * 60 * 1000 // 8 horas
     });
 
@@ -124,11 +126,11 @@ const register = async (req, res) => {
 
     const token = await signToken(usuario, roleName);
 
-    // Configurar cookie
+    // Configurar cookie httpOnly (ver nota en login)
     res.cookie('agromap_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 8 * 60 * 60 * 1000
     });
 
@@ -150,7 +152,7 @@ const me = async (req, res) => {
         include: [{ model: Role, as: 'rol' }]
     });
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
-    
+
     const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
     return res.json(safeUser(usuario, roleName));
   } catch (error) {
@@ -159,4 +161,17 @@ const me = async (req, res) => {
   }
 };
 
-module.exports = { login, register, me };
+
+// ── POST /auth/logout ─────────────────────────────────────────────────────────
+// Limpia la cookie httpOnly. El frontend no puede borrarla por sí mismo (esa
+// es la idea de httpOnly), así que necesitamos un endpoint dedicado.
+const logout = (_req, res) => {
+  res.clearCookie('agromap_token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+  return res.json({ success: true });
+};
+
+module.exports = { login, register, me, logout };

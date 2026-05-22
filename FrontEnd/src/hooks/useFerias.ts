@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Feria } from "../types/feria.types";
 import { searchFeriasInGoogle } from "../services/googleMapsService";
 import { fetchFeriasFallback } from "../services/feriasFallbackService";
-import { ENDPOINTS } from "../services/api.config";
+import { ENDPOINTS, authFetch } from "../services/api.config";
 
 const PROVINCIAS_COSTA_RICA = [
   "San José",
@@ -105,7 +105,10 @@ export const useFerias = () => {
             (async () => {
               for (const feria of newFerias) {
                 try {
-                  await fetch(ENDPOINTS.ferias, {
+                  // POST /ferias requiere rol Administrador en el backend.
+                  // Si quien navega no es admin, la respuesta será 401/403 y
+                  // simplemente saltamos al siguiente.
+                  const res = await authFetch(ENDPOINTS.ferias, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -117,6 +120,10 @@ export const useFerias = () => {
                       source: 'google'
                     }),
                   });
+                  if (!res.ok) {
+                    // Sin permiso para sincronizar. No reintentamos en esta sesión.
+                    break;
+                  }
                 } catch (syncErr) {
                   console.error("Error al sincronizar feria:", syncErr);
                 }

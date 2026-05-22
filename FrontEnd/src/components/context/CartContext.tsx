@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { API_BASE_URL } from '../../services/api.config'
+import { API_BASE_URL, authFetch } from '../../services/api.config'
 import { useAuth } from './AuthContext'
 
 export interface CartItem {
@@ -36,8 +36,10 @@ export interface Proforma {
 interface CartContextType {
   items: CartItem[]
   addToCart: (item: Omit<CartItem, 'cantidad'>, cantidad?: number) => void
-  removeFromCart: (id: string) => void
-  updateQuantity: (id: string, cantidad: number) => void
+  // Identificamos cada línea del carrito por la combinación `id + feriaNombre`
+  // porque un mismo producto puede estar en varias ferias con precios distintos.
+  removeFromCart: (id: string, feriaNombre: string) => void
+  updateQuantity: (id: string, feriaNombre: string, cantidad: number) => void
   clearCart: () => void
   getTotal: () => number
   getItemCount: () => number
@@ -114,19 +116,19 @@ const CartProviderInner: React.FC<CartProviderProps> = ({ children }) => {
     setIsCartOpen(true)
   }
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = (id: string, feriaNombre: string) => {
     if (!userId) return
-    setItems(prev => prev.filter(i => !(i.id === id || `${i.id}-${i.feriaNombre}` === id)))
+    setItems(prev => prev.filter(i => !(i.id === id && i.feriaNombre === feriaNombre)))
   }
 
-  const updateQuantity = (id: string, cantidad: number) => {
+  const updateQuantity = (id: string, feriaNombre: string, cantidad: number) => {
     if (!userId) return
     if (cantidad <= 0) {
-      removeFromCart(id)
+      removeFromCart(id, feriaNombre)
       return
     }
     setItems(prev => prev.map(i =>
-      (i.id === id || `${i.id}-${i.feriaNombre}` === id) ? { ...i, cantidad } : i
+      (i.id === id && i.feriaNombre === feriaNombre) ? { ...i, cantidad } : i
     ))
   }
 
@@ -164,11 +166,9 @@ const CartProviderInner: React.FC<CartProviderProps> = ({ children }) => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/proformas`, {
+      const response = await authFetch(`${API_BASE_URL}/proformas`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(proformaData),
       });
 

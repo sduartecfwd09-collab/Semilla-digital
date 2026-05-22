@@ -6,9 +6,12 @@ jest.mock('../models', () => ({
   sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
 }));
 
+// Setup.js mockea estos middlewares globalmente (stubs para tests de controladores).
+// Acá queremos probar el comportamiento REAL, así que usamos `requireActual`
+// para esquivar los mocks globales.
 const jwt = require('jsonwebtoken');
-const { verifyToken } = require('../middlewares/authMiddleware');
-const { requireRole } = require('../middlewares/roleMiddleware');
+const { verifyToken } = jest.requireActual('../middlewares/authMiddleware');
+const { requireRole } = jest.requireActual('../middlewares/roleMiddleware');
 
 // ── Helpers para simular req/res/next de Express ──────────────────────────────
 const mockRes = () => {
@@ -111,7 +114,7 @@ describe('requireRole middleware', () => {
 
     expect(mockNext).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: expect.stringMatching(/prohibido/i) }));
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringMatching(/Acceso denegado/i) }));
   });
 
   test('401 - req.user no existe (token no verificado antes)', () => {

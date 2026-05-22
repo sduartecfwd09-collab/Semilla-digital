@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { ENDPOINTS } from '../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import './ContactUs.css';
 
@@ -45,7 +45,7 @@ const ContactUs: React.FC = () => {
 
   const fetchMyMessages = async () => {
     try {
-      const res = await fetch(ENDPOINTS.contactMessages);
+      const res = await authFetch(ENDPOINTS.contactMessages);
       const json = await res.json();
       const allMessages = json.success ? json.data : json;
       const data: ContactMessage[] = allMessages || [];
@@ -149,7 +149,7 @@ const ContactUs: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${ENDPOINTS.contactMessages}/${id}`, { method: 'DELETE' });
+        await authFetch(`${ENDPOINTS.contactMessages}/${id}`, { method: 'DELETE' });
         
         // Quitar de local storage
         const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
@@ -186,7 +186,7 @@ const ContactUs: React.FC = () => {
     try {
       if (editingMessageId) {
         // ACTUALIZAR MENSAJE
-        const res = await fetch(`${ENDPOINTS.contactMessages}/${editingMessageId}`, {
+        const res = await authFetch(`${ENDPOINTS.contactMessages}/${editingMessageId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombre, correo, telefono, mensaje })

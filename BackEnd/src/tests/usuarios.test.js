@@ -53,10 +53,8 @@ describe('GET /usuarios', () => {
     expect(res.body[0]).toHaveProperty('name');
   });
 
-  test('401 - sin token devuelve 401', async () => {
-    const res = await request(app).get('/usuarios');
-    expect(res.status).toBe(401);
-  });
+  // El test "401 sin token" está en middleware.auth.test.js (usa jest.requireActual
+  // para probar el verifyToken real); acá setup.js mockea con stub permisivo.
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
