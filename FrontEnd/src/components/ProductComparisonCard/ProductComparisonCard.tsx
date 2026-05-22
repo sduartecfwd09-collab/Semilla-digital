@@ -1,7 +1,7 @@
 import React from 'react'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './ProductComparisonCard.css'
-import { Producto } from '../../servers/ProductService'
+import { Producto } from '../../services/ProductService'
 
 
 export interface ComparisonRow {
@@ -26,11 +26,15 @@ export interface ProductComparisonData {
 
 interface ProductComparisonCardProps {
   product: ProductComparisonData
+  onSelect?: () => void
 }
 
-const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }) => {
-  const lowestPriceNumeric = Math.min(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
-  const maxPrice = Math.max(...product.rows.map((r: ComparisonRow) => r.priceNumeric))
+const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product, onSelect }) => {
+  // Guard: si no hay filas de precios, Math.min/max sobre array vacío retorna ±Infinity
+  // y rompe el cálculo de barras y badges. Caemos a 0 en ese caso.
+  const numericPrices = product.rows.map((r: ComparisonRow) => r.priceNumeric)
+  const lowestPriceNumeric = numericPrices.length > 0 ? Math.min(...numericPrices) : 0
+  const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 0
 
   // Eliminar cualquier '· Por ...' embebido en la descripción que contradiga la unidad real
   const cleanDescription = product.description
@@ -61,9 +65,22 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           </div>
           <div className="product-comp-desc">{cleanDescription}</div>
         </div>
-        <div className="product-comp-price-summary">
-          <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
-          <div className="product-comp-min-price">{product.lowestPrice}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginLeft: 'auto', flexWrap: 'wrap' }}>
+          <div className="product-comp-price-summary">
+            <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
+            <div className="product-comp-min-price">{product.lowestPrice}</div>
+          </div>
+          {onSelect && (
+            <button 
+              className="product-comp-select-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              🛒 Seleccionar
+            </button>
+          )}
         </div>
       </div>
 
@@ -80,11 +97,11 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product }
           const isBest = row.priceNumeric === lowestPriceNumeric
           const isExpensive = row.priceNumeric === maxPrice && !isBest
           const diff = row.priceNumeric - lowestPriceNumeric
-          const barWidthPct = Math.round((row.priceNumeric / maxPrice) * 100)
+          const barWidthPct = maxPrice > 0 ? Math.round((row.priceNumeric / maxPrice) * 100) : 0
           const barColor = isBest ? '#3B9C3A' : '#e2e8f0'
 
           return (
-            <div key={index} className={`product-comp-row ${isBest ? 'best' : ''}`}>
+            <div key={`${row.feriaName}-${row.priceNumeric}-${index}`} className={`product-comp-row ${isBest ? 'best' : ''}`}>
               {/* Feria info */}
               <div>
                 <div className="product-comp-feria-name">{row.feriaName}</div>

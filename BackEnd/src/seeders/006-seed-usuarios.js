@@ -19,9 +19,9 @@ module.exports = {
       {
         id: 2,
         name: 'Juan Pérez',
-        email: 'juan@agricultor.com',
+        email: 'juan@productor.com',
         password: hashedPassword,
-        role_id: 2, // Agricultor
+        role_id: 2, // Productor
         status: 'Activo',
         feria_id: 1,
         created_at: new Date(),

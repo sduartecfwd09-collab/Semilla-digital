@@ -1,18 +1,16 @@
 const router = require('express').Router();
 const ctrl = require('../controllers/distritoController');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-// GET  /api/distritos                  → Listar todos
-// GET  /api/distritos/:id              → Obtener por ID
-// GET  /api/distritos/canton/:cantonId → Filtrar por cantón
-// POST /api/distritos                  → Crear
-// PUT  /api/distritos/:id              → Actualizar
-// DEL  /api/distritos/:id              → Eliminar
-
+// ── PÚBLICAS ────────────────────────────────────────────────
 router.get('/', ctrl.getAll);
 router.get('/canton/:cantonId', ctrl.getByCanton);
 router.get('/:id', ctrl.getById);
-router.post('/', ctrl.create);
-router.put('/:id', ctrl.update);
-router.delete('/:id', ctrl.remove);
+
+// ── PROTEGIDAS (solo Administrador) ─────────────────────────
+router.post('/',    verifyToken, authorizeRoles('Administrador'), ctrl.create);
+router.put('/:id',  verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

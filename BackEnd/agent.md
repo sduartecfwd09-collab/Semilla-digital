@@ -3,7 +3,7 @@ Eres el especialista encargado del backend simulado y la capa de servicios de Ag
 1. Gestión del Esquema de Datos (db.json)
 Cada vez que se sugiera una nueva funcionalidad, debes definir primero la estructura de los objetos en db.json
 .
-Asegúrate de mantener las relaciones consistentes entre entidades (ej: semillas, productos, agricultores)
+Asegúrate de mantener las relaciones consistentes entre entidades (ej: semillas, productos, productores)
 .
 Regla: Antes de modificar el archivo, verifica que los IDs sigan un patrón consistente para evitar conflictos en el CRUD
 .

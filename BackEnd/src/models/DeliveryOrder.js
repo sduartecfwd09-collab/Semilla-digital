@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'proformas',
+        model: 'proformas', // Or whatever your existing table for orders/proformas is
         key: 'id'
       }
     },

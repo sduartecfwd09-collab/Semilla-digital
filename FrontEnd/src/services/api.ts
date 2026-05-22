@@ -22,7 +22,9 @@ export const api = {
             headers,
         });
         if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-        return response.json();
+        const json = await response.json();
+        // Si la respuesta viene envuelta en { success: true, data: [...] }, extraemos data
+        return (json && json.success && json.data !== undefined) ? json.data : json;
     },
 
     // Usuarios

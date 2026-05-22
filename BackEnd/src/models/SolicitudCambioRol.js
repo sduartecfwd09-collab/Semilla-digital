@@ -65,6 +65,14 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    selfie_verificacion_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    documentos_rutas: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   }, {
     tableName: 'solicitudes_cambio_rol',
     timestamps: true,

@@ -18,7 +18,7 @@ const FeriasByProvinceList: React.FC = () => {
   return (
     <section id="ferias" className="ferias-by-province-section">
       <div className="ferias-header">
-        <span className="ferias-label">Ferias del Agricultor</span>
+        <span className="ferias-label">Ferias del Productor</span>
         <h2 className="ferias-title">Explorá las ferias de cada provincia</h2>
         <p className="ferias-description">
           Utilizamos Google Maps para brindarte direcciones precisas y enriquecemos la 

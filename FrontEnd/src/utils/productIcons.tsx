@@ -33,7 +33,7 @@ export interface IconDef {
  * Mapeo emoji → ícono + colores temáticos.
  * Clave: el emoji tal como se almacena en db.json.
  */
-export const EMOJI_ICON_MAP: Record<string, IconDef> = {
+const EMOJI_ICON_MAP: Record<string, IconDef> = {
   // ── Verduras ──────────────────────────────────────────────
   '🥬': { Icon: Leaf,    label: 'Lechuga',    color: '#2e7d32', bg: '#e8f5e9' },
   '🥦': { Icon: Sprout,  label: 'Brócoli',    color: '#388e3c', bg: '#e8f5e9' },
@@ -80,7 +80,7 @@ export const EMOJI_ICON_MAP: Record<string, IconDef> = {
 /**
  * Fallback por categoría cuando el emoji no está en el mapa.
  */
-export const CATEGORY_ICON_MAP: Record<string, IconDef> = {
+const CATEGORY_ICON_MAP: Record<string, IconDef> = {
   'Verduras':   { Icon: Leaf,          label: 'Verduras',   color: '#2e7d32', bg: '#e8f5e9' },
   'Frutas':     { Icon: Apple,         label: 'Frutas',     color: '#c62828', bg: '#ffebee' },
   'Granos':     { Icon: Wheat,         label: 'Granos',     color: '#e65100', bg: '#fff3e0' },
@@ -92,7 +92,7 @@ export const CATEGORY_ICON_MAP: Record<string, IconDef> = {
 }
 
 /** Resuelve la definición de ícono dado un emoji y/o categoría. */
-export function resolveIcon(emoji?: string, categoria?: string): IconDef {
+function resolveIcon(emoji?: string, categoria?: string): IconDef {
   if (emoji && EMOJI_ICON_MAP[emoji]) return EMOJI_ICON_MAP[emoji]
   if (categoria && CATEGORY_ICON_MAP[categoria]) return CATEGORY_ICON_MAP[categoria]
   return { Icon: ShoppingBasket, label: 'Producto', color: '#546e7a', bg: '#eceff1' }

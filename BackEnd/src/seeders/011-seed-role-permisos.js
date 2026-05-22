@@ -1,6 +1,6 @@
 'use strict';
 
-// Roles: 1=Administrador, 2=Agricultor, 3=Usuario
+// Roles: 1=Administrador, 2=Productor, 3=Usuario
 // Permisos: ver catálogo en 010-seed-permisos.js
 
 module.exports = {
@@ -22,9 +22,9 @@ module.exports = {
     }
 
     // ═══════════════════════════════════════════════════════════
-    // AGRICULTOR (role_id: 2)
+    // PRODUCTOR (role_id: 2)
     // ═══════════════════════════════════════════════════════════
-    const permisosAgricultor = [
+    const permisosProductor = [
       10, // productos.ver
       11, // productos.crear
       12, // productos.editar
@@ -38,7 +38,7 @@ module.exports = {
       26, // proformas.crear
     ];
 
-    permisosAgricultor.forEach((permisoId) => {
+    permisosProductor.forEach((permisoId) => {
       asignaciones.push({
         role_id: 2,
         permiso_id: permisoId,
@@ -54,7 +54,7 @@ module.exports = {
     const permisosUsuario = [
       10, // productos.ver
       14, // ferias.ver
-      17, // solicitudes.crear (solicitar ser agricultor)
+      17, // solicitudes.crear (solicitar ser productor)
       23, // recetas.ver
       25, // proformas.ver
       26, // proformas.crear

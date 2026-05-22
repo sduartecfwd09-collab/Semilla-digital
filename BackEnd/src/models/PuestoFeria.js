@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
     puesto_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'puestos_agricultor', key: 'id' },
+      references: { model: 'puestos_productor', key: 'id' },
     },
     feria_id: {
       type: DataTypes.INTEGER,

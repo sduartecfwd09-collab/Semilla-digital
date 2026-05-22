@@ -216,7 +216,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
-          model: 'proformas',
+          model: 'proformas', // Existing table
           key: 'id'
         },
         onUpdate: 'CASCADE',

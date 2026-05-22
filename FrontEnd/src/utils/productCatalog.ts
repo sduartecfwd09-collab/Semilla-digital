@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────
 // productCatalog.ts
 // Catálogo centralizado de productos válidos para la plataforma.
-// Se utiliza en el formulario de productos para que el agricultor
+// Se utiliza en el formulario de productos para que el productor
 // seleccione de una lista predefinida y evitar duplicados por
 // errores ortográficos.
 // ─────────────────────────────────────────────────────────────────

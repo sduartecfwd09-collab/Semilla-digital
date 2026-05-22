@@ -16,7 +16,10 @@ const Navbar: React.FC = () => {
 
   // Close menu on route change
   useEffect(() => {
-    setMenuOpen(false)
+    const handle = requestAnimationFrame(() => {
+      setMenuOpen(false)
+    })
+    return () => cancelAnimationFrame(handle)
   }, [location.pathname])
 
   // Close menu on resize to desktop
@@ -188,9 +191,9 @@ const Navbar: React.FC = () => {
           </li>
         )}
 
-        {user?.role === 'Agricultor' && (
+        {user?.role === 'Productor' && (
           <li>
-            <Link to="/agricultor" className={`navbar-link ${location.pathname.startsWith('/agricultor') ? 'active' : ''}`}>
+            <Link to="/productor" className={`navbar-link ${location.pathname.startsWith('/productor') ? 'active' : ''}`}>
               Panel Mi Feria
             </Link>
           </li>

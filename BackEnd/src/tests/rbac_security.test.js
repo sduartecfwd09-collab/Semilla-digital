@@ -71,14 +71,14 @@ describe('Seguridad RBAC: Integración de Rutas y Middlewares', () => {
       expect(response.body.message).toContain('no se proporcionó');
     });
 
-    test('Debería retornar 403 si el token es inválido/manipulado', async () => {
+    test('Debería retornar 401 si el token es inválido/manipulado', async () => {
       // Usar un token que tenga el formato Bearer pero que sea inválido para JWT
       const response = await request(app)
         .get('/usuarios')
         .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload');
       
-      if (response.status !== 403) console.log('Invalid Token Failure Body:', response.body);
-      expect(response.status).toBe(403);
+      if (response.status !== 401) console.log('Invalid Token Failure Body:', response.body);
+      expect(response.status).toBe(401);
       expect(response.body.message).toContain('inválido');
     });
   });

@@ -7,7 +7,7 @@
 
 /**
  * Middleware factory para autorización por roles.
- * Uso: authorizeRoles('Administrador', 'Agricultor')
+ * Uso: authorizeRoles('Administrador', 'Productor')
  *
  * IMPORTANTE: Debe usarse DESPUÉS de verifyToken,
  * ya que depende de req.user.role
@@ -37,4 +37,8 @@ const authorizeRoles = (...allowedRoles) => {
   };
 };
 
-module.exports = { authorizeRoles };
+// Alias histórico: el código antiguo usaba `requireRole(...roles)`.
+// Lo mantenemos exportado para no romper imports preexistentes.
+const requireRole = authorizeRoles;
+
+module.exports = { authorizeRoles, requireRole };

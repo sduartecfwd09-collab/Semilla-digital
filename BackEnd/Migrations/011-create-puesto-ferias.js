@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'puestos_agricultor',
+          model: 'puestos_productor',
           key: 'id',
         },
         onUpdate: 'CASCADE',
