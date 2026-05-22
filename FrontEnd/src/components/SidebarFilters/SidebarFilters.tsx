@@ -21,7 +21,6 @@ interface ProductFromAPI {
 
 interface SidebarFiltersProps {
   activeCategory?: string
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCategoryChange?: (category: string) => void
 }
 
@@ -29,7 +28,9 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
   activeCategory = 'Todos',
   onCategoryChange
 }) => {
-  const [selected, setSelected] = useState<string>(activeCategory)
+  // La categoría seleccionada es controlada por el padre vía `activeCategory`.
+  // No mantenemos estado local duplicado — eso causaba que la prop y el state
+  // pudieran divergir y forzaba un useEffect de sincronización.
   const [totalCount, setTotalCount] = useState<number>(0)
   const [categories, setCategories] = useState<Category[]>([
     { emoji: '', name: 'Verduras', count: 0 },
@@ -53,7 +54,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
         // Deduplicar por nombre normalizado (igual que en el comparador)
         const uniqueProducts = new Map<string, string>(); // normalizedName -> category
         
-        availableProducts.forEach((p) => {
+        availableProducts.forEach((p: any) => {
           const rawName = p.nombre || p.name || 'Otros';
           const key = normalizeProductName(rawName);
           
@@ -79,13 +80,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
       });
   }, []);
 
-  // Sincronizar cambios en las props
-  useEffect(() => {
-    setSelected(activeCategory)
-  }, [activeCategory])
-
   const handleCategoryClick = (name: string) => {
-    setSelected(name)
     if (onCategoryChange) onCategoryChange(name)
   }
 
@@ -96,7 +91,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
         <h3 className="sidebar-card-title">Categorías</h3>
         <ul className="category-list">
           <li
-            className={`category-item ${selected === 'Todos' ? 'active' : ''}`}
+            className={`category-item ${activeCategory === 'Todos' ? 'active' : ''}`}
             onClick={() => handleCategoryClick('Todos')}
           >
             <span className="category-item-label">
@@ -108,7 +103,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
           {categories.map((cat) => (
             <li
               key={cat.name}
-              className={`category-item ${selected === cat.name ? 'active' : ''}`}
+              className={`category-item ${activeCategory === cat.name ? 'active' : ''}`}
               onClick={() => handleCategoryClick(cat.name)}
             >
               <span><CategoryIcon categoria={cat.name} size={18} /> {cat.name}</span>

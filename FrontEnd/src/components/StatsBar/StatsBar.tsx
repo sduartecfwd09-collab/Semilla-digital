@@ -60,8 +60,8 @@ const StatsBar: React.FC = () => {
 
   return (
     <div className="stats-bar">
-      {stats.map((stat, index) => (
-        <div key={index} className="stat-item">
+      {stats.map((stat) => (
+        <div key={stat.label} className="stat-item">
           <div className="stat-value">{stat.value}</div>
           <div className="stat-label">{stat.label}</div>
         </div>

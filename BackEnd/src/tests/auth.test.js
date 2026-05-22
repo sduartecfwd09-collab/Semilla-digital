@@ -3,6 +3,11 @@ require('./setup');
 
 const jwt = require('jsonwebtoken');
 
+jest.mock('bcrypt', () => ({
+  compare: jest.fn().mockImplementation((plain, hashed) => Promise.resolve(plain === hashed)),
+  hash: jest.fn().mockResolvedValue('hashed_pass'),
+}));
+
 // ── Mock del modelo Usuario ───────────────────────────────────────────────────
 jest.mock('../models', () => {
   const mockUsuario = {
@@ -29,6 +34,15 @@ jest.mock('../models', () => {
       findOne: jest.fn(),
       findByPk: jest.fn(),
       create: jest.fn(),
+    },
+    Role: {
+      findOne: jest.fn().mockResolvedValue({ id: 1, nombre: 'Usuario' }),
+    },
+    Permiso: {
+      findAll: jest.fn().mockResolvedValue([]),
+    },
+    RolePermiso: {
+      findAll: jest.fn().mockResolvedValue([]),
     },
   };
 });
@@ -88,9 +102,14 @@ describe('POST /auth/login', () => {
   test('200 - login exitoso devuelve token válido y user sin password', async () => {
     Usuario.findOne.mockResolvedValue({
       id: 1, name: 'Admin', email: 'admin@test.cr',
-      password: 'admin123', role: 'Administrador', status: 'Activo',
-      toJSON() { return { id: 1, name: 'Admin', email: 'admin@test.cr', password: 'admin123', role: 'Administrador', status: 'Activo' }; },
+      password: 'admin123', role: 'Administrador', status: 'Activo', roleId: 1,
+      rol: { id: 1, nombre: 'Administrador' },
+      toJSON() { return { id: 1, name: 'Admin', email: 'admin@test.cr', password: 'admin123', role: 'Administrador', status: 'Activo', roleId: 1 }; },
     });
+
+    // Role.findOne para signToken debe retornar el rol del admin
+    const { Role } = require('../models');
+    Role.findOne.mockResolvedValue({ id: 1, nombre: 'Administrador' });
 
     const res = await request(app)
       .post('/auth/login')

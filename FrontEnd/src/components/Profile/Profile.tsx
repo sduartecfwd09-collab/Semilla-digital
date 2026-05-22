@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { validateEmail } from '../../utils/validation';
+import { validateEmail, validatePassword } from '../../utils/validation';
 import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -27,12 +27,8 @@ const Profile: React.FC = () => {
     email: '',
     role: '',
     status: '',
-    password: '',
-    confirmPassword: '',
     avatar: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [requestMotivo, setRequestMotivo] = useState<string>('');
@@ -40,6 +36,8 @@ const Profile: React.FC = () => {
   const [originalData, setOriginalData] = useState({...userData});
 
   useEffect(() => {
+    let cancelled = false;
+
     // Si no hay usuario y ya terminó de cargar el context, vamos a auth
     if (!user) {
       const stored = localStorage.getItem('user');
@@ -56,9 +54,9 @@ const Profile: React.FC = () => {
     authFetch(`${ENDPOINTS.usuarios}/${currentId}`)
       .then(res => res.json())
       .then(json => {
+        if (cancelled) return undefined;
         const data = json.success ? json.data : json;
-        const localPassword = localStorage.getItem('agromap_password_temp') || '••••••••';
-        
+
         const userInfo = {
           id: data.id,
           name: data.name || data.nombre || '',
@@ -66,30 +64,29 @@ const Profile: React.FC = () => {
           email: data.email,
           role: data.role || data.rol?.nombre || '',
           status: data.status,
-          password: localPassword,
-          confirmPassword: localPassword,
           avatar: data.avatar || user?.avatar || ''
         };
         setUserData(userInfo);
         setOriginalData({...userInfo});
-        
+
         return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
       .then(res => res?.json())
       .then(json => {
+        if (cancelled) return;
         if (json) {
           const allRequests = json.success ? json.data : json;
           const userRequests = (allRequests || []).filter(
             (r: any) => String(r.usuarioId) === String(currentId)
           ).sort((a: any, b: any) => new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime());
-          
+
           if (userRequests.length > 0) {
             // Priorizamos: Aprobada > Pendiente > Rechazada
             let activeRequest = userRequests[0];
             const aprobada = userRequests.find((r: any) => r.estado === 'Aprobada');
             const pendiente = userRequests.find((r: any) => r.estado === 'Pendiente');
             const rechazada = userRequests.find((r: any) => r.estado === 'Rechazada');
-            
+
             if (aprobada) {
               activeRequest = aprobada;
             } else if (pendiente) {
@@ -109,9 +106,12 @@ const Profile: React.FC = () => {
         setLoading(false);
       })
       .catch(err => {
+        if (cancelled) return;
         console.error('Error fetching user profile:', err);
         setLoading(false);
       });
+
+    return () => { cancelled = true; };
   }, [user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,19 +125,98 @@ const Profile: React.FC = () => {
       setUserData(originalData);
     }
     setIsEditing(!isEditing);
-    setShowPassword(false);
-    setShowConfirmPassword(false);
+  };
+
+
+  const handleChangePassword = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Cambiar contraseña',
+      html:
+        '<input id="swal-current" type="password" class="swal2-input" placeholder="Contraseña actual" autocomplete="current-password">' +
+        '<input id="swal-new" type="password" class="swal2-input" placeholder="Nueva contraseña" autocomplete="new-password">' +
+        '<input id="swal-confirm" type="password" class="swal2-input" placeholder="Confirmar nueva contraseña" autocomplete="new-password">',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Cambiar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: 'var(--verde-claro)',
+      cancelButtonColor: '#718096',
+      preConfirm: () => {
+        const current = (document.getElementById('swal-current') as HTMLInputElement)?.value || '';
+        const next = (document.getElementById('swal-new') as HTMLInputElement)?.value || '';
+        const confirm = (document.getElementById('swal-confirm') as HTMLInputElement)?.value || '';
+
+        if (!current || !next || !confirm) {
+          Swal.showValidationMessage('Por favor completá los tres campos.');
+          return false;
+        }
+        const pwdCheck = validatePassword(next);
+        if (!pwdCheck.valid) {
+          Swal.showValidationMessage(pwdCheck.message || 'Contraseña inválida');
+          return false;
+        }
+        if (next !== confirm) {
+          Swal.showValidationMessage('La nueva contraseña y su confirmación no coinciden.');
+          return false;
+        }
+        if (next === current) {
+          Swal.showValidationMessage('La nueva contraseña debe ser distinta de la actual.');
+          return false;
+        }
+        return { current, next };
+      }
+    });
+
+    if (!formValues) return;
+
+    try {
+      const response = await authFetch(ENDPOINTS.cambiarPassword(userData.id), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: formValues.current,
+          newPassword: formValues.next
+        })
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Contraseña actualizada',
+          text: 'Tu contraseña se cambió correctamente.',
+          confirmButtonColor: 'var(--verde-claro)',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const message = response.status === 401
+          ? 'La contraseña actual no es correcta.'
+          : errorData.message || errorData.error || 'No se pudo cambiar la contraseña.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: message,
+          confirmButtonColor: 'var(--verde-claro)',
+        });
+      }
+    } catch (err) {
+      console.error('Error al cambiar contraseña:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de servidor',
+        text: 'Hubo un problema al conectar con el servidor.',
+        confirmButtonColor: 'var(--verde-claro)',
+      });
+    }
   };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validaciones al igual que en el registro
+
     const trimmedName = userData.name.trim();
     const trimmedEmail = userData.email.trim();
-    const trimmedPassword = userData.password.trim();
-    const trimmedConfirm = userData.confirmPassword.trim();
 
     if (!trimmedName || !trimmedEmail) {
       Swal.fire({
@@ -160,47 +239,18 @@ const Profile: React.FC = () => {
       return;
     }
 
-    if (trimmedPassword || trimmedConfirm) {
-      if (trimmedPassword.length <= 6) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Contraseña insegura',
-          text: 'La contraseña debe tener más de 6 dígitos de longitud.',
-          confirmButtonColor: 'var(--verde-claro)',
-        });
-        return;
-      }
-
-      if (trimmedPassword !== trimmedConfirm) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de contraseña',
-          text: 'Las contraseñas no coinciden.',
-          confirmButtonColor: 'var(--verde-claro)',
-        });
-        return;
-      }
-    }
-
     try {
-      // NOTA: La validación de correo duplicado ahora la maneja el backend directamente,
-      // ya que un usuario normal no tiene permisos para listar todos los usuarios.
-
       const fullUserResponse = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
       const fullUserJson = await fullUserResponse.json();
       const fullUserData = fullUserJson.success ? fullUserJson.data : fullUserJson;
 
+      // Eliminamos password del payload: el cambio de contraseña usa su propio endpoint
+      const { password: _omitPassword, ...safeUserData } = fullUserData || {};
       const updatedData: any = {
-        ...fullUserData,
+        ...safeUserData,
         name: trimmedName,
         email: trimmedEmail,
       };
-
-      // Solo actualizar password si fue cambiado del actual
-      if (trimmedPassword && trimmedPassword !== '••••••••' && trimmedPassword !== originalData.password) {
-        updatedData.password = trimmedPassword;
-        localStorage.setItem('agromap_password_temp', trimmedPassword);
-      }
 
       const response = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PUT',
@@ -212,18 +262,11 @@ const Profile: React.FC = () => {
         const finalJson = await response.json();
         const finalUser = finalJson.success ? finalJson.data : finalJson;
         updateUserInContext(finalUser);
-        
-        const currentPass = localStorage.getItem('agromap_password_temp') || '••••••••';
-        const newOriginalData = {
-          ...userData,
-          password: currentPass,
-          confirmPassword: currentPass
-        };
+
+        const newOriginalData = { ...userData };
         setOriginalData(newOriginalData);
         setUserData(newOriginalData);
         setIsEditing(false);
-        setShowPassword(false);
-        setShowConfirmPassword(false);
         
         Swal.fire({
           icon: 'success',
@@ -307,7 +350,7 @@ const Profile: React.FC = () => {
   const handleRoleRequest = async () => {
     try {
       const result = await Swal.fire({
-        title: '¿Solicitar perfil de Agricultor?',
+        title: '¿Solicitar perfil de Productor?',
         text: 'Tu solicitud será enviada al administrador para su aprobación.',
         icon: 'question',
         showCancelButton: true,
@@ -322,7 +365,7 @@ const Profile: React.FC = () => {
           usuarioId: userData.id,
           nombreUsuario: userData.name,
           correoUsuario: userData.email,
-          rolSolicitado: 'Agricultor',
+          rolSolicitado: 'Productor',
           estado: 'Pendiente',
           motivoRespuesta: '',
           fechaSolicitud: new Date().toISOString()
@@ -366,7 +409,7 @@ const Profile: React.FC = () => {
 
     const { isConfirmed } = await Swal.fire({
       title: '¿Estás seguro?',
-      text: "Se cancelará esta solicitud para ser Agricultor y tendrás que volver a enviarla si cambiás de opinión.",
+      text: "Se cancelará esta solicitud para ser Productor y tendrás que volver a enviarla si cambiás de opinión.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -382,15 +425,15 @@ const Profile: React.FC = () => {
           method: 'DELETE',
         });
 
-        // Borrar la información del puesto asociado (puestosAgricultor)
-        const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
+        // Borrar la información del puesto asociado (puestosProductor)
+        const puestosRes = await authFetch(ENDPOINTS.puestosProductor);
         const puestosJson = await puestosRes.json();
         const todosPuestos = puestosJson.success ? puestosJson.data : puestosJson;
         const misPuestos = (todosPuestos || []).filter((p: any) => String(p.usuarioId) === String(userData.id));
         
         // Elimar todos sus puestos (normalmente debería ser solo uno)
         await Promise.all(misPuestos.map((p: any) => 
-          authFetch(`${ENDPOINTS.puestosAgricultor}/${p.id}`, { method: 'DELETE' })
+          authFetch(`${ENDPOINTS.puestosProductor}/${p.id}`, { method: 'DELETE' })
         ));
         
         setRequestStatus(null);
@@ -410,14 +453,14 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleConvertirseEnAgricultor = async () => {
+  const handleConvertirseEnProductor = async () => {
     try {
       setLoading(true);
       
       // Obtener datos del puesto solicitado y la feria asignada
       const [userRes, puestosRes, feriasRes] = await Promise.all([
         authFetch(`${ENDPOINTS.usuarios}/${userData.id}`),
-        authFetch(ENDPOINTS.puestosAgricultor),
+        authFetch(ENDPOINTS.puestosProductor),
         authFetch(ENDPOINTS.ferias)
       ]);
       
@@ -452,7 +495,7 @@ const Profile: React.FC = () => {
       await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'Agricultor' })
+        body: JSON.stringify({ role: 'Productor' })
       });
 
       const updatedUserRes = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
@@ -463,10 +506,10 @@ const Profile: React.FC = () => {
       Swal.fire({
         icon: 'success',
         title: '¡Felicidades!',
-        text: `Bienvenido a tu nuevo perfil de Agricultor en AgroMap.${mensajeFeria}`,
+        text: `Bienvenido a tu nuevo perfil de Productor en AgroMap.${mensajeFeria}`,
         confirmButtonColor: 'var(--verde-claro)',
       }).then(() => {
-        window.location.href = '/agricultor';
+        navigate('/productor');
       });
     } catch (error) {
       console.error(error);
@@ -475,21 +518,6 @@ const Profile: React.FC = () => {
     }
   };
 
-
-  // Iconos SVG para el ojo (mostrar/ocultar contraseña)
-  const EyeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-  );
-
-  const EyeOffIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-      <line x1="1" y1="1" x2="23" y2="23"></line>
-    </svg>
-  );
 
   if (loading) {
     return (
@@ -566,54 +594,23 @@ const Profile: React.FC = () => {
 
               <div className="input-group">
                 <label>Contraseña</label>
-                <div className={`input-box ${!isEditing ? 'disabled' : ''}`}>
+                <div className="input-box disabled">
                   <span className="input-icon">🔒</span>
-                  <input 
-                    type={(!isEditing || !showPassword) ? "password" : "text"} 
-                    name="password"
-                    value={userData.password}
-                    onChange={handleChange}
-                    placeholder="Contraseña"
-                    readOnly={!isEditing}
-                    autoComplete="new-password"
+                  <input
+                    type="password"
+                    value="••••••••"
+                    readOnly
+                    aria-label="Contraseña oculta"
                   />
-                  {isEditing && (
-                    <button 
-                      type="button" 
-                      className="password-toggle-profile"
-                      onClick={() => setShowPassword(!showPassword)}
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="change-password-btn"
+                    onClick={handleChangePassword}
+                  >
+                    Cambiar contraseña
+                  </button>
                 </div>
               </div>
-
-              {isEditing && (
-                <div className="input-group">
-                  <label>Confirmar contraseña</label>
-                  <div className="input-box">
-                    <span className="input-icon">🔒</span>
-                    <input 
-                      type={showConfirmPassword ? "text" : "password"} 
-                      name="confirmPassword"
-                      value={userData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Confirmá nueva contraseña"
-                      autoComplete="new-password"
-                    />
-                    <button 
-                      type="button" 
-                      className="password-toggle-profile"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      tabIndex={-1}
-                    >
-                      {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
-                    </button>
-                  </div>
-                </div>
-              )}
 
             </div>
 
@@ -662,7 +659,7 @@ const Profile: React.FC = () => {
                     <div className="purchase-body">
                       <ul className="purchase-items-list">
                         {p.items.map((item, i) => (
-                          <li key={i}>
+                          <li key={`${item.id || item.nombre}-${i}`}>
                             {item.emoji} {item.nombre} (x{item.cantidad}) - ₡{(item.precio * item.cantidad).toLocaleString()}
                           </li>
                         ))}
@@ -682,12 +679,12 @@ const Profile: React.FC = () => {
             )}
           </div>
 
-          {/* Solicitud para ser Agricultor - Solo se muestra si el usuario es cliente ('Usuario') */}
+          {/* Solicitud para ser Productor - Solo se muestra si el usuario es cliente ('Usuario') */}
           {(userData.role && userData.role.toLowerCase() === 'usuario') && (
             <div className="role-request-section">
               <div className="separator"></div>
               <div className="role-request-content">
-                <h3>Solicitud para ser Agricultor</h3>
+                <h3>Solicitud para ser Productor</h3>
                 
                 {requestStatus === 'Pendiente' && (
                   <>
@@ -699,7 +696,7 @@ const Profile: React.FC = () => {
                       <button 
                         type="button" 
                         className="role-request-btn"
-                        onClick={() => navigate('/registro-agricultor')}
+                        onClick={() => navigate('/registro-productor')}
                         style={{ flex: 1 }}
                       >
                         Editar solicitud
@@ -726,10 +723,10 @@ const Profile: React.FC = () => {
                     <button 
                       type="button" 
                       className="save-btn"
-                      onClick={handleConvertirseEnAgricultor}
+                      onClick={handleConvertirseEnProductor}
                       style={{width: '100%', maxWidth: '300px', margin: '0 auto', display: 'block'}}
                     >
-                      Convertirse en agricultor
+                      Convertirse en productor
                     </button>
                   </>
                 )}
@@ -744,7 +741,7 @@ const Profile: React.FC = () => {
                     <button 
                       type="button" 
                       className="role-request-btn"
-                      onClick={() => navigate('/registro-agricultor?reset=true')}
+                      onClick={() => navigate('/registro-productor?reset=true')}
                     >
                       Enviar nueva solicitud
                     </button>
@@ -753,13 +750,13 @@ const Profile: React.FC = () => {
 
                 {!requestStatus && (
                   <>
-                    <p>Completá el formulario con los datos de tu puesto para solicitar el cambio de rol a Agricultor. Un administrador revisará tu solicitud.</p>
+                    <p>Completá el formulario con los datos de tu puesto para solicitar el cambio de rol a Productor. Un administrador revisará tu solicitud.</p>
                     <button 
                       type="button" 
                       className="role-request-btn"
-                      onClick={() => navigate('/registro-agricultor')}
+                      onClick={() => navigate('/registro-productor')}
                     >
-                      Solicitar ser Agricultor
+                      Solicitar ser Productor
                     </button>
                   </>
                 )}

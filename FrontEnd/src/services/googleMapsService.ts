@@ -1,9 +1,11 @@
 import { Feria } from "../types/feria.types";
 
-const GOOGLE_MAPS_API_KEY = "TU_API_KEY_AQUI"; // El usuario deberá poner su API Key aquí
+// La key se lee de Vite env (VITE_GOOGLE_MAPS_KEY). Si no está definida,
+// usamos modo "mock" para no exponer nada y no romper desarrollo.
+const GOOGLE_MAPS_API_KEY = (import.meta.env.VITE_GOOGLE_MAPS_KEY as string | undefined) || "";
 const BASE_URL = "https://maps.googleapis.com/maps/api";
 
-const IS_MOCKING = GOOGLE_MAPS_API_KEY === "TU_API_KEY_AQUI";
+const IS_MOCKING = !GOOGLE_MAPS_API_KEY;
 
 /**
  * Servicio para consultar ferias desde Google Maps Platform.
@@ -44,7 +46,7 @@ export const searchFeriasInGoogle = async (provincia: string): Promise<Feria[]> 
   }
 
   try {
-    const textSearchUrl = `${BASE_URL}/place/textsearch/json?query=feria del agricultor en ${provincia}&key=${GOOGLE_MAPS_API_KEY}`;
+    const textSearchUrl = `${BASE_URL}/place/textsearch/json?query=feria del productor en ${provincia}&key=${GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(textSearchUrl);
     const data = await response.json();
 

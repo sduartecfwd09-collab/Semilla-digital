@@ -212,6 +212,24 @@
   display: block;
 }
 
+.change-password-btn {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  background: var(--verde-claro, #2d8a42);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.change-password-btn:hover {
+  background: var(--verde-oscuro, #20682f);
+  transform: translateY(-1px);
+}
+
 /* Ocultar el ojito por defecto de los navegadores */
 .input-box input::-ms-reveal,
 .input-box input::-ms-clear {

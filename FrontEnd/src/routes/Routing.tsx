@@ -8,7 +8,7 @@ import LoginYRegistroPage from '../pages/LoginYRegistro';
 import Profile from '../pages/Profile';
 import FeriasPage from '../pages/Ferias';
 import RecetasPage from '../pages/Recetas';
-import RegistroAgricultorPage from '../pages/RegistroAgricultor';
+import RegistroProductorPage from '../pages/RegistroProductor';
 import ContactUs from '../components/ContactUs/ContactUs';
 import ProformaPage from '../components/Proforma/ProformaPage';
 
@@ -16,19 +16,19 @@ import ProformaPage from '../components/Proforma/ProformaPage';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
 import AdminUsuarios from '../pages/Admin/AdminUsuarios';
 import AdminSolicitudes from '../pages/Admin/AdminSolicitudes/AdminSolicitudes';
-import AdminAgricultores from '../pages/Admin/AdminAgricultores/AdminAgricultores';
+import AdminProductores from '../pages/Admin/AdminProductores/AdminProductores';
 import AdminProductos from '../pages/Admin/AdminProductos';
 import AdminRecetas from '../pages/Admin/AdminRecetas';
 import AdminConfiguracion from '../pages/Admin/AdminConfiguracion';
 import AdminContactos from '../pages/Admin/AdminContactos/AdminContactos';
 import AdminLayout from '../components/admin/AdminLayout';
 
-// Páginas de Agricultor (Unidas desde el merge)
-import Dashboard from '../components/Agricultor/Dashboard/Dashboard'
-import MisProductos from '../components/Agricultor/MisProductos/index'
-import MisFerias from '../components/Agricultor/MisFerias/MisFerias'
-import Configuracion from '../components/Agricultor/Configuracion/index'
-import Ganancias from '../components/Agricultor/Ganancias/Ganancias'
+// Páginas de Productor (Unidas desde el merge)
+import Dashboard from '../components/Productor/Dashboard/Dashboard'
+import MisProductos from '../components/Productor/MisProductos/index'
+import MisFerias from '../components/Productor/MisFerias/MisFerias'
+import Configuracion from '../components/Productor/Configuracion/index'
+import Ganancias from '../components/Productor/Ganancias/Ganancias'
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute'
 
 const Routing: React.FC = () => {
@@ -47,7 +47,7 @@ const Routing: React.FC = () => {
         
         {/* Rutas de Usuario */}
         <Route path="/perfil" element={<Profile />} />
-        <Route path="/registro-agricultor" element={<RegistroAgricultorPage />} />
+        <Route path="/registro-productor" element={<RegistroProductorPage />} />
 
         {/* Panel Administrador (Protegido por rol 'Administrador') */}
         <Route 
@@ -61,18 +61,18 @@ const Routing: React.FC = () => {
           <Route index element={<AdminDashboard />} />
           <Route path="usuarios" element={<AdminUsuarios />} />
           <Route path="solicitudes" element={<AdminSolicitudes />} />
-          <Route path="agricultores" element={<AdminAgricultores />} />
+          <Route path="productores" element={<AdminProductores />} />
           <Route path="productos" element={<AdminProductos />} />
           <Route path="recetas" element={<AdminRecetas />} />
           <Route path="configuracion" element={<AdminConfiguracion />} />
           <Route path="contactos" element={<AdminContactos />} />
         </Route>
 
-        {/* Rutas de Agricultor (Protegido por rol 'Agricultor') */}
+        {/* Rutas de Productor (Protegido por rol 'Productor') */}
         <Route 
-          path="/agricultor" 
+          path="/productor" 
           element={
-            <ProtectedRoute allowedRoles={['Agricultor', 'admin_feriante']}>
+            <ProtectedRoute allowedRoles={['Productor', 'admin_feriante']}>
               <Outlet />
             </ProtectedRoute>
           }

@@ -7,7 +7,8 @@ jest.mock('../models', () => ({
 }));
 
 const jwt = require('jsonwebtoken');
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { requireRole } = require('../middlewares/roleMiddleware');
 
 // ── Helpers para simular req/res/next de Express ──────────────────────────────
 const mockRes = () => {
@@ -23,7 +24,7 @@ describe('verifyToken middleware', () => {
   beforeEach(() => mockNext.mockClear());
 
   test('llama next() con token válido y adjunta req.user', () => {
-    const token = jwt.sign({ id: 1, role: 'Agricultor' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: 1, role: 'Productor' }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const req = { headers: { authorization: `Bearer ${token}` } };
     const res = mockRes();
 
@@ -32,7 +33,7 @@ describe('verifyToken middleware', () => {
     expect(mockNext).toHaveBeenCalledTimes(1);
     expect(req.user).toBeDefined();
     expect(req.user.id).toBe(1);
-    expect(req.user.role).toBe('Agricultor');
+    expect(req.user.role).toBe('Productor');
   });
 
   test('401 - sin header Authorization', () => {
@@ -94,10 +95,10 @@ describe('requireRole middleware', () => {
   });
 
   test('llama next() si el rol está entre múltiples permitidos', () => {
-    const req = { user: { id: 2, role: 'Agricultor' } };
+    const req = { user: { id: 2, role: 'Productor' } };
     const res = mockRes();
 
-    requireRole('Administrador', 'Agricultor')(req, res, mockNext);
+    requireRole('Administrador', 'Productor')(req, res, mockNext);
 
     expect(mockNext).toHaveBeenCalledTimes(1);
   });

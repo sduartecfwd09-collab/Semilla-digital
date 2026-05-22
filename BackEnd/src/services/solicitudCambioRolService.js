@@ -106,16 +106,17 @@ const update = async (id, data) => {
     throw new Error('Solicitud no encontrada');
   }
 
-  // Redirigir si se aprueba o rechaza a través del método genérico update (PATCH /api/solicitudes/:id)
-  if (data.estado === 'Aprobada') {
-    return await approve(id, { motivo_respuesta: data.motivoRespuesta || data.motivo_respuesta });
-  }
-  if (data.estado === 'Rechazada') {
-    return await reject(id, { motivo_respuesta: data.motivoRespuesta || data.motivo_respuesta });
-  }
-
+  // El cambio de estado SOLO se permite vía los endpoints dedicados (approve/reject),
+  // que están protegidos por rol Administrador en la capa de rutas. Aquí lo bloqueamos
+  // explícitamente para evitar que un usuario común se auto-apruebe enviando
+  // `estado: 'Aprobada'` por PATCH /solicitudes/:id.
   const updateData = { ...data };
-  
+  delete updateData.estado;
+  delete updateData.motivoRespuesta;
+  delete updateData.motivo_respuesta;
+  delete updateData.fechaRespuesta;
+  delete updateData.fecha_respuesta;
+
   if (data.nombreUsuario !== undefined) updateData.nombre_usuario = data.nombreUsuario;
   if (data.nombreDelPuesto !== undefined) updateData.nombre_del_puesto = data.nombreDelPuesto;
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
@@ -137,7 +138,9 @@ const approve = async (id, data = {}) => {
   }
 
   // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
-  const targetRoleName = solicitud.rol_solicitado === 'Vendedor' ? 'Agricultor' : solicitud.rol_solicitado;
+  // Mapeo de roles legacy a roles actuales
+  const legacyMapping = { 'Vendedor': 'Productor', 'Agricultor': 'Productor' };
+  const targetRoleName = legacyMapping[solicitud.rol_solicitado] || solicitud.rol_solicitado;
   const role = await Role.findOne({ where: { nombre: targetRoleName } });
   if (role && solicitud.usuario) {
     await solicitud.usuario.update({ roleId: role.id });

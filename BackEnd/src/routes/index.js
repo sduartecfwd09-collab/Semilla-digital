@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router  = express.Router();
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
 
 // ── Rutas públicas ──────────────────────────────────────────────
 router.use('/auth',       require('./authRoutes'));
@@ -21,7 +21,7 @@ router.use('/usuarios',
 
 router.use('/puestos',
   verifyToken,
-  require('./puestoAgricultorRoutes')
+  require('./puestoProductorRoutes')
 );
 
 router.use('/solicitudes',

@@ -3,7 +3,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link } from 'react-router-dom'
-import { validateEmail } from '../../utils/validation'
+import { validateEmail, validatePassword } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
 
@@ -40,11 +40,12 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (loginPassword.length < 8) {
+    const loginPwdCheck = validatePassword(loginPassword)
+    if (!loginPwdCheck.valid) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña inválida',
-        text: 'La contraseña debe tener mínimo 8 caracteres.',
+        text: loginPwdCheck.message,
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
@@ -55,22 +56,22 @@ const Auth: React.FC = () => {
 
       if (result.success) {
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'success',
-          title: '¡Bienvenido a AgroMap!',
-          text: 'Has iniciado sesión correctamente.',
-          confirmButtonColor: 'var(--verde-claro)',
-          timer: 2000,
+          title: 'Sesión iniciada correctamente',
           showConfirmButton: false,
-        }).then(() => {
-          localStorage.setItem('agromap_password_temp', loginPassword); // Guardar para poder mostrarla en el perfil
-          if (result.role === 'Administrador' || result.role === 'Admin') {
-            navigate('/admin')
-          } else if (result.role === 'Agricultor' || result.role === 'Vendedor') {
-            navigate('/agricultor')
-          } else {
-            navigate('/')
-          }
-        })
+          timer: 2000,
+          timerProgressBar: true
+        });
+
+        if (result.role === 'Administrador' || result.role === 'Admin') {
+          navigate('/admin')
+        } else if (result.role === 'Productor' || result.role === 'Vendedor') {
+          navigate('/productor')
+        } else {
+          navigate('/')
+        }
       } else {
         Swal.fire({
           icon: 'error',
@@ -107,11 +108,12 @@ const Auth: React.FC = () => {
       return
     }
 
-    if (trimmedPassword.length < 8) {
+    const regPwdCheck = validatePassword(trimmedPassword)
+    if (!regPwdCheck.valid) {
       Swal.fire({
         icon: 'warning',
         title: 'Contraseña insegura',
-        text: 'La contraseña debe tener mínimo 8 dígitos de longitud.',
+        text: regPwdCheck.message,
         confirmButtonColor: 'var(--verde-claro)',
       })
       return
@@ -160,7 +162,6 @@ const Auth: React.FC = () => {
           timer: 2500,
           showConfirmButton: false,
         }).then(() => {
-          localStorage.setItem('agromap_password_temp', trimmedPassword); // Guardar temporalmente
           setIsLogin(true)
         })
       } else if (response.status === 409) {
@@ -210,7 +211,7 @@ const Auth: React.FC = () => {
           en las ferias.
         </h1>
         <p className="auth-description">
-          Accedé a precios actualizados, comparaciones en tiempo real y toda la información que necesitás para aprovechar al máximo las ferias del agricultor.
+          Accedé a precios actualizados, comparaciones en tiempo real y toda la información que necesitás para aprovechar al máximo las ferias del productor.
         </p>
 
         <div className="auth-features">

@@ -42,7 +42,7 @@ const mergeFeriasData = (google: any[], fallback: any[]): Feria[] => {
 };
 
 /**
- * Hook para obtener y combinar todas las ferias del agricultor de Google Maps y el fallback.
+ * Hook para obtener y combinar todas las ferias del productor de Google Maps y el fallback.
  * Orquesta la búsqueda por provincia.
  */
 export const useFerias = () => {
@@ -51,23 +51,27 @@ export const useFerias = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         setLoading(true);
 
         // Fetch de fallback inicial
         const fallbackResults = await fetchFeriasFallback();
+        if (cancelled) return;
 
         // Fetch de Google por cada provincia
         const googleFetchResultsPromises = PROVINCIAS_COSTA_RICA.map((p) =>
           searchFeriasInGoogle(p)
         );
         const googleFetchResults = await Promise.all(googleFetchResultsPromises);
+        if (cancelled) return;
         const googleDataFlat = googleFetchResults.flat();
 
         // Mezclar y enriquecer datos
         const mergedData = mergeFeriasData(googleDataFlat, fallbackResults);
-        
+
         // Deduplicar por nombre para evitar que duplicados en db.json afecten el reporte
         const uniqueMergedData: Feria[] = [];
         const seenNames = new Set();
@@ -79,49 +83,58 @@ export const useFerias = () => {
           }
         });
 
+        if (cancelled) return;
         setAllFerias(uniqueMergedData);
 
-        // Sincronización: Registrar nuevas ferias en el backend
-        const newFerias = uniqueMergedData.filter(m => 
-          m.source === "google" &&
-          !fallbackResults.some(f => 
-            f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim()
-          )
-        );
+        // Sincronización: Registrar nuevas ferias en el backend.
+        // Guard: solo sincronizamos una vez por sesión para evitar duplicados al
+        // remontar el hook (StrictMode dispara los efectos dos veces, y cada
+        // navegación lo volvería a ejecutar).
+        const SYNC_FLAG = 'agromap_google_ferias_synced';
+        if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(SYNC_FLAG)) {
+          const newFerias = uniqueMergedData.filter(m =>
+            m.source === "google" &&
+            !fallbackResults.some(f =>
+              f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim()
+            )
+          );
 
-        const syncNewFerias = async () => {
-          for (const feria of newFerias) {
-            try {
-              await fetch(ENDPOINTS.ferias, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  nombre: feria.nombre,
-                  provincia: feria.provincia,
-                  direccion: feria.direccion,
-                  dias: feria.dias,
-                  horario: feria.horario,
-                  source: 'google'
-                }),
-              });
-            } catch (syncErr) {
-              console.error("Error al sincronizar feria:", syncErr);
-            }
+          if (newFerias.length > 0) {
+            sessionStorage.setItem(SYNC_FLAG, '1');
+            // Fire-and-forget: no necesitamos esperarlo
+            (async () => {
+              for (const feria of newFerias) {
+                try {
+                  await fetch(ENDPOINTS.ferias, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      nombre: feria.nombre,
+                      provincia: feria.provincia,
+                      direccion: feria.direccion,
+                      dias: feria.dias,
+                      horario: feria.horario,
+                      source: 'google'
+                    }),
+                  });
+                } catch (syncErr) {
+                  console.error("Error al sincronizar feria:", syncErr);
+                }
+              }
+            })();
           }
-        };
-
-        if (newFerias.length > 0) {
-          syncNewFerias();
         }
       } catch (err) {
+        if (cancelled) return;
         console.error(err);
-        setError("Error al cargar las ferias del agricultor");
+        setError("Error al cargar las ferias del productor");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
+    return () => { cancelled = true; };
   }, []);
 
   return { allFerias, loading, error };

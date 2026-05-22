@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
+import Swal from 'sweetalert2'
 import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/ProductComparisonCard'
 import './ProductModal.css'
 
@@ -9,11 +12,15 @@ interface ProductModalProps {
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
+  const navigate = useNavigate()
   const { addToCart } = useCart()
+  const { user } = useAuth()
   const [addedIndex, setAddedIndex] = useState<number | null>(null)
   const [quantities, setQuantities] = useState<Record<number, number>>({})
 
-  const lowestPrice = Math.min(...product.rows.map(r => r.priceNumeric))
+  // Si rows está vacío, evitamos Math.min(...[]) que retorna Infinity y rompe la UI.
+  const priceList = product.rows.map(r => r.priceNumeric)
+  const lowestPrice = priceList.length > 0 ? Math.min(...priceList) : 0
 
   const getQuantity = (index: number) => quantities[index] || 1
 
@@ -23,6 +30,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   }
 
   const handleAddToCart = (row: ComparisonRow, index: number) => {
+    if (!user) {
+      Swal.fire({
+        icon: 'warning',
+        title: '🔒🛒 Desbloqueá Tu Carrito',
+        text: 'Para agregar productos a tu carrito, comparar precios de ferias y generar tus proformas, necesitás tener una cuenta en AgroMap. ¡Es gratis y solo te tomará un minuto!',
+        confirmButtonColor: '#3B9C3A',
+        showCancelButton: true,
+        confirmButtonText: 'Registrarse ahora',
+        cancelButtonText: 'Seguir navegando',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/auth')
+        }
+      })
+      return
+    }
     const qty = getQuantity(index)
     addToCart({
       id: `${product.name}-${row.feriaName}`,
@@ -55,12 +78,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
         <div className="product-modal-body">
           <h3 className="product-modal-section-title">📊 Precios por Feria</h3>
           <div className="product-modal-prices">
-            {product.rows
+            {[...product.rows]
               .sort((a, b) => a.priceNumeric - b.priceNumeric)
               .map((row, index) => {
                 const isBest = row.priceNumeric === lowestPrice
                 return (
-                  <div key={index} className={`product-modal-price-row ${isBest ? 'best' : ''}`}>
+                  <div key={`${row.feriaName}-${row.priceNumeric}-${index}`} className={`product-modal-price-row ${isBest ? 'best' : ''}`}>
                     <div>
                       <div className="product-modal-price-feria">
                         {row.feriaName}

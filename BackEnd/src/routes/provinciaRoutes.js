@@ -1,16 +1,15 @@
 const router = require('express').Router();
 const ctrl = require('../controllers/provinciaController');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-// GET  /api/provincias       → Listar todas
-// GET  /api/provincias/:id   → Obtener por ID
-// POST /api/provincias       → Crear
-// PUT  /api/provincias/:id   → Actualizar
-// DEL  /api/provincias/:id   → Eliminar
-
+// ── PÚBLICAS ────────────────────────────────────────────────
 router.get('/', ctrl.getAll);
 router.get('/:id', ctrl.getById);
-router.post('/', ctrl.create);
-router.put('/:id', ctrl.update);
-router.delete('/:id', ctrl.remove);
+
+// ── PROTEGIDAS (solo Administrador) ─────────────────────────
+router.post('/',    verifyToken, authorizeRoles('Administrador'), ctrl.create);
+router.put('/:id',  verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

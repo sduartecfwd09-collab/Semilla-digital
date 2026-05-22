@@ -27,7 +27,18 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
 
     useEffect(() => {
         if (userToEdit) {
-            setFormData({ ...userToEdit });
+            // Importante: NO copiamos el campo password del usuario existente
+            // (puede venir el hash desde el backend). Lo dejamos vacío para que
+            // sólo se envíe si el admin lo escribe explícitamente.
+            const { password: _omit, ...rest } = userToEdit;
+            setFormData({
+                name: rest.name || '',
+                email: rest.email || '',
+                password: '',
+                avatar: rest.avatar || '',
+                role: rest.role || 'Usuario',
+                status: rest.status || 'Activo',
+            });
         } else {
             setFormData({
                 name: '',
@@ -52,21 +63,28 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
 
         setLoading(true);
         try {
+            const trimmedPassword = formData.password?.trim() || '';
+            const basePayload: any = {
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                avatar: formData.avatar,
+                role: formData.role,
+                status: formData.status,
+            };
+            // En modo edición, solo enviamos password si el admin escribió uno nuevo.
+            // De lo contrario el backend la dejaría vacía y borraría la actual.
+            if (trimmedPassword) basePayload.password = trimmedPassword;
+
             let result;
             if (isEditing && userToEdit.id) {
-                result = await api.updateUser(userToEdit.id, {
-                    ...formData,
-                    name: formData.name.trim(),
-                    email: formData.email.trim(),
-                    password: formData.password?.trim() || ''
-                });
+                result = await api.updateUser(userToEdit.id, basePayload);
             } else {
-                result = await api.createUser({
-                    ...formData,
-                    name: formData.name.trim(),
-                    email: formData.email.trim(),
-                    password: formData.password?.trim() || ''
-                });
+                if (!trimmedPassword) {
+                    Swal.fire('Información Faltante', 'La contraseña es obligatoria al crear un usuario.', 'warning');
+                    setLoading(false);
+                    return;
+                }
+                result = await api.createUser({ ...basePayload, password: trimmedPassword });
             }
             onSuccess(result);
             onClose();
@@ -142,7 +160,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                                     disabled={!isFirstAdmin}
                                 >
                                     <option value="Administrador">Administrador</option>
-                                    <option value="Agricultor">Agricultor</option>
+                                    <option value="Productor">Productor</option>
                                     <option value="Usuario">Usuario</option>
                                 </select>
                             </div>

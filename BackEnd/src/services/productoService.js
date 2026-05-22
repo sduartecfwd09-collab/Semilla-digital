@@ -2,7 +2,7 @@
 // Service: Producto
 // Descripción: Lógica de negocio para productos agrícolas
 // ============================================================
-const { Producto, Usuario, OfertaProducto, Feria } = require('../models');
+const { sequelize, Producto, Usuario, OfertaProducto, Feria } = require('../models');
 
 // Función auxiliar para mapear el resultado de la base de datos a lo que espera el frontend
 const mapProductoParaFrontend = (producto) => {
@@ -33,6 +33,11 @@ const findAll = async (query = {}) => {
   // Filtro por disponibilidad
   if (query.disponible !== undefined) {
     where.disponible = query.disponible === 'true' || query.disponible === true;
+  }
+
+  // Filtro por usuario (productor)
+  if (query.userId) {
+    where.user_id = query.userId;
   }
 
   const productos = await Producto.findAll({
@@ -85,22 +90,29 @@ const create = async (data) => {
     throw new Error('El nombre del producto es requerido');
   }
   if (!payload.user_id) {
-    throw new Error('El usuario (agricultor) es requerido');
+    throw new Error('El usuario (productor) es requerido');
   }
-  
-  const nuevoProducto = await Producto.create(payload);
 
-  // Guardar precios/ofertas si vienen incluidos
-  if (data.precios && Array.isArray(data.precios)) {
-    for (const precio of data.precios) {
-      await OfertaProducto.create({
-        producto_id: nuevoProducto.id,
-        feria_id: precio.feriaId || 1,
-        precio: precio.precio,
-        unidad: data.unidad || 'Unidad'
-      });
+  // Producto + ofertas en una transacción para no dejar productos huérfanos
+  // si falla la inserción de alguna oferta.
+  const nuevoProducto = await sequelize.transaction(async (t) => {
+    const creado = await Producto.create(payload, { transaction: t });
+
+    if (data.precios && Array.isArray(data.precios)) {
+      for (const precio of data.precios) {
+        if (!precio.feriaId) {
+          throw new Error('Cada precio debe incluir feriaId');
+        }
+        await OfertaProducto.create({
+          producto_id: creado.id,
+          feria_id: precio.feriaId,
+          precio: precio.precio,
+          unidad: data.unidad || 'Unidad'
+        }, { transaction: t });
+      }
     }
-  }
+    return creado;
+  });
 
   return await findById(nuevoProducto.id);
 };
@@ -114,20 +126,27 @@ const update = async (id, data) => {
   const payload = { ...data };
   if (data.userId) payload.user_id = data.userId;
 
-  await producto.update(payload);
-
-  // Actualizar precios si vienen
+  // Si hay reemplazo de precios, envolvemos producto + ofertas en una transacción
+  // para que un fallo a mitad no deje el producto sin precios.
   if (data.precios && Array.isArray(data.precios)) {
-    // Borramos los viejos para reemplazarlos (simplificado)
-    await OfertaProducto.destroy({ where: { producto_id: id } });
-    for (const precio of data.precios) {
-      await OfertaProducto.create({
-        producto_id: id,
-        feria_id: precio.feriaId || 1,
-        precio: precio.precio,
-        unidad: data.unidad || 'Unidad'
-      });
-    }
+    await sequelize.transaction(async (t) => {
+      await producto.update(payload, { transaction: t });
+      await OfertaProducto.destroy({ where: { producto_id: id }, transaction: t });
+      for (const precio of data.precios) {
+        if (!precio.feriaId) {
+          throw new Error('Cada precio debe incluir feriaId');
+        }
+        await OfertaProducto.create({
+          producto_id: id,
+          feria_id: precio.feriaId,
+          precio: precio.precio,
+          unidad: data.unidad || 'Unidad'
+        }, { transaction: t });
+      }
+    });
+  } else {
+    // Sin reemplazo de precios: update simple
+    await producto.update(payload);
   }
 
   return await findById(id);

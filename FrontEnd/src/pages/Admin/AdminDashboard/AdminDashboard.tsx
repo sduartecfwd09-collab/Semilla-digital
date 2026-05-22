@@ -10,7 +10,7 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState({
         users: 0,
         products: 0,
-        agricultores: 0,
+        productores: 0,
         recipes: 0,
         pendingRequests: 0,
         queries: 340,
@@ -58,12 +58,12 @@ const AdminDashboard = () => {
                 console.warn('Error fetching contactos:', e);
             }
 
-            const agricultoresCount = users.filter((u: any) => u.role === 'Agricultor').length;
+            const productoresCount = users.filter((u: any) => u.role === 'Productor').length;
 
             setStats({
                 users: users.length,
                 products: products.length,
-                agricultores: agricultoresCount,
+                productores: productoresCount,
                 recipes: recipes.length,
                 pendingRequests: pendingCount,
                 queries: 340,
@@ -80,7 +80,7 @@ const AdminDashboard = () => {
     const statCards = [
         { title: 'Usuarios registrados', value: loading ? '...' : stats.users, icon: '👥', trend: '+3 esta semana', color: '#6c5ce7', bgColor: '#f3f0ff', path: '/admin/usuarios' },
         { title: 'Solicitudes pendientes', value: loading ? '...' : stats.pendingRequests, icon: '📝', trend: 'Revisión', color: '#fa8231', bgColor: '#fff4e6', path: '/admin/solicitudes' },
-        { title: 'Agricultores activos', value: loading ? '...' : stats.agricultores, icon: '👨‍🌾', trend: '+2', color: '#00cec9', bgColor: '#e0f9f8', path: '/admin/agricultores' },
+        { title: 'Productores activos', value: loading ? '...' : stats.productores, icon: '👨‍🌾', trend: '+2', color: '#00cec9', bgColor: '#e0f9f8', path: '/admin/productores' },
         { title: 'Productos en catálogo', value: loading ? '...' : stats.products, icon: '🥦', trend: '+8', color: '#00b894', bgColor: '#e6fffb', path: '/admin/productos' },
         { title: 'Recetas publicadas', value: loading ? '...' : stats.recipes, icon: '🍃', trend: '+5', color: '#ff9f43', bgColor: '#fff8e1', path: '/admin/recetas' },
         { title: 'Mensajes de contacto', value: loading ? '...' : stats.contactos, icon: '✉️', trend: stats.pendingContactos > 0 ? `${stats.pendingContactos} pendientes` : 'Al día', color: '#e84393', bgColor: '#ffeef8', path: '/admin/contactos' },
@@ -94,8 +94,8 @@ const AdminDashboard = () => {
             </header>
 
             <div className="stats-grid">
-                {statCards.map((card, index) => (
-                    <Link to={card.path} className="stat-card" key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
+                {statCards.map((card) => (
+                    <Link to={card.path} className="stat-card" key={card.title} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <div className="stat-card-top">
                             <div className="card-icon" style={{ backgroundColor: card.bgColor, color: card.color }}>
                                 {card.icon}

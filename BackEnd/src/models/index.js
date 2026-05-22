@@ -29,7 +29,7 @@ const models = {
   Producto: require('./Producto')(sequelize),
   Receta: require('./Receta')(sequelize),
   SolicitudCambioRol: require('./SolicitudCambioRol')(sequelize),
-  PuestoAgricultor: require('./PuestoAgricultor')(sequelize),
+  PuestoProductor: require('./PuestoProductor')(sequelize),
   PuestoFeria: require('./PuestoFeria')(sequelize),
   OfertaProducto: require('./OfertaProducto')(sequelize),
   RecetaIngrediente: require('./RecetaIngrediente')(sequelize),

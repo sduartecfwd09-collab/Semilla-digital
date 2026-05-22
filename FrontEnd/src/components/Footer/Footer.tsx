@@ -48,7 +48,7 @@ const Footer: React.FC = () => {
         <div className="footer-social">
           <h3 className="footer-section-title">Navegación</h3>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <li><Link to="/ferias" style={{ color: 'inherit', textDecoration: 'none', fontSize: '14px', opacity: 0.8 }}>Ferias del Agricultor</Link></li>
+            <li><Link to="/ferias" style={{ color: 'inherit', textDecoration: 'none', fontSize: '14px', opacity: 0.8 }}>Ferias del Productor</Link></li>
             <li><Link to="/comparar" style={{ color: 'inherit', textDecoration: 'none', fontSize: '14px', opacity: 0.8 }}>Comparar Precios</Link></li>
             <li><Link to="/recetas" style={{ color: 'inherit', textDecoration: 'none', fontSize: '14px', opacity: 0.8 }}>Recetas Sugeridas</Link></li>
             <li><Link to="/contacto" style={{ color: 'inherit', textDecoration: 'none', fontSize: '14px', opacity: 0.8 }}>Contacto</Link></li>

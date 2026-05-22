@@ -1,7 +1,7 @@
 'use strict';
 const router = require('express').Router();
 const { login, register, me } = require('../controllers/authController');
-const { verifyToken } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
 
 // POST /auth/login    → credenciales → devuelve { token, user }
 router.post('/login',    login);

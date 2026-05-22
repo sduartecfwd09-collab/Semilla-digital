@@ -8,10 +8,10 @@ const { authorizeRoles } = require('../middlewares/roleMiddleware');
 // POST  /api/mensajes                   → Enviar mensaje de contacto
 // PATCH /api/mensajes/:id               → Editar mensaje (por el usuario si está pendiente)
 // DEL   /api/mensajes/:id               → Eliminar mensaje (por el usuario)
-router.get('/', ctrl.getAll);
+router.get('/', verifyToken, authorizeRoles('Administrador'), ctrl.getAll);
 router.post('/', ctrl.create);
-router.patch('/:id', ctrl.update);
-router.delete('/:id', ctrl.remove);
+router.patch('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 // ── ADMIN ───────────────────────────────────────────────────
 // GET   /api/mensajes/pendientes        → Solo pendientes

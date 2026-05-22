@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { API_BASE_URL } from '../../services/api.config'
+import { useAuth } from './AuthContext'
 
 export interface CartItem {
   id: string
@@ -61,17 +62,24 @@ interface CartProviderProps {
   children: ReactNode
 }
 
-export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+const CartProviderInner: React.FC<CartProviderProps> = ({ children }) => {
+  const { user } = useAuth()
+  const userId = user?.id || null
+  const cartKey = userId ? `agromap_cart_${userId}` : null
+  const proformasKey = userId ? `agromap_proformas_${userId}` : null
+
   const [items, setItems] = useState<CartItem[]>(() => {
+    if (!cartKey) return []
     try {
-      const stored = localStorage.getItem('agromap_cart')
+      const stored = localStorage.getItem(cartKey)
       return stored ? JSON.parse(stored) : []
     } catch { return [] }
   })
 
   const [proformas, setProformas] = useState<Proforma[]>(() => {
+    if (!proformasKey) return []
     try {
-      const stored = localStorage.getItem('agromap_proformas')
+      const stored = localStorage.getItem(proformasKey)
       return stored ? JSON.parse(stored) : []
     } catch { return [] }
   })
@@ -79,14 +87,19 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem('agromap_cart', JSON.stringify(items))
-  }, [items])
+    if (cartKey) {
+      localStorage.setItem(cartKey, JSON.stringify(items))
+    }
+  }, [items, cartKey])
 
   useEffect(() => {
-    localStorage.setItem('agromap_proformas', JSON.stringify(proformas))
-  }, [proformas])
+    if (proformasKey) {
+      localStorage.setItem(proformasKey, JSON.stringify(proformas))
+    }
+  }, [proformas, proformasKey])
 
   const addToCart = (item: Omit<CartItem, 'cantidad'>, cantidad = 1) => {
+    if (!userId) return
     setItems(prev => {
       const existing = prev.find(i => i.id === item.id && i.feriaNombre === item.feriaNombre)
       if (existing) {
@@ -102,10 +115,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }
 
   const removeFromCart = (id: string) => {
+    if (!userId) return
     setItems(prev => prev.filter(i => !(i.id === id || `${i.id}-${i.feriaNombre}` === id)))
   }
 
   const updateQuantity = (id: string, cantidad: number) => {
+    if (!userId) return
     if (cantidad <= 0) {
       removeFromCart(id)
       return
@@ -115,7 +130,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     ))
   }
 
-  const clearCart = () => setItems([])
+  const clearCart = () => {
+    if (!userId) return
+    setItems([])
+  }
 
   const getTotal = () => items.reduce((sum, i) => sum + i.precio * i.cantidad, 0)
 
@@ -123,22 +141,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const saveProforma = async (delivery?: DeliveryInfo): Promise<Proforma> => {
     const subtotal = getTotal()
-    
-    const storedUser = localStorage.getItem('user');
-    let usuarioId: number | null = null;
-    if (storedUser) {
-      try {
-        const u = JSON.parse(storedUser);
-        if (u && u.id) {
-          usuarioId = Number(u.id);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
 
     const proformaData = {
-      usuario_id: usuarioId,
+      usuario_id: userId ? Number(userId) : null,
       subtotal,
       total: subtotal + (delivery?.costoEnvio || 0),
       costo_envio: delivery?.costoEnvio || 0,
@@ -203,6 +208,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }
 
   const deleteProforma = (id: string) => {
+    if (!userId) return
     setProformas(prev => prev.filter(p => p.id !== id))
   }
 
@@ -222,4 +228,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
+}
+
+export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+  const { user } = useAuth()
+  return (
+    <CartProviderInner key={user?.id || 'guest'}>
+      {children}
+    </CartProviderInner>
+  )
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import './Recipes.css'
 import { ENDPOINTS } from '../../services/api.config'
+import { escapeHtml } from '../../utils/escapeHtml'
 
 interface Recipe {
   id: string
@@ -36,16 +37,16 @@ const Recipes: React.FC = () => {
     const steps = recipe.steps || [];
 
     Swal.fire({
-      title: `<span style="font-family: 'Playfair Display', serif; color: #11361c">${recipe.title}</span>`,
+      title: `<span style="font-family: 'Playfair Display', serif; color: #11361c">${escapeHtml(recipe.title)}</span>`,
       html: `
         <div style="text-align: left; padding: 0 10px;">
-          <p style="color: #666; font-style: italic; margin-bottom: 20px; line-height: 1.5;">${recipe.description}</p>
-          
+          <p style="color: #666; font-style: italic; margin-bottom: 20px; line-height: 1.5;">${escapeHtml(recipe.description)}</p>
+
           <div style="margin-bottom: 20px;">
             <h4 style="color: #2d8a42; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 5px;">🥑 Ingredientes:</h4>
             <ul style="color: #444; line-height: 1.8; list-style-type: none; padding: 0;">
-              ${ingredients.length > 0 
-                ? ingredients.map(ing => `<li style="display: flex; align-items: center; gap: 8px;"><span style="color: #2d8a42;">•</span> ${ing}</li>`).join('')
+              ${ingredients.length > 0
+                ? ingredients.map(ing => `<li style="display: flex; align-items: center; gap: 8px;"><span style="color: #2d8a42;">•</span> ${escapeHtml(ing)}</li>`).join('')
                 : '<li>No se especificaron ingredientes.</li>'
               }
             </ul>
@@ -53,9 +54,9 @@ const Recipes: React.FC = () => {
 
           <div>
             <h4 style="color: #2d8a42; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 5px;">👨‍🍳 Preparación:</h4>
-            ${steps.length > 0 
+            ${steps.length > 0
               ? `<ol style="color: #444; line-height: 1.7; padding-left: 20px;">
-                  ${steps.map(step => `<li style="margin-bottom: 10px; padding-left: 5px;">${step}</li>`).join('')}
+                  ${steps.map(step => `<li style="margin-bottom: 10px; padding-left: 5px;">${escapeHtml(step)}</li>`).join('')}
                  </ol>`
               : '<p style="color: #888; font-style: italic;">Próximamente estaremos añadiendo el paso a paso detallado para esta receta.</p>'
             }

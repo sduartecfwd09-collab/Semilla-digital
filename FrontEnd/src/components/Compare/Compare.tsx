@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../Navbar'
 import SidebarFilters from '../SidebarFilters'
 import ProductComparisonCard from '../ProductComparisonCard'
 import { ProductComparisonData, ComparisonRow } from '../ProductComparisonCard/ProductComparisonCard'
 import ProductModal from '../ProductModal/ProductModal'
 import Footer from '../Footer'
+import Swal from 'sweetalert2'
+import { useAuth } from '../context/AuthContext'
 import './Compare.css'
 import { ENDPOINTS } from '../../services/api.config'
 import { normalizeProductName, getCanonicalName, findInCatalog } from '../../utils/productCatalog'
@@ -36,12 +39,37 @@ const Compare: React.FC = () => {
   
   const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
+  const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const handleSelectProduct = (product: ProductComparisonData) => {
+    if (!user) {
+      Swal.fire({
+        icon: 'warning',
+        title: '🔒🛒 Desbloqueá Tu Carrito',
+        text: 'Para agregar productos a tu carrito, comparar precios de ferias y generar tus proformas, necesitás tener una cuenta en AgroMap. ¡Es gratis y solo te tomará un minuto!',
+        confirmButtonColor: '#3B9C3A',
+        showCancelButton: true,
+        confirmButtonText: 'Registrarse ahora',
+        cancelButtonText: 'Seguir navegando',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/auth')
+        }
+      })
+      return
+    }
+    setSelectedProduct(product)
+  }
+
   useEffect(() => {
+    let cancelled = false;
     Promise.all([
       fetch(ENDPOINTS.productos).then(res => res.json()),
       fetch(ENDPOINTS.ferias).then(res => res.json())
     ])
       .then(([productsRes, feriasRes]: [any, any]) => {
+        if (cancelled) return;
         const productsData = productsRes.success ? productsRes.data : productsRes;
         const feriasData = feriasRes.success ? feriasRes.data : feriasRes;
 
@@ -67,10 +95,10 @@ const Compare: React.FC = () => {
         const availableData = (productsData || []).filter((p: any) => p.disponible !== false);
         
         // Mapeamos los productos de la API a la estructura que espera la UI
-        const mappedData: ProductComparisonData[] = availableData.map(p => {
+        const mappedData: ProductComparisonData[] = availableData.map((p: any) => {
           const prices = p.precios || [];
-          const minPrice = prices.length > 0 
-            ? Math.min(...prices.map((pr) => pr.precio ?? 0)) 
+          const minPrice = prices.length > 0
+            ? Math.min(...prices.map((pr: any) => pr.precio ?? 0))
             : 0;
 
           return {
@@ -82,7 +110,9 @@ const Compare: React.FC = () => {
             lowestPrice: p.lowestPrice || `₡${minPrice.toLocaleString()}`,
             rows: p.rows ? p.rows : prices.map((pr: any) => {
               // Buscar feria si no tiene el nombre guardado directamente en el objeto de precio
-              const relatedFeria = normalizedFerias.find(f => String(f.id) === String(pr.feriaId));
+              const relatedFeria = (pr.feriaId != null) 
+                ? normalizedFerias.find((f: any) => f.id != null && String(f.id) === String(pr.feriaId)) 
+                : undefined;
               const feriaName = pr.feriaNombre || (relatedFeria ? relatedFeria.nombre : 'Feria Local');
               const province = pr.provincia || (relatedFeria ? relatedFeria.provincia : (p as any).provincia || '');
               
@@ -137,13 +167,16 @@ const Compare: React.FC = () => {
           }
         })
 
+        if (cancelled) return;
         setAllProducts(Array.from(groupedMap.values()))
         setLoading(false)
       })
       .catch(err => {
+        if (cancelled) return;
         console.error('Error fetching products:', err)
         setLoading(false)
       })
+    return () => { cancelled = true; };
   }, [])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -304,8 +337,8 @@ const Compare: React.FC = () => {
           {filteredProducts.length > 0 ? (
             <div className="filtered-products-list">
               {filteredProducts.map((product: ProductComparisonData, index: number) => (
-                <div key={product.name + index} onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
-                  <ProductComparisonCard product={product} onSelect={() => setSelectedProduct(product)} />
+                <div key={product.name + index} onClick={() => handleSelectProduct(product)} style={{ cursor: 'pointer' }}>
+                  <ProductComparisonCard product={product} onSelect={() => handleSelectProduct(product)} />
                 </div>
               ))}
             </div>

@@ -122,7 +122,7 @@ const remove = async (id) => {
 // ── AUTH ─────────────────────────────────────────────────────
 
 const validatePassword = async (email, password) => {
-  const usuario = await Usuario.findOne({ 
+  const usuario = await Usuario.findOne({
     where: { email },
     include: [{ model: Role, as: 'rol' }]
   });
@@ -133,6 +133,25 @@ const validatePassword = async (email, password) => {
   if (!isValid) throw new Error('Credenciales inválidas: contraseña incorrecta');
 
   return usuario;
+};
+
+const changePassword = async (id, currentPassword, newPassword) => {
+  if (!currentPassword || !newPassword) {
+    throw new Error('Se requiere la contraseña actual y la nueva');
+  }
+  if (newPassword.length <= 6) {
+    throw new Error('La nueva contraseña debe tener más de 6 caracteres');
+  }
+
+  const usuario = await Usuario.findByPk(id);
+  if (!usuario) throw new Error('Usuario no encontrado');
+
+  const isValid = await bcrypt.compare(currentPassword, usuario.password);
+  if (!isValid) throw new Error('La contraseña actual no es correcta');
+
+  const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  await usuario.update({ password: hashed });
+  return true;
 };
 
 module.exports = {
@@ -146,4 +165,5 @@ module.exports = {
   assignFeria,
   remove,
   validatePassword,
+  changePassword,
 };

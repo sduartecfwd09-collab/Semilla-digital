@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { useAuth } from '../../../components/context/AuthContext'
-import AdminProductForm from '../../../components/adminAgricultor/AgricultorProductForm/AdminProductForm'
+import AdminProductForm from '../../../components/adminProductor/ProductorProductForm/AdminProductForm'
 import {
   Producto,
   createProducto,
   updateProducto,
   deleteProducto,
-} from '../../../servers/ProductService'
+} from '../../../services/ProductService'
 import { API_BASE_URL } from '../../../services/api.config'
-import CategoryIcon from '../../../components/CategoryIcon/CategoryIcon'
-import { normalizeProductName } from '../../../utils/productCatalog'
 import './AdminProductos.css'
-import { Product } from '../../../types'
 
 
 const AdminProductos = () => {
@@ -214,7 +211,7 @@ const AdminProductos = () => {
                 )}
             </div>
 
-            {/* Formulario modal - mismo que el del agricultor */}
+            {/* Formulario modal - mismo que el del productor */}
             {showForm && (
                 <AdminProductForm
                     producto={editingProduct}

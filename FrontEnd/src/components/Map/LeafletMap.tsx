@@ -8,7 +8,7 @@ import { geocodeFeria } from '../../services/geocodingService';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-let DefaultIcon = L.icon({
+const DefaultIcon = L.icon({
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
     iconSize: [25, 41],
@@ -20,10 +20,12 @@ interface LeafletMapProps {
   feria: Feria;
 }
 
-// Component to handle map centering
+// Component to handle map centering — el side-effect va en useEffect, no en render
 const ChangeView = ({ center }: { center: [number, number] }) => {
   const map = useMap();
-  map.setView(center, 15);
+  useEffect(() => {
+    map.setView(center, 15);
+  }, [center, map]);
   return null;
 };
 
@@ -32,16 +34,21 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ feria }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     const getCoords = async () => {
       setLoading(true);
       const result = await geocodeFeria(feria);
+      if (cancelled) return;
       if (result) {
         setCoords([result.lat, result.lng]);
+      } else {
+        setCoords(null);
       }
       setLoading(false);
     };
 
     getCoords();
+    return () => { cancelled = true; };
   }, [feria]);
 
   if (loading) {
