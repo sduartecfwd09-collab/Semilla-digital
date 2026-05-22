@@ -19,7 +19,7 @@ const features: Feature[] = [
     icon: <Map size={32} />,
     title: 'Directorio de ferias',
     description:
-      'Encontrá ferias del agricultor cerca de vos con información sobre ubicación, horarios y productos disponibles.',
+      'Encontrá ferias del productor cerca de vos con información sobre ubicación, horarios y productos disponibles.',
   },
   {
     icon: <Search size={32} />,
@@ -37,8 +37,8 @@ const FeaturesSection: React.FC = () => {
         Todo lo que necesitás para comprar con inteligencia
       </div>
       <div className="features-grid">
-        {features.map((feature, index) => (
-          <div key={index} className="features-card">
+        {features.map((feature) => (
+          <div key={feature.title} className="features-card">
             <div className="features-icon">{feature.icon}</div>
             <h3 className="features-card-title">{feature.title}</h3>
             <p className="features-card-desc">{feature.description}</p>

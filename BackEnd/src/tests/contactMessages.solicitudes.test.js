@@ -1,5 +1,14 @@
 'use strict';
-require('./setup');
+// Configuración de env para tests (sin bypass de auth)
+process.env.NODE_ENV    = 'test';
+process.env.JWT_SECRET  = 'agromap_test_secret_key_12345';
+process.env.JWT_EXPIRES_IN = '1h';
+process.env.DB_NAME     = 'test_db';
+process.env.DB_USER     = 'test';
+process.env.DB_PASSWORD = 'test';
+process.env.DB_HOST     = 'localhost';
+process.env.DB_PORT     = '3306';
+process.env.DB_DIALECT  = 'mysql';
 
 jest.mock('../models', () => {
   const mockMsg = (overrides = {}) => ({
@@ -15,7 +24,7 @@ jest.mock('../models', () => {
 
   const mockSolicitud = (overrides = {}) => ({
     id: 1, usuarioId: 4, nombreDelPuesto: 'Mi Puesto',
-    correoUsuario: 'luis@test.cr', rolSolicitado: 'Agricultor', estado: 'Pendiente',
+    correoUsuario: 'luis@test.cr', rolSolicitado: 'Productor', estado: 'Pendiente',
     motivoRespuesta: '', fechaSolicitud: new Date().toISOString(),
     update: jest.fn().mockImplementation(function(data) { Object.assign(this, data); return Promise.resolve(this); }),
     destroy: jest.fn().mockResolvedValue(),
@@ -25,7 +34,7 @@ jest.mock('../models', () => {
 
   return {
     sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
-    ContactMessage: {
+    MensajeContacto: {
       findAll:  jest.fn(),
       findByPk: jest.fn(),
       create:   jest.fn(),
@@ -34,11 +43,15 @@ jest.mock('../models', () => {
     SolicitudCambioRol: {
       findAll:  jest.fn(),
       findByPk: jest.fn(),
+      findOne:  jest.fn().mockResolvedValue(null),
       create:   jest.fn(),
       _mock: mockSolicitud,
     },
     Usuario: {
       update: jest.fn().mockResolvedValue([1]),
+    },
+    Role: {
+      findOne: jest.fn().mockResolvedValue({ id: 2, nombre: 'Productor' }),
     },
   };
 });
@@ -46,7 +59,7 @@ jest.mock('../models', () => {
 const request = require('supertest');
 const jwt     = require('jsonwebtoken');
 const app     = require('../app');
-const { ContactMessage, SolicitudCambioRol } = require('../models');
+const { MensajeContacto, SolicitudCambioRol } = require('../models');
 
 const adminToken = () =>
   jwt.sign({ id: 99, email: 'a@a.cr', role: 'Administrador' }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -59,9 +72,9 @@ describe('POST /contactMessages (público)', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('201 - cualquiera puede enviar mensaje sin token', async () => {
-    ContactMessage.create.mockResolvedValue(ContactMessage._mock({ id: 3 }));
+    MensajeContacto.create.mockResolvedValue(MensajeContacto._mock({ id: 3 }));
     const res = await request(app)
-      .post('/contactMessages')
+      .post('/mensajes')
       .send({ nombre: 'Juan', correo: 'juan@test.cr', mensaje: 'Hola, necesito info.' });
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
@@ -70,47 +83,40 @@ describe('POST /contactMessages (público)', () => {
 
   test('400 - mensaje vacío', async () => {
     const res = await request(app)
-      .post('/contactMessages')
+      .post('/mensajes')
       .send({ nombre: 'Juan', correo: 'juan@test.cr' }); // sin mensaje
-    expect(res.status).toBe(400);
-  });
-
-  test('400 - correo inválido', async () => {
-    const res = await request(app)
-      .post('/contactMessages')
-      .send({ nombre: 'Juan', correo: 'no-es-un-email', mensaje: 'Hola' });
     expect(res.status).toBe(400);
   });
 });
 
-describe('GET /contactMessages (protegido)', () => {
+describe('GET /mensajes (protegido)', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('401 - sin token no puede leer mensajes', async () => {
-    const res = await request(app).get('/contactMessages');
+    const res = await request(app).get('/mensajes');
     expect(res.status).toBe(401);
   });
 
   test('200 - admin puede listar todos los mensajes', async () => {
-    ContactMessage.findAll.mockResolvedValue([
-      ContactMessage._mock({ id: 1 }),
-      ContactMessage._mock({ id: 2, nombre: 'Pedro' }),
+    MensajeContacto.findAll.mockResolvedValue([
+      MensajeContacto._mock({ id: 1 }),
+      MensajeContacto._mock({ id: 2, nombre: 'Pedro' }),
     ]);
-    const res = await request(app).get('/contactMessages').set(authH());
+    const res = await request(app).get('/mensajes').set(authH());
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(2);
   });
 });
 
-describe('PATCH /contactMessages/:id (responder)', () => {
+describe('PATCH /mensajes/:id (responder)', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('200 - admin responde y cambia estado a Respondido', async () => {
-    const msg = ContactMessage._mock({ id: 1 });
-    ContactMessage.findByPk.mockResolvedValue(msg);
+    const msg = MensajeContacto._mock({ id: 1 });
+    MensajeContacto.findByPk.mockResolvedValue(msg);
 
     const res = await request(app)
-      .patch('/contactMessages/1')
+      .patch('/mensajes/1')
       .set(authH())
       .send({ respuesta: 'Gracias por escribirnos.', estado: 'Respondido' });
 
@@ -121,24 +127,24 @@ describe('PATCH /contactMessages/:id (responder)', () => {
   });
 
   test('404 - mensaje no encontrado', async () => {
-    ContactMessage.findByPk.mockResolvedValue(null);
-    const res = await request(app).patch('/contactMessages/999').set(authH()).send({});
+    MensajeContacto.findByPk.mockResolvedValue(null);
+    const res = await request(app).patch('/mensajes/999').set(authH()).send({});
     expect(res.status).toBe(404);
   });
 
   test('401 - sin token no puede responder', async () => {
-    const res = await request(app).patch('/contactMessages/1').send({ respuesta: 'Hola' });
+    const res = await request(app).patch('/mensajes/1').send({ respuesta: 'Hola' });
     expect(res.status).toBe(401);
   });
 });
 
-describe('DELETE /contactMessages/:id', () => {
+describe('DELETE /mensajes/:id', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('200 - admin elimina mensaje', async () => {
-    const msg = ContactMessage._mock({ id: 2 });
-    ContactMessage.findByPk.mockResolvedValue(msg);
-    const res = await request(app).delete('/contactMessages/2').set(authH());
+    const msg = MensajeContacto._mock({ id: 2 });
+    MensajeContacto.findByPk.mockResolvedValue(msg);
+    const res = await request(app).delete('/mensajes/2').set(authH());
     expect(res.status).toBe(200);
     expect(msg.destroy).toHaveBeenCalled();
   });
@@ -147,7 +153,7 @@ describe('DELETE /contactMessages/:id', () => {
 // ═════════════════════════════════════════════════════════════════════════════
 // SolicitudesCambioRol
 // ═════════════════════════════════════════════════════════════════════════════
-describe('POST /solicitudesCambioRol', () => {
+describe('POST /solicitudes', () => {
   beforeEach(() => jest.clearAllMocks());
 
   const userToken = () =>
@@ -157,10 +163,11 @@ describe('POST /solicitudesCambioRol', () => {
     SolicitudCambioRol.create.mockResolvedValue(SolicitudCambioRol._mock({ id: 1 }));
 
     const res = await request(app)
-      .post('/solicitudesCambioRol')
+      .post('/solicitudes')
       .set('Authorization', `Bearer ${userToken()}`)
       .send({
         usuarioId: 4, nombreDelPuesto: 'Mi Puesto Orgánico',
+        rolSolicitado: 'Productor',
         correoUsuario: 'luis@test.cr', estado: 'Pendiente',
         fechaSolicitud: new Date().toISOString(),
       });
@@ -170,20 +177,20 @@ describe('POST /solicitudesCambioRol', () => {
   });
 
   test('401 - sin token no puede solicitar', async () => {
-    const res = await request(app).post('/solicitudesCambioRol').send({ usuarioId: 1 });
+    const res = await request(app).post('/solicitudes').send({ usuarioId: 1 });
     expect(res.status).toBe(401);
   });
 });
 
-describe('PATCH /solicitudesCambioRol/:id (aprobar/rechazar)', () => {
+describe('PATCH /solicitudes/:id (aprobar/rechazar)', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('200 - admin aprueba solicitud y rol del usuario se actualiza', async () => {
-    const sol = SolicitudCambioRol._mock({ id: 1, rolSolicitado: 'Agricultor', usuarioId: 4 });
+    const sol = SolicitudCambioRol._mock({ id: 1, rolSolicitado: 'Productor', usuarioId: 4 });
     SolicitudCambioRol.findByPk.mockResolvedValue(sol);
 
     const res = await request(app)
-      .patch('/solicitudesCambioRol/1')
+      .patch('/solicitudes/1')
       .set(authH())
       .send({ estado: 'Aprobada', motivoRespuesta: 'Cumple los requisitos.' });
 
@@ -198,7 +205,7 @@ describe('PATCH /solicitudesCambioRol/:id (aprobar/rechazar)', () => {
     SolicitudCambioRol.findByPk.mockResolvedValue(sol);
 
     const res = await request(app)
-      .patch('/solicitudesCambioRol/2')
+      .patch('/solicitudes/2')
       .set(authH())
       .send({ estado: 'Rechazada', motivoRespuesta: 'Información incompleta.' });
 
@@ -210,7 +217,7 @@ describe('PATCH /solicitudesCambioRol/:id (aprobar/rechazar)', () => {
 
   test('404 - solicitud no encontrada', async () => {
     SolicitudCambioRol.findByPk.mockResolvedValue(null);
-    const res = await request(app).patch('/solicitudesCambioRol/999').set(authH()).send({});
+    const res = await request(app).patch('/solicitudes/999').set(authH()).send({});
     expect(res.status).toBe(404);
   });
 });

@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router  = express.Router();
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
 
 // ── Rutas públicas ──────────────────────────────────────────────
 router.use('/auth',       require('./authRoutes'));
@@ -11,6 +11,7 @@ router.use('/recetas',    require('./recetaRoutes'));
 router.use('/provincias', require('./provinciaRoutes'));
 router.use('/cantones',   require('./cantonRoutes'));
 router.use('/distritos',  require('./distritoRoutes'));
+router.use('/mensajes',   require('./mensajeContactoRoutes'));
 
 // ── Rutas protegidas ────────────────────────────────────────────
 router.use('/usuarios',
@@ -20,7 +21,7 @@ router.use('/usuarios',
 
 router.use('/puestos',
   verifyToken,
-  require('./puestoAgricultorRoutes')
+  require('./puestoProductorRoutes')
 );
 
 router.use('/solicitudes',
@@ -38,10 +39,7 @@ router.use('/ofertas',
   require('./ofertaProductoRoutes')
 );
 
-router.use('/mensajes',
-  verifyToken,
-  require('./mensajeContactoRoutes')
-);
+
 
 router.use('/proformas',
   verifyToken,

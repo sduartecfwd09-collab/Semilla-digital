@@ -208,3 +208,29 @@
         text-align: left;
     }
 }
+
+.product-comp-select-btn {
+    background-color: var(--verde-claro, #2d8a42);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(45, 138, 66, 0.2), 0 2px 4px -1px rgba(45, 138, 66, 0.1);
+}
+
+.product-comp-select-btn:hover {
+    background-color: var(--verde-oscuro, #1b5e20);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(45, 138, 66, 0.3), 0 4px 6px -2px rgba(45, 138, 66, 0.05);
+}
+
+.product-comp-select-btn:active {
+    transform: translateY(0);
+}

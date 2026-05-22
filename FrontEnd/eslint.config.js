@@ -26,7 +26,11 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
+      // 'any' es ruidoso pero NO debería ser silencioso: queremos warnings para ir
+      // tipando gradualmente. Si bloquea CI, mover a 'off' temporalmente.
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
 )

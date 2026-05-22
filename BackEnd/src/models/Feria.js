@@ -1,7 +1,7 @@
 // ============================================================
 // Modelo: Feria
 // Tabla: ferias
-// Descripción: Ferias del agricultor / mercados locales
+// Descripción: Ferias del productor / mercados locales
 // ============================================================
 const { DataTypes } = require('sequelize');
 
@@ -55,7 +55,7 @@ module.exports = (sequelize) => {
     });
 
     // Una feria tiene muchos puestos (vía tabla intermedia)
-    Feria.belongsToMany(models.PuestoAgricultor, {
+    Feria.belongsToMany(models.PuestoProductor, {
       through: models.PuestoFeria,
       foreignKey: 'feria_id',
       otherKey: 'puesto_id',
@@ -68,8 +68,8 @@ module.exports = (sequelize) => {
       as: 'ofertaProductos',
     });
 
-    // Relación directa con puestos de agricultor
-    Feria.hasMany(models.PuestoAgricultor, {
+    // Relación directa con puestos de productor
+    Feria.hasMany(models.PuestoProductor, {
       foreignKey: 'feria_id',
       as: 'puestosDirectos',
     });

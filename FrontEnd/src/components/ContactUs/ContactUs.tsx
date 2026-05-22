@@ -46,7 +46,9 @@ const ContactUs: React.FC = () => {
   const fetchMyMessages = async () => {
     try {
       const res = await fetch(ENDPOINTS.contactMessages);
-      const data: ContactMessage[] = await res.json();
+      const json = await res.json();
+      const allMessages = json.success ? json.data : json;
+      const data: ContactMessage[] = allMessages || [];
       
       // Obtener los IDs guardados localmente para usuarios no registrados
       const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
@@ -107,6 +109,18 @@ const ContactUs: React.FC = () => {
       telefono: msg.telefono,
       mensaje: msg.mensaje
     });
+    
+    // Alerta pequeña para avisar que se seleccionó
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'info',
+      title: 'Modo edición activado',
+      text: 'Modificá tu mensaje en el formulario',
+      showConfirmButton: false,
+      timer: 3000
+    });
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -211,10 +225,11 @@ const ContactUs: React.FC = () => {
         });
 
         if (res.ok) {
-          const createdMessage = await res.json();
+          const resJson = await res.json();
+          const createdMessage = resJson.success ? resJson.data : resJson;
           
           // Guardar en local storage para que los usuarios no registrados puedan editarlo luego
-          if (createdMessage.id) {
+          if (createdMessage && createdMessage.id) {
             const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
             savedIds.push(createdMessage.id);
             localStorage.setItem('agromap_my_messages', JSON.stringify(savedIds));
@@ -391,7 +406,7 @@ const ContactUs: React.FC = () => {
                               {msg.estado === 'Respondido' ? '✅ Respondido' : '⏳ Pendiente'}
                             </span>
                             <span className="contact-msg-date">
-                              {new Date(msg.fechaEnvio).toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              {new Date(msg.fechaEnvio || (msg as any).fecha_envio).toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                           </div>
                           
@@ -420,9 +435,9 @@ const ContactUs: React.FC = () => {
                           <div className="contact-msg-response">
                             <strong>Respuesta del administrador:</strong>
                             <p>{msg.respuesta}</p>
-                            {msg.fechaRespuesta && (
+                            {((msg.fechaRespuesta) || (msg as any).fecha_respuesta) && (
                               <span className="contact-msg-date">
-                                {new Date(msg.fechaRespuesta).toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                {new Date(msg.fechaRespuesta || (msg as any).fecha_respuesta).toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' })}
                               </span>
                             )}
                           </div>

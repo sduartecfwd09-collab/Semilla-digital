@@ -112,6 +112,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    // Limpieza por si quedó del flujo anterior (puede borrarse en una futura versión)
+    localStorage.removeItem('agromap_password_temp')
   }
 
   const value = {

@@ -28,6 +28,10 @@ const findById = async (id) => {
 };
 
 const create = async (data) => {
+  if (data.name) data.nombre = data.name;
+  if (data.province) data.provincia = data.province;
+  if (data.schedule) data.horario = data.schedule;
+
   if (!data.nombre) {
     throw new Error('El nombre de la feria es requerido');
   }
@@ -39,6 +43,11 @@ const update = async (id, data) => {
   if (!feria) {
     throw new Error('Feria no encontrada');
   }
+
+  if (data.name) data.nombre = data.name;
+  if (data.province) data.provincia = data.province;
+  if (data.schedule) data.horario = data.schedule;
+
   return await feria.update(data);
 };
 

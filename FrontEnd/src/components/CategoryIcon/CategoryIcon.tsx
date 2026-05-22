@@ -36,8 +36,20 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({
       }}
       title={iconData.label}
     >
+      {/*
+        dangerouslySetInnerHTML: las cadenas SVG provienen de la constante interna
+        `utils/categoryIcons.ts` (no son input del usuario). Si en el futuro la fuente
+        de los SVG se hidrata desde backend o desde input externo, hay que sanitizarlas
+        con DOMPurify o reemplazar este componente por SVGs como JSX nativo.
+      */}
       <span
-        dangerouslySetInnerHTML={{ __html: iconData.svg.replace(/width="\d+"/, `width="${size}"`).replace(/height="\d+"/, `height="${size}"`) }}
+        dangerouslySetInnerHTML={{
+          __html: typeof iconData.svg === 'string'
+            ? iconData.svg
+                .replace(/width="\d+"/, `width="${size}"`)
+                .replace(/height="\d+"/, `height="${size}"`)
+            : ''
+        }}
         style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
       />
       {showLabel && (
