@@ -95,10 +95,15 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
+  if (data.rol_solicitado === 'DRIVER' && !data.selfie_verificacion_url) {
+    throw new Error('La selfie de verificación es obligatoria');
+  }
+
   if (data.documentos_base64 && data.vehicle_type) {
     const savedPaths = saveBase64Documents(data.usuario_id, data.vehicle_type, data.documentos_base64);
-    if (savedPaths) data.documentos_base64 = savedPaths;
+    if (savedPaths) data.documentos_rutas = savedPaths;
   }
+  delete data.documentos_base64;
 
   return await SolicitudCambioRol.create({
     ...data,
@@ -166,18 +171,18 @@ const update = async (id, data) => {
   if (!solicitud) {
     throw new Error('Solicitud no encontrada');
   }
-  
+
   if (data.documentos_base64) {
     const vType = data.vehicle_type || solicitud.vehicle_type;
     const uId = data.usuario_id || solicitud.usuario_id;
     if (vType && uId) {
       const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
       if (savedPaths) {
-        // Merge with existing paths if they exist
-        data.documentos_base64 = { ...(solicitud.documentos_base64 || {}), ...savedPaths };
+        data.documentos_rutas = { ...(solicitud.documentos_rutas || {}), ...savedPaths };
       }
     }
   }
+  delete data.documentos_base64;
 
   return await solicitud.update(data);
 };

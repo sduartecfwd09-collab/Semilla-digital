@@ -4,7 +4,8 @@ import Swal from 'sweetalert2';
 import './RegistroDelivery.css';
 import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
-import { ENDPOINTS, authFetch } from '../../services/api.config';
+import { ENDPOINTS, authFetch, authFormFetch } from '../../services/api.config';
+import type { DocFile } from './CameraCapture';
 import { validateEmail } from '../../utils/validation';
 import CameraCapture from './CameraCapture';
 
@@ -29,7 +30,6 @@ const MOTO_DOCUMENTS = [
   { key: 'cedula', label: 'Cédula de identidad', emoji: '🪪' },
   { key: 'hojaDelincuencia', label: 'Hoja de delincuencia actualizada', emoji: '📋' },
   { key: 'licenciaMoto', label: 'Licencia de conducir', emoji: '🪪' },
-  { key: 'fotoMotociclista', label: 'Foto reciente del motociclista', emoji: '📸' },
   { key: 'tarjetaPropiedad', label: 'Credenciales / Tarjeta de propiedad', emoji: '📑' },
   { key: 'revisionTecnicaMoto', label: 'Revisión técnica (Riteve)', emoji: '🔧' },
   { key: 'marchamoMoto', label: 'Comprobante de marchamo', emoji: '📄' },
@@ -69,13 +69,6 @@ const BICI_CONFIRMATIONS = [
   { key: 'biciMochilaOficial', label: 'La mochila es de marca oficial', emoji: '✅' },
   { key: 'biciTelefonoInternet', label: 'Tengo teléfono inteligente con internet', emoji: '📱' },
 ];
-
-interface DocFile { 
-  file: File | null; 
-  preview: string; 
-  status: 'pending' | 'loaded' | 'error';
-  errorMessage?: string;
-}
 
 interface DocumentUploaderProps {
   docKey: string;
@@ -188,7 +181,7 @@ const RegistroDelivery: React.FC = () => {
   const [documents, setDocuments] = useState<Record<string, DocFile | null>>({
     cedula: null, hojaDelincuencia: null, licenciaConducir: null,
     revisionTecnica: null, marchamo: null,
-    licenciaMoto: null, fotoMotociclista: null, tarjetaPropiedad: null,
+    licenciaMoto: null, tarjetaPropiedad: null,
     revisionTecnicaMoto: null, marchamoMoto: null,
     cedulaPasaporte: null, hojaDelincuenciaBM: null, licenciaBM: null,
     riteveBM: null, marchamoBM: null,
@@ -201,6 +194,7 @@ const RegistroDelivery: React.FC = () => {
   });
   const [bolsoConfirm, setBolsoConfirm] = useState(false);
   const [bolsoFoto, setBolsoFoto] = useState<DocFile | null>(null);
+  const [identitySelfie, setIdentitySelfie] = useState<DocFile | null>(null);
 
   /* Year validation helper */
   const currentYear = new Date().getFullYear();
@@ -395,6 +389,10 @@ const RegistroDelivery: React.FC = () => {
     if (vehicleType === 'Moto' && !validateMotoFields()) return;
     if (vehicleType === 'BiciMoto' && !validateBiciMotoFields()) return;
     if (vehicleType === 'Bicicleta' && !validateBicicletaFields()) return;
+    if (!identitySelfie?.file || identitySelfie.status !== 'loaded') {
+      Swal.fire({ icon: 'warning', title: 'Verificación pendiente', text: 'Completá el escáner de identidad con prueba de vida.', confirmButtonColor: 'var(--verde-claro)' });
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -459,21 +457,21 @@ const RegistroDelivery: React.FC = () => {
         solicitudData.documentos_base64 = docsBase64;
       }
 
-      if (!solicitudId) {
-        const res = await authFetch(ENDPOINTS.solicitudesCambioRol, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(solicitudData)
-        });
-        if (!res.ok) throw new Error('Error al crear solicitud');
-        const nuevo = await res.json();
-        setSolicitudId(nuevo.data ? nuevo.data.id : nuevo.id);
-      } else {
-        const res = await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitudId}`, {
-          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(solicitudData)
-        });
-        if (!res.ok) throw new Error('Error al actualizar solicitud');
+      const formData = new FormData();
+      formData.append('selfie', identitySelfie.file);
+      formData.append('usuario_id', String(userId));
+      formData.append('data', JSON.stringify(solicitudData));
+
+      const url = solicitudId
+        ? `${ENDPOINTS.solicitudesCambioRol}/${solicitudId}`
+        : ENDPOINTS.solicitudesCambioRol;
+      const res = await authFormFetch(url, { method: solicitudId ? 'PATCH' : 'POST', body: formData });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Error al guardar solicitud');
       }
+      const nuevo = await res.json();
+      if (!solicitudId) setSolicitudId(nuevo.data ? nuevo.data.id : nuevo.id);
 
       setSolicitudEnviada(true);
       Swal.fire({
@@ -682,28 +680,16 @@ const RegistroDelivery: React.FC = () => {
                     <div className="input-group full-width">
                       <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
                       <div className="documents-upload-grid">
-                        {MOTO_DOCUMENTS.map(doc => {
-                          if (doc.key === 'fotoMotociclista') {
-                            return (
-                              <CameraCapture
-                                key={doc.key}
-                                label={doc.label}
-                                fileData={documents.fotoMotociclista}
-                                onPhotoCaptured={(fileData) => updateDocument('fotoMotociclista', fileData)}
-                              />
-                            );
-                          }
-                          return (
-                            <DocumentUploader
-                              key={doc.key}
-                              docKey={doc.key}
-                              label={doc.label}
-                              emoji={doc.emoji}
-                              fileData={documents[doc.key]}
-                              onFileChange={updateDocument}
-                            />
-                          );
-                        })}
+                        {MOTO_DOCUMENTS.map(doc => (
+                          <DocumentUploader
+                            key={doc.key}
+                            docKey={doc.key}
+                            label={doc.label}
+                            emoji={doc.emoji}
+                            fileData={documents[doc.key]}
+                            onFileChange={updateDocument}
+                          />
+                        ))}
                       </div>
                     </div>
                   </>
@@ -855,6 +841,18 @@ const RegistroDelivery: React.FC = () => {
                     </div>
                   </>
                 )}
+
+                {/* ── Identity verification (live camera only) ── */}
+                <h3 className="form-section-title">
+                  <span className="section-icon">🤳</span> Verificación de identidad
+                </h3>
+                <div className="input-group full-width identity-selfie-section">
+                  <CameraCapture
+                    label="Selfie de verificación"
+                    fileData={identitySelfie}
+                    onPhotoCaptured={setIdentitySelfie}
+                  />
+                </div>
 
                 {/* ── Contact info ── */}
                 <h3 className="form-section-title">

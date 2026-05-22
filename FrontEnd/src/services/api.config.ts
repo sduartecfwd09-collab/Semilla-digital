@@ -49,3 +49,11 @@ export const authFetch = async (url: string, options: RequestInit = {}) => {
 
   return response;
 };
+
+/** Fetch con auth para FormData (sin Content-Type manual) */
+export const authFormFetch = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('token');
+  const headers = new Headers(options.headers);
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  return fetch(url, { ...options, headers });
+};
