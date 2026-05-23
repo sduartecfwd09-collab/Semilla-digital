@@ -40,21 +40,35 @@ const findAll = async (query = {}) => {
     where.user_id = query.userId;
   }
 
-  const page = parseInt(query.page) || 1;
-  const limit = parseInt(query.limit) || 20;
-  const offset = (page - 1) * limit;
+  const hasPagination = query.page || query.limit;
 
-  const list = await Producto.findAndCountAll({
-    where,
-    limit,
-    offset,
-    include: [
-      { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email'] },
-      { model: OfertaProducto, as: 'ofertas', include: [{ model: Feria, as: 'feria' }] }
-    ],
-    order: [['created_at', 'DESC']],
-  });
-  return { count: list.count, rows: list.rows.map(mapProductoParaFrontend) };
+  if (hasPagination) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    const list = await Producto.findAndCountAll({
+      where,
+      limit,
+      offset,
+      include: [
+        { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email'] },
+        { model: OfertaProducto, as: 'ofertas', include: [{ model: Feria, as: 'feria' }] }
+      ],
+      order: [['created_at', 'DESC']],
+    });
+    return { count: list.count, rows: list.rows.map(mapProductoParaFrontend) };
+  } else {
+    const list = await Producto.findAll({
+      where,
+      include: [
+        { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email'] },
+        { model: OfertaProducto, as: 'ofertas', include: [{ model: Feria, as: 'feria' }] }
+      ],
+      order: [['created_at', 'DESC']],
+    });
+    return list.map(mapProductoParaFrontend);
+  }
 };
 
 const findById = async (id) => {

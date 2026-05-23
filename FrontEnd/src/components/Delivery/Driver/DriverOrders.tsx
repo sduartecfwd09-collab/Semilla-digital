@@ -13,74 +13,7 @@ const DriverOrders: React.FC = () => {
       try {
         setLoading(true);
         const res = await deliveryService.getMyOrders();
-        
-        if (res.data.length === 0) {
-          const mockOrders: any[] = [
-            {
-              id: '1',
-              order_id: 'ORD-1029',
-              status: 'DELIVERED',
-              pickup_address: 'Feria del Agricultor, San José',
-              dropoff_address: 'Barrio Escalante, San José',
-              created_at: new Date(Date.now() - 3600000).toISOString(), // hace 1 hora
-              total_cost: 3500,
-              earnings_breakdown: { total_driver_payout: 3500 }
-            },
-            {
-              id: '2',
-              order_id: 'ORD-1035',
-              status: 'IN_TRANSIT',
-              pickup_address: 'Feria de Alajuela',
-              dropoff_address: 'El Llano, Alajuela',
-              created_at: new Date().toISOString(), // ahora
-              total_cost: 5100,
-              earnings_breakdown: { total_driver_payout: 5100 }
-            },
-            {
-              id: '3',
-              order_id: 'ORD-1028',
-              status: 'DELIVERED',
-              pickup_address: 'Mercado Central, Heredia',
-              dropoff_address: 'San Rafael, Heredia',
-              created_at: new Date(Date.now() - 86400000).toISOString(), // ayer
-              total_cost: 4200,
-              earnings_breakdown: { total_driver_payout: 4200 }
-            },
-            {
-              id: '4',
-              order_id: 'ORD-1040',
-              status: 'CANCELLED',
-              pickup_address: 'Feria de Cartago',
-              dropoff_address: 'Tres Ríos, Cartago',
-              created_at: new Date(Date.now() - 172800000).toISOString(), // hace 2 días
-              total_cost: 2500,
-              earnings_breakdown: { total_driver_payout: 2500 }
-            },
-            {
-              id: '5',
-              order_id: 'ORD-1021',
-              status: 'DELIVERED',
-              pickup_address: 'Feria de Pavas',
-              dropoff_address: 'Rohrmoser, San José',
-              created_at: new Date(Date.now() - 259200000).toISOString(), // hace 3 días
-              total_cost: 3800,
-              earnings_breakdown: { total_driver_payout: 3800 }
-            },
-            {
-              id: '6',
-              order_id: 'ORD-1015',
-              status: 'DELIVERED',
-              pickup_address: 'Feria de Escazú',
-              dropoff_address: 'Santa Ana',
-              created_at: new Date(Date.now() - 604800000).toISOString(), // hace 1 semana
-              total_cost: 6500,
-              earnings_breakdown: { total_driver_payout: 6500 }
-            }
-          ];
-          setOrders(mockOrders);
-        } else {
-          setOrders(res.data);
-        }
+        setOrders(res.data || []);
       } catch (error) {
         console.error('Error fetching orders:', error);
       } finally {

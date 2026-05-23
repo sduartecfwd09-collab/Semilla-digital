@@ -267,91 +267,6 @@ const DeliveryDashboard: React.FC = () => {
     }
   }, []);
 
-  const loadMockData = () => {
-    setProfile({
-      id: 'mock-driver-1',
-      user_id: 999,
-      status: 'AVAILABLE',
-      current_lat: 9.9281,
-      current_lng: -84.0907,
-      rating: 4.8,
-      active_orders: 4,
-      max_orders: 5,
-      accumulated_balance: 15400,
-      usuario: { id: 999, name: 'Repartidor de Prueba', email: 'test@delivery.com' }
-    });
-    setStats({
-      totalDelivered: 45,
-      deliveredToday: 5,
-      totalEarnings: 150000,
-      earningsToday: 15400,
-      activeOrders: 4,
-      rating: 4.8
-    });
-
-    const o1Params: EarningsParams = { distanceKm: 5.2, estimatedTimeMins: 15, surgeMultiplier: 1.2, tips: 1000 };
-    const e1 = calculateDriverEarnings(o1Params);
-
-    const o2Params: EarningsParams = { distanceKm: 2.5, estimatedTimeMins: 8, surgeMultiplier: 1.0, tips: 0 };
-    const e2 = calculateDriverEarnings(o2Params);
-
-    const o3Params: EarningsParams = { distanceKm: 8.0, estimatedTimeMins: 25, surgeMultiplier: 1.5, tips: 500 };
-    const e3 = calculateDriverEarnings(o3Params);
-
-    const o4Params: EarningsParams = { distanceKm: 1.5, estimatedTimeMins: 5, surgeMultiplier: 1.0, tips: 0 };
-    const e4 = calculateDriverEarnings(o4Params);
-
-    setOrders([
-      {
-        id: 'order-mock-1', order_id: 'ORD-9001', driver_id: 'mock-driver-1', status: 'ASSIGNED',
-        commerce_name: 'Restaurante El Buen Sabor',
-        pickup_address: 'Plaza Central, Local 4, San José', pickup_lat: 9.9322, pickup_lng: -84.0795,
-        dropoff_address: 'Condominio Las Vistas, Torre 2', dropoff_lat: 9.9981, dropoff_lng: -84.1198,
-        delivery_notes: 'Dejar en recepción por favor. No tocar timbre.',
-        item_count: 3, handling_tags: 'Bebidas, Comida Caliente',
-        distance_km: o1Params.distanceKm, estimated_time_mins: o1Params.estimatedTimeMins,
-        subtotal_items: 12500, delivery_fee: 2500, total_customer_cost: 16000, tips: o1Params.tips!,
-        earnings_breakdown: e1,
-        proof_of_delivery_url: null, created_at: new Date().toISOString()
-      },
-      {
-        id: 'order-mock-2', order_id: 'ORD-9002', driver_id: 'mock-driver-1', status: 'ACCEPTED',
-        commerce_name: 'Farmacia La Salud',
-        pickup_address: 'Av 2, Calle 5, Heredia', pickup_lat: 10.323, pickup_lng: -84.432,
-        dropoff_address: 'Residencial Los Álamos', dropoff_lat: 10.330, dropoff_lng: -84.440,
-        delivery_notes: null,
-        item_count: 1, handling_tags: 'Medicamentos',
-        distance_km: o2Params.distanceKm, estimated_time_mins: o2Params.estimatedTimeMins,
-        subtotal_items: 8000, delivery_fee: 1500, total_customer_cost: 9500, tips: o2Params.tips!,
-        earnings_breakdown: e2,
-        proof_of_delivery_url: null, created_at: new Date().toISOString()
-      },
-      {
-        id: 'order-mock-3', order_id: 'ORD-9003', driver_id: 'mock-driver-1', status: 'PICKED_UP',
-        commerce_name: 'Floristería Paraíso',
-        pickup_address: 'Centro Comercial Escazú', pickup_lat: 10.0159, pickup_lng: -84.2140,
-        dropoff_address: 'Edificio Empresarial, Piso 3', dropoff_lat: 10.0259, dropoff_lng: -84.2240,
-        delivery_notes: 'Entregar a la secretaria',
-        item_count: 2, handling_tags: 'Frágil, Flores',
-        distance_km: o3Params.distanceKm, estimated_time_mins: o3Params.estimatedTimeMins,
-        subtotal_items: 25000, delivery_fee: 3000, total_customer_cost: 28500, tips: o3Params.tips!,
-        earnings_breakdown: e3,
-        proof_of_delivery_url: null, created_at: new Date().toISOString()
-      },
-      {
-        id: 'order-mock-4', order_id: 'ORD-9004', driver_id: 'mock-driver-1', status: 'IN_TRANSIT',
-        commerce_name: 'Cafetería Central',
-        pickup_address: 'Frente al Parque Morazán', pickup_lat: 9.998, pickup_lng: -84.111,
-        dropoff_address: 'Oficinas Gubernamentales', dropoff_lat: 9.950, dropoff_lng: -84.050,
-        delivery_notes: 'Llamar al llegar',
-        item_count: 1, handling_tags: 'Líquidos',
-        distance_km: o4Params.distanceKm, estimated_time_mins: o4Params.estimatedTimeMins,
-        subtotal_items: 4500, delivery_fee: 1200, total_customer_cost: 5700, tips: o4Params.tips!,
-        earnings_breakdown: e4,
-        proof_of_delivery_url: null, created_at: new Date().toISOString()
-      }
-    ]);
-  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -425,11 +340,6 @@ const DeliveryDashboard: React.FC = () => {
 
   const handleAcceptOrder = async (orderId: string) => {
     try {
-      if (orderId.includes('mock')) {
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'ACCEPTED' } : o));
-        Swal.fire({ icon: 'success', title: 'Pedido Aceptado', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
-        return;
-      }
       await deliveryService.acceptOrder(orderId);
       fetchDashboardData();
       Swal.fire({ icon: 'success', title: 'Pedido Aceptado', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
@@ -441,10 +351,6 @@ const DeliveryDashboard: React.FC = () => {
 
   const handleRejectOrder = async (orderId: string) => {
     try {
-      if (orderId.includes('mock')) {
-        setOrders(prev => prev.filter(o => o.id !== orderId));
-        return;
-      }
       await deliveryService.rejectOrder(orderId);
       fetchDashboardData();
     } catch (error: any) {
@@ -454,10 +360,6 @@ const DeliveryDashboard: React.FC = () => {
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     try {
-      if (orderId.includes('mock')) {
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus as any } : o));
-        return;
-      }
       await deliveryService.updateOrderStatus(orderId, newStatus);
       fetchDashboardData();
     } catch (error: any) {
@@ -468,19 +370,6 @@ const DeliveryDashboard: React.FC = () => {
   const handleDeliveryConfirm = async (proofUrl: string) => {
     if (!proofOrder) return;
     try {
-      if (proofOrder.id.includes('mock')) {
-        setOrders(prev => prev.filter(o => o.id !== proofOrder.id));
-        setProofOrder(null);
-        Swal.fire({
-          icon: 'success',
-          title: '¡Entrega Completada!',
-          html: `Tu ganancia neta de <strong>₡${Math.round(proofOrder.earnings_breakdown?.total_driver_payout ?? 0).toLocaleString()}</strong> fue acreditada a tu saldo.`,
-          background: '#1b2a1e',
-          color: '#fff',
-          confirmButtonColor: '#36EB60',
-        });
-        return;
-      }
       await deliveryService.updateOrderStatus(proofOrder.id, 'DELIVERED', proofUrl);
       setProofOrder(null);
       fetchDashboardData();
@@ -516,9 +405,6 @@ const DeliveryDashboard: React.FC = () => {
           <p className="subtitle">Aquí tienes el resumen de tu actividad de hoy.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <button onClick={loadMockData} style={{ background: '#36EB60', color: '#1b2a1e', border: 'none', padding: '8px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-            Cargar Datos de Prueba
-          </button>
           <div className="status-toggle-container">
             <span className="status-label">{profile?.status === 'OFFLINE' ? 'Desconectado' : 'Conectado'}</span>
             <label className="switch">

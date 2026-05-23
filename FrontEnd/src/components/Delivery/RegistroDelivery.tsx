@@ -14,8 +14,7 @@ const VEHICLE_TYPES = [
   { value: 'Carro', label: 'Automóvil', emoji: '🚗' },
   { value: 'Moto', label: 'Motocicleta', emoji: '🏍️' },
   { value: 'BiciMoto', label: 'Bici-moto (Ciclomotor)', emoji: '🛵' },
-  { value: 'Bicicleta', label: 'Bicicleta', emoji: '🚲' },
-  { value: 'Otro', label: 'Otro / A pie', emoji: '🚶' }
+  { value: 'Bicicleta', label: 'Bicicleta', emoji: '🚲' }
 ];
 
 const CARRO_DOCUMENTS = [

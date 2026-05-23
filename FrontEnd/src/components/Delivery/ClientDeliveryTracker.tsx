@@ -193,7 +193,7 @@ const ClientDeliveryTracker: React.FC = () => {
             <DollarSignIcon />
             <div className="detail-text">
               <span>Costo de envío</span>
-              <strong>₡{order.total_cost?.toLocaleString()}</strong>
+              <strong>₡{order.delivery_fee?.toLocaleString()}</strong>
             </div>
           </div>
         </div>

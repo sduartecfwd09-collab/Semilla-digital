@@ -33,6 +33,7 @@ export const useLivenessScanner = (onVerified: (r: { dataUrl: string; file: File
   const blinkRef = useRef<BlinkState>({ closed: false });
   const smileBaseRef = useRef<number | null>(null);
   const lastLmRef = useRef<Landmark[] | null>(null);
+  const okFramesRef = useRef(0);
   const rafRef = useRef(0);
   const lastRef = useRef(0);
 
@@ -183,8 +184,21 @@ export const useLivenessScanner = (onVerified: (r: { dataUrl: string; file: File
     const poseOk = checkChallenge(step, lm, motionRef.current, blinkRef.current, smileBaseRef.current, false);
     setCanScan(poseOk);
     setBorder(poseOk ? 'green' : 'yellow');
+
+    if (poseOk) {
+      okFramesRef.current += 1;
+      if (okFramesRef.current >= 4) {
+        okFramesRef.current = 0;
+        advanceStep();
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+    } else {
+      okFramesRef.current = 0;
+    }
+
     rafRef.current = requestAnimationFrame(tick);
-  }, [landmarkerRef]);
+  }, [landmarkerRef, advanceStep]);
 
   useEffect(() => {
     if (phase === 'active' && ready) rafRef.current = requestAnimationFrame(tick);
@@ -204,6 +218,7 @@ export const useLivenessScanner = (onVerified: (r: { dataUrl: string; file: File
     setProgress(0);
     setBorder('gray');
     setCanScan(false);
+    okFramesRef.current = 0;
     stop();
     setPhase('loading');
     phaseRef.current = 'loading';
@@ -236,6 +251,7 @@ export const useLivenessScanner = (onVerified: (r: { dataUrl: string; file: File
     setPhase('idle');
     setProgress(0);
     setBorder('gray');
+    okFramesRef.current = 0;
   };
 
   return { ready, phase, liveMsg, hint, progress, border, canScan, errorMsg, videoRef, captureRef, start, cancel, scanStep };

@@ -28,7 +28,9 @@ export const headPitch = (lm: Landmark[]) => {
   const nose = lm[1];
   const chin = lm[152];
   const forehead = lm[10];
-  return (chin.y - nose.y) / (dist(forehead, chin) || 1);
+  const mid = (forehead.y + chin.y) / 2;
+  const h = dist(forehead, chin) || 1;
+  return (nose.y - mid) / h;
 };
 
 export const smileRatio = (lm: Landmark[]) => {

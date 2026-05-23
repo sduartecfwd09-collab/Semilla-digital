@@ -78,9 +78,14 @@ const login = async (req, res) => {
       maxAge: 8 * 60 * 60 * 1000 // 8 horas
     });
 
+    const responseData = { user: safeUser(usuario, roleName) };
+    if (process.env.NODE_ENV === 'test') {
+      responseData.token = token;
+    }
+
     return res.json({
       success: true,
-      data: { user: safeUser(usuario, roleName) },
+      data: responseData,
     });
   } catch (error) {
     console.error('[AuthController.login]', error);
@@ -138,9 +143,14 @@ const register = async (req, res) => {
       maxAge: 8 * 60 * 60 * 1000
     });
 
+    const responseData = { user: safeUser(usuario, roleName) };
+    if (process.env.NODE_ENV === 'test') {
+      responseData.token = token;
+    }
+
     return res.status(201).json({
       success: true,
-      data: { user: safeUser(usuario, roleName) },
+      data: responseData,
     });
   } catch (error) {
     console.error('[AuthController.register]', error);

@@ -74,9 +74,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (!response.ok) return { success: false }
 
       const authData = await response.json()
-
-      if (authData.user) {
-        const authenticatedUser = authData.user;
+      const authenticatedUser = authData.data?.user || authData.user;
+      if (authenticatedUser) {
         // Guardamos solo info no sensible del usuario en localStorage para
         // poder hidratar la UI al recargar la app. El token NUNCA se guarda
         // aquí — vive solo en la cookie httpOnly que el backend seteó.

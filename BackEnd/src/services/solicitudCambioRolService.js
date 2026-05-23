@@ -58,6 +58,15 @@ const mapSolicitudParaFrontend = (s) => {
     fechaSolicitud: raw.fecha_solicitud,
     motivoRespuesta: raw.motivo_respuesta,
     fechaRespuesta: raw.fecha_respuesta,
+    vehicle_type: raw.vehicle_type || raw.vehicleType,
+    license_plate: raw.license_plate || raw.licensePlate,
+    marca_vehiculo: raw.marca_vehiculo || raw.marcaVehiculo,
+    modelo_vehiculo: raw.modelo_vehiculo || raw.modeloVehiculo,
+    anio_vehiculo: raw.anio_vehiculo || raw.anioVehiculo,
+    selfie_verificacion_url: raw.selfie_verificacion_url || raw.selfieVerificacionUrl,
+    documentos_base64: raw.documentos_base64 || raw.documentosBase64,
+    documentos_rutas: raw.documentos_rutas || raw.documentosRutas,
+    confirmaciones: raw.confirmaciones,
     createdAt: raw.createdAt || raw.created_at,
     updatedAt: raw.updatedAt || raw.updated_at,
     usuario: raw.usuario ? {
@@ -160,10 +169,6 @@ const update = async (id, data) => {
     throw new Error('Solicitud no encontrada');
   }
 
-  // El cambio de estado SOLO se permite vía los endpoints dedicados (approve/reject),
-  // que están protegidos por rol Administrador en la capa de rutas. Aquí lo bloqueamos
-  // explícitamente para evitar que un usuario común se auto-apruebe enviando
-  // `estado: 'Aprobada'` por PATCH /solicitudes/:id.
   const updateData = { ...data };
   delete updateData.estado;
   delete updateData.motivoRespuesta;
@@ -194,7 +199,7 @@ const update = async (id, data) => {
 
 const approve = async (id, data = {}) => {
   const solicitud = await SolicitudCambioRol.findByPk(id, {
-    include: [{ model: Usuario, as: 'usuario' }],
+    include: [{ model: Usuario, as: 'usuario' }]
   });
   if (!solicitud) {
     throw new Error('Solicitud no encontrada');
@@ -204,10 +209,7 @@ const approve = async (id, data = {}) => {
   }
 
   // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
-  // Mapeo de roles legacy a roles actuales
-  const legacyMapping = { 'Vendedor': 'Productor', 'Agricultor': 'Productor' };
-  const targetRoleName = legacyMapping[solicitud.rol_solicitado] || solicitud.rol_solicitado;
-  const role = await Role.findOne({ where: { nombre: targetRoleName } });
+  const role = await Role.findOne({ where: { nombre: solicitud.rol_solicitado } });
   if (role && solicitud.usuario) {
     await solicitud.usuario.update({ roleId: role.id });
   }

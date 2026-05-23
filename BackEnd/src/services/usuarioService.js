@@ -30,22 +30,33 @@ const mapUsuario = (u) => {
 };
 
 const findAll = async (query = {}) => {
-  const page = parseInt(query.page) || 1;
-  const limit = parseInt(query.limit) || 20;
-  const offset = (page - 1) * limit;
+  const hasPagination = query.page || query.limit;
 
-  const { rows, count } = await Usuario.findAndCountAll({
-    limit,
-    offset,
-    attributes: publicAttributes,
-    include: includeRelations,
-    order: [['createdAt', 'DESC']],
-  });
-  
-  return {
-    rows: rows.map(mapUsuario),
-    count,
-  };
+  if (hasPagination) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await Usuario.findAndCountAll({
+      limit,
+      offset,
+      attributes: publicAttributes,
+      include: includeRelations,
+      order: [['createdAt', 'DESC']],
+    });
+    
+    return {
+      rows: rows.map(mapUsuario),
+      count,
+    };
+  } else {
+    const list = await Usuario.findAll({
+      attributes: publicAttributes,
+      include: includeRelations,
+      order: [['createdAt', 'DESC']],
+    });
+    return list.map(mapUsuario);
+  }
 };
 
 const findById = async (id) => {

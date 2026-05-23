@@ -152,7 +152,8 @@ const Auth: React.FC = () => {
           password: trimmedPassword,
           role: 'Usuario',
           status: 'Activo'
-        })
+        }),
+        credentials: 'include'
       })
 
       if (response.ok) {

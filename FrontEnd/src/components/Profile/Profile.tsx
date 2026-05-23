@@ -31,7 +31,7 @@ const Profile: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agricultorRequest, setAgricultorRequest] = useState<any>(null);
+  const [productorRequest, setProductorRequest] = useState<any>(null);
   const [driverRequest, setDriverRequest] = useState<any>(null);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
@@ -83,7 +83,7 @@ const Profile: React.FC = () => {
             (r: any) => String(r.usuario_id || r.usuarioId) === String(currentId)
           ).sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
 
-          const agRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Agricultor' || r.rolSolicitado === 'Agricultor' || r.rol_solicitado === 'Productor' || r.rolSolicitado === 'Productor');
+          const agRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Productor' || r.rolSolicitado === 'Productor');
           if (agRequests.length > 0) {
             let activeRequest = agRequests[0];
             const aprobada = agRequests.find((r: any) => r.estado === 'Aprobada');
@@ -92,7 +92,7 @@ const Profile: React.FC = () => {
             if (aprobada) activeRequest = aprobada;
             else if (pendiente) activeRequest = pendiente;
             else if (rechazada) activeRequest = rechazada;
-            setAgricultorRequest(activeRequest);
+            setProductorRequest(activeRequest);
             setHasPendingRequest(true);
           }
 
@@ -320,7 +320,7 @@ const Profile: React.FC = () => {
   };
 
   const handleCancelarSolicitud = async () => {
-    const reqId = agricultorRequest?.id;
+    const reqId = productorRequest?.id;
     if (!reqId) return;
 
     const { isConfirmed } = await Swal.fire({
@@ -350,7 +350,7 @@ const Profile: React.FC = () => {
           authFetch(`${ENDPOINTS.puestosProductor}/${p.id}`, { method: 'DELETE' })
         ));
         
-        setAgricultorRequest(null);
+        setProductorRequest(null);
         
         Swal.fire({
           icon: 'success',
@@ -638,7 +638,7 @@ const Profile: React.FC = () => {
               <div className="role-request-content">
                 <h3>Solicitud para ser Productor</h3>
                 
-                {agricultorRequest && (agricultorRequest.estado === 'Pendiente' || agricultorRequest.estado === 'Pendiente') && (
+                {productorRequest && (productorRequest.estado === 'Pendiente') && (
                   <>
                     <p>Tu solicitud está siendo revisada por un administrador. Podés actualizar la información de tu puesto si lo necesitás.</p>
                     <div className="request-status-badge pending">
@@ -665,10 +665,10 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {agricultorRequest && (agricultorRequest.estado === 'Aprobada' || agricultorRequest.estado === 'Aprobada') && (
+                {productorRequest && (productorRequest.estado === 'Aprobada') && (
                   <>
                     <p><strong>¡Felicidades!</strong> Tu solicitud ha sido aprobada por el administrador.</p>
-                    {agricultorRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{agricultorRequest.motivo_respuesta}"</p>}
+                    {productorRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{productorRequest.motivo_respuesta}"</p>}
                     <div className="request-status-badge approved" style={{backgroundColor: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
                       <span>✅ Aprobada</span>
                     </div>
@@ -683,10 +683,10 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {agricultorRequest && (agricultorRequest.estado === 'Rechazada' || agricultorRequest.estado === 'Rechazada') && (
+                {productorRequest && (productorRequest.estado === 'Rechazada') && (
                   <>
                     <p>Tu solicitud ha sido rechazada.</p>
-                    {agricultorRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{agricultorRequest.motivo_respuesta}"</p>}
+                    {productorRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{productorRequest.motivo_respuesta}"</p>}
                     <div className="request-status-badge rejected" style={{backgroundColor: '#fef2f2', color: '#991b1b', borderColor: '#fecaca', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
                       <span>❌ Rechazada</span>
                     </div>
@@ -700,7 +700,7 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                {!agricultorRequest && (
+                {!productorRequest && (
                   <>
                     <p>Completá el formulario con los datos de tu puesto para solicitar el cambio de rol a Productor. Un administrador revisará tu solicitud.</p>
                     <button 

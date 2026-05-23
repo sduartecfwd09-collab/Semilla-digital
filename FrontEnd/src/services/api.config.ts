@@ -36,11 +36,7 @@ export const authFetch = async (url: string, options: RequestInit = {}) => {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(url, { 
-    ...options, 
-    headers,
-    credentials: 'include'
-  });
+  const response = await fetch(url, { ...options, headers, credentials: 'include' });
 
   if (response.status === 401) {
     if (!window.location.pathname.includes('/auth')) {
@@ -71,9 +67,5 @@ export const authFormFetch = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token');
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  return fetch(url, { 
-    ...options, 
-    headers,
-    credentials: 'include'
-  });
+  return fetch(url, { ...options, headers, credentials: 'include' });
 };

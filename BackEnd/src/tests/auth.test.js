@@ -65,7 +65,7 @@ describe('POST /auth/register', () => {
 
     const res = await request(app)
       .post('/auth/register')
-      .send({ name: 'Nuevo User', email: 'nuevo@test.cr', password: 'pass123' });
+      .send({ name: 'Nuevo User', email: 'nuevo@test.cr', password: 'password123' });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('token');
@@ -88,7 +88,7 @@ describe('POST /auth/register', () => {
 
     const res = await request(app)
       .post('/auth/register')
-      .send({ name: 'Dup', email: 'ya@existe.cr', password: '123' });
+      .send({ name: 'Dup', email: 'ya@existe.cr', password: 'password123' });
 
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/ya existe/i);

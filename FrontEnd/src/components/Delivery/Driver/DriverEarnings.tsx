@@ -12,53 +12,7 @@ const DriverEarnings: React.FC = () => {
     const fetchEarnings = async () => {
       try {
         const data = await deliveryService.getMyEarnings();
-        
-        // Si no hay ganancias (todas en 0), mostrar datos de prueba
-        if (data && data.today.count === 0 && data.week.count === 0 && data.month.count === 0) {
-          const mockData: DeliveryEarnings = {
-            today: { earnings: 15500, count: 4 },
-            week: { earnings: 65000, count: 18 },
-            month: { earnings: 245000, count: 72 },
-            recentDeliveries: [
-              {
-                id: '1',
-                delivered_at: new Date().toISOString(),
-                order_id: 'ORD-1029',
-                distance_km: 3.5,
-                rating: { score: 5 },
-                total_cost: '3500'
-              },
-              {
-                id: '2',
-                delivered_at: new Date(Date.now() - 86400000).toISOString(),
-                order_id: 'ORD-1028',
-                distance_km: 5.2,
-                rating: { score: 4 },
-                total_cost: '4200'
-              },
-              {
-                id: '3',
-                delivered_at: new Date(Date.now() - 172800000).toISOString(),
-                order_id: 'ORD-1025',
-                distance_km: 2.1,
-                rating: null,
-                total_cost: '2800'
-              }
-            ],
-            weeklyChartData: [
-              { date: 'Lun', earnings: 8500 },
-              { date: 'Mar', earnings: 12000 },
-              { date: 'Mié', earnings: 9000 },
-              { date: 'Jue', earnings: 15000 },
-              { date: 'Vie', earnings: 0 },
-              { date: 'Sáb', earnings: 11500 },
-              { date: 'Dom', earnings: 15500 }
-            ]
-          };
-          setEarnings(mockData);
-        } else {
-          setEarnings(data);
-        }
+        setEarnings(data);
       } catch (error) {
         console.error('Error fetching earnings:', error);
       } finally {

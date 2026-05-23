@@ -20,13 +20,13 @@ export const useFaceLandmarker = () => {
           lm = await FaceLandmarker.createFromOptions(vision, {
             baseOptions: { modelAssetPath: MODEL, delegate: 'GPU' },
             runningMode: 'VIDEO',
-            numFaces: 2,
+            numFaces: 1,
           });
         } catch {
           lm = await FaceLandmarker.createFromOptions(vision, {
             baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' },
             runningMode: 'VIDEO',
-            numFaces: 2,
+            numFaces: 1,
           });
         }
         if (!cancelled) {

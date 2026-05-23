@@ -11,8 +11,8 @@ const shuffle = <T,>(a: T[]) => {
   return x;
 };
 
-/** detect + 3 retos aleatorios */
-export const buildSteps = (): ChallengeId[] => ['detect', ...shuffle(POOL).slice(0, 3)];
+/** Secuencia profesional fija: detectar -> mirar arriba -> izquierda -> derecha -> volver a centrar */
+export const buildSteps = (): ChallengeId[] => ['detect', 'look_up', 'turn_left', 'turn_right', 'detect'];
 
 export const CHALLENGE_LABELS: Record<ChallengeId, string> = {
   detect: 'Centra tu rostro en el óvalo',
