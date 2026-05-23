@@ -42,7 +42,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email y contraseña son obligatorios.' });
+      return res.status(400).json({ success: false, message: 'Email y contraseña son obligatorios.' });
     }
 
     const usuario = await Usuario.findOne({
@@ -51,17 +51,17 @@ const login = async (req, res) => {
     });
 
     if (!usuario) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
     }
 
     // Comparación con bcrypt
     const isMatch = await bcrypt.compare(password.trim(), usuario.password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
     }
 
     if (usuario.status === 'Inactivo') {
-      return res.status(403).json({ error: 'Tu cuenta está inactiva. Contacta al administrador.' });
+      return res.status(403).json({ success: false, message: 'Tu cuenta está inactiva. Contacta al administrador.' });
     }
 
     const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
@@ -76,12 +76,12 @@ const login = async (req, res) => {
     });
 
     return res.json({
-      token,
-      user: safeUser(usuario, roleName),
+      success: true,
+      data: { user: safeUser(usuario, roleName) },
     });
   } catch (error) {
-    console.error('[Auth] login:', error);
-    return res.status(500).json({ error: 'Error en el proceso de login.' });
+    console.error('[AuthController.login]', error);
+    return res.status(500).json({ success: false, message: 'Error en el proceso de login.' });
   }
 };
 
@@ -92,21 +92,24 @@ const register = async (req, res) => {
     const { name, email, password, feriaId, puestoInfo } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Los campos name, email y password son obligatorios.' });
+      return res.status(400).json({ success: false, message: 'Los campos name, email y password son obligatorios.' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 8 caracteres.' });
     }
 
     const existing = await Usuario.findOne({
       where: { email: email.toLowerCase().trim() },
     });
     if (existing) {
-      return res.status(409).json({ error: 'Ya existe una cuenta registrada con este correo electrónico.' });
+      return res.status(409).json({ success: false, message: 'Ya existe una cuenta registrada con este correo electrónico.' });
     }
 
     // Forzar el rol de Usuario por seguridad
     const roleName = 'Usuario';
     const dbRole = await Role.findOne({ where: { nombre: roleName } });
     if (!dbRole) {
-      return res.status(500).json({ error: 'Rol por defecto no encontrado.' });
+      return res.status(500).json({ success: false, message: 'Rol por defecto no encontrado.' });
     }
 
     // Encriptar contraseña
@@ -133,12 +136,12 @@ const register = async (req, res) => {
     });
 
     return res.status(201).json({
-      token,
-      user: safeUser(usuario, roleName),
+      success: true,
+      data: { user: safeUser(usuario, roleName) },
     });
   } catch (error) {
-    console.error('[Auth] register:', error);
-    return res.status(400).json({ error: error.message });
+    console.error('[AuthController.register]', error);
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -149,13 +152,13 @@ const me = async (req, res) => {
     const usuario = await Usuario.findByPk(req.user.id, {
         include: [{ model: Role, as: 'rol' }]
     });
-    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado.' });
+    if (!usuario) return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
     
     const roleName = usuario.rol ? usuario.rol.nombre : 'Usuario';
-    return res.json(safeUser(usuario, roleName));
+    return res.json({ success: true, data: safeUser(usuario, roleName) });
   } catch (error) {
-    console.error('[Auth] me:', error);
-    return res.status(500).json({ error: 'Error al obtener el perfil.' });
+    console.error('[AuthController.me]', error);
+    return res.status(500).json({ success: false, message: 'Error al obtener el perfil.' });
   }
 };
 

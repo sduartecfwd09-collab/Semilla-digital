@@ -145,8 +145,8 @@ const changePassword = async (id, currentPassword, newPassword) => {
   if (!currentPassword || !newPassword) {
     throw new Error('Se requiere la contraseña actual y la nueva');
   }
-  if (newPassword.length <= 6) {
-    throw new Error('La nueva contraseña debe tener más de 6 caracteres');
+  if (newPassword.length < 8) {
+    throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
   }
 
   const usuario = await Usuario.findByPk(id);

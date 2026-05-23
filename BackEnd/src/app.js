@@ -68,8 +68,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
 app.use(cookieParser());
 app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
@@ -122,8 +122,10 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       await sequelize.authenticate();
       console.log('✅ Conexión a MySQL establecida');
-      await sequelize.sync({ alter: false }); // usar alter:true solo para migraciones iniciales
-      console.log('✅ Modelos sincronizados con la base de datos');
+      if (process.env.NODE_ENV !== 'production') {
+        await sequelize.sync({ alter: false }); // usar alter:true solo para migraciones iniciales
+        console.log('✅ Modelos sincronizados con la base de datos');
+      }
       server.listen(PORT, () => {
         console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
         console.log('   Presiona Ctrl+C para detener\n');
