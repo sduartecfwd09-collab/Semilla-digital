@@ -1,26 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { deliveryService, DeliveryEarnings } from '../../../services/deliveryService';
 import { DollarSign, Calendar, TrendingUp, Award } from 'lucide-react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import ReactECharts from 'echarts-for-react';
 import './DriverEarnings.css';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const DriverEarnings: React.FC = () => {
   const [earnings, setEarnings] = useState<DeliveryEarnings | null>(null);
@@ -141,52 +123,40 @@ const DriverEarnings: React.FC = () => {
         <div className="chart-section" style={{ backgroundColor: 'var(--verde-oscuro)', padding: '20px', borderRadius: '12px', marginBottom: '30px', border: '1px solid var(--verde-borde)' }}>
           <h2 style={{ marginBottom: '20px', fontSize: '1.2rem' }}>Ganancias de los últimos 7 días</h2>
           <div style={{ height: '300px' }}>
-            <Bar
-              data={{
-                labels: earnings.weeklyChartData.map((d: any) => d.date),
-                datasets: [
-                  {
-                    label: 'Ganancias (₡)',
-                    data: earnings.weeklyChartData.map((d: any) => d.earnings),
-                    backgroundColor: '#36EB60',
-                    borderRadius: 4,
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: function(context) {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                          label += ': ';
-                        }
-                        if (context.parsed.y !== null) {
-                          label += new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(context.parsed.y);
-                        }
-                        return label;
-                      }
-                    }
+            <ReactECharts
+              option={{
+                tooltip: {
+                  trigger: 'axis',
+                  axisPointer: { type: 'shadow' },
+                  formatter: function(params: any) {
+                    let val = params[0].value;
+                    return params[0].name + '<br/>' + params[0].marker + 'Ganancias: ' + new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(val);
                   }
                 },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: { color: '#9ca3af' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                  },
-                  x: {
-                    ticks: { color: '#9ca3af' },
-                    grid: { display: false }
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true, show: false },
+                xAxis: {
+                  type: 'category',
+                  data: earnings.weeklyChartData.map((d: any) => d.date),
+                  axisTick: { alignWithLabel: true },
+                  axisLabel: { color: '#9ca3af' },
+                  axisLine: { show: false }
+                },
+                yAxis: {
+                  type: 'value',
+                  axisLabel: { color: '#9ca3af' },
+                  splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+                },
+                series: [
+                  {
+                    name: 'Ganancias',
+                    type: 'bar',
+                    barWidth: '60%',
+                    data: earnings.weeklyChartData.map((d: any) => d.earnings),
+                    itemStyle: { color: '#36EB60', borderRadius: [4, 4, 0, 0] }
                   }
-                }
+                ]
               }}
+              style={{ height: '100%', width: '100%' }}
             />
           </div>
         </div>
