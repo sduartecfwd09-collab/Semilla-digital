@@ -64,11 +64,10 @@ const AdminDashboard = () => {
                 console.warn('Error fetching contactos:', e);
             }
 
-<<<<<<< HEAD
             const agricultoresCount = users.filter((u: any) => (u.role ?? u.rol?.nombre) === 'Agricultor').length;
-=======
+
             const productoresCount = users.filter((u: any) => u.role === 'Productor').length;
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
+ 
 
             setStats({
                 users: users.length,

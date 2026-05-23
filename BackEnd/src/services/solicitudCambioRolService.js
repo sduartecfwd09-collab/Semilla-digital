@@ -1,10 +1,9 @@
-<<<<<<< HEAD
 // ============================================================
 // Service: SolicitudCambioRol
 // Descripción: Lógica de negocio para solicitudes de cambio
 //              de rol (flujo de aprobación admin)
 // ============================================================
-const { SolicitudCambioRol, Usuario, DeliveryDriver } = require('../models');
+const { SolicitudCambioRol, Usuario, DeliveryDriver, Role } = require('../models');
 const fs = require('fs');
 const path = require('path');
 
@@ -43,8 +42,7 @@ const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
     filePaths[docId] = `/storage/delivery-applications/${userId}/${vehicleType}/${filename}`;
   }
   return filePaths;
-=======
-const { SolicitudCambioRol, Usuario, Role } = require('../models');
+};
 
 const mapSolicitudParaFrontend = (s) => {
   if (!s) return null;
@@ -70,7 +68,6 @@ const mapSolicitudParaFrontend = (s) => {
       role: raw.usuario.role || (raw.usuario.rol ? raw.usuario.rol.nombre : 'Usuario')
     } : null
   };
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
 };
 
 const findAll = async (query = {}) => {
@@ -134,7 +131,6 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
-<<<<<<< HEAD
   if (data.rol_solicitado === 'DRIVER' && !data.selfie_verificacion_url) {
     throw new Error('La selfie de verificación es obligatoria');
   }
@@ -145,10 +141,7 @@ const create = async (data) => {
   }
   delete data.documentos_base64;
 
-  return await SolicitudCambioRol.create({
-=======
   const created = await SolicitudCambioRol.create({
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
     ...data,
     usuario_id,
     rol_solicitado,
@@ -182,6 +175,18 @@ const update = async (id, data) => {
   if (data.nombreDelPuesto !== undefined) updateData.nombre_del_puesto = data.nombreDelPuesto;
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
   if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
+
+  if (data.documentos_base64) {
+    const vType = data.vehicle_type || solicitud.vehicle_type;
+    const uId = data.usuario_id || solicitud.usuario_id;
+    if (vType && uId) {
+      const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
+      if (savedPaths) {
+        updateData.documentos_rutas = { ...(solicitud.documentos_rutas || {}), ...savedPaths };
+      }
+    }
+    delete updateData.documentos_base64;
+  }
 
   const updated = await solicitud.update(updateData);
   return mapSolicitudParaFrontend(updated);
@@ -247,26 +252,7 @@ const reject = async (id, data = {}) => {
   return mapSolicitudParaFrontend(rejected);
 };
 
-const update = async (id, data) => {
-  const solicitud = await SolicitudCambioRol.findByPk(id);
-  if (!solicitud) {
-    throw new Error('Solicitud no encontrada');
-  }
 
-  if (data.documentos_base64) {
-    const vType = data.vehicle_type || solicitud.vehicle_type;
-    const uId = data.usuario_id || solicitud.usuario_id;
-    if (vType && uId) {
-      const savedPaths = saveBase64Documents(uId, vType, data.documentos_base64);
-      if (savedPaths) {
-        data.documentos_rutas = { ...(solicitud.documentos_rutas || {}), ...savedPaths };
-      }
-    }
-  }
-  delete data.documentos_base64;
-
-  return await solicitud.update(data);
-};
 
 const remove = async (id) => {
   const solicitud = await SolicitudCambioRol.findByPk(id);
@@ -286,6 +272,5 @@ module.exports = {
   update,
   approve,
   reject,
-  update,
   remove,
 };

@@ -16,11 +16,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   const { addToCart } = useCart()
   const { user } = useAuth()
   const [addedIndex, setAddedIndex] = useState<number | null>(null)
-<<<<<<< HEAD
   const [deliveryToggle, setDeliveryToggle] = useState<Record<number, boolean>>({})
-=======
   const [quantities, setQuantities] = useState<Record<number, number>>({})
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
 
   // Si rows está vacío, evitamos Math.min(...[]) que retorna Infinity y rompe la UI.
   const priceList = product.rows.map(r => r.priceNumeric)
@@ -34,9 +31,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   }
 
   const handleAddToCart = (row: ComparisonRow, index: number) => {
-<<<<<<< HEAD
-    const hasDelivery = deliveryToggle[index]
-=======
     if (!user) {
       Swal.fire({
         icon: 'warning',
@@ -53,8 +47,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
       })
       return
     }
+    const hasDelivery = deliveryToggle[index]
     const qty = getQuantity(index)
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
     addToCart({
       id: `${product.name}-${row.feriaName}`,
       nombre: product.name,
@@ -116,12 +110,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                         </label>
                       </div>
                     </div>
-<<<<<<< HEAD
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span className="product-modal-price-value">₡{(row.priceNumeric + (isDeliveryOn ? 1500 : 0)).toLocaleString()}</span>
-=======
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                      <span className="product-modal-price-value">{row.price}</span>
+                      <span className="product-modal-price-value">₡{(row.priceNumeric + (isDeliveryOn ? 1500 : 0)).toLocaleString()}</span>
                       
                       {/* Selector de cantidad dependiente de la unidad de medida */}
                       <div className="product-modal-qty-selector">
@@ -144,8 +134,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                           {product.unit || 'ud'}
                         </span>
                       </div>
-
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6
                       <button
                         className={`product-modal-add-btn ${addedIndex === index ? 'added' : ''}`}
                         style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', minHeight: '56px' }}

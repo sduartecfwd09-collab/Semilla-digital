@@ -29,8 +29,7 @@ const AdminProductores = () => {
             setLoading(true)
             const [usersRaw, puestosRaw, allProductsRaw, allFeriasRaw] = await Promise.all([
                 api.getUsers(),
-<<<<<<< HEAD:FrontEnd/src/pages/Admin/AdminAgricultores/AdminAgricultores.tsx
-                api.request<any>('/puestosAgricultor'),
+                api.request<any>('/puestosProductor'),
                 api.request<any>('/productos'),
                 api.request<any>('/ferias')
             ]) as any[]
@@ -40,19 +39,9 @@ const AdminProductores = () => {
             const productsList = allProductsRaw.data ?? allProductsRaw ?? []
             const feriasList = allFeriasRaw.data ?? allFeriasRaw ?? []
 
-            // Solo mostrar agricultores aprobados (role === 'Agricultor')
-            const agros = usersList
-                .filter((u: User) => (u.role ?? (u as any).rol?.nombre) === 'Agricultor')
-=======
-                api.request<PuestoProductor[]>('/puestosProductor'),
-                api.request<any[]>('/productos'),
-                api.request<any[]>('/ferias')
-            ])
-
             // Solo mostrar productores aprobados (role === 'Productor')
-            const agros = users
-                .filter((u: User) => u.role === 'Productor')
->>>>>>> 23cae5ce1cac93a309b789a8f54cd0593a6c25f6:FrontEnd/src/pages/Admin/AdminProductores/AdminProductores.tsx
+            const agros = usersList
+                .filter((u: User) => (u.role ?? (u as any).rol?.nombre) === 'Productor')
                 .map((u: User) => {
                     const puesto = puestosList.find((p: any) => p.usuarioId === u.id)
                     const productos = productsList.filter((p: any) => String(p.userId) === String(u.id))
@@ -465,6 +454,7 @@ const AdminProductores = () => {
                                             type="text" 
                                             value={formData.name}
                                             onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            placeholder="Ej: Juan Pérez"
                                             required
                                         />
                                     </div>
@@ -473,7 +463,8 @@ const AdminProductores = () => {
                                         <input 
                                             type="email" 
                                             value={formData.email}
-                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            placeholder="ejemplo@correo.com"
                                             required
                                         />
                                     </div>
@@ -483,40 +474,47 @@ const AdminProductores = () => {
                             <div className="form-section">
                                 <h3>Información del Puesto</h3>
                                 <div className="form-grid">
-                                    <div className="form-field">
-                                        <label>Nombre del Puesto</label>
-                                        <input 
-                                            type="text" 
-                                            value={formData.nombrePuesto}
-                                            onChange={(e) => setFormData({...formData, nombrePuesto: e.target.value})}
-                                        />
-                                    </div>
-                                    <div className="form-field">
-                                        <label>Teléfono</label>
-                                        <input 
-                                            type="tel" 
-                                            value={formData.telefono}
-                                            onChange={(e) => setFormData({...formData, telefono: e.target.value.replace(/[^0-9]/g, '').slice(0, 8)})}
-                                            placeholder="88887777"
-                                        />
-                                    </div>
-                                    <div className="form-field full-width">
-                                        <label>Ubicación</label>
-                                        <input 
-                                            type="text" 
-                                            value={formData.ubicacion}
-                                            onChange={(e) => setFormData({...formData, ubicacion: e.target.value})}
-                                        />
-                                    </div>
-                                    <div className="form-field full-width">
-                                        <label>Horarios y Días</label>
-                                        <input 
-                                            type="text" 
-                                            value={formData.horarios}
-                                            onChange={(e) => setFormData({...formData, horarios: e.target.value})}
-                                            placeholder="Ej: Sábados de 5am a 2pm"
-                                        />
-                                    </div>
+                                        <div className="form-field">
+                                            <label>Nombre del Puesto</label>
+                                            <input 
+                                                type="text" 
+                                                value={formData.nombrePuesto}
+                                                onChange={(e) => setFormData({ ...formData, nombrePuesto: e.target.value })}
+                                                placeholder="Ej: Tienda Orgánica"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field">
+                                            <label>Teléfono</label>
+                                            <input 
+                                                type="tel" 
+                                                value={formData.telefono}
+                                                onChange={(e) => setFormData({ ...formData, telefono: e.target.value.replace(/[^0-9]/g, '').slice(0, 8) })}
+                                                placeholder="88887777"
+                                                pattern="[0-9]{8}"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field full-width">
+                                            <label>Ubicación</label>
+                                            <input 
+                                                type="text" 
+                                                value={formData.ubicacion}
+                                                onChange={(e) => setFormData({ ...formData, ubicacion: e.target.value })}
+                                                placeholder="Ej: San José, Costa Rica"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field full-width">
+                                            <label>Horarios y Días</label>
+                                            <input 
+                                                type="text" 
+                                                value={formData.horarios}
+                                                onChange={(e) => setFormData({ ...formData, horarios: e.target.value })}
+                                                placeholder="Ej: Sábados de 5am a 2pm"
+                                                required
+                                            />
+                                        </div>
                                 </div>
                             </div>
 

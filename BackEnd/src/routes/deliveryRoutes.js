@@ -2,7 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const deliveryController = require('../controllers/deliveryController');
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
+const { requireRole } = require('../middlewares/roleMiddleware');
 
 // ── DRIVERS
 router.get('/drivers', verifyToken, requireRole('Administrador'), deliveryController.getDrivers);
