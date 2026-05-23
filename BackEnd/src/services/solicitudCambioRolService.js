@@ -79,7 +79,7 @@ const findAll = async (query = {}) => {
 
   const list = await SolicitudCambioRol.findAll({
     where,
-    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
+    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'roleId'] }],
     order: [['fecha_solicitud', 'DESC']],
   });
   return list.map(mapSolicitudParaFrontend);
@@ -87,7 +87,7 @@ const findAll = async (query = {}) => {
 
 const findById = async (id) => {
   const item = await SolicitudCambioRol.findByPk(id, {
-    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
+    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'roleId'] }],
   });
   return mapSolicitudParaFrontend(item);
 };
@@ -103,7 +103,7 @@ const findByUsuario = async (usuarioId) => {
 const findPendientes = async () => {
   const list = await SolicitudCambioRol.findAll({
     where: { estado: 'Pendiente' },
-    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'role'] }],
+    include: [{ model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email', 'roleId'] }],
     order: [['fecha_solicitud', 'ASC']],
   });
   return list.map(mapSolicitudParaFrontend);

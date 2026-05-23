@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, Link as RouterLink } from 'react-router-dom'
 import { validateEmail, validatePassword } from '../../utils/validation'
 import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
@@ -312,6 +312,15 @@ const Auth: React.FC = () => {
                   Ingresar a AgroMap
                 </button>
               </form>
+
+              <p style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                <RouterLink
+                  to="/recuperar-password"
+                  style={{ color: 'var(--verde-claro)', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 600 }}
+                >
+                  ¿Olvidaste tu contraseña?
+                </RouterLink>
+              </p>
 
               <div className="auth-separator">
                 <span>o continuá con</span>

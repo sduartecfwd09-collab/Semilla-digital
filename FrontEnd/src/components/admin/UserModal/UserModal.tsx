@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../../services/api';
 import Swal from 'sweetalert2';
-import { useAuth } from '../../context/AuthContext';
 
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
 interface UserModalProps {
@@ -12,8 +11,6 @@ interface UserModalProps {
 }
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userToEdit }) => {
-    const { user } = useAuth();
-    const isFirstAdmin = user?.id === 'admin-main';
     const isEditing = !!userToEdit;
     const [formData, setFormData] = useState({
         name: '',
@@ -21,7 +18,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
         password: '',
         avatar: '',
         role: 'Usuario',
-        status: 'Active'
     });
     const [loading, setLoading] = useState(false);
 
@@ -30,14 +26,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
             // Importante: NO copiamos el campo password del usuario existente
             // (puede venir el hash desde el backend). Lo dejamos vacío para que
             // sólo se envíe si el admin lo escribe explícitamente.
+            // El rol viene del backend como `role` (mapeado desde rol.nombre)
+            // o como objeto `rol` si la respuesta no fue normalizada.
             const { password: _omit, ...rest } = userToEdit;
             setFormData({
                 name: rest.name || '',
                 email: rest.email || '',
                 password: '',
                 avatar: rest.avatar || '',
-                role: rest.role || 'Usuario',
-                status: rest.status || 'Activo',
+                role: rest.role || rest.rol?.nombre || 'Usuario',
             });
         } else {
             setFormData({
@@ -46,7 +43,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                 password: '',
                 avatar: '',
                 role: 'Usuario',
-                status: 'Activo'
             });
         }
     }, [userToEdit, isOpen]);
@@ -69,7 +65,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                 email: formData.email.trim(),
                 avatar: formData.avatar,
                 role: formData.role,
-                status: formData.status,
             };
             // En modo edición, solo enviamos password si el admin escribió uno nuevo.
             // De lo contrario el backend la dejaría vacía y borraría la actual.
@@ -157,21 +152,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
                                 <select
                                     value={formData.role}
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                    disabled={!isFirstAdmin}
                                 >
                                     <option value="Administrador">Administrador</option>
                                     <option value="Productor">Productor</option>
                                     <option value="Usuario">Usuario</option>
-                                </select>
-                            </div>
-                            <div className="form-field">
-                                <label>Estado</label>
-                                <select
-                                    value={formData.status}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                >
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
                                 </select>
                             </div>
                         </div>

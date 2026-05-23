@@ -20,25 +20,40 @@ const publicAttributes = { exclude: ['password'] };
 
 // ── CRUD ────────────────────────────────────────────────────
 
+// Mapea la instancia/POJO de Usuario para incluir `role` como string plano
+// derivado de la relación `rol` (la tabla guarda roleId). Esto es lo que
+// consume el frontend para mostrar y filtrar.
+const mapUsuario = (u) => {
+  if (!u) return null;
+  const raw = u.toJSON ? u.toJSON() : u;
+  return { ...raw, role: raw.rol ? raw.rol.nombre : null };
+};
+
 const findAll = async (query = {}) => {
   const page = parseInt(query.page) || 1;
   const limit = parseInt(query.limit) || 20;
   const offset = (page - 1) * limit;
 
-  return await Usuario.findAndCountAll({
+  const { rows, count } = await Usuario.findAndCountAll({
     limit,
     offset,
     attributes: publicAttributes,
     include: includeRelations,
     order: [['createdAt', 'DESC']],
   });
+  
+  return {
+    rows: rows.map(mapUsuario),
+    count,
+  };
 };
 
 const findById = async (id) => {
-  return await Usuario.findByPk(id, {
+  const u = await Usuario.findByPk(id, {
     attributes: publicAttributes,
     include: includeRelations,
   });
+  return mapUsuario(u);
 };
 
 const findByEmail = async (email) => {

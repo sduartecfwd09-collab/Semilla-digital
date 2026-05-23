@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { ENDPOINTS } from '../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import './ContactUs.css';
 
@@ -45,24 +45,21 @@ const ContactUs: React.FC = () => {
 
   const fetchMyMessages = async () => {
     try {
-      const res = await fetch(ENDPOINTS.contactMessages);
+      // Usuarios autenticados consultan `/mensajes/mios` (filtrado por el JWT
+      // del backend). Usuarios anónimos no tienen JWT y no hay buzón remoto;
+      // solo pueden ver lo que tengan guardado en localStorage como "míos".
+      if (!user) {
+        setMyMessages([]);
+        return;
+      }
+      const res = await authFetch(ENDPOINTS.contactMessagesMine);
+      if (!res.ok) {
+        setMyMessages([]);
+        return;
+      }
       const json = await res.json();
-      const allMessages = json.success ? json.data : json;
-      const data: ContactMessage[] = allMessages || [];
-      
-      // Obtener los IDs guardados localmente para usuarios no registrados
-      const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
-
-      const mine = data.filter((m) => {
-        if (user) {
-          // Si el usuario está logueado, solo ver los de su correo (ignorando mayúsculas)
-          return m.correo.toLowerCase() === user.email.toLowerCase();
-        } else {
-          // Si es anónimo, ver los de su dispositivo local
-          return m.id && savedIds.includes(m.id);
-        }
-      });
-      setMyMessages(mine.sort((a, b) => 
+      const data: ContactMessage[] = (json && json.success ? json.data : json) || [];
+      setMyMessages(data.sort((a, b) =>
         new Date(b.fechaEnvio).getTime() - new Date(a.fechaEnvio).getTime()
       ));
     } catch {
@@ -149,7 +146,7 @@ const ContactUs: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${ENDPOINTS.contactMessages}/${id}`, { method: 'DELETE' });
+        await authFetch(`${ENDPOINTS.contactMessages}/${id}`, { method: 'DELETE' });
         
         // Quitar de local storage
         const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]');
@@ -186,7 +183,7 @@ const ContactUs: React.FC = () => {
     try {
       if (editingMessageId) {
         // ACTUALIZAR MENSAJE
-        const res = await fetch(`${ENDPOINTS.contactMessages}/${editingMessageId}`, {
+        const res = await authFetch(`${ENDPOINTS.contactMessages}/${editingMessageId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombre, correo, telefono, mensaje })

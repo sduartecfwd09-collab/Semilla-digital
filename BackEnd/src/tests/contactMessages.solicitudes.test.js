@@ -182,7 +182,10 @@ describe('POST /solicitudes', () => {
   });
 });
 
-describe('PATCH /solicitudes/:id (aprobar/rechazar)', () => {
+// Los endpoints dedicados `/aprobar` y `/rechazar` son los únicos que pueden
+// cambiar el estado. El PATCH genérico /solicitudes/:id bloquea cambios de estado
+// para evitar auto-aprobación por usuarios no-admin.
+describe('PATCH /solicitudes/:id/aprobar', () => {
   beforeEach(() => jest.clearAllMocks());
 
   test('200 - admin aprueba solicitud y rol del usuario se actualiza', async () => {
@@ -190,9 +193,9 @@ describe('PATCH /solicitudes/:id (aprobar/rechazar)', () => {
     SolicitudCambioRol.findByPk.mockResolvedValue(sol);
 
     const res = await request(app)
-      .patch('/solicitudes/1')
+      .patch('/solicitudes/1/aprobar')
       .set(authH())
-      .send({ estado: 'Aprobada', motivoRespuesta: 'Cumple los requisitos.' });
+      .send({ motivoRespuesta: 'Cumple los requisitos.' });
 
     expect(res.status).toBe(200);
     expect(sol.update).toHaveBeenCalledWith(
@@ -200,24 +203,48 @@ describe('PATCH /solicitudes/:id (aprobar/rechazar)', () => {
     );
   });
 
+  test('404 - solicitud no encontrada', async () => {
+    SolicitudCambioRol.findByPk.mockResolvedValue(null);
+    const res = await request(app).patch('/solicitudes/999/aprobar').set(authH()).send({});
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('PATCH /solicitudes/:id/rechazar', () => {
+  beforeEach(() => jest.clearAllMocks());
+
   test('200 - admin rechaza solicitud', async () => {
     const sol = SolicitudCambioRol._mock({ id: 2 });
     SolicitudCambioRol.findByPk.mockResolvedValue(sol);
 
     const res = await request(app)
-      .patch('/solicitudes/2')
+      .patch('/solicitudes/2/rechazar')
       .set(authH())
-      .send({ estado: 'Rechazada', motivoRespuesta: 'Información incompleta.' });
+      .send({ motivoRespuesta: 'Información incompleta.' });
 
     expect(res.status).toBe(200);
     expect(sol.update).toHaveBeenCalledWith(
       expect.objectContaining({ estado: 'Rechazada' })
     );
   });
+});
 
-  test('404 - solicitud no encontrada', async () => {
-    SolicitudCambioRol.findByPk.mockResolvedValue(null);
-    const res = await request(app).patch('/solicitudes/999').set(authH()).send({});
-    expect(res.status).toBe(404);
+describe('PATCH /solicitudes/:id (update genérico no cambia estado)', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('200 - el `estado` enviado se ignora (defensa contra auto-aprobación)', async () => {
+    const sol = SolicitudCambioRol._mock({ id: 3, estado: 'Pendiente' });
+    SolicitudCambioRol.findByPk.mockResolvedValue(sol);
+
+    const res = await request(app)
+      .patch('/solicitudes/3')
+      .set(authH())
+      .send({ estado: 'Aprobada', nombreDelPuesto: 'Nuevo nombre' });
+
+    expect(res.status).toBe(200);
+    // El estado NO debe llegar a `update`; pero `nombre_del_puesto` sí.
+    const args = sol.update.mock.calls[0][0];
+    expect(args).not.toHaveProperty('estado');
+    expect(args).toHaveProperty('nombre_del_puesto', 'Nuevo nombre');
   });
 });

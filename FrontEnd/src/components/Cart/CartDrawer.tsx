@@ -64,10 +64,10 @@ const CartDrawer: React.FC = () => {
                     <div className="cart-item-name">{item.nombre}</div>
                     <div className="cart-item-feria">📍 {item.feriaNombre} · {item.provincia}</div>
                     <div className="cart-item-controls">
-                      <button className="cart-qty-btn" onClick={() => updateQuantity(item.id, item.cantidad - 1)}>−</button>
+                      <button className="cart-qty-btn" onClick={() => updateQuantity(item.id, item.feriaNombre, item.cantidad - 1)}>−</button>
                       <span className="cart-qty-value">{item.cantidad}</span>
-                      <button className="cart-qty-btn" onClick={() => updateQuantity(item.id, item.cantidad + 1)}>+</button>
-                      <button className="cart-item-remove" onClick={() => removeFromCart(item.id)}>🗑️</button>
+                      <button className="cart-qty-btn" onClick={() => updateQuantity(item.id, item.feriaNombre, item.cantidad + 1)}>+</button>
+                      <button className="cart-item-remove" onClick={() => removeFromCart(item.id, item.feriaNombre)}>🗑️</button>
                     </div>
                   </div>
                   <div>

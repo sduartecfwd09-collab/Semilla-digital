@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Feria } from "../types/feria.types";
 import { searchFeriasInGoogle } from "../services/googleMapsService";
 import { fetchFeriasFallback } from "../services/feriasFallbackService";
-import { ENDPOINTS } from "../services/api.config";
+import { ENDPOINTS, authFetch } from "../services/api.config";
 
 const PROVINCIAS_COSTA_RICA = [
   "San José",
@@ -86,43 +86,36 @@ export const useFerias = () => {
         if (cancelled) return;
         setAllFerias(uniqueMergedData);
 
-        // Sincronización: Registrar nuevas ferias en el backend.
-        // Guard: solo sincronizamos una vez por sesión para evitar duplicados al
-        // remontar el hook (StrictMode dispara los efectos dos veces, y cada
-        // navegación lo volvería a ejecutar).
-        const SYNC_FLAG = 'agromap_google_ferias_synced';
-        if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(SYNC_FLAG)) {
-          const newFerias = uniqueMergedData.filter(m =>
-            m.source === "google" &&
-            !fallbackResults.some(f =>
-              f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim()
-            )
-          );
+        // Sincronización: registramos en el backend cualquier feria de Google
+        // que no esté ya en el fallback. El endpoint POST /ferias es idempotente
+        // (findOrCreate por nombre) así que repetir la llamada no duplica, y
+        // cada feria se intenta de forma independiente (no rompemos el lote
+        // si una falla).
+        const newFerias = uniqueMergedData.filter(m =>
+          m.source === "google" &&
+          !fallbackResults.some(f =>
+            f.nombre.toLowerCase().trim() === m.nombre.toLowerCase().trim()
+          )
+        );
 
-          if (newFerias.length > 0) {
-            sessionStorage.setItem(SYNC_FLAG, '1');
-            // Fire-and-forget: no necesitamos esperarlo
-            (async () => {
-              for (const feria of newFerias) {
-                try {
-                  await fetch(ENDPOINTS.ferias, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      nombre: feria.nombre,
-                      provincia: feria.provincia,
-                      direccion: feria.direccion,
-                      dias: feria.dias,
-                      horario: feria.horario,
-                      source: 'google'
-                    }),
-                  });
-                } catch (syncErr) {
-                  console.error("Error al sincronizar feria:", syncErr);
-                }
-              }
-            })();
-          }
+        if (newFerias.length > 0) {
+          // Fire-and-forget: no bloquea la UI
+          (async () => {
+            await Promise.allSettled(newFerias.map(feria =>
+              authFetch(ENDPOINTS.ferias, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  nombre: feria.nombre,
+                  provincia: feria.provincia,
+                  direccion: feria.direccion,
+                  dias: feria.dias,
+                  horario: feria.horario,
+                  source: 'google'
+                }),
+              })
+            ));
+          })();
         }
       } catch (err) {
         if (cancelled) return;

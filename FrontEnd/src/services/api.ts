@@ -4,15 +4,18 @@ import { API_BASE_URL } from './api.config';
 const API_URL = API_BASE_URL;
 
 export const api = {
-    // Envoltorio genérico para peticiones fetch
+    // Envoltorio genérico para peticiones fetch.
+    // La autenticación viaja en la cookie httpOnly `agromap_token` que el navegador
+    // envía automáticamente cuando usamos `credentials: 'include'`.
     async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-        const token = localStorage.getItem('token');
         const headers = new Headers(options.headers);
 
         if (!headers.has('Content-Type')) {
             headers.set('Content-Type', 'application/json');
         }
 
+        // Bearer header como fallback si todavía hay token en localStorage
+        const token = localStorage.getItem('token');
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
@@ -20,6 +23,7 @@ export const api = {
         const response = await fetch(`${API_URL}${endpoint}`, {
             ...options,
             headers,
+            credentials: 'include',
         });
         if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
         const json = await response.json();

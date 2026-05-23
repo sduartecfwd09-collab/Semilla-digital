@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import CartDrawer from '../Cart/CartDrawer'
 import './Navbar.css'
-import { ENDPOINTS } from '../../services/api.config'
+import { ENDPOINTS, authFetch } from '../../services/api.config'
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
@@ -66,9 +66,11 @@ const Navbar: React.FC = () => {
       // 1. Solicitudes de cambio de rol (perfil)
       if (user) {
         try {
-          const res = await fetch(ENDPOINTS.solicitudesCambioRol)
-          const data = await res.json()
-          const myResponses = data.filter((s: any) => 
+          const res = await authFetch(ENDPOINTS.solicitudesCambioRol)
+          if (!res.ok) return
+          const json = await res.json()
+          const data = (json && json.success ? json.data : json) || []
+          const myResponses = data.filter((s: any) =>
             String(s.usuarioId) === String(user.id) && s.estado !== 'Pendiente'
           )
           if (myResponses.length > 0) {
@@ -90,14 +92,19 @@ const Navbar: React.FC = () => {
         }
       }
 
-      // 2. Mensajes de contacto
+      // 2. Mensajes de contacto (buzón personal): consultamos `/mensajes/mios`
+      //    que ya viene filtrado por el JWT del backend. Para usuarios anónimos
+      //    no hay buzón remoto, así que salimos.
+      if (!user) return
       try {
-        const res = await fetch(ENDPOINTS.contactMessages)
-        const data = await res.json()
+        const res = await authFetch(ENDPOINTS.contactMessagesMine)
+        if (!res.ok) return
+        const json = await res.json()
+        const data = (json && json.success ? json.data : json) || []
         const savedIds: string[] = JSON.parse(localStorage.getItem('agromap_my_messages') || '[]')
-        
+
         const myResponded = data.filter((m: any) => {
-          const matchedByEmail = user?.email && m.correo && 
+          const matchedByEmail = user?.email && m.correo &&
                                 m.correo.toLowerCase() === user.email.toLowerCase()
           const matchedByLocal = m.id && savedIds.includes(m.id)
           return (matchedByEmail || matchedByLocal) && m.estado === 'Respondido'

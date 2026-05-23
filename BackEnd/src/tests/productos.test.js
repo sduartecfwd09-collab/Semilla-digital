@@ -26,7 +26,14 @@ jest.mock('../models', () => {
   };
 
   return {
-    sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
+    sequelize: {
+      authenticate: jest.fn().mockResolvedValue(),
+      sync: jest.fn().mockResolvedValue(),
+      // Simula sequelize.transaction(cb) ejecutando el callback con un objeto
+      // de transacción dummy. Permite que productoService.create/update con
+      // transacciones funcionen contra los mocks sin BD real.
+      transaction: jest.fn().mockImplementation(async (cb) => cb({})),
+    },
     Producto: {
       findAll:  jest.fn(),
       findByPk: jest.fn(),

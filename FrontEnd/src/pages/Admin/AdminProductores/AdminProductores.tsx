@@ -29,9 +29,9 @@ const AdminProductores = () => {
             setLoading(true)
             const [usersRaw, puestosRaw, allProductsRaw, allFeriasRaw] = await Promise.all([
                 api.getUsers(),
-                api.request<any>('/puestos'),
-                api.request<any>('/productos'),
-                api.request<any>('/ferias')
+                api.request<PuestoProductor[]>('/puestos'),
+                api.request<any[]>('/productos'),
+                api.request<any[]>('/ferias')
             ]) as any[]
 
             const usersList = usersRaw.data ?? usersRaw ?? []

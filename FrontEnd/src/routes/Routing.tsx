@@ -11,6 +11,8 @@ import RecetasPage from '../pages/Recetas';
 import RegistroProductorPage from '../pages/RegistroProductor';
 import ContactUs from '../components/ContactUs/ContactUs';
 import ProformaPage from '../components/Proforma/ProformaPage';
+import RecuperarPassword from '../pages/RecuperarPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 // Páginas de Administración (Unidas desde el merge)
 import AdminDashboard from '../pages/Admin/AdminDashboard';
@@ -49,6 +51,8 @@ const Routing: React.FC = () => {
         <Route path="/comparar" element={<Comparar />} />
         <Route path="/auth" element={<LoginYRegistroPage />} />
         <Route path="/login" element={<Navigate to="/auth" replace />} /> {/* Aliasing login to auth */}
+        <Route path="/recuperar-password" element={<RecuperarPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/ferias" element={<FeriasPage />} />
         <Route path="/recetas" element={<RecetasPage />} />
         <Route path="/contacto" element={<ContactUs />} />

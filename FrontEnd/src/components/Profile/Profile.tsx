@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { validateEmail, validatePassword } from '../../utils/validation';
+import { validateEmail } from '../../utils/validation';
 import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -124,90 +124,6 @@ const Profile: React.FC = () => {
       setUserData(originalData);
     }
     setIsEditing(!isEditing);
-  };
-
-
-  const handleChangePassword = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: 'Cambiar contraseña',
-      html:
-        '<input id="swal-current" type="password" class="swal2-input" placeholder="Contraseña actual" autocomplete="current-password">' +
-        '<input id="swal-new" type="password" class="swal2-input" placeholder="Nueva contraseña" autocomplete="new-password">' +
-        '<input id="swal-confirm" type="password" class="swal2-input" placeholder="Confirmar nueva contraseña" autocomplete="new-password">',
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Cambiar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: 'var(--verde-claro)',
-      cancelButtonColor: '#718096',
-      preConfirm: () => {
-        const current = (document.getElementById('swal-current') as HTMLInputElement)?.value || '';
-        const next = (document.getElementById('swal-new') as HTMLInputElement)?.value || '';
-        const confirm = (document.getElementById('swal-confirm') as HTMLInputElement)?.value || '';
-
-        if (!current || !next || !confirm) {
-          Swal.showValidationMessage('Por favor completá los tres campos.');
-          return false;
-        }
-        const pwdCheck = validatePassword(next);
-        if (!pwdCheck.valid) {
-          Swal.showValidationMessage(pwdCheck.message || 'Contraseña inválida');
-          return false;
-        }
-        if (next !== confirm) {
-          Swal.showValidationMessage('La nueva contraseña y su confirmación no coinciden.');
-          return false;
-        }
-        if (next === current) {
-          Swal.showValidationMessage('La nueva contraseña debe ser distinta de la actual.');
-          return false;
-        }
-        return { current, next };
-      }
-    });
-
-    if (!formValues) return;
-
-    try {
-      const response = await authFetch(ENDPOINTS.cambiarPassword(userData.id), {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentPassword: formValues.current,
-          newPassword: formValues.next
-        })
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Contraseña actualizada',
-          text: 'Tu contraseña se cambió correctamente.',
-          confirmButtonColor: 'var(--verde-claro)',
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const message = response.status === 401
-          ? 'La contraseña actual no es correcta.'
-          : errorData.message || errorData.error || 'No se pudo cambiar la contraseña.';
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: message,
-          confirmButtonColor: 'var(--verde-claro)',
-        });
-      }
-    } catch (err) {
-      console.error('Error al cambiar contraseña:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error de servidor',
-        text: 'Hubo un problema al conectar con el servidor.',
-        confirmButtonColor: 'var(--verde-claro)',
-      });
-    }
   };
 
 
@@ -645,26 +561,6 @@ const Profile: React.FC = () => {
                     placeholder="tucorreo@ejemplo.com"
                     readOnly={!isEditing}
                   />
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label>Contraseña</label>
-                <div className="input-box disabled">
-                  <span className="input-icon">🔒</span>
-                  <input
-                    type="password"
-                    value="••••••••"
-                    readOnly
-                    aria-label="Contraseña oculta"
-                  />
-                  <button
-                    type="button"
-                    className="change-password-btn"
-                    onClick={handleChangePassword}
-                  >
-                    Cambiar contraseña
-                  </button>
                 </div>
               </div>
 

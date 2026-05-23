@@ -186,28 +186,8 @@ describe('GET /auth/me', () => {
     expect(res.body.id).toBe(1);
   });
 
-  test('401 - sin token', async () => {
-    const res = await request(app).get('/auth/me');
-    expect(res.status).toBe(401);
-  });
-
-  test('401 - token malformado', async () => {
-    const res = await request(app)
-      .get('/auth/me')
-      .set('Authorization', 'Bearer token_invalido_xxx');
-    expect(res.status).toBe(401);
-  });
-
-  test('401 - token expirado', async () => {
-    const expiredToken = jwt.sign(
-      { id: 1, role: 'Administrador' },
-      process.env.JWT_SECRET,
-      { expiresIn: '-1s' } // ya expiró
-    );
-    const res = await request(app)
-      .get('/auth/me')
-      .set('Authorization', `Bearer ${expiredToken}`);
-    expect(res.status).toBe(401);
-    expect(res.body.error).toMatch(/expirada/i);
-  });
+  // NOTA: los tests "401 sin token / token malformado / token expirado" están
+  // cubiertos en middleware.auth.test.js (que prueba el verifyToken real con
+  // jest.requireActual). Acá no podemos verificarlos porque setup.js mockea
+  // verifyToken con un stub permisivo para no estorbar los tests de controlador.
 });

@@ -125,19 +125,19 @@ const ProformaPage: React.FC = () => {
                   </div>
                 ) : (
                   items.map((item, i) => (
-                    <div className="proforma-item" key={`${item.id}-${i}`}>
+                    <div className="proforma-item" key={`${item.id}-${item.feriaNombre}-${i}`}>
                       <div className="proforma-item-emoji">{item.emoji}</div>
                       <div>
                         <div className="proforma-item-name">{item.nombre}</div>
                         <div className="proforma-item-feria">📍 {item.feriaNombre} · {item.provincia}</div>
                       </div>
                       <div className="proforma-item-qty">
-                        <button className="proforma-qty-btn" onClick={() => updateQuantity(item.id, item.cantidad - 1)}>−</button>
+                        <button className="proforma-qty-btn" onClick={() => updateQuantity(item.id, item.feriaNombre, item.cantidad - 1)}>−</button>
                         <span style={{ fontWeight: 800, minWidth: '1.5rem', textAlign: 'center' }}>{item.cantidad}</span>
-                        <button className="proforma-qty-btn" onClick={() => updateQuantity(item.id, item.cantidad + 1)}>+</button>
+                        <button className="proforma-qty-btn" onClick={() => updateQuantity(item.id, item.feriaNombre, item.cantidad + 1)}>+</button>
                       </div>
                       <div className="proforma-item-price">₡{(item.precio * item.cantidad).toLocaleString()}</div>
-                      <button className="proforma-item-remove" onClick={() => removeFromCart(item.id)}>🗑️</button>
+                      <button className="proforma-item-remove" onClick={() => removeFromCart(item.id, item.feriaNombre)}>🗑️</button>
                     </div>
                   ))
                 )}
