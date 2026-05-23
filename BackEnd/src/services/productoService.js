@@ -40,15 +40,21 @@ const findAll = async (query = {}) => {
     where.user_id = query.userId;
   }
 
-  const productos = await Producto.findAll({
+  const page = parseInt(query.page) || 1;
+  const limit = parseInt(query.limit) || 20;
+  const offset = (page - 1) * limit;
+
+  const list = await Producto.findAndCountAll({
     where,
+    limit,
+    offset,
     include: [
       { model: Usuario, as: 'usuario', attributes: ['id', 'name', 'nombre', 'email'] },
       { model: OfertaProducto, as: 'ofertas', include: [{ model: Feria, as: 'feria' }] }
     ],
     order: [['created_at', 'DESC']],
   });
-  return productos.map(mapProductoParaFrontend);
+  return { count: list.count, rows: list.rows.map(mapProductoParaFrontend) };
 };
 
 const findById = async (id) => {

@@ -20,8 +20,14 @@ const publicAttributes = { exclude: ['password'] };
 
 // ── CRUD ────────────────────────────────────────────────────
 
-const findAll = async () => {
-  return await Usuario.findAll({
+const findAll = async (query = {}) => {
+  const page = parseInt(query.page) || 1;
+  const limit = parseInt(query.limit) || 20;
+  const offset = (page - 1) * limit;
+
+  return await Usuario.findAndCountAll({
+    limit,
+    offset,
     attributes: publicAttributes,
     include: includeRelations,
     order: [['createdAt', 'DESC']],

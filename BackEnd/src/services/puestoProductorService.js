@@ -86,11 +86,17 @@ const includeAll = [
 ];
 
 const findAll = async (query = {}) => {
-  const list = await PuestoProductor.findAll({
+  const page = parseInt(query.page) || 1;
+  const limit = parseInt(query.limit) || 20;
+  const offset = (page - 1) * limit;
+
+  const list = await PuestoProductor.findAndCountAll({
+    limit,
+    offset,
     include: includeAll,
     order: [['fecha_registro', 'DESC']],
   });
-  return list.map(mapPuestoParaFrontend);
+  return { count: list.count, rows: list.rows.map(mapPuestoParaFrontend) };
 };
 
 const findById = async (id) => {

@@ -211,7 +211,7 @@ export const deleteFeria = async (id) => {
  */
 export const getPuestoByUserId = async (userId) => {
   try {
-    const res = await fetch(`${BASE_URL}/puestosProductor?usuarioId=${userId}`)
+    const res = await fetch(`${BASE_URL}/puestos?usuarioId=${userId}`)
     const posts = await handleResponse(res)
     // Devolvemos el último para que coincida con RegistroProductor (último registro ingresado/actualizado)
     return posts.length > 0 ? posts[posts.length - 1] : null
@@ -228,7 +228,7 @@ export const getPuestoByUserId = async (userId) => {
  * @returns {Promise<Object>} puesto actualizado
  */
 export const updatePuesto = async (id, puestoData) => {
-  const res = await fetch(`${BASE_URL}/puestosProductor/${id}`, {
+  const res = await fetch(`${BASE_URL}/puestos/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(puestoData),

@@ -108,58 +108,6 @@ const changeStatus = async (req, res) => {
 
 // ── AUTH ─────────────────────────────────────────────────────
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Email y contraseña son requeridos" });
-    }
-
-    // Delega la validación de credenciales al service
-    const usuario = await usuarioService.validatePassword(email, password);
-
-    // El rol vive en la relación `rol`, no como atributo plano del usuario
-    const roleName = usuario.rol?.nombre || null;
-
-    // Genera el token JWT
-    const token = jwt.sign(
-      { id: usuario.id, email: usuario.email, role: roleName },
-      JWT_SECRET,
-      { expiresIn: "8h" },
-    );
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        token,
-        usuario: {
-          id: usuario.id,
-          name: usuario.name,
-          nombre: usuario.nombre,
-          email: usuario.email,
-          role: roleName,
-          status: usuario.status,
-          avatar: usuario.avatar,
-        },
-      },
-    });
-  } catch (error) {
-    // Errores de credenciales inválidas (lanzados por el service)
-    if (
-      error.message.includes("Credenciales") ||
-      error.message.includes("no encontrad") ||
-      error.message.includes("inválid")
-    ) {
-      return res.status(401).json({ success: false, message: error.message });
-    }
-    return res
-      .status(500)
-      .json({ success: false, message: "Error interno del servidor" });
-  }
-};
 
 const register = async (req, res) => {
   try {
@@ -249,7 +197,7 @@ module.exports = {
   update,
   remove,
   changeStatus,
-  login,
+
   register,
   getProfile,
   changePassword,

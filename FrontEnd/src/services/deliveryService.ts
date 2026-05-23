@@ -190,11 +190,8 @@ export const deliveryService = {
     const res = await authFetch(`${ENDPOINTS.delivery}/orders/${orderId}/accept`, {
       method: 'POST'
     });
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Error al aceptar pedido');
-    }
-    const json = await res.json();
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.message || 'Error al aceptar pedido');
     return json.data;
   },
 

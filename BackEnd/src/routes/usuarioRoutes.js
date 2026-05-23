@@ -18,9 +18,7 @@ const ownerOrAdmin = (req, res, next) => {
 };
 
 // ── AUTH (público) ──────────────────────────────────────────
-// POST /api/usuarios/login    → Iniciar sesión
 // POST /api/usuarios/register → Registrarse
-router.post('/login', ctrl.login);
 router.post('/register', ctrl.register);
 
 // ── PERFIL (autenticado) ────────────────────────────────────

@@ -7,6 +7,7 @@ const morgan  = require('morgan');
 const cookieParser = require('cookie-parser');
 const routes  = require('./routes');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
 
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { sequelize } = require('./models');
@@ -14,6 +15,7 @@ const http = require('http');
 const socket = require('./socket');
 
 const app  = express();
+app.use(helmet());
 const PORT = process.env.PORT || 3002;
 const server = http.createServer(app);
 const io = socket.init(server);
