@@ -6,7 +6,8 @@ module.exports = {
   init: (httpServer) => {
     io = new Server(httpServer, {
       cors: {
-        origin: "*",
+        origin: (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',').map(o => o.trim()).filter(Boolean),
+        credentials: true,
         methods: ["GET", "POST"]
       }
     });

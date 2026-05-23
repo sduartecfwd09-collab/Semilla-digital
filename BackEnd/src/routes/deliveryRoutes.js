@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const dc = require('../controllers/deliveryController');
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { requireRole } = require('../middlewares/roleMiddleware');
 
 // ── SETTINGS (any authenticated user)
 router.get('/settings', dc.getSettings);

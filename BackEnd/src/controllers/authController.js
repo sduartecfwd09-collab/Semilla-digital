@@ -89,7 +89,7 @@ const login = async (req, res) => {
 // ── POST /auth/register ───────────────────────────────────────────────────────
 const register = async (req, res) => {
   try {
-    const { name, email, password, role, status, feriaId, puestoInfo } = req.body;
+    const { name, email, password, feriaId, puestoInfo } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Los campos name, email y password son obligatorios.' });
@@ -102,11 +102,11 @@ const register = async (req, res) => {
       return res.status(409).json({ error: 'Ya existe una cuenta registrada con este correo electrónico.' });
     }
 
-    // Buscar el ID del rol solicitado
-    const roleName = role || 'Usuario';
+    // Forzar el rol de Usuario por seguridad
+    const roleName = 'Usuario';
     const dbRole = await Role.findOne({ where: { nombre: roleName } });
     if (!dbRole) {
-      return res.status(400).json({ error: 'El rol especificado no es válido.' });
+      return res.status(500).json({ error: 'Rol por defecto no encontrado.' });
     }
 
     // Encriptar contraseña
@@ -117,7 +117,7 @@ const register = async (req, res) => {
       email:    email.toLowerCase().trim(),
       password: hashedPassword,
       roleId:   dbRole.id,
-      status:   status || 'Activo',
+      status:   'Activo',
       feriaId:  feriaId || null,
       puestoInfo: puestoInfo || null,
     });

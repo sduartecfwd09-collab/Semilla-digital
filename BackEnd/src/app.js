@@ -6,6 +6,7 @@ const cors    = require('cors');
 const morgan  = require('morgan');
 const cookieParser = require('cookie-parser');
 const routes  = require('./routes');
+const jwt = require('jsonwebtoken');
 
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { sequelize } = require('./models');
@@ -17,14 +18,27 @@ const PORT = process.env.PORT || 3002;
 const server = http.createServer(app);
 const io = socket.init(server);
 
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  if (!token) return next(new Error('Authentication required'));
+  try {
+    socket.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
+});
+
 io.on('connection', (client) => {
   console.log('🔗 Cliente conectado a WebSocket:', client.id);
   
   client.on('joinOrder', (orderId) => {
+    if (!client.user) return;
     client.join(`order_${orderId}`);
   });
   
   client.on('joinDriver', (driverId) => {
+    if (!client.user) return;
     client.join(`driver_${driverId}`);
   });
 
