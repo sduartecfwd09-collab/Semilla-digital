@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { ENDPOINTS } from '../../../services/api.config';
+import { ENDPOINTS, authFetch } from '../../../services/api.config';
 import './AdminContactos.css';
 
 interface ContactMessage {
@@ -30,9 +30,10 @@ const AdminContactos: React.FC = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const res = await fetch(ENDPOINTS.contactMessages);
-      const data: ContactMessage[] = await res.json();
-      setMessages(data.sort((a, b) => 
+      const res = await authFetch(ENDPOINTS.contactMessages);
+      const json = await res.json();
+      const data: ContactMessage[] = (json && json.success ? json.data : json) || [];
+      setMessages(data.sort((a, b) =>
         new Date(b.fechaEnvio).getTime() - new Date(a.fechaEnvio).getTime()
       ));
     } catch (error) {
@@ -57,7 +58,7 @@ const AdminContactos: React.FC = () => {
     }
 
     try {
-      const res = await fetch(`${ENDPOINTS.contactMessages}/${messageId}`, {
+      const res = await authFetch(`${ENDPOINTS.contactMessages}/${messageId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -105,7 +106,7 @@ const AdminContactos: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${ENDPOINTS.contactMessages}/${messageId}`, { method: 'DELETE' });
+        await authFetch(`${ENDPOINTS.contactMessages}/${messageId}`, { method: 'DELETE' });
         setMessages(messages.filter(m => m.id !== messageId));
         Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1500, showConfirmButton: false });
       } catch {

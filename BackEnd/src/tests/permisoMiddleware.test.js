@@ -83,7 +83,7 @@ describe('Middleware: permisoMiddleware (requirePermiso)', () => {
   });
 
   test('Debería permitir acceso si se requiere AL MENOS UNO de varios permisos y tiene uno', async () => {
-    mockReq.user.roleId = 2; // ID de agricultor
+    mockReq.user.roleId = 2; // ID de productor
     
     // Simulamos que el primer permiso no lo tiene, pero el segundo sí
     permisoService.tienePermiso

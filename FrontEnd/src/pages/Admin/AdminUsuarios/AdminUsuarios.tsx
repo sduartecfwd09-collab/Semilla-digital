@@ -109,7 +109,6 @@ const AdminUsuarios = () => {
                             <tr>
                                 <th>Usuario</th>
                                 <th>Rol</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -132,11 +131,6 @@ const AdminUsuarios = () => {
                                          </div>
                                      </td>
                                     <td>{user.role}</td>
-                                    <td>
-                                        <span className={`status-badge ${user.status === 'Activo' ? 'status-active' : 'status-inactive'}`}>
-                                            {user.status}
-                                        </span>
-                                    </td>
                                     <td>
                                          <div className="action-buttons">
                                              <button

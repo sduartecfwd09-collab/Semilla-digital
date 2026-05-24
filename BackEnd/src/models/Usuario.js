@@ -91,9 +91,9 @@ module.exports = (sequelize) => {
       onDelete: 'CASCADE',
     });
 
-    Usuario.hasOne(models.PuestoAgricultor, {
+    Usuario.hasOne(models.PuestoProductor, {
       foreignKey: 'usuario_id',
-      as: 'puestoAgricultor',
+      as: 'puestoProductor',
       onDelete: 'CASCADE',
     });
 

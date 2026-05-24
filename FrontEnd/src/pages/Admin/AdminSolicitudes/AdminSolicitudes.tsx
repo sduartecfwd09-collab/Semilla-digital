@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { ENDPOINTS, authFetch } from '../../../services/api.config';
+import { escapeHtml } from '../../../utils/escapeHtml';
 import '../AdminUsuarios/AdminUsuarios.css'; // Reutilizamos estilos
+
+// Helper: desempaqueta respuestas del backend que vienen como { success, data }
+const unwrap = async (res: Response): Promise<any> => {
+  const json = await res.json();
+  return json && json.success && json.data !== undefined ? json.data : json;
+};
 
 interface Solicitud {
   id: string;
@@ -36,8 +43,8 @@ const AdminSolicitudes: React.FC = () => {
         authFetch(ENDPOINTS.usuarios)
       ]);
       
-      const solData: Solicitud[] = await solRes.json();
-      const userData: Usuario[] = await userRes.json();
+      const solData: Solicitud[] = (await unwrap(solRes)) || [];
+      const userData: Usuario[] = (await unwrap(userRes)) || [];
       
       // Mapear usuarios por ID y por Correo para búsquedas flexibles
       const userMap: Record<string, Usuario> = {};
@@ -90,7 +97,7 @@ const AdminSolicitudes: React.FC = () => {
     // 2. Confirmación final antes de enviar
     const confirm = await Swal.fire({
       title: '¿Confirmar decisión?',
-      html: `Vas a marcar esta solicitud como <strong>${nuevoEstado}</strong>.<br/><br/><strong>Mensaje adjunto:</strong><br/>"${motivo}"`,
+      html: `Vas a marcar esta solicitud como <strong>${escapeHtml(nuevoEstado)}</strong>.<br/><br/><strong>Mensaje adjunto:</strong><br/>"${escapeHtml(motivo)}"`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -102,24 +109,22 @@ const AdminSolicitudes: React.FC = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      // 1. Actualizar la solicitud con estado, motivo y fecha de respuesta
-      await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}`, {
+      // 1. Llamar al endpoint dedicado de admin (aprobar/rechazar). El PATCH
+      //    genérico /solicitudes/:id bloquea cambios de estado por seguridad.
+      const accion = nuevoEstado === 'Aprobada' ? 'aprobar' : 'rechazar';
+      await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${solicitud.id}/${accion}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estado: nuevoEstado,
-          motivoRespuesta: motivo,
-          fechaRespuesta: new Date().toISOString()
-        })
+        body: JSON.stringify({ motivoRespuesta: motivo })
       });
 
       // 2. Si es aprobada, asignar la feria automáticamente al usuario desde su puesto
       if (nuevoEstado === 'Aprobada' && solicitud.usuarioId) {
         try {
-          const puestosRes = await authFetch(ENDPOINTS.puestosAgricultor);
-          const puestos = await puestosRes.json();
+          const puestosRes = await authFetch(ENDPOINTS.puestosProductor);
+          const puestos = (await unwrap(puestosRes)) || [];
           const miPuesto = puestos.find((p: any) => String(p.usuarioId) === String(solicitud.usuarioId));
-          
+
           if (miPuesto && miPuesto.feriaId) {
             await authFetch(`${ENDPOINTS.usuarios}/${solicitud.usuarioId}`, {
               method: 'PATCH',
@@ -131,7 +136,7 @@ const AdminSolicitudes: React.FC = () => {
           console.error("Error al asignar feria automáticamente:", e);
         }
       }
-      Swal.fire('¡Listo!', `Solicitud ${nuevoEstado.toLowerCase()} correctamente${nuevoEstado === 'Aprobada' ? '. El usuario podrá activar su rol de Agricultor desde su perfil.' : '.'}`, 'success');
+      Swal.fire('¡Listo!', `Solicitud ${nuevoEstado.toLowerCase()} correctamente${nuevoEstado === 'Aprobada' ? '. El usuario podrá activar su rol de Productor desde su perfil.' : '.'}`, 'success');
       fetchDatos();
     } catch (error) {
       console.error('Error updating solicitud:', error);
@@ -147,8 +152,8 @@ const AdminSolicitudes: React.FC = () => {
           Swal.showLoading();
         }
       });
-      const res = await authFetch(`${ENDPOINTS.puestosAgricultor}`);
-      const puestos = await res.json();
+      const res = await authFetch(`${ENDPOINTS.puestosProductor}`);
+      const puestos = (await unwrap(res)) || [];
       const puestoUsuario = puestos.filter((p: any) => String(p.usuarioId) === String(solicitud.usuarioId)).pop();
 
       if (!puestoUsuario) {
@@ -156,25 +161,35 @@ const AdminSolicitudes: React.FC = () => {
         return;
       }
 
+      const safe = (v: unknown) => escapeHtml(v ?? 'N/A');
+      const ubicacionTxt = Array.isArray(puestoUsuario.ubicacion)
+        ? puestoUsuario.ubicacion.join(', ')
+        : (puestoUsuario.ubicacion || 'N/A');
+      const tiposTxt = Array.isArray(puestoUsuario.tiposProducto)
+        ? puestoUsuario.tiposProducto.join(', ')
+        : 'N/A';
+
       Swal.fire({
         title: `Detalles de la Solicitud`,
         html: `
           <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
-            <p><strong>Nombre del Puesto:</strong> ${puestoUsuario.nombrePuesto || 'N/A'}</p>
-            <p><strong>Ferias de interés:</strong> ${Array.isArray(puestoUsuario.ubicacion) ? puestoUsuario.ubicacion.join(', ') : (puestoUsuario.ubicacion || 'N/A')}</p>
-            <p><strong>Descripción:</strong> ${puestoUsuario.descripcion || 'N/A'}</p>
-            <p><strong>Tipos de Producto:</strong> ${Array.isArray(puestoUsuario.tiposProducto) ? puestoUsuario.tiposProducto.join(', ') : 'N/A'}</p>
+            <p><strong>Nombre del Puesto:</strong> ${safe(puestoUsuario.nombrePuesto)}</p>
+            <p><strong>Ferias de interés:</strong> ${escapeHtml(ubicacionTxt)}</p>
+            <p><strong>Descripción:</strong> ${safe(puestoUsuario.descripcion)}</p>
+            <p><strong>Tipos de Producto:</strong> ${escapeHtml(tiposTxt)}</p>
             <hr style="opacity: 0.3; margin: 10px 0;">
-            <p><strong>Teléfono:</strong> ${puestoUsuario.telefono || 'N/A'}</p>
-            <p><strong>Email de contacto:</strong> ${puestoUsuario.email || 'N/A'}</p>
-            <p><strong>Horarios propuestos:</strong> ${puestoUsuario.horarios || 'N/A'}</p>
-            <p><strong>Métodos de Cultivo:</strong> ${puestoUsuario.metodosCultivo || 'N/A'}</p>
-            <p><strong>Redes Sociales:</strong> ${puestoUsuario.redesSociales || 'N/A'}</p>
+            <p><strong>Teléfono:</strong> ${safe(puestoUsuario.telefono)}</p>
+            <p><strong>Email de contacto:</strong> ${safe(puestoUsuario.email)}</p>
+            <p><strong>Horarios propuestos:</strong> ${safe(puestoUsuario.horarios)}</p>
+            <p><strong>Métodos de Cultivo:</strong> ${safe(puestoUsuario.metodosCultivo)}</p>
+            <p><strong>Redes Sociales:</strong> ${safe(puestoUsuario.redesSociales)}</p>
             <hr style="opacity: 0.3; margin: 10px 0;">
             ${puestoUsuario.fotosBase64 && puestoUsuario.fotosBase64.length > 0
-              ? `<p><strong>Fotos Adjuntas:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64.map((b64: string) => `<img src="${b64}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" />`).join('')}</div>`
-              : (puestoUsuario.fotosNombres && puestoUsuario.fotosNombres.length > 0 
-                  ? `<p><strong>Fotos adjuntas:</strong> ${puestoUsuario.fotosNombres.length} foto(s)</p>` 
+              ? `<p><strong>Fotos Adjuntas:</strong></p><div style="display:flex; gap:10px; overflow-x:auto; padding-bottom: 5px;">${puestoUsuario.fotosBase64
+                  .filter((b64: string) => typeof b64 === 'string' && b64.startsWith('data:image/'))
+                  .map((b64: string) => `<img src="${escapeHtml(b64)}" style="max-height: 120px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" />`).join('')}</div>`
+              : (puestoUsuario.fotosNombres && puestoUsuario.fotosNombres.length > 0
+                  ? `<p><strong>Fotos adjuntas:</strong> ${puestoUsuario.fotosNombres.length} foto(s)</p>`
                   : '')}
           </div>
         `,
@@ -191,7 +206,7 @@ const AdminSolicitudes: React.FC = () => {
   return (
     <div className="users-container">
       <header className="users-header">
-        <h1>Solicitudes de Agricultor</h1>
+        <h1>Solicitudes de Productor</h1>
       </header>
 
       <div className="table-wrapper">

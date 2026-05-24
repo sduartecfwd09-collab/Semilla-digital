@@ -20,11 +20,30 @@ const AdminFerias = () => {
         fetchFairs()
     }, [])
 
+    const mapFair = (f: any): Fair => {
+        const rawProv = f.direccion?.provincia?.nombre || f.provincia || f.province || "Otras";
+        let province = rawProv;
+        if (!rawProv || rawProv === 'Otras') {
+            const nombreFeria = f.nombre || f.name || '';
+            const PROVINCIAS_CR = ["San José", "Alajuela", "Cartago", "Heredia", "Guanacaste", "Puntarenas", "Limón"];
+            const match = PROVINCIAS_CR.find(p => nombreFeria.toLowerCase().includes(p.toLowerCase()));
+            if (match) province = match;
+        }
+        return {
+            id: String(f.id),
+            name: f.nombre || f.name || "Feria sin nombre",
+            province,
+            location: f.direccion?.distrito?.nombre || f.direccion || f.location || "Ubicación no especificada",
+            schedule: f.horario || f.schedule || "Horario no disponible"
+        };
+    };
+
     const fetchFairs = async () => {
         try {
             setLoading(true)
             const data: any = await api.request('/ferias')
-            setFairs(data)
+            const mapped = (data || []).map(mapFair);
+            setFairs(mapped)
         } catch (error) {
             console.error('Error fetching fairs:', error)
             Swal.fire('Error', 'Error al cargar las ferias.', 'error')
@@ -77,13 +96,13 @@ const AdminFerias = () => {
                     method: 'PUT',
                     body: JSON.stringify(formData)
                 })
-                setFairs(fairs.map(f => f.id === selectedFeria.id ? updated : f))
+                setFairs(fairs.map(f => f.id === selectedFeria.id ? mapFair(updated) : f))
             } else {
                 const created: any = await api.request('/ferias', {
                     method: 'POST',
                     body: JSON.stringify(formData)
                 })
-                setFairs([...fairs, created])
+                setFairs([...fairs, mapFair(created)])
             }
             closeModal()
             Swal.fire('Éxito', `Feria ${isEditing ? 'actualizada' : 'creada'} correctamente.`, 'success')

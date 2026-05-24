@@ -1,4 +1,4 @@
-export interface User {
+﻿export interface User {
   id: string;
   name: string;
   email: string;
@@ -43,7 +43,7 @@ export interface Recipe {
   time: string;
 }
 
-export interface PuestoAgricultor {
+export interface PuestoProductor {
   id: string;
   usuarioId: string;
   nombrePuesto: string;

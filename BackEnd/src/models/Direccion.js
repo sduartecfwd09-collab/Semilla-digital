@@ -91,9 +91,9 @@ module.exports = (sequelize) => {
       as: 'feria',
     });
 
-    Direccion.hasOne(models.PuestoAgricultor, {
+    Direccion.hasOne(models.PuestoProductor, {
       foreignKey: 'direccion_id',
-      as: 'puestoAgricultor',
+      as: 'puestoProductor',
     });
 
     Direccion.hasMany(models.Proforma, {

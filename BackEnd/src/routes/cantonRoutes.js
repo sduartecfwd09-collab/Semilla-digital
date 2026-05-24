@@ -1,18 +1,16 @@
 const router = require('express').Router();
 const ctrl = require('../controllers/cantonController');
+const { verifyToken } = require('../middlewares/authMiddleware');
+const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-// GET  /api/cantones                        → Listar todos
-// GET  /api/cantones/:id                    → Obtener por ID
-// GET  /api/cantones/provincia/:provinciaId → Filtrar por provincia
-// POST /api/cantones                        → Crear
-// PUT  /api/cantones/:id                    → Actualizar
-// DEL  /api/cantones/:id                    → Eliminar
-
+// ── PÚBLICAS ────────────────────────────────────────────────
 router.get('/', ctrl.getAll);
 router.get('/provincia/:provinciaId', ctrl.getByProvincia);
 router.get('/:id', ctrl.getById);
-router.post('/', ctrl.create);
-router.put('/:id', ctrl.update);
-router.delete('/:id', ctrl.remove);
+
+// ── PROTEGIDAS (solo Administrador) ─────────────────────────
+router.post('/',    verifyToken, authorizeRoles('Administrador'), ctrl.create);
+router.put('/:id',  verifyToken, authorizeRoles('Administrador'), ctrl.update);
+router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;

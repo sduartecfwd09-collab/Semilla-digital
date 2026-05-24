@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { ENDPOINTS } from '../../services/api.config'
+import { ENDPOINTS, API_BASE_URL } from '../../services/api.config'
 
 interface User {
   id: string
@@ -67,16 +67,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(ENDPOINTS.authLogin, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // necesario para que el navegador acepte la cookie httpOnly
         body: JSON.stringify({ email: targetEmail, password: targetPassword })
       });
 
       if (!response.ok) return { success: false }
-      
+
       const authData = await response.json()
-      
-      if (authData.token && authData.user) {
+
+      if (authData.user) {
         const authenticatedUser = authData.user;
-        // Guardar en estado y localStorage (sin password por seguridad)
+        // Guardamos solo info no sensible del usuario en localStorage para
+        // poder hidratar la UI al recargar la app. El token NUNCA se guarda
+        // aquí — vive solo en la cookie httpOnly que el backend seteó.
         const userToStore: User = {
           id: String(authenticatedUser.id),
           email: authenticatedUser.email,
@@ -90,7 +93,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         setUser(userToStore)
         localStorage.setItem('user', JSON.stringify(userToStore))
-        localStorage.setItem('token', authData.token)
         return { success: true, role: authenticatedUser.role }
       }
       return { success: false }
@@ -112,6 +114,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('user')
+    // Invalidamos la cookie httpOnly llamando al backend. No esperamos el resultado
+    // (fire-and-forget) porque la UI ya está fuera de sesión y un fallo de red no
+    // debe bloquearla. Tampoco necesitamos token para esto: el endpoint solo borra
+    // la cookie con res.clearCookie.
+    fetch(`${API_BASE_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => { /* silently ignore */ })
+
+    // Limpiezas por compatibilidad con flujos viejos
+    localStorage.removeItem('token')
+    localStorage.removeItem('agromap_password_temp')
   }
 
   const value = {

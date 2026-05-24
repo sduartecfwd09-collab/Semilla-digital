@@ -149,7 +149,7 @@ const AdminRecetas = () => {
                                 <p>{recipe.description}</p>
                                 <div className="recipe-ingredients">
                                     {recipe.ingredients && recipe.ingredients.map((ing: string, i: number) => (
-                                        <span className="ingredient-tag" key={i}>{ing}</span>
+                                        <span className="ingredient-tag" key={`${ing}-${i}`}>{ing}</span>
                                     ))}
                                 </div>
                                 <div className="recipe-card-actions">

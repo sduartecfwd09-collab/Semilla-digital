@@ -11,14 +11,14 @@ const HeroSection: React.FC = () => {
 
       {/* Left column – text */}
       <div>
-        <div className="hero-tag">🌿 Ferias del Agricultor · Costa Rica</div>
+        <div className="hero-tag">🌿 Ferias del Productor · Costa Rica</div>
         <h1 className="hero-title">
           Compará precios,{' '}
           <em>comprá mejor.</em>
         </h1>
         <p className="hero-description">
           Consultá y compará los precios de frutas, verduras y más en las diferentes
-          ferias del agricultor de tu región antes de salir de casa.
+          ferias del productor de tu región antes de salir de casa.
         </p>
         <div className="hero-buttons">
           <Link to="/comparar" className="hero-btn-primary">

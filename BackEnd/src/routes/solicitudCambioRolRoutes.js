@@ -14,9 +14,11 @@ router.patch('/:id/aprobar', verifyToken, authorizeRoles('Administrador'), ctrl.
 router.patch('/:id/rechazar', verifyToken, authorizeRoles('Administrador'), ctrl.reject);
 
 // ── USUARIO AUTENTICADO ─────────────────────────────────────
-// GET  /api/solicitudes/usuario/:usuarioId → Mis solicitudes
-// POST /api/solicitudes                    → Crear solicitud
+// GET   /api/solicitudes/usuario/:usuarioId → Mis solicitudes
+// POST  /api/solicitudes                    → Crear solicitud
+// PATCH /api/solicitudes/:id                → Actualizar solicitud (modo edición)
 router.get('/usuario/:usuarioId', verifyToken, ctrl.getByUsuario);
 router.post('/', verifyToken, ctrl.create);
+router.patch('/:id', verifyToken, ctrl.update);
 
 module.exports = router;

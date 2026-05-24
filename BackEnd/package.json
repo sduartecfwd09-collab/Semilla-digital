@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "seed": "node src/seeders/seed.js",
+    "seed": "npx sequelize-cli db:seed:all",
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "test:coverage": "jest --runInBand --forceExit --detectOpenHandles --coverage"
   },
@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.7",
+    "nodemailer": "^8.0.7",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
