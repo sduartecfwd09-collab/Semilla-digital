@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../../services/api'
+import { ENDPOINTS, authFormFetch } from '../../../services/api.config'
 import Swal from 'sweetalert2'
 import './AdminRecetas.css'
 import { Recipe } from '../../../types'
@@ -19,13 +20,15 @@ const AdminRecetas = () => {
         difficulty: 'Fácil',
         time: ''
     })
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [removeImage, setRemoveImage] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
 
-    // Cargar recetas al montar el componente
     useEffect(() => {
         fetchRecipes()
     }, [])
 
-    // Obtener todas las recetas de la API
     const fetchRecipes = async () => {
         try {
             setLoading(true)
@@ -38,7 +41,6 @@ const AdminRecetas = () => {
         }
     }
 
-    // Preparar el modal para editar una receta existente
     const handleEditClick = (recipe: Recipe) => {
         setSelectedRecipe(recipe)
         setFormData({
@@ -47,11 +49,13 @@ const AdminRecetas = () => {
             steps: recipe.steps ? recipe.steps.join('\n') : '',
             ingredients: recipe.ingredients ? recipe.ingredients.join(', ') : ''
         })
+        setImageFile(null)
+        setImagePreview(recipe.image_url || null)
+        setRemoveImage(false)
         setIsEditing(true)
         setShowModal(true)
     }
 
-    // Mostrar confirmación para eliminar una receta
     const handleDeleteClick = async (recipe: any) => {
         const result = await Swal.fire({
             title: '¿Eliminar Receta?',
@@ -63,7 +67,7 @@ const AdminRecetas = () => {
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         })
-        
+
         if (result.isConfirmed) {
             try {
                 await api.request(`/recetas/${recipe.id}`, { method: 'DELETE' })
@@ -76,53 +80,86 @@ const AdminRecetas = () => {
         }
     }
 
-    // Procesar el envío del formulario (crear o editar)
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        if (!file.type.startsWith('image/')) {
+            Swal.fire('Imagen inválida', 'Seleccioná un archivo de imagen.', 'warning')
+            return
+        }
+        if (file.size > 3 * 1024 * 1024) {
+            Swal.fire('Imagen muy grande', 'El archivo no puede superar 3MB.', 'warning')
+            return
+        }
+        setImageFile(file)
+        setRemoveImage(false)
+        const reader = new FileReader()
+        reader.onload = (ev) => setImagePreview((ev.target?.result as string) || null)
+        reader.readAsDataURL(file)
+    }
+
+    const handleRemoveCurrentImage = () => {
+        setImageFile(null)
+        setImagePreview(null)
+        setRemoveImage(true)
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Validación: No permitir campos vacíos o que solo contengan espacios
         if (!formData.title.trim() || !formData.description.trim() || !formData.ingredients.trim() || !formData.steps.trim() || !formData.time.trim()) {
             Swal.fire('Información Faltante', 'Todos los campos son obligatorios. Por favor, evita dejar vacíos.', 'warning')
             return
         }
 
-        const recipeData = {
-            ...formData,
-            title: formData.title.trim(),
-            description: formData.description.trim(),
-            time: `${formData.time.trim()} min`, // Siempre guardar con ' min'
-            ingredients: formData.ingredients.split(',').map(i => i.trim()).filter(i => i !== ''),
-            steps: formData.steps.split('\n').map(s => s.trim()).filter(s => s !== '')
-        }
+        const ingredients = formData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
+        const steps = formData.steps.split('\n').map(s => s.trim()).filter(Boolean)
+
+        const fd = new FormData()
+        fd.append('title', formData.title.trim())
+        fd.append('description', formData.description.trim())
+        fd.append('difficulty', formData.difficulty)
+        fd.append('time', `${formData.time.trim()} min`)
+        fd.append('ingredients', JSON.stringify(ingredients))
+        fd.append('steps', JSON.stringify(steps))
+        if (imageFile) fd.append('image', imageFile)
+        if (removeImage && isEditing) fd.append('remove_image', 'true')
 
         try {
+            setSubmitting(true)
+            const url = isEditing && selectedRecipe
+                ? `${ENDPOINTS.recetas}/${selectedRecipe.id}`
+                : ENDPOINTS.recetas
+            const method = isEditing ? 'PUT' : 'POST'
+            const res = await authFormFetch(url, { method, body: fd })
+            const json = await res.json()
+            if (!res.ok || json?.success === false) {
+                throw new Error(json?.message || `Error HTTP ${res.status}`)
+            }
+            const saved = json?.success && json.data !== undefined ? json.data : json
             if (isEditing && selectedRecipe) {
-                const updated = await api.request<any>(`/recetas/${selectedRecipe.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify(recipeData)
-                })
-                setRecipes(recipes.map(r => r.id === selectedRecipe.id ? updated : r))
+                setRecipes(recipes.map(r => (r.id === selectedRecipe.id ? saved : r)))
             } else {
-                const created = await api.request<any>('/recetas', {
-                    method: 'POST',
-                    body: JSON.stringify(recipeData)
-                })
-                setRecipes([...recipes, created])
+                setRecipes([...recipes, saved])
             }
             closeModal()
             Swal.fire('Éxito', `Receta ${isEditing ? 'actualizada' : 'creada'} correctamente.`, 'success')
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            Swal.fire('Error', 'Hubo un error al guardar la receta', 'error')
+            Swal.fire('Error', error?.message || 'Hubo un error al guardar la receta', 'error')
+        } finally {
+            setSubmitting(false)
         }
     }
 
-    // Cerrar el modal y resetear el formulario
     const closeModal = () => {
         setShowModal(false)
         setIsEditing(false)
         setSelectedRecipe(null)
         setFormData({ title: '', description: '', ingredients: '', steps: '', difficulty: 'Fácil', time: '' })
+        setImageFile(null)
+        setImagePreview(null)
+        setRemoveImage(false)
     }
 
     return (
@@ -140,6 +177,13 @@ const AdminRecetas = () => {
                 <div className="recipes-grid">
                     {recipes.map(recipe => (
                         <div className="recipe-card" key={recipe.id}>
+                            {recipe.image_url && (
+                                <img
+                                    src={recipe.image_url}
+                                    alt={recipe.title}
+                                    style={{ width: '100%', height: '160px', objectFit: 'cover', borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }}
+                                />
+                            )}
                             <div className="recipe-card-content">
                                 <div className="recipe-meta">
                                     <span>⏱️ {recipe.time}</span>
@@ -198,6 +242,31 @@ const AdminRecetas = () => {
                                             required
                                         />
                                     </div>
+                                    <div className="form-field full-width">
+                                        <label>Imagen (máx. 3MB, JPG/PNG/WebP)</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            style={{ padding: '0.5rem 0' }}
+                                        />
+                                        {imagePreview && (
+                                            <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="preview"
+                                                    style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemoveCurrentImage}
+                                                    style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '0.4rem 0.85rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
+                                                >
+                                                    Quitar imagen
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -235,7 +304,7 @@ const AdminRecetas = () => {
                                             style={{ borderRadius: '10px', padding: '0.85rem 1rem', border: '1px solid #e5e7eb', background: '#f9fafb', appearance: 'none' }}
                                         >
                                             <option value="Fácil">Fácil</option>
-                                            <option value="Media">Media</option>
+                                            <option value="Medio">Medio</option>
                                             <option value="Difícil">Difícil</option>
                                         </select>
                                     </div>
@@ -254,9 +323,9 @@ const AdminRecetas = () => {
                             </div>
 
                             <div className="modal-actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                                <button type="button" className="btn-cancel" onClick={closeModal}>Cancelar</button>
-                                <button type="submit" className="btn-save">
-                                    {isEditing ? 'Guardar Cambios' : 'Crear Receta'}
+                                <button type="button" className="btn-cancel" onClick={closeModal} disabled={submitting}>Cancelar</button>
+                                <button type="submit" className="btn-save" disabled={submitting}>
+                                    {submitting ? 'Guardando...' : (isEditing ? 'Guardar Cambios' : 'Crear Receta')}
                                 </button>
                             </div>
                         </form>

@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Camera, User as UserIcon, Mail, ShoppingCart, Bell, Moon, LogOut, ArrowRight } from 'lucide-react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import { validateEmail } from '../../utils/validation';
 import { ENDPOINTS, authFetch } from '../../services/api.config';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
+import { usePreferences } from '../context/PreferencesContext';
 import './Profile.css';
-
-// Iconos SVG para el ojo (mostrar/ocultar contraseña)
-
-
-
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const { user, updateUserInContext } = useAuth();
+  const { user, updateUserInContext, logout } = useAuth();
   const { proformas } = useCart();
+  const { theme, toggleTheme } = useTheme();
+  const { notifications, toggleNotifications } = usePreferences();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
@@ -29,20 +29,13 @@ const Profile: React.FC = () => {
     status: '',
     avatar: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [productorRequest, setProductorRequest] = useState<any>(null);
   const [driverRequest, setDriverRequest] = useState<any>(null);
-  const [hasPendingRequest, setHasPendingRequest] = useState(false);
-  const [requestStatus, setRequestStatus] = useState<string | null>(null);
-  const [requestMotivo, setRequestMotivo] = useState<string>('');
-  const [requestId, setRequestId] = useState<string>('');
-  const [originalData, setOriginalData] = useState({...userData});
+  const [originalData, setOriginalData] = useState({ ...userData });
 
   useEffect(() => {
     let cancelled = false;
 
-    // Si no hay usuario y ya terminó de cargar el context, vamos a auth
     if (!user) {
       const stored = localStorage.getItem('user');
       if (!stored) {
@@ -70,7 +63,7 @@ const Profile: React.FC = () => {
           avatar: data.avatar || user?.avatar || ''
         };
         setUserData(userInfo);
-        setOriginalData({...userInfo});
+        setOriginalData({ ...userInfo });
 
         return authFetch(ENDPOINTS.solicitudesCambioRol);
       })
@@ -93,7 +86,6 @@ const Profile: React.FC = () => {
             else if (pendiente) activeRequest = pendiente;
             else if (rechazada) activeRequest = rechazada;
             setProductorRequest(activeRequest);
-            setHasPendingRequest(true);
           }
 
           const drRequests = userRequests.filter((r: any) => r.rol_solicitado === 'DRIVER' || r.rolSolicitado === 'DRIVER')
@@ -113,11 +105,7 @@ const Profile: React.FC = () => {
     return () => { cancelled = true; };
   }, [user, navigate]);
 
-  // ── Polling de estado de la solicitud Productor ──────────────────
-  // Mientras la solicitud esté "Pendiente", consulta cada 5s para
-  // detectar la decisión automática de la IA y refrescar la UI sin
-  // necesidad de recargar la página. Se detiene cuando cambia el estado
-  // o cuando el componente se desmonta.
+  // Polling de estado para solicitud Productor (preservado del original)
   useEffect(() => {
     if (!productorRequest || productorRequest.estado !== 'Pendiente') return;
     const currentId = user?.id || JSON.parse(localStorage.getItem('user') || '{}').id;
@@ -136,7 +124,6 @@ const Profile: React.FC = () => {
 
         setProductorRequest(mine);
 
-        // Si fue aprobada, refrescar info del usuario (su rol cambió a Productor)
         if (mine.estado === 'Aprobada') {
           try {
             const userRes = await authFetch(`${ENDPOINTS.usuarios}/${currentId}`);
@@ -173,12 +160,10 @@ const Profile: React.FC = () => {
 
   const handleEditToggle = () => {
     if (isEditing) {
-      // Si cancelamos, restauramos los datos originales
       setUserData(originalData);
     }
     setIsEditing(!isEditing);
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,7 +176,7 @@ const Profile: React.FC = () => {
         icon: 'warning',
         title: 'Campos incompletos',
         text: 'Por favor, completá tu nombre y correo.',
-        confirmButtonColor: 'var(--verde-claro)',
+        confirmButtonColor: '#52b788',
       });
       return;
     }
@@ -202,7 +187,7 @@ const Profile: React.FC = () => {
         icon: 'error',
         title: 'Correo inválido',
         text: emailValidation.message,
-        confirmButtonColor: 'var(--verde-claro)',
+        confirmButtonColor: '#52b788',
       });
       return;
     }
@@ -212,7 +197,6 @@ const Profile: React.FC = () => {
       const fullUserJson = await fullUserResponse.json();
       const fullUserData = fullUserJson.success ? fullUserJson.data : fullUserJson;
 
-      // Eliminamos password del payload: el cambio de contraseña usa su propio endpoint
       const { password: _omitPassword, ...safeUserData } = fullUserData || {};
       const updatedData: any = {
         ...safeUserData,
@@ -235,12 +219,12 @@ const Profile: React.FC = () => {
         setOriginalData(newOriginalData);
         setUserData(newOriginalData);
         setIsEditing(false);
-        
+
         Swal.fire({
           icon: 'success',
           title: 'Perfil actualizado',
           text: 'Tu información ha sido guardada correctamente.',
-          confirmButtonColor: 'var(--verde-claro)',
+          confirmButtonColor: '#52b788',
           timer: 2000,
           showConfirmButton: false
         });
@@ -252,7 +236,7 @@ const Profile: React.FC = () => {
             icon: 'error',
             title: 'Correo en uso',
             text: 'Este correo electrónico ya está registrado por otro usuario.',
-            confirmButtonColor: 'var(--verde-claro)',
+            confirmButtonColor: '#52b788',
           });
         } else {
           throw new Error(errorMessage);
@@ -263,7 +247,7 @@ const Profile: React.FC = () => {
         icon: 'error',
         title: 'Error',
         text: err.message || 'Hubo un problema al actualizar tu perfil.',
-        confirmButtonColor: 'var(--verde-claro)',
+        confirmButtonColor: '#52b788',
       });
     }
   };
@@ -272,13 +256,10 @@ const Profile: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validar tipo de archivo
     if (!file.type.startsWith('image/')) {
       Swal.fire('Error', 'Por favor selecciona una imagen válida.', 'error');
       return;
     }
-
-    // Validar tamaño (máximo 2MB para db.json)
     if (file.size > 2 * 1024 * 1024) {
       Swal.fire('Error', 'La imagen es demasiado grande. Máximo 2MB.', 'error');
       return;
@@ -287,13 +268,10 @@ const Profile: React.FC = () => {
     const reader = new FileReader();
     reader.onload = async (event) => {
       const base64Image = event.target?.result as string;
-      
       try {
-        // Actualizamos localmente y en contexto global
         setUserData(prev => ({ ...prev, avatar: base64Image }));
         updateUserInContext({ avatar: base64Image });
-        
-        // Guardamos en el servidor
+
         await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -315,70 +293,13 @@ const Profile: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleRoleRequest = async () => {
-    try {
-      const result = await Swal.fire({
-        title: '¿Solicitar perfil de Productor?',
-        text: 'Tu solicitud será enviada al administrador para su aprobación.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: 'var(--verde-claro)',
-        cancelButtonColor: '#718096',
-        confirmButtonText: 'Sí, enviar solicitud',
-        cancelButtonText: 'Cancelar'
-      });
-
-      if (result.isConfirmed) {
-        const newRequest = {
-          usuarioId: userData.id,
-          nombreUsuario: userData.name,
-          correoUsuario: userData.email,
-          rolSolicitado: 'Productor',
-          estado: 'Pendiente',
-          motivoRespuesta: '',
-          fechaSolicitud: new Date().toISOString()
-        };
-
-        const response = await authFetch(ENDPOINTS.solicitudesCambioRol, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newRequest)
-        });
-
-        if (response.ok) {
-          const resJson = await response.json();
-          const createdSolicitud = resJson.success ? resJson.data : resJson;
-          setHasPendingRequest(true);
-          setRequestStatus('Pendiente');
-          setRequestId(createdSolicitud.id || '');
-          
-          Swal.fire({
-            icon: 'success',
-            title: 'Solicitud enviada',
-            text: 'Tu petición de cambio de rol ha sido registrada y será revisada por un administrador.',
-            confirmButtonColor: 'var(--verde-claro)',
-          });
-        } else {
-          throw new Error('Error al enviar la solicitud');
-        }
-      }
-    } catch {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo procesar la solicitud en este momento.',
-        confirmButtonColor: 'var(--verde-claro)',
-      });
-    }
-  };
-
   const handleCancelarSolicitud = async () => {
     const reqId = productorRequest?.id;
     if (!reqId) return;
 
     const { isConfirmed } = await Swal.fire({
       title: '¿Estás seguro?',
-      text: "Se cancelará esta solicitud para ser Productor y tendrás que volver a enviarla si cambiás de opinión.",
+      text: 'Se cancelará esta solicitud para ser Productor y tendrás que volver a enviarla si cambiás de opinión.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -389,27 +310,22 @@ const Profile: React.FC = () => {
 
     if (isConfirmed) {
       try {
-        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, {
-          method: 'DELETE',
-        });
+        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, { method: 'DELETE' });
 
-        // Borrar la información del puesto asociado (puestosProductor)
         const puestosRes = await authFetch(ENDPOINTS.puestosProductor);
         const puestosJson = await puestosRes.json();
         const todosPuestos = puestosJson.success ? puestosJson.data : puestosJson;
         const misPuestos = (todosPuestos || []).filter((p: any) => String(p.usuarioId) === String(userData.id));
-        
-        await Promise.all(misPuestos.map((p: any) => 
+        await Promise.all(misPuestos.map((p: any) =>
           authFetch(`${ENDPOINTS.puestosProductor}/${p.id}`, { method: 'DELETE' })
         ));
-        
+
         setProductorRequest(null);
-        
         Swal.fire({
           icon: 'success',
           title: 'Solicitud cancelada',
           text: 'Tu solicitud y toda la información asociada han sido borradas correctamente.',
-          confirmButtonColor: 'var(--verde-claro)',
+          confirmButtonColor: '#52b788',
         });
       } catch (error) {
         console.error('Error al cancelar solicitud:', error);
@@ -424,7 +340,7 @@ const Profile: React.FC = () => {
 
     const { isConfirmed } = await Swal.fire({
       title: '¿Estás seguro?',
-      text: "Se cancelará esta solicitud para ser Repartidor.",
+      text: 'Se cancelará esta solicitud para ser Repartidor.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -435,15 +351,13 @@ const Profile: React.FC = () => {
 
     if (isConfirmed) {
       try {
-        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, {
-          method: 'DELETE',
-        });
+        await authFetch(`${ENDPOINTS.solicitudesCambioRol}/${reqId}`, { method: 'DELETE' });
         setDriverRequest(null);
         Swal.fire({
           icon: 'success',
           title: 'Solicitud cancelada',
           text: 'Tu solicitud de repartidor ha sido cancelada correctamente.',
-          confirmButtonColor: 'var(--verde-claro)',
+          confirmButtonColor: '#52b788',
         });
       } catch (error) {
         console.error('Error al cancelar solicitud de repartidor:', error);
@@ -460,26 +374,26 @@ const Profile: React.FC = () => {
         authFetch(ENDPOINTS.puestosProductor),
         authFetch(ENDPOINTS.ferias)
       ]);
-      
+
       const currentFullUserJson = await userRes.json();
       const allPuestosJson = await puestosRes.json();
       const allFeriasJson = await feriasRes.json();
-      
+
       const currentFullUser = currentFullUserJson.success ? currentFullUserJson.data : currentFullUserJson;
       const allPuestos = allPuestosJson.success ? allPuestosJson.data : allPuestosJson;
       const allFerias = allFeriasJson.success ? allFeriasJson.data : allFeriasJson;
-      
+
       const miPuesto = allPuestos.filter((p: any) => String(p.usuarioId) === String(userData.id)).pop();
       const feriasSolicitadas = miPuesto?.ubicacion || [];
       const feriaAsignada = allFerias.find((f: any) => String(f.id) === String(currentFullUser.feriaId));
-      
+
       let mensajeFeria = '';
       if (feriaAsignada) {
         const feriaName = feriaAsignada.name || feriaAsignada.nombre || '';
-        const fueSolicitada = Array.isArray(feriasSolicitadas) 
+        const fueSolicitada = Array.isArray(feriasSolicitadas)
           ? feriasSolicitadas.includes(feriaName)
           : feriasSolicitadas === feriaName;
-          
+
         if (feriaName) {
           if (fueSolicitada) {
             mensajeFeria = `\n\nTu solicitud para vender en la feria de ${feriaName} ha sido aceptada.`;
@@ -504,7 +418,7 @@ const Profile: React.FC = () => {
         icon: 'success',
         title: '¡Felicidades!',
         text: `Bienvenido a tu nuevo perfil de Productor en AgroMap.${mensajeFeria}`,
-        confirmButtonColor: 'var(--verde-claro)',
+        confirmButtonColor: '#52b788',
       }).then(() => {
         navigate('/productor');
       });
@@ -532,7 +446,7 @@ const Profile: React.FC = () => {
         icon: 'success',
         title: '¡Felicidades!',
         text: 'Bienvenido a tu nuevo perfil de Repartidor en AgroMap.',
-        confirmButtonColor: 'var(--verde-claro)',
+        confirmButtonColor: '#52b788',
       }).then(() => {
         window.location.href = '/driver';
       });
@@ -543,322 +457,323 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleLogoutFromProfile = async () => {
+    const result = await Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro de que deseas salir de tu cuenta?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#52b788',
+      cancelButtonColor: '#718096',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    });
+    if (result.isConfirmed) {
+      navigate('/');
+      Promise.resolve().then(() => logout());
+    }
+  };
+
+  const handleShowAllProformas = () => {
+    if (proformas.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Sin compras aún',
+        text: 'Cuando generes presupuestos aparecerán acá.',
+        confirmButtonColor: '#52b788',
+      });
+      return;
+    }
+    const html = proformas.map((p) => `
+      <div style="text-align:left;border:1px solid #e1e8fd;border-radius:12px;padding:12px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;color:#424843;margin-bottom:6px;">
+          <strong style="color:#0d2818;">${p.id}</strong><span>${p.fecha}</span>
+        </div>
+        <ul style="margin:0 0 6px 0;padding-left:18px;color:#424843;font-size:0.9rem;">
+          ${p.items.map(i => `<li>${i.emoji || ''} ${i.nombre} (x${i.cantidad}) - ₡${(i.precio * i.cantidad).toLocaleString()}</li>`).join('')}
+        </ul>
+        <div style="text-align:right;font-weight:700;color:#0d2818;">Total: ₡${p.total.toLocaleString()}</div>
+      </div>
+    `).join('');
+    Swal.fire({
+      title: 'Mi Historial de Compras',
+      html: `<div style="max-height:55vh;overflow-y:auto;padding:0 4px;">${html}</div>`,
+      width: '640px',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#52b788',
+    });
+  };
+
+  // ID legible derivado del id real
+  const displayId = userData.id ? `#AM-${String(userData.id).padStart(4, '0')}` : '';
+  const statusLabel = (userData.status || 'Activo').toUpperCase();
+  const statusClass = (userData.status || 'Activo').toLowerCase();
+  const isUsuarioRole = userData.role && userData.role.toLowerCase() === 'usuario';
+  const canRequestDriver = !userData.role || (userData.role.toLowerCase() !== 'driver' && userData.role.toLowerCase() !== 'administrador');
 
   if (loading) {
     return (
-      <div className="profile-page-loading">
+      <div className="pn-profile-loading">
         <p>Cargando perfil...</p>
       </div>
     );
   }
 
   return (
-    <div className="profile-page">
+    <div className="pn-profile-page">
       <Navbar />
-      
-      <main className="profile-container">
-        <div className="profile-card animate-fade">
-          <div className="profile-header">
-            <div className="profile-avatar-container">
-              <div className="profile-avatar">
-                {userData.avatar ? (
-                  <img src={userData.avatar} alt="Avatar" className="avatar-img" />
-                ) : (
-                  (userData.name || userData.nombre || 'U').charAt(0).toUpperCase()
-                )}
-              </div>
-              <label htmlFor="avatar-upload" className="avatar-upload-label" title="Cambiar foto">
-                <span className="camera-icon">📷</span>
-                <input 
-                  type="file" 
-                  id="avatar-upload" 
-                  accept="image/*" 
-                  onChange={handleAvatarChange} 
-                  style={{ display: 'none' }} 
-                />
-              </label>
-            </div>
-            <label htmlFor="avatar-upload" className="change-photo-text">
-               Cambiar foto
-            </label>
-            <h1>Mi Perfil</h1>
-            <p className="profile-status">Estado: <span className={userData.status?.toLowerCase() || 'activo'}>{userData.status || 'Activo'}</span></p>
-          </div>
 
-          <form onSubmit={handleSubmit} className="profile-form">
-            <div className="profile-grid">
-              <div className="input-group">
-                <label>Nombre completo</label>
-                <div className={`input-box ${!isEditing ? 'disabled' : ''}`}>
-                  <span className="input-icon">👤</span>
-                  <input 
-                    type="text" 
-                    name="name"
-                    value={userData.name}
-                    onChange={handleChange}
-                    placeholder="Tu nombre"
-                    readOnly={!isEditing}
-                  />
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label>Correo electrónico</label>
-                <div className={`input-box ${!isEditing ? 'disabled' : ''}`}>
-                  <span className="input-icon">✉️</span>
-                  <input 
-                    type="email" 
-                    name="email"
-                    value={userData.email}
-                    onChange={handleChange}
-                    placeholder="tucorreo@ejemplo.com"
-                    readOnly={!isEditing}
-                  />
-                </div>
-              </div>
-
-            </div>
-
-            <div className="profile-actions">
-              {!isEditing ? (
-                <>
-                  <button type="button" className="edit-btn" onClick={handleEditToggle}>
-                    Editar perfil
-                  </button>
-                  <button type="button" className="cancel-btn" onClick={() => navigate('/')}>
-                    Volver al inicio
-                  </button>
-                </>
+      <main className="pn-profile-container">
+        {/* Header centrado con avatar */}
+        <div className="pn-profile-header">
+          <div className="pn-profile-avatar-ring">
+            <div className="pn-profile-avatar">
+              {userData.avatar ? (
+                <img src={userData.avatar} alt="Avatar" />
               ) : (
-                <>
-                  <button 
-                    type="submit" 
-                    className="save-btn" 
-                    disabled={JSON.stringify(userData) === JSON.stringify(originalData)}
-                    style={JSON.stringify(userData) === JSON.stringify(originalData) ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-                  >
-                    Guardar cambios
-                  </button>
-                  <button type="button" className="cancel-btn" onClick={handleEditToggle}>
-                    Cancelar
-                  </button>
-                </>
+                <span>{(userData.name || userData.nombre || 'U').charAt(0).toUpperCase()}</span>
               )}
             </div>
-          </form>
+            <label htmlFor="pn-avatar-upload" className="pn-profile-camera" title="Cambiar foto" aria-label="Cambiar foto">
+              <Camera size={16} strokeWidth={2.2} />
+              <input
+                type="file"
+                id="pn-avatar-upload"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                style={{ display: 'none' }}
+              />
+            </label>
+          </div>
+          <h1 className="pn-profile-title">Mi Perfil</h1>
+        </div>
 
-          {/* Historial de Compras */}
-          <div className="profile-purchase-history">
-            <div className="separator"></div>
-            <h3>🛒 Mi Historial de Compras</h3>
-            {proformas.length === 0 ? (
-              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '10px' }}>Aún no tienes compras o presupuestos generados.</p>
-            ) : (
-              <div className="purchase-list">
-                {proformas.map((p) => (
-                  <div className="purchase-item" key={p.id}>
-                    <div className="purchase-header">
-                      <span className="purchase-id">{p.id}</span>
-                      <span className="purchase-date">{p.fecha}</span>
-                    </div>
-                    <div className="purchase-body">
-                      <ul className="purchase-items-list">
-                        {p.items.map((item, i) => (
-                          <li key={`${item.id || item.nombre}-${i}`}>
-                            {item.emoji} {item.nombre} (x{item.cantidad}) - ₡{(item.precio * item.cantidad).toLocaleString()}
-                          </li>
-                        ))}
-                      </ul>
-                      {p.delivery && (
-                        <div className="purchase-delivery">
-                          🚚 Envío a: {p.delivery.direccion} ({p.delivery.provincia}) - ₡{p.delivery.costoEnvio.toLocaleString()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="purchase-footer">
-                      <strong>Total:</strong> <span>₡{p.total.toLocaleString()}</span>
+        {/* Layout 2 columnas */}
+        <div className="pn-profile-grid">
+          {/* Main */}
+          <div className="pn-profile-main">
+            {/* Datos personales */}
+            <section className="pn-profile-card">
+              <header className="pn-profile-card-header">
+                <UserIcon size={18} strokeWidth={2.2} />
+                <h2>Datos Personales</h2>
+                {!isEditing ? (
+                  <button type="button" className="pn-link-btn" onClick={handleEditToggle}>Editar</button>
+                ) : (
+                  <button type="button" className="pn-link-btn" onClick={handleEditToggle}>Cancelar</button>
+                )}
+              </header>
+
+              <form onSubmit={handleSubmit} className="pn-profile-form">
+                <div className="pn-profile-form-grid">
+                  <div className="pn-input-group">
+                    <label>Nombre completo</label>
+                    <div className={`pn-input-box ${!isEditing ? 'disabled' : ''}`}>
+                      <UserIcon size={16} strokeWidth={2} className="pn-input-icon" />
+                      <input
+                        type="text"
+                        name="name"
+                        value={userData.name}
+                        onChange={handleChange}
+                        placeholder="Tu nombre"
+                        readOnly={!isEditing}
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+
+                  <div className="pn-input-group">
+                    <label>Correo electrónico</label>
+                    <div className={`pn-input-box ${!isEditing ? 'disabled' : ''}`}>
+                      <Mail size={16} strokeWidth={2} className="pn-input-icon" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={userData.email}
+                        onChange={handleChange}
+                        placeholder="tucorreo@ejemplo.com"
+                        readOnly={!isEditing}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="pn-btn-primary"
+                  disabled={!isEditing || JSON.stringify(userData) === JSON.stringify(originalData)}
+                >
+                  Guardar cambios
+                </button>
+              </form>
+            </section>
+
+            {/* Historial de compras */}
+            <section className="pn-profile-card">
+              <header className="pn-profile-card-header">
+                <ShoppingCart size={18} strokeWidth={2.2} />
+                <h2>Mi Historial de Compras</h2>
+                <button type="button" className="pn-link-btn" onClick={handleShowAllProformas}>
+                  Ver todo
+                </button>
+              </header>
+
+              {proformas.length === 0 ? (
+                <div className="pn-empty-state">
+                  <ShoppingCart size={36} strokeWidth={1.6} />
+                  <p>Aún no tienes compras o presupuestos generados.</p>
+                  <button type="button" className="pn-link-btn" onClick={() => navigate('/ferias')}>
+                    Explorar ferias cercanas
+                  </button>
+                </div>
+              ) : (
+                <ul className="pn-history-list">
+                  {proformas.slice(0, 3).map((p) => (
+                    <li key={p.id} className="pn-history-item">
+                      <div className="pn-history-head">
+                        <strong>{p.id}</strong>
+                        <span>{p.fecha}</span>
+                      </div>
+                      <div className="pn-history-total">Total: <strong>₡{p.total.toLocaleString()}</strong></div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
           </div>
 
-          {/* Solicitud para ser Productor - Solo se muestra si el usuario es cliente ('Usuario') */}
-          {(userData.role && userData.role.toLowerCase() === 'usuario') && (
-            <div className="role-request-section">
-              <div className="separator"></div>
-              <div className="role-request-content">
-                <h3>Solicitud para ser Productor</h3>
-                
-                {productorRequest && (productorRequest.estado === 'Pendiente') && (
-                  <>
-                    <p>Tu solicitud está siendo revisada por un administrador. Podés actualizar la información de tu puesto si lo necesitás.</p>
-                    <div className="request-status-badge pending">
-                      <span>⏳ Solicitud pendiente de aprobación</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '15px' }}>
-                      <button 
-                        type="button" 
-                        className="role-request-btn"
-                        onClick={() => navigate('/registro-productor')}
-                        style={{ flex: 1 }}
-                      >
-                        Editar solicitud
-                      </button>
-                      <button 
-                        type="button" 
-                        className="role-request-btn"
-                        style={{ flex: 1, backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}
-                        onClick={handleCancelarSolicitud}
-                      >
-                        Cancelar solicitud
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                {productorRequest && (productorRequest.estado === 'Aprobada') && (
-                  <>
-                    <p><strong>¡Felicidades!</strong> Tu solicitud ha sido aprobada por el administrador.</p>
-                    {productorRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{productorRequest.motivo_respuesta}"</p>}
-                    <div className="request-status-badge approved" style={{backgroundColor: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
-                      <span>✅ Aprobada</span>
-                    </div>
-                    <button 
-                      type="button" 
-                      className="save-btn"
-                      onClick={handleConvertirseEnProductor}
-                      style={{width: '100%', maxWidth: '300px', margin: '0 auto', display: 'block'}}
-                    >
-                      Convertirse en productor
-                    </button>
-                  </>
-                )}
-
-                {productorRequest && (productorRequest.estado === 'Rechazada') && (
-                  <>
-                    <p>Tu solicitud ha sido rechazada.</p>
-                    {productorRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{productorRequest.motivo_respuesta}"</p>}
-                    <div className="request-status-badge rejected" style={{backgroundColor: '#fef2f2', color: '#991b1b', borderColor: '#fecaca', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
-                      <span>❌ Rechazada</span>
-                    </div>
-                    <button 
-                      type="button" 
-                      className="role-request-btn"
-                      onClick={() => navigate('/registro-productor?reset=true')}
-                    >
-                      Enviar nueva solicitud
-                    </button>
-                  </>
-                )}
+          {/* Side */}
+          <aside className="pn-profile-side">
+            {/* Productor */}
+            {isUsuarioRole && (
+              <section className="pn-profile-dark-card">
+                <h3>¿Eres Productor?</h3>
+                <p>Únete a nuestra red y ofrece tus productos directamente a la comunidad.</p>
 
                 {!productorRequest && (
-                  <>
-                    <p>Completá el formulario con los datos de tu puesto para solicitar el cambio de rol a Productor. Un administrador revisará tu solicitud.</p>
-                    <button 
-                      type="button" 
-                      className="role-request-btn"
-                      onClick={() => navigate('/registro-productor')}
-                    >
-                      Solicitar ser Productor
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Solicitud para ser Repartidor - Solo se muestra si NO es Driver ni Admin */}
-          {(!userData.role || (userData.role.toLowerCase() !== 'driver' && userData.role.toLowerCase() !== 'administrador')) && (
-            <div className="role-request-section">
-              <div className="separator"></div>
-              <div className="role-request-content">
-                <h3>Solicitud para ser Repartidor (Delivery)</h3>
-                
-                {driverRequest && (driverRequest.estado === 'Pendiente' || driverRequest.estado === 'Pendiente') && (
-                  <>
-                    <p>Tu solicitud está siendo revisada por un administrador. Podés actualizar la información de tu vehículo si lo necesitás.</p>
-                    <div className="request-status-badge pending">
-                      <span>⏳ Solicitud pendiente de aprobación</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '15px' }}>
-                      <button 
-                        type="button" 
-                        className="role-request-btn"
-                        onClick={() => navigate('/registro-delivery')}
-                        style={{ flex: 1 }}
-                      >
-                        Editar solicitud
-                      </button>
-                      <button 
-                        type="button" 
-                        className="role-request-btn"
-                        style={{ flex: 1, backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}
-                        onClick={handleCancelarSolicitudDriver}
-                      >
-                        Cancelar solicitud
-                      </button>
-                    </div>
-                  </>
+                  <button className="pn-btn-accent" onClick={() => navigate('/registro-productor')}>
+                    Solicitar ser Productor <ArrowRight size={16} />
+                  </button>
                 )}
 
-                {driverRequest && (driverRequest.estado === 'Aprobada' || driverRequest.estado === 'Aprobada') && (
-                  <>
-                    <p><strong>¡Felicidades!</strong> Tu solicitud ha sido aprobada por el administrador.</p>
-                    {driverRequest.motivo_respuesta && <p style={{fontStyle: 'italic'}}>Mensaje del admin: "{driverRequest.motivo_respuesta}"</p>}
-                    <div className="request-status-badge approved" style={{backgroundColor: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
-                      <span>✅ Aprobada</span>
+                {productorRequest?.estado === 'Pendiente' && (
+                  <div className="pn-role-status pending">
+                    <span className="pn-role-status-label">Solicitud pendiente</span>
+                    <div className="pn-role-actions">
+                      <button className="pn-btn-secondary" onClick={() => navigate('/registro-productor')}>Editar</button>
+                      <button className="pn-btn-danger" onClick={handleCancelarSolicitud}>Cancelar</button>
                     </div>
-                    <button 
-                      type="button" 
-                      className="save-btn"
-                      onClick={handleConvertirseEnDriver}
-                      style={{width: '100%', maxWidth: '300px', margin: '0 auto', display: 'block'}}
-                    >
-                      Convertirse en repartidor
-                    </button>
-                  </>
+                  </div>
                 )}
 
-                {driverRequest && (driverRequest.estado === 'Rechazada' || driverRequest.estado === 'Rechazada') && (
-                  <>
-                    <p>Tu solicitud ha sido rechazada.</p>
-                    {driverRequest.motivo_respuesta && <p style={{color: '#991b1b'}}><strong>Motivo:</strong> "{driverRequest.motivo_respuesta}"</p>}
-                    <div className="request-status-badge rejected" style={{backgroundColor: '#fef2f2', color: '#991b1b', borderColor: '#fecaca', marginBottom: '20px', padding: '10px', borderRadius: '8px'}}>
-                      <span>❌ Rechazada</span>
-                    </div>
-                    <button 
-                      type="button" 
-                      className="role-request-btn"
-                      onClick={() => navigate('/registro-delivery?reset=true')}
-                    >
-                      Enviar nueva solicitud
+                {productorRequest?.estado === 'Aprobada' && (
+                  <div className="pn-role-status approved">
+                    <span className="pn-role-status-label">Aprobada</span>
+                    {productorRequest.motivo_respuesta && <p className="pn-role-note">"{productorRequest.motivo_respuesta}"</p>}
+                    <button className="pn-btn-accent" onClick={handleConvertirseEnProductor}>
+                      Convertirse en productor <ArrowRight size={16} />
                     </button>
-                  </>
+                  </div>
                 )}
+
+                {productorRequest?.estado === 'Rechazada' && (
+                  <div className="pn-role-status rejected">
+                    <span className="pn-role-status-label">Rechazada</span>
+                    {productorRequest.motivo_respuesta && <p className="pn-role-note">"{productorRequest.motivo_respuesta}"</p>}
+                    <button className="pn-btn-accent" onClick={() => navigate('/registro-productor?reset=true')}>
+                      Enviar nueva solicitud <ArrowRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Delivery */}
+            {canRequestDriver && (
+              <section className="pn-profile-dark-card">
+                <h3>¿Querés ser Delivery?</h3>
+                <p>Unite a nuestra red de repartidores y ayudá a llevar la frescura del campo a los hogares.</p>
 
                 {!driverRequest && (
-                  <>
-                    <p>Completá el formulario con los datos de tu vehículo para solicitar el cambio de rol a Repartidor. Un administrador revisará tu solicitud.</p>
-                    <button 
-                      type="button" 
-                      className="role-request-btn"
-                      onClick={() => navigate('/registro-delivery')}
-                    >
-                      Solicitar ser Repartidor
-                    </button>
-                  </>
+                  <button className="pn-btn-accent" onClick={() => navigate('/registro-delivery')}>
+                    Solicitar ser Delivery <ArrowRight size={16} />
+                  </button>
                 )}
+
+                {driverRequest?.estado === 'Pendiente' && (
+                  <div className="pn-role-status pending">
+                    <span className="pn-role-status-label">Solicitud pendiente</span>
+                    <div className="pn-role-actions">
+                      <button className="pn-btn-secondary" onClick={() => navigate('/registro-delivery')}>Editar</button>
+                      <button className="pn-btn-danger" onClick={handleCancelarSolicitudDriver}>Cancelar</button>
+                    </div>
+                  </div>
+                )}
+
+                {driverRequest?.estado === 'Aprobada' && (
+                  <div className="pn-role-status approved">
+                    <span className="pn-role-status-label">Aprobada</span>
+                    {driverRequest.motivo_respuesta && <p className="pn-role-note">"{driverRequest.motivo_respuesta}"</p>}
+                    <button className="pn-btn-accent" onClick={handleConvertirseEnDriver}>
+                      Convertirse en repartidor <ArrowRight size={16} />
+                    </button>
+                  </div>
+                )}
+
+                {driverRequest?.estado === 'Rechazada' && (
+                  <div className="pn-role-status rejected">
+                    <span className="pn-role-status-label">Rechazada</span>
+                    {driverRequest.motivo_respuesta && <p className="pn-role-note">"{driverRequest.motivo_respuesta}"</p>}
+                    <button className="pn-btn-accent" onClick={() => navigate('/registro-delivery?reset=true')}>
+                      Enviar nueva solicitud <ArrowRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Preferencias */}
+            <section className="pn-profile-card pn-preferences-card">
+              <h3 className="pn-preferences-title">PREFERENCIAS</h3>
+
+              <div className="pn-pref-row">
+                <span className="pn-pref-icon"><Bell size={18} strokeWidth={2} /></span>
+                <span className="pn-pref-label">Notificaciones</span>
+                <button
+                  type="button"
+                  className={`pn-toggle ${notifications ? 'on' : ''}`}
+                  onClick={toggleNotifications}
+                  aria-label="Activar notificaciones"
+                  aria-pressed={notifications}
+                >
+                  <span className="pn-toggle-thumb" />
+                </button>
               </div>
-            </div>
-          )}
+
+              <div className="pn-pref-row">
+                <span className="pn-pref-icon"><Moon size={18} strokeWidth={2} /></span>
+                <span className="pn-pref-label">Modo Oscuro</span>
+                <button
+                  type="button"
+                  className={`pn-toggle ${theme === 'dark' ? 'on' : ''}`}
+                  onClick={toggleTheme}
+                  aria-label="Activar modo oscuro"
+                  aria-pressed={theme === 'dark'}
+                >
+                  <span className="pn-toggle-thumb" />
+                </button>
+              </div>
+
+              <button type="button" className="pn-logout-btn" onClick={handleLogoutFromProfile}>
+                <LogOut size={16} strokeWidth={2.2} /> Cerrar sesión
+              </button>
+            </section>
+          </aside>
         </div>
       </main>
 
       <Footer />
     </div>
   );
-}
+};
 
 export default Profile;

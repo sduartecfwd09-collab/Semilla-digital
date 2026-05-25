@@ -1,28 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 @import './admin-ui.css';
 @import './Responsive.css';
 
 :root {
-  /* Colors - Premium Nature Palette */
-  --primary-color: #0d2818; 
+  /* Colors - Premium Nature Palette (LEGACY - usado por componentes fuera de Perfil/Recetas/Navbar/Footer) */
+  --primary-color: #0d2818;
   --primary-light: #1b4332;
-  --accent-color: #52b788;  
+  --accent-color: #52b788;
   --accent-glow: rgba(82, 183, 136, 0.3);
-  
+
   --bg-color: #f4f7f5;
   --surface-color: #ffffff;
-  
+
   --text-main: #111827;
   --text-muted: #6b7280;
-  
+
   --border-color: #e5e7eb;
   --success: #10b981;
 
-  --verde: #3B9C3A;       
-  --verde-claro: #2d7a2d; 
-  --lima: #36EB60;        
-  --tierra: #d97706;      
+  --verde: #3B9C3A;
+  --verde-claro: #2d7a2d;
+  --lima: #36EB60;
+  --tierra: #d97706;
   --rojo: #e11d48;
   --crema: var(--blanco);
   --blanco: #ffffff;
@@ -46,6 +46,89 @@
 
   /* Transitions */
   --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================================ */
+  /* PREMIUM NATURE TOKENS (M3) - usado por Navbar, Footer,        */
+  /* Recetas, Perfil. NO eliminar variables legacy de arriba.      */
+  /* ============================================================ */
+  --pn-primary: #0d2818;
+  --pn-primary-hover: #1b4332;
+  --pn-on-primary: #ffffff;
+  --pn-primary-container: #0d2818;
+  --pn-on-primary-container: #74917b;
+  --pn-inverse-primary: #afceb6;
+
+  --pn-accent: #52b788;
+  --pn-accent-hover: #429770;
+  --pn-secondary-container: #92f7c3;
+  --pn-on-secondary-container: #00734d;
+
+  --pn-surface: #f9f9ff;
+  --pn-surface-dim: #d3daef;
+  --pn-surface-bright: #f9f9ff;
+  --pn-surface-container-lowest: #ffffff;
+  --pn-surface-container-low: #f1f3ff;
+  --pn-surface-container: #e9edff;
+  --pn-surface-container-high: #e1e8fd;
+  --pn-surface-container-highest: #dce2f7;
+
+  --pn-on-surface: #141b2b;
+  --pn-on-surface-variant: #424843;
+  --pn-outline: #727972;
+  --pn-outline-variant: #c2c8c1;
+
+  --pn-error: #ba1a1a;
+  --pn-on-error: #ffffff;
+  --pn-error-container: #ffdad6;
+  --pn-on-error-container: #93000a;
+
+  /* Radios */
+  --pn-radius-sm: 0.5rem;
+  --pn-radius: 1rem;
+  --pn-radius-md: 1.25rem;
+  --pn-radius-lg: 1.5rem;
+  --pn-radius-xl: 2rem;
+  --pn-radius-full: 9999px;
+
+  /* Sombras tonalizadas (verde-tinted, no negras puras) */
+  --pn-shadow-card: 0 4px 20px rgba(13, 40, 24, 0.05);
+  --pn-shadow-card-hover: 0 8px 28px rgba(13, 40, 24, 0.10);
+  --pn-shadow-modal: 0 12px 40px rgba(13, 40, 24, 0.12);
+  --pn-shadow-accent: 0 6px 18px rgba(82, 183, 136, 0.28);
+
+  /* Tipografía */
+  --pn-font-display: 'Outfit', sans-serif;
+  --pn-font-body: 'DM Sans', sans-serif;
+}
+
+/* ============================================================ */
+/* DARK THEME (scoped via data-pn-theme="dark" en <html>)        */
+/* Solo afecta componentes que usan tokens --pn-*. Los           */
+/* componentes legacy NO se ven afectados.                       */
+/* ============================================================ */
+:root[data-pn-theme="dark"] {
+  --pn-surface: #0f1419;
+  --pn-surface-dim: #0a0e12;
+  --pn-surface-bright: #1a1f26;
+  --pn-surface-container-lowest: #161b22;
+  --pn-surface-container-low: #1a1f26;
+  --pn-surface-container: #1e2530;
+  --pn-surface-container-high: #252c38;
+  --pn-surface-container-highest: #2c3441;
+
+  --pn-on-surface: #edf0ff;
+  --pn-on-surface-variant: #b8bec7;
+  --pn-outline: #8b9197;
+  --pn-outline-variant: #2c3441;
+
+  --pn-primary: #afceb6;
+  --pn-on-primary: #001106;
+  --pn-primary-container: #052011;
+  --pn-on-primary-container: #cbead1;
+
+  --pn-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --pn-shadow-card-hover: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --pn-shadow-modal: 0 12px 40px rgba(0, 0, 0, 0.55);
 }
 
 html {
