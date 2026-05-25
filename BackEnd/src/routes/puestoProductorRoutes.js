@@ -13,12 +13,12 @@ router.get('/usuario/:usuarioId', ctrl.getByUsuario);
 router.get('/feria/:feriaId', ctrl.getByFeria);
 router.get('/:id', ctrl.getById);
 
-// ── PROTEGIDAS (Productor | Administrador) ──────────────────
-// POST   /api/puestos       → Crear puesto
-// PUT    /api/puestos/:id   → Actualizar puesto
-// DELETE /api/puestos/:id   → Eliminar puesto
-router.post('/', verifyToken, authorizeRoles('Productor', 'Administrador'), ctrl.create);
-router.put('/:id', verifyToken, authorizeRoles('Productor', 'Administrador'), ctrl.update);
+// ── PROTEGIDAS ──────────────────────────────────────────────
+// POST   /api/puestos       → Crear puesto (aplica también a Usuario en proceso de solicitud Productor)
+// PUT    /api/puestos/:id   → Actualizar puesto (idem)
+// DELETE /api/puestos/:id   → Eliminar puesto (solo Admin)
+router.post('/', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.create);
+router.put('/:id', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.update);
 router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
 module.exports = router;
