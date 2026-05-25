@@ -17,8 +17,9 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Error genérico
+  const isProduction = process.env.NODE_ENV === 'production';
   return res.status(err.status || 500).json({
-    error: err.message || 'Error interno del servidor.',
+    error: isProduction ? 'Error interno del servidor.' : err.message,
   });
 };
 

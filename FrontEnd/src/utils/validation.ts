@@ -6,7 +6,14 @@ export const validateEmail = (email: string): { valid: boolean; message?: string
   return { valid: true };
 };
 
+// Longitud mínima de contraseña exigida por TODO el frontend.
+// Cambiar acá impacta registro, edición de perfil y cambio de contraseña.
+export const MIN_PASSWORD_LENGTH = 8;
+
 export const validatePassword = (password: string): { valid: boolean; message?: string } => {
-  if (password.length <= 6) return { valid: false, message: 'La contraseña debe tener más de 6 caracteres.' };
+  if (!password) return { valid: false, message: 'La contraseña es obligatoria.' };
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { valid: false, message: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` };
+  }
   return { valid: true };
 };

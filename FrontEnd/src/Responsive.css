@@ -614,14 +614,14 @@ img, picture, video, canvas, svg {
    ============================================================ */
 
 @media (max-width: 48rem) {
-  .registro-agricultor-card {
+  .registro-productor-card {
     padding: 1.5rem 1.25rem;
     border-radius: 0.75rem;
   }
 }
 
 @media (max-width: 37.5rem) {
-  .registro-agricultor-grid {
+  .registro-productor-grid {
     grid-template-columns: 1fr;
   }
 
@@ -633,18 +633,18 @@ img, picture, video, canvas, svg {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .registro-agricultor-actions {
+  .registro-productor-actions {
     flex-direction: column;
     gap: 0.625rem;
   }
 }
 
 @media (max-width: 30rem) {
-  .registro-agricultor-container {
+  .registro-productor-container {
     padding: 1.25rem 0.75rem;
   }
 
-  .registro-agricultor-card {
+  .registro-productor-card {
     padding: 1.25rem 0.875rem;
   }
 
@@ -884,13 +884,13 @@ img, picture, video, canvas, svg {
    ============================================================ */
 
 @media (max-width: 64rem) {
-  .agricultor-sidebar {
+  .productor-sidebar {
     width: 13.75rem;
   }
 }
 
 @media (max-width: 48rem) {
-  .agricultor-sidebar {
+  .productor-sidebar {
     width: 100% !important;
     min-height: auto !important;
     position: fixed !important;
@@ -902,12 +902,12 @@ img, picture, video, canvas, svg {
     box-shadow: 0 -0.25rem 1.25rem rgba(0,0,0,0.2) !important;
   }
 
-  .agricultor-sidebar-header,
-  .agricultor-sidebar-user {
+  .productor-sidebar-header,
+  .productor-sidebar-user {
     display: none;
   }
 
-  .agricultor-sidebar-nav {
+  .productor-sidebar-nav {
     flex-direction: row !important;
     padding: 0 !important;
     gap: 0 !important;
@@ -916,7 +916,7 @@ img, picture, video, canvas, svg {
     overflow-x: auto;
   }
 
-  .agricultor-sidebar-link {
+  .productor-sidebar-link {
     flex-direction: column !important;
     padding: 0.625rem 0.5rem !important;
     border-radius: 0 !important;
@@ -927,11 +927,11 @@ img, picture, video, canvas, svg {
     opacity: 1;
   }
 
-  .agricultor-sidebar-link:hover {
+  .productor-sidebar-link:hover {
     transform: none !important;
   }
 
-  .agricultor-sidebar-home-link {
+  .productor-sidebar-home-link {
     display: none;
   }
 
@@ -942,7 +942,7 @@ img, picture, video, canvas, svg {
 
 
 /* ============================================================
-   18. AGRICULTOR DASHBOARD (Panel Agricultor)
+   18. AGRICULTOR DASHBOARD (Panel Productor)
    ============================================================ */
 
 @media (max-width: 64rem) {
@@ -1181,7 +1181,7 @@ img, picture, video, canvas, svg {
 
 
 /* ============================================================
-   22. MIS FERIAS (Agricultor)
+   22. MIS FERIAS (Productor)
    ============================================================ */
 
 @media (max-width: 48rem) {
@@ -1257,7 +1257,7 @@ img, picture, video, canvas, svg {
 
 @media (max-width: 48rem) {
   .admin-stats-grid,
-  .agricultor-stats-grid {
+  .productor-stats-grid {
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
   }
@@ -1265,7 +1265,7 @@ img, picture, video, canvas, svg {
 
 @media (max-width: 30rem) {
   .admin-stats-grid,
-  .agricultor-stats-grid {
+  .productor-stats-grid {
     grid-template-columns: 1fr;
   }
 }

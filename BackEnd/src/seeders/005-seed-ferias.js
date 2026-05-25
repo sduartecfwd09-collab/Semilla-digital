@@ -4,14 +4,14 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const ferias = [
       {
-        id: 1, nombre: 'Feria del Agricultor Zapote',
+        id: 1, nombre: 'Feria del Productor Zapote',
         direccion_id: 1,
         dias: 'Sábado y Domingo', horario: '6:00 AM - 2:00 PM',
         source: 'Municipalidad de San José',
         created_at: new Date(), updated_at: new Date()
       },
       {
-        id: 2, nombre: 'Feria del Agricultor Alajuela',
+        id: 2, nombre: 'Feria del Productor Alajuela',
         direccion_id: 2,
         dias: 'Viernes y Sábado', horario: '7:00 AM - 3:00 PM',
         source: 'CAC Alajuela',

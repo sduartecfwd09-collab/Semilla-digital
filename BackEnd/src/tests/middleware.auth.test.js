@@ -6,8 +6,12 @@ jest.mock('../models', () => ({
   sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
 }));
 
+// Setup.js mockea estos middlewares globalmente (stubs para tests de controladores).
+// Acá queremos probar el comportamiento REAL, así que usamos `requireActual`
+// para esquivar los mocks globales.
 const jwt = require('jsonwebtoken');
-const { verifyToken, requireRole } = require('../middlewares/auth');
+const { verifyToken } = jest.requireActual('../middlewares/authMiddleware');
+const { requireRole } = jest.requireActual('../middlewares/roleMiddleware');
 
 // ── Helpers para simular req/res/next de Express ──────────────────────────────
 const mockRes = () => {
@@ -23,7 +27,7 @@ describe('verifyToken middleware', () => {
   beforeEach(() => mockNext.mockClear());
 
   test('llama next() con token válido y adjunta req.user', () => {
-    const token = jwt.sign({ id: 1, role: 'Agricultor' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: 1, role: 'Productor' }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const req = { headers: { authorization: `Bearer ${token}` } };
     const res = mockRes();
 
@@ -32,7 +36,7 @@ describe('verifyToken middleware', () => {
     expect(mockNext).toHaveBeenCalledTimes(1);
     expect(req.user).toBeDefined();
     expect(req.user.id).toBe(1);
-    expect(req.user.role).toBe('Agricultor');
+    expect(req.user.role).toBe('Productor');
   });
 
   test('401 - sin header Authorization', () => {
@@ -94,10 +98,10 @@ describe('requireRole middleware', () => {
   });
 
   test('llama next() si el rol está entre múltiples permitidos', () => {
-    const req = { user: { id: 2, role: 'Agricultor' } };
+    const req = { user: { id: 2, role: 'Productor' } };
     const res = mockRes();
 
-    requireRole('Administrador', 'Agricultor')(req, res, mockNext);
+    requireRole('Administrador', 'Productor')(req, res, mockNext);
 
     expect(mockNext).toHaveBeenCalledTimes(1);
   });
@@ -110,7 +114,7 @@ describe('requireRole middleware', () => {
 
     expect(mockNext).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: expect.stringMatching(/prohibido/i) }));
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringMatching(/Acceso denegado/i) }));
   });
 
   test('401 - req.user no existe (token no verificado antes)', () => {

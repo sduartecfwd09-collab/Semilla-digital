@@ -53,8 +53,8 @@ const AdminSidebar = () => {
                 <NavLink to="/admin/solicitudes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     📝 Solicitudes
                 </NavLink>
-                <NavLink to="/admin/agricultores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                    👨‍🌾 Agricultores
+                <NavLink to="/admin/productores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                    👨‍🌾 Productores
                 </NavLink>
                 <NavLink to="/admin/productos" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     📦 Productos
@@ -64,6 +64,9 @@ const AdminSidebar = () => {
                 </NavLink>
                 <NavLink to="/admin/contactos" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     ✉️ Contactos
+                </NavLink>
+                <NavLink to="/admin/repartidores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                    🛵 Repartidores
                 </NavLink>
             </nav>
         </aside>

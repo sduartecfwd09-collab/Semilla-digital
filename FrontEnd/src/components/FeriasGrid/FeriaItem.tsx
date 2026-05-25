@@ -1,6 +1,7 @@
 import React from 'react';
 import Swal from 'sweetalert2';
 import { Feria } from '../../types/feria.types';
+import { escapeHtml } from '../../utils/escapeHtml';
 
 interface FeriaItemProps {
   feria: Feria;
@@ -13,34 +14,34 @@ const FeriaItem: React.FC<FeriaItemProps> = ({ feria }) => {
     const directUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 
+    const safeName = escapeHtml(feria.nombre);
+    const safeAddress = escapeHtml(`${feria.direccion}, ${feria.provincia}`);
+    // Las URLs ya van por encodeURIComponent y se escapan también por seguridad
+    const safeDirect = escapeHtml(directUrl);
+    const safeDirections = escapeHtml(directionsUrl);
+
     Swal.fire({
-      title: `<span style="color: #166534; font-family: 'Inter', sans-serif;">${feria.nombre}</span>`,
+      title: `<span style="color: #166534; font-family: 'Inter', sans-serif;">${safeName}</span>`,
       html: `
         <div class="map-modal-container" style="text-align: left; padding: 10px;">
           <div style="background-color: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px; border-radius: 12px; margin-bottom: 24px; box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);">
             <p style="margin: 0; font-weight: 700; color: #166534; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
               📍 Ubicación exacta
             </p>
-            <p style="margin: 8px 0 0 0; color: #374151; font-size: 0.95rem; line-height: 1.5;">${feria.direccion}, ${feria.provincia}</p>
+            <p style="margin: 8px 0 0 0; color: #374151; font-size: 0.95rem; line-height: 1.5;">${safeAddress}</p>
           </div>
-          
+
           <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 20px;">
-            <a href="${directUrl}" target="_blank" rel="noopener noreferrer" 
-               style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 18px; background-color: #2563eb; color: white; border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 1.05rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 15px -3px rgb(37 99 235 / 0.2), 0 4px 6px -4px rgb(37 99 235 / 0.2);"
-               onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'" 
-               onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0)'">
+            <a href="${safeDirect}" target="_blank" rel="noopener noreferrer"
+               style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 18px; background-color: #2563eb; color: white; border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 1.05rem; box-shadow: 0 10px 15px -3px rgb(37 99 235 / 0.2), 0 4px 6px -4px rgb(37 99 235 / 0.2);">
               🗺️ Ver en Google Maps
             </a>
-            
-            <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer"
-               style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background-color: #ffffff; color: #374151; border-radius: 14px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: 2px solid #e5e7eb; transition: all 0.3s;"
-               onmouseover="this.style.borderColor='#d1d5db'; this.style.backgroundColor='#f9fafb'" 
-               onmouseout="this.style.borderColor='#e5e7eb'; this.style.backgroundColor='#ffffff'">
+
+            <a href="${safeDirections}" target="_blank" rel="noopener noreferrer"
+               style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background-color: #ffffff; color: #374151; border-radius: 14px; text-decoration: none; font-weight: 600; font-size: 0.95rem; border: 2px solid #e5e7eb;">
               🚗 ¿Cómo llegar ahora?
             </a>
           </div>
-          
-         
         </div>
       `,
       showCloseButton: true,

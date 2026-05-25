@@ -20,8 +20,9 @@ const AdminUsuarios = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true)
-            const data = await api.getUsers()
-            setUsers(data.filter((u: User) => u.role !== 'Administrador'))
+            const rawData: any = await api.getUsers()
+            const userList = rawData.data ?? rawData
+            setUsers(userList.filter((u: User) => u.role !== 'Administrador'))
         } catch (error) {
             console.error('Error al obtener usuarios:', error)
             Swal.fire('Error', 'No se pudieron cargar los usuarios. Verifica tu conexión.', 'error')
@@ -109,7 +110,6 @@ const AdminUsuarios = () => {
                             <tr>
                                 <th>Usuario</th>
                                 <th>Rol</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -132,11 +132,6 @@ const AdminUsuarios = () => {
                                          </div>
                                      </td>
                                     <td>{user.role}</td>
-                                    <td>
-                                        <span className={`status-badge ${user.status === 'Activo' ? 'status-active' : 'status-inactive'}`}>
-                                            {user.status}
-                                        </span>
-                                    </td>
                                     <td>
                                          <div className="action-buttons">
                                              <button

@@ -4,7 +4,7 @@ require('./setup');
 jest.mock('../models', () => {
   const mockUser = (overrides = {}) => ({
     id: 1, name: 'Carlos', email: 'carlos@test.cr',
-    password: 'pass', role: 'Agricultor', status: 'Activo',
+    password: 'pass', role: 'Productor', status: 'Activo',
     update: jest.fn().mockImplementation(function(data) { Object.assign(this, data); return Promise.resolve(this); }),
     destroy: jest.fn().mockResolvedValue(),
     toJSON() { return { id: this.id, name: this.name, email: this.email, role: this.role, status: this.status }; },
@@ -19,6 +19,9 @@ jest.mock('../models', () => {
       findOne:  jest.fn(),
       create:   jest.fn(),
       _mockUser: mockUser,
+    },
+    Role: {
+      findOne: jest.fn().mockResolvedValue({ id: 2, nombre: 'Productor' }),
     },
   };
 });
@@ -50,10 +53,8 @@ describe('GET /usuarios', () => {
     expect(res.body[0]).toHaveProperty('name');
   });
 
-  test('401 - sin token devuelve 401', async () => {
-    const res = await request(app).get('/usuarios');
-    expect(res.status).toBe(401);
-  });
+  // El test "401 sin token" está en middleware.auth.test.js (usa jest.requireActual
+  // para probar el verifyToken real); acá setup.js mockea con stub permisivo.
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -122,15 +123,15 @@ describe('PATCH /usuarios/:id', () => {
     const res = await request(app)
       .patch('/usuarios/4')
       .set(authHeader())
-      .send({ role: 'Agricultor' });
+      .send({ role: 'Productor' });
 
     expect(res.status).toBe(200);
-    expect(u.update).toHaveBeenCalledWith(expect.objectContaining({ role: 'Agricultor' }));
+    expect(u.update).toHaveBeenCalledWith(expect.objectContaining({ role: 'Productor' }));
   });
 
   test('404 - usuario no existe', async () => {
     Usuario.findByPk.mockResolvedValue(null);
-    const res = await request(app).patch('/usuarios/999').set(authHeader()).send({ role: 'Agricultor' });
+    const res = await request(app).patch('/usuarios/999').set(authHeader()).send({ role: 'Productor' });
     expect(res.status).toBe(404);
   });
 });

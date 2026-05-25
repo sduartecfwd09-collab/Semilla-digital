@@ -27,10 +27,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
     return <Navigate to="/" replace />
   }
 
-  // Si hay roles permitidos, verificar que el usuario tenga uno de ellos
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />
-  }
 
 
   return <>{children}</>

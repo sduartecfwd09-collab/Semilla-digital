@@ -20,19 +20,51 @@ const publicAttributes = { exclude: ['password'] };
 
 // ── CRUD ────────────────────────────────────────────────────
 
-const findAll = async () => {
-  return await Usuario.findAll({
-    attributes: publicAttributes,
-    include: includeRelations,
-    order: [['createdAt', 'DESC']],
-  });
+// Mapea la instancia/POJO de Usuario para incluir `role` como string plano
+// derivado de la relación `rol` (la tabla guarda roleId). Esto es lo que
+// consume el frontend para mostrar y filtrar.
+const mapUsuario = (u) => {
+  if (!u) return null;
+  const raw = u.toJSON ? u.toJSON() : u;
+  return { ...raw, role: raw.rol ? raw.rol.nombre : null };
+};
+
+const findAll = async (query = {}) => {
+  const hasPagination = query.page || query.limit;
+
+  if (hasPagination) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await Usuario.findAndCountAll({
+      limit,
+      offset,
+      attributes: publicAttributes,
+      include: includeRelations,
+      order: [['createdAt', 'DESC']],
+    });
+    
+    return {
+      rows: rows.map(mapUsuario),
+      count,
+    };
+  } else {
+    const list = await Usuario.findAll({
+      attributes: publicAttributes,
+      include: includeRelations,
+      order: [['createdAt', 'DESC']],
+    });
+    return list.map(mapUsuario);
+  }
 };
 
 const findById = async (id) => {
-  return await Usuario.findByPk(id, {
+  const u = await Usuario.findByPk(id, {
     attributes: publicAttributes,
     include: includeRelations,
   });
+  return mapUsuario(u);
 };
 
 const findByEmail = async (email) => {
@@ -122,7 +154,7 @@ const remove = async (id) => {
 // ── AUTH ─────────────────────────────────────────────────────
 
 const validatePassword = async (email, password) => {
-  const usuario = await Usuario.findOne({ 
+  const usuario = await Usuario.findOne({
     where: { email },
     include: [{ model: Role, as: 'rol' }]
   });
@@ -133,6 +165,25 @@ const validatePassword = async (email, password) => {
   if (!isValid) throw new Error('Credenciales inválidas: contraseña incorrecta');
 
   return usuario;
+};
+
+const changePassword = async (id, currentPassword, newPassword) => {
+  if (!currentPassword || !newPassword) {
+    throw new Error('Se requiere la contraseña actual y la nueva');
+  }
+  if (newPassword.length < 8) {
+    throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
+  }
+
+  const usuario = await Usuario.findByPk(id);
+  if (!usuario) throw new Error('Usuario no encontrado');
+
+  const isValid = await bcrypt.compare(currentPassword, usuario.password);
+  if (!isValid) throw new Error('La contraseña actual no es correcta');
+
+  const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  await usuario.update({ password: hashed });
+  return true;
 };
 
 module.exports = {
@@ -146,4 +197,5 @@ module.exports = {
   assignFeria,
   remove,
   validatePassword,
+  changePassword,
 };

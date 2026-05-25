@@ -24,14 +24,17 @@ const AdminPrecios = () => {
     const fetchPrices = async () => {
         try {
             setLoading(true)
-            const [pricesData, productsData] = await Promise.all([
+            const [pricesDataRaw, productsDataRaw] = await Promise.all([
                 api.getPrices(),
                 api.getProducts()
-            ])
+            ]) as any[]
+
+            const pricesList = pricesDataRaw.data ?? pricesDataRaw ?? []
+            const productsList = productsDataRaw.data ?? productsDataRaw ?? []
 
             // Combinar datos del producto (icono, nombre, unidad) en los registros de precios
-            const mergedPrices = pricesData.map((p: Price) => {
-                const product = productsData.find((prod: Product) => prod.id === p.productId)
+            const mergedPrices = pricesList.map((p: Price) => {
+                const product = productsList.find((prod: Product) => prod.id === p.productId)
                 return {
                     ...p,
                     productName: product?.nombre || 'Producto desconocido',

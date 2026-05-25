@@ -1,0 +1,31 @@
+.driver-layout-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d2818; /* Dark mode background */
+}
+
+.driver-layout-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.driver-main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+}
+
+@media (max-width: 768px) {
+  .driver-layout-container {
+    flex-direction: column;
+  }
+  
+  .driver-main-content {
+    padding: 1rem;
+    max-height: none;
+    overflow-y: visible;
+  }
+}

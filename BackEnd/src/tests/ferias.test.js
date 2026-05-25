@@ -17,6 +17,11 @@ jest.mock('../models', () => {
       findAll:  jest.fn(),
       findByPk: jest.fn(),
       create:   jest.fn(),
+      // findOrCreate devuelve [instancia, creado]. Por defecto simulamos
+      // "creó nueva" para que los tests POST validen el flujo de creación.
+      findOrCreate: jest.fn().mockImplementation(({ defaults }) =>
+        Promise.resolve([mockFeria(defaults), true])
+      ),
       _mock: mockFeria,
     },
   };

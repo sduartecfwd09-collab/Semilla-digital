@@ -33,7 +33,7 @@ module.exports = {
       { id: 19, clave: 'solicitudes.rechazar',       nombre: 'Rechazar solicitudes',      descripcion: 'Rechazar solicitudes de cambio de rol',           modulo_id: 5, created_at: new Date(), updated_at: new Date() },
 
       // ── Módulo: Puestos (modulo_id: 6) ──────────────────────
-      { id: 20, clave: 'puestos.ver',              nombre: 'Ver puestos',               descripcion: 'Ver puestos de agricultor',                      modulo_id: 6, created_at: new Date(), updated_at: new Date() },
+      { id: 20, clave: 'puestos.ver',              nombre: 'Ver puestos',               descripcion: 'Ver puestos de productor',                       modulo_id: 6, created_at: new Date(), updated_at: new Date() },
       { id: 21, clave: 'puestos.crear',             nombre: 'Crear puesto',              descripcion: 'Registrar un puesto propio',                     modulo_id: 6, created_at: new Date(), updated_at: new Date() },
       { id: 22, clave: 'puestos.gestionar',          nombre: 'Gestionar puestos',         descripcion: 'CRUD completo de todos los puestos',             modulo_id: 6, created_at: new Date(), updated_at: new Date() },
 

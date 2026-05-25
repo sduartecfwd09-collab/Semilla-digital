@@ -5,6 +5,18 @@
 // ============================================================
 const solicitudService = require('../services/solicitudCambioRolService');
 
+const parseBody = (req) => {
+  if (req.body.data && typeof req.body.data === 'string') {
+    try {
+      const parsed = JSON.parse(req.body.data);
+      return { ...parsed, usuario_id: req.body.usuario_id || parsed.usuario_id };
+    } catch {
+      throw new Error('Datos del formulario inválidos');
+    }
+  }
+  return req.body;
+};
+
 const getAll = async (req, res) => {
   try {
     const data = await solicitudService.findAll(req.query);
@@ -37,7 +49,14 @@ const getByUsuario = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const data = await solicitudService.create(req.body);
+    const body = parseBody(req);
+    if (body.rol_solicitado === 'DRIVER' && !req.file) {
+      return res.status(400).json({ success: false, message: 'La selfie de verificación es obligatoria' });
+    }
+    if (req.file) {
+      body.selfie_verificacion_url = `/storage/selfies/${body.usuario_id}/${req.file.filename}`;
+    }
+    const data = await solicitudService.create(body);
     return res.status(201).json({ success: true, data });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
@@ -80,6 +99,22 @@ const remove = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const body = parseBody(req);
+    if (req.file) {
+      body.selfie_verificacion_url = `/storage/selfies/${body.usuario_id}/${req.file.filename}`;
+    }
+    const data = await solicitudService.update(req.params.id, body);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 const getPendientes = async (req, res) => {
   try {
     const data = await solicitudService.findPendientes();
@@ -89,4 +124,4 @@ const getPendientes = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, getByUsuario, getPendientes, create, approve, reject, remove };
+module.exports = { getAll, getById, getByUsuario, getPendientes, create, approve, reject, update, remove };

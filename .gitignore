@@ -1,0 +1,36 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (cada subproyecto tiene su propio .env)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Builds
+dist/
+build/
+dist-ssr/
+coverage/
+.vite/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Backups y dumps temporales
+*.bak
+respaldo_*.sql
+*.sql
+
+# Metadata local de herramientas (Claude Code, etc.)
+.claude/

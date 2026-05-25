@@ -2,6 +2,7 @@ const router = require('express').Router();
 const ctrl = require('../controllers/solicitudCambioRolController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
+const { handleSelfieUpload } = require('../middlewares/uploadSelfie');
 
 // ── ADMIN ───────────────────────────────────────────────────
 // GET   /api/solicitudes                  → Listar todas (Admin)
@@ -16,7 +17,9 @@ router.patch('/:id/rechazar', verifyToken, authorizeRoles('Administrador'), ctrl
 // ── USUARIO AUTENTICADO ─────────────────────────────────────
 // GET  /api/solicitudes/usuario/:usuarioId → Mis solicitudes
 // POST /api/solicitudes                    → Crear solicitud
+// PATCH /api/solicitudes/:id               → Actualizar solicitud
 router.get('/usuario/:usuarioId', verifyToken, ctrl.getByUsuario);
-router.post('/', verifyToken, ctrl.create);
+router.post('/', verifyToken, handleSelfieUpload, ctrl.create);
+router.patch('/:id', verifyToken, handleSelfieUpload, ctrl.update);
 
 module.exports = router;

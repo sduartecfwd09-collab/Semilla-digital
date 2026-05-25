@@ -36,6 +36,14 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    vehicle_type: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    license_plate: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
     estado: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -55,6 +63,14 @@ module.exports = (sequelize) => {
     },
     fecha_respuesta: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    selfie_verificacion_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    documentos_rutas: {
+      type: DataTypes.JSON,
       allowNull: true,
     },
   }, {

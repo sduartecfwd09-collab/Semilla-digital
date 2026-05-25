@@ -1,7 +1,7 @@
 // ============================================================
 // Modelo: Producto
 // Tabla: productos
-// Descripción: Productos agrícolas ofrecidos por los agricultores
+// Descripción: Productos agrícolas ofrecidos por los productores
 // ============================================================
 const { DataTypes } = require('sequelize');
 
@@ -57,7 +57,7 @@ module.exports = (sequelize) => {
   });
 
   Producto.associate = (models) => {
-    // Un producto pertenece a un usuario (agricultor)
+    // Un producto pertenece a un usuario (productor)
     Producto.belongsTo(models.Usuario, {
       foreignKey: 'user_id',
       as: 'usuario',

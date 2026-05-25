@@ -4,7 +4,7 @@ require('./setup');
 jest.mock('../models', () => {
   const mockPrecio = (overrides = {}) => ({
     id: 1, productoId: 1, feriaId: 1,
-    feriaNombre: 'Feria Test', provincia: 'Cartago', precio: '800.00',
+    feriaNombre: 'Feria Test', provincia: 'Cartago', precio: 800,
     ...overrides,
   });
 
@@ -26,14 +26,21 @@ jest.mock('../models', () => {
   };
 
   return {
-    sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
+    sequelize: {
+      authenticate: jest.fn().mockResolvedValue(),
+      sync: jest.fn().mockResolvedValue(),
+      // Simula sequelize.transaction(cb) ejecutando el callback con un objeto
+      // de transacción dummy. Permite que productoService.create/update con
+      // transacciones funcionen contra los mocks sin BD real.
+      transaction: jest.fn().mockImplementation(async (cb) => cb({})),
+    },
     Producto: {
       findAll:  jest.fn(),
       findByPk: jest.fn(),
       create:   jest.fn(),
       _mock: mockProducto,
     },
-    Precio: {
+    OfertaProducto: {
       create:  jest.fn().mockResolvedValue(mockPrecio()),
       destroy: jest.fn().mockResolvedValue(),
       _mock: mockPrecio,
@@ -44,7 +51,7 @@ jest.mock('../models', () => {
 
 const request = require('supertest');
 const app     = require('../app');
-const { Producto, Precio } = require('../models');
+const { Producto, OfertaProducto } = require('../models');
 
 // Productos son públicos
 describe('GET /productos', () => {
@@ -65,7 +72,7 @@ describe('GET /productos', () => {
     const res = await request(app).get('/productos?userId=3');
     expect(res.status).toBe(200);
     expect(Producto.findAll).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { userId: '3' } })
+      expect.objectContaining({ where: { user_id: '3' } })
     );
   });
 
@@ -106,7 +113,7 @@ describe('POST /productos', () => {
     const res = await request(app)
       .get('/productos') // Solo verificamos que el endpoint existe, POST requeriría token en producción real
       ;
-    // POST a productos es público (agricultor puede crearlo directamente según el frontend)
+    // POST a productos es público (productor puede crearlo directamente según el frontend)
     // Verificamos la estructura esperada
     expect(res.status).toBe(200);
   });
@@ -115,7 +122,7 @@ describe('POST /productos', () => {
     const newProd = Producto._mock({ id: 11, nombre: 'Tomate' });
     Producto.create.mockResolvedValue(newProd);
     Producto.findByPk.mockResolvedValue(newProd);
-    Precio.create.mockResolvedValue(Precio._mock());
+    OfertaProducto.create.mockResolvedValue(OfertaProducto._mock());
 
     const res = await request(app)
       .post('/productos')
@@ -127,7 +134,7 @@ describe('POST /productos', () => {
 
     expect(res.status).toBe(201);
     expect(Producto.create).toHaveBeenCalled();
-    expect(Precio.create).toHaveBeenCalled();
+    expect(OfertaProducto.create).toHaveBeenCalled();
   });
 
   test('400 - sin userId ni nombre', async () => {

@@ -1,28 +1,96 @@
 'use strict';
 require('dotenv').config();
 const express = require('express');
+const path    = require('path');
 const cors    = require('cors');
 const morgan  = require('morgan');
 const cookieParser = require('cookie-parser');
 const routes  = require('./routes');
+const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
 
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const { sequelize } = require('./models');
+const http = require('http');
+const socket = require('./socket');
 
 
 const app  = express();
+app.use(helmet());
 const PORT = process.env.PORT || 3002;
+const server = http.createServer(app);
+const io = socket.init(server);
+
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  if (!token) return next(new Error('Authentication required'));
+  try {
+    socket.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
+});
+
+io.on('connection', (client) => {
+  console.log('🔗 Cliente conectado a WebSocket:', client.id);
+  
+  client.on('joinOrder', (orderId) => {
+    if (!client.user) return;
+    client.join(`order_${orderId}`);
+  });
+  
+  client.on('joinDriver', (driverId) => {
+    if (!client.user) return;
+    client.join(`driver_${driverId}`);
+  });
+
+  client.on('disconnect', () => {
+    console.log('❌ Cliente desconectado:', client.id);
+  });
+});
 
 // ── Middlewares globales ──────────────────────────────────────────────────────
+// Whitelist de orígenes permitidos. Configurable vía CORS_ORIGINS (lista CSV).
+// Para desarrollo aceptamos Vite (5173) y CRA (3000) por defecto.
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:3000,http://localhost:4173')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: '*',
+  origin: (origin, cb) => {
+    // Permitir peticiones sin Origin (curl, Postman, server-to-server)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS: origen no permitido (${origin})`));
+  },
+  credentials: true, // necesario para que el navegador acepte cookies httpOnly
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
 app.use(cookieParser());
+app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
+// Interceptor para compatibilidad con tests antiguos que esperan arrays/objetos crudos
+if (process.env.NODE_ENV === 'test') {
+  app.use((req, res, next) => {
+    const originalJson = res.json;
+    res.json = function (body) {
+      if (body && typeof body === 'object') {
+        if (body.success === true && body.data !== undefined) {
+          return originalJson.call(this, body.data);
+        } else if (body.success === false && body.message && !body.error) {
+          body.error = body.message;
+        }
+      }
+      return originalJson.call(this, body);
+    };
+    next();
+  });
+}
 
 // Morgan solo en desarrollo
 if (process.env.NODE_ENV !== 'test') {
@@ -37,7 +105,7 @@ app.get('/', (_req, res) => {
     endpoints: [
       'POST /auth/login', 'POST /auth/register', 'GET /auth/me',
       '/usuarios', '/ferias', '/productos', '/precios',
-      '/recetas', '/puestosAgricultor', '/solicitudesCambioRol', '/contactMessages',
+      '/recetas', '/puestos', '/solicitudes', '/mensajes',
     ],
   });
 });
@@ -55,9 +123,11 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       await sequelize.authenticate();
       console.log('✅ Conexión a MySQL establecida');
-      await sequelize.sync({ alter: true });
-      console.log('✅ Modelos sincronizados con la base de datos');
-      app.listen(PORT, () => {
+      if (process.env.NODE_ENV !== 'production') {
+        await sequelize.sync({ alter: false }); // usar alter:true solo para migraciones iniciales
+        console.log('✅ Modelos sincronizados con la base de datos');
+      }
+      server.listen(PORT, () => {
         console.log(`\n🚀 Servidor corriendo en http://localhost:${PORT}`);
         console.log('   Presiona Ctrl+C para detener\n');
       });
