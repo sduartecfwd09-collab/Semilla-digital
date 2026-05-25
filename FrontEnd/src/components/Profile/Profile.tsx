@@ -113,6 +113,59 @@ const Profile: React.FC = () => {
     return () => { cancelled = true; };
   }, [user, navigate]);
 
+  // ── Polling de estado de la solicitud Productor ──────────────────
+  // Mientras la solicitud esté "Pendiente", consulta cada 5s para
+  // detectar la decisión automática de la IA y refrescar la UI sin
+  // necesidad de recargar la página. Se detiene cuando cambia el estado
+  // o cuando el componente se desmonta.
+  useEffect(() => {
+    if (!productorRequest || productorRequest.estado !== 'Pendiente') return;
+    const currentId = user?.id || JSON.parse(localStorage.getItem('user') || '{}').id;
+    if (!currentId) return;
+
+    let stopped = false;
+    const interval = setInterval(async () => {
+      try {
+        const res = await authFetch(ENDPOINTS.solicitudesCambioRol);
+        const json = await res.json();
+        const all = json?.success ? json.data : json;
+        const mine = (all || [])
+          .filter((r: any) => String(r.usuario_id || r.usuarioId) === String(currentId))
+          .find((r: any) => String(r.id) === String(productorRequest.id));
+        if (stopped || !mine || mine.estado === productorRequest.estado) return;
+
+        setProductorRequest(mine);
+
+        // Si fue aprobada, refrescar info del usuario (su rol cambió a Productor)
+        if (mine.estado === 'Aprobada') {
+          try {
+            const userRes = await authFetch(`${ENDPOINTS.usuarios}/${currentId}`);
+            const userJson = await userRes.json();
+            const fresh = userJson.success ? userJson.data : userJson;
+            const updated = {
+              id: fresh.id,
+              name: fresh.name || fresh.nombre || '',
+              nombre: fresh.nombre || fresh.name || '',
+              email: fresh.email,
+              role: fresh.role || fresh.rol?.nombre || '',
+              status: fresh.status,
+              avatar: fresh.avatar || ''
+            };
+            setUserData(updated);
+            setOriginalData(updated);
+            updateUserInContext(fresh);
+          } catch (e) {
+            console.warn('No se pudo refrescar el usuario tras aprobación:', e);
+          }
+        }
+      } catch (err) {
+        console.warn('[polling solicitud] error:', err);
+      }
+    }, 5000);
+
+    return () => { stopped = true; clearInterval(interval); };
+  }, [productorRequest?.id, productorRequest?.estado, user, updateUserInContext]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserData(prev => ({ ...prev, [name]: value }));

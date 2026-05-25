@@ -157,15 +157,30 @@ const Auth: React.FC = () => {
       })
 
       if (response.ok) {
+        const autoLogin = await login(trimmedEmail, trimmedPassword)
+
         Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'success',
-          title: '¡Cuenta creada!',
-          text: 'Tu cuenta ha sido creada exitosamente. Ahora podés iniciar sesión.',
-          confirmButtonColor: 'var(--verde-claro)',
-          timer: 2500,
+          title: '¡Cuenta creada! Bienvenido/a a AgroMap',
           showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
         }).then(() => {
-          setIsLogin(true)
+          if (autoLogin.success) {
+            if (autoLogin.role === 'Administrador' || autoLogin.role === 'Admin') {
+              navigate('/admin')
+            } else if (autoLogin.role === 'Productor' || autoLogin.role === 'Vendedor') {
+              navigate('/productor')
+            } else if (autoLogin.role === 'Repartidor' || autoLogin.role === 'DRIVER') {
+              navigate('/driver')
+            } else {
+              navigate('/')
+            }
+          } else {
+            setIsLogin(true)
+          }
         })
       } else if (response.status === 409) {
         Swal.fire({
