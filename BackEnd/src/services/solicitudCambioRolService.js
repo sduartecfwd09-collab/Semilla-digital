@@ -160,6 +160,16 @@ const create = async (data) => {
     estado: 'Pendiente',
     fecha_solicitud: new Date(),
   });
+
+  // ── Revisión automática con IA (solo rol Productor) ─────────
+  if (rol_solicitado === 'Productor' && process.env.AI_AUTO_REVIEW_ENABLED === 'true') {
+    setImmediate(() => {
+      require('./ai/productorAutoReviewer')
+        .review(created.id)
+        .catch((err) => console.error('[autoReview] error:', err.message));
+    });
+  }
+
   return mapSolicitudParaFrontend(created);
 };
 

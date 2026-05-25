@@ -36,11 +36,12 @@ const getTransporter = () => {
  * Envía un email. Si no hay SMTP configurado, lo imprime en consola
  * (útil para desarrollo local). Lanza si SMTP está configurado pero falla.
  */
-const sendMail = async ({ to, subject, html, text }) => {
+const sendMail = async ({ to, bcc, subject, html, text }) => {
   const transporter = getTransporter();
   if (!transporter) {
     console.log('\n[emailService] (modo dev: SMTP no configurado)');
     console.log('  Para:', to);
+    if (bcc) console.log('  BCC:', bcc);
     console.log('  Asunto:', subject);
     console.log('  Texto:', text || (html ? html.replace(/<[^>]+>/g, ' ').trim() : ''));
     console.log();
@@ -49,6 +50,7 @@ const sendMail = async ({ to, subject, html, text }) => {
   return transporter.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
+    bcc,
     subject,
     html,
     text,
