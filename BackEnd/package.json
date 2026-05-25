@@ -1,0 +1,36 @@
+{
+  "name": "agromap-backend",
+  "version": "1.0.0",
+  "description": "Backend para AgroMap - API REST con Express + Sequelize + MySQL + JWT",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "seed": "npx sequelize-cli db:seed:all",
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "test:coverage": "jest --runInBand --forceExit --detectOpenHandles --coverage"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
+    "mysql2": "^3.9.7",
+    "nodemailer": "^8.0.7",
+    "sequelize": "^6.37.8",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "sequelize-cli": "^6.6.5",
+    "supertest": "^7.0.0"
+  }
+}

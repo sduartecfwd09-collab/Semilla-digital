@@ -1,0 +1,119 @@
+import React, { useState, useEffect } from 'react'
+import CategoryIcon from '../CategoryIcon/CategoryIcon'
+import './SidebarFilters.css'
+import { ENDPOINTS } from '../../services/api.config'
+import { ShoppingBasket } from 'lucide-react'
+import { findInCatalog, normalizeProductName } from '../../utils/productCatalog'
+
+interface Category {
+  emoji: string
+  name: string
+  count: number
+}
+
+interface ProductFromAPI {
+  nombre?: string
+  name?: string
+  categoria?: string
+  category?: string
+  disponible?: boolean
+}
+
+interface SidebarFiltersProps {
+  activeCategory?: string
+  onCategoryChange?: (category: string) => void
+}
+
+const SidebarFilters: React.FC<SidebarFiltersProps> = ({
+  activeCategory = 'Todos',
+  onCategoryChange
+}) => {
+  // La categoría seleccionada es controlada por el padre vía `activeCategory`.
+  // No mantenemos estado local duplicado — eso causaba que la prop y el state
+  // pudieran divergir y forzaba un useEffect de sincronización.
+  const [totalCount, setTotalCount] = useState<number>(0)
+  const [categories, setCategories] = useState<Category[]>([
+    { emoji: '', name: 'Verduras', count: 0 },
+    { emoji: '', name: 'Frutas', count: 0 },
+    { emoji: '', name: 'Hierbas', count: 0 },
+    { emoji: '', name: 'Tubérculos', count: 0 },
+    { emoji: '', name: 'Granos', count: 0 },
+    { emoji: '', name: 'Proteína', count: 0 },
+    { emoji: '', name: 'Lácteos', count: 0 },
+  ])
+
+  useEffect(() => {
+    // Cargar productos para actualizar los conteos de categorías
+    fetch(ENDPOINTS.productos)
+      .then(res => res.json())
+      .then(json => {
+        const productosData = json.success ? json.data : json;
+        const counts: Record<string, number> = {};
+        const availableProducts = (productosData || []).filter((p: any) => p.disponible !== false);
+        
+        // Deduplicar por nombre normalizado (igual que en el comparador)
+        const uniqueProducts = new Map<string, string>(); // normalizedName -> category
+        
+        availableProducts.forEach((p: any) => {
+          const rawName = p.nombre || p.name || 'Otros';
+          const key = normalizeProductName(rawName);
+          
+          if (!uniqueProducts.has(key)) {
+            const catalogEntry = findInCatalog(rawName);
+            const category = catalogEntry ? catalogEntry.categoria : (p.categoria || p.category || 'Otros');
+            uniqueProducts.set(key, category);
+          }
+        });
+
+        uniqueProducts.forEach((category) => {
+          counts[category] = (counts[category] || 0) + 1;
+        });
+
+        setTotalCount(uniqueProducts.size);
+        setCategories((prev) => prev.map((cat) => ({
+          ...cat,
+          count: counts[cat.name] || 0
+        })));
+      })
+      .catch(err => {
+        console.error('Error loading products for category counts:', err);
+      });
+  }, []);
+
+  const handleCategoryClick = (name: string) => {
+    if (onCategoryChange) onCategoryChange(name)
+  }
+
+  return (
+    <aside className="sidebar-filters">
+      {/* Categorías */}
+      <div className="sidebar-card">
+        <h3 className="sidebar-card-title">Categorías</h3>
+        <ul className="category-list">
+          <li
+            className={`category-item ${activeCategory === 'Todos' ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('Todos')}
+          >
+            <span className="category-item-label">
+              <ShoppingBasket size={16} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+              Todos
+            </span>
+            <span className="category-item-badge">{totalCount}</span>
+          </li>
+          {categories.map((cat) => (
+            <li
+              key={cat.name}
+              className={`category-item ${activeCategory === cat.name ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(cat.name)}
+            >
+              <span><CategoryIcon categoria={cat.name} size={18} /> {cat.name}</span>
+              <span className="category-item-badge">{cat.count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  )
+}
+
+export default SidebarFilters

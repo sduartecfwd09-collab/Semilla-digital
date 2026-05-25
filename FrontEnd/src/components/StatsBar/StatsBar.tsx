@@ -1,0 +1,73 @@
+import React, { useState, useEffect } from 'react'
+import { useFerias } from '../../hooks/useFerias'
+import './StatsBar.css'
+import { ENDPOINTS } from '../../services/api.config'
+import { normalizeProductName } from '../../utils/productCatalog'
+
+interface Stat {
+  value: string
+  label: string
+}
+
+const StatsBar: React.FC = () => {
+  const { allFerias, loading: loadingFerias } = useFerias()
+  const [productCount, setProductCount] = useState(0)
+  const [loadingProducts, setLoadingProducts] = useState(true)
+
+  useEffect(() => {
+    // Obtenemos la cantidad de productos reales del db.json
+    fetch(ENDPOINTS.productos)
+      .then((res) => res.json())
+      .then((resData) => {
+        const data = resData.success ? resData.data : resData;
+        if (Array.isArray(data)) {
+          const availableData = data.filter((p: any) => p.disponible !== false);
+          const uniqueProducts = new Set<string>();
+          availableData.forEach((p: any) => {
+            const name = p.nombre || p.name || '';
+            if (name.trim()) {
+              uniqueProducts.add(normalizeProductName(name));
+            }
+          });
+          setProductCount(uniqueProducts.size);
+        }
+        setLoadingProducts(false)
+      })
+      .catch((err) => {
+        console.error('Error fetching products for stats:', err)
+        setLoadingProducts(false)
+      })
+  }, [])
+
+  const stats: Stat[] = [
+    { 
+      value: loadingFerias ? '...' : String(allFerias.length), 
+      label: 'Ferias registradas' 
+    },
+    { 
+      value: loadingProducts ? '...' : String(productCount), 
+      label: 'Productos disponibles' 
+    },
+    { 
+      value: '7', 
+      label: 'Provincias cubiertas' 
+    },
+    { 
+      value: '100%', 
+      label: 'Acceso Gratuito' 
+    },
+  ]
+
+  return (
+    <div className="stats-bar">
+      {stats.map((stat) => (
+        <div key={stat.label} className="stat-item">
+          <div className="stat-value">{stat.value}</div>
+          <div className="stat-label">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default StatsBar

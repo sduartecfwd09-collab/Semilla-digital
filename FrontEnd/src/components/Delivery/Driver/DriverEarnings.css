@@ -1,0 +1,161 @@
+.driver-earnings-page {
+  animation: fadeIn 0.4s ease;
+  font-family: 'DM Sans', sans-serif;
+  color: #fff;
+}
+
+.earnings-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.earnings-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.earnings-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.earnings-card.primary {
+  background: linear-gradient(135deg, rgba(54, 235, 96, 0.1), rgba(82, 183, 136, 0.2));
+  border-color: rgba(54, 235, 96, 0.3);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-top span {
+  font-size: 1.1rem;
+  color: #a3b1a9;
+  font-weight: 500;
+}
+
+.earnings-card.primary .card-top span {
+  color: #36EB60;
+}
+
+.icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.earnings-card.primary .icon-wrapper {
+  background: #36EB60;
+  color: #051A10;
+}
+
+.card-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-bottom span {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.recent-payouts-section h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.payouts-table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  overflow-x: auto;
+}
+
+.payouts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.payouts-table th, .payouts-table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.payouts-table th {
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.payouts-table tr:last-child td {
+  border-bottom: none;
+}
+
+.payouts-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.order-id-cell {
+  font-family: monospace;
+  color: #9ca3af;
+}
+
+.rating-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #facc15;
+  font-weight: 600;
+}
+
+.no-rating {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.amount-cell {
+  font-weight: 700;
+  color: #36EB60;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+@media (max-width: 768px) {
+  .payouts-table th, .payouts-table td {
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,394 @@
+.proforma-page {
+  min-height: 100vh;
+  background: #f8faf9;
+}
+
+.proforma-container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+}
+
+.proforma-header {
+  margin-bottom: 2rem;
+}
+
+.proforma-header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #052e16;
+  letter-spacing: -0.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.proforma-header p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.proforma-content {
+  display: grid;
+  grid-template-columns: 1fr 22rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.proforma-items-section {
+  background: white;
+  border-radius: 1.25rem;
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.proforma-items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fafbfc;
+}
+
+.proforma-items-header h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.proforma-item {
+  display: grid;
+  grid-template-columns: 3rem 1fr auto auto auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f8fafc;
+  transition: background 0.15s;
+}
+
+.proforma-item:hover {
+  background: #fafbfc;
+}
+
+.proforma-item-emoji {
+  font-size: 1.8rem;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0fdf4;
+  border-radius: 0.75rem;
+}
+
+.proforma-item-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.proforma-item-feria {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.proforma-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.proforma-qty-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #3B9C3A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.proforma-qty-btn:hover {
+  background: #f0fdf4;
+  border-color: #3B9C3A;
+}
+
+.proforma-item-price {
+  font-weight: 800;
+  color: #052e16;
+  font-size: 1rem;
+  text-align: right;
+  min-width: 5rem;
+}
+
+.proforma-item-remove {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  transition: all 0.15s;
+  border-radius: 0.25rem;
+}
+
+.proforma-item-remove:hover {
+  background: #fef2f2;
+}
+
+.proforma-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.proforma-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Sidebar */
+.proforma-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.proforma-summary {
+  background: white;
+  border-radius: 1.25rem;
+  border: 1px solid #f1f5f9;
+  padding: 1.5rem;
+}
+
+.proforma-summary h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.proforma-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.proforma-summary-row.total {
+  border-top: 2px solid #052e16;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #052e16;
+}
+
+.proforma-delivery-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f0fdf4;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  border: 1px solid #dcfce7;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+
+.proforma-delivery-toggle:hover {
+  border-color: #3B9C3A;
+}
+
+.proforma-delivery-toggle input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: #3B9C3A;
+}
+
+.proforma-delivery-toggle span {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.proforma-delivery-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  animation: fadeInFields 0.3s ease;
+}
+
+@keyframes fadeInFields {
+  from { opacity: 0; transform: translateY(-0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.proforma-field input,
+.proforma-field select,
+.proforma-field textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  background: #fafbfc;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.proforma-field input:focus,
+.proforma-field select:focus,
+.proforma-field textarea:focus {
+  outline: none;
+  border-color: #3B9C3A;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 156, 58, 0.1);
+}
+
+.proforma-field label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.proforma-generate-btn {
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(135deg, #3B9C3A, #2d7a2d);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0.25rem 0.75rem rgba(59, 156, 58, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.proforma-generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.25rem rgba(59, 156, 58, 0.4);
+}
+
+.proforma-generate-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Historial */
+.proforma-history {
+  background: white;
+  border-radius: 1.25rem;
+  border: 1px solid #f1f5f9;
+  padding: 1.5rem;
+}
+
+.proforma-history h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.proforma-history-item {
+  padding: 0.85rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+}
+
+.proforma-history-item:hover {
+  border-color: #e2e8f0;
+}
+
+.proforma-history-id {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #3B9C3A;
+}
+
+.proforma-history-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.proforma-history-total {
+  font-weight: 800;
+  color: #052e16;
+  font-size: 1rem;
+}
+
+.proforma-history-delete {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.15s;
+}
+
+.proforma-history-delete:hover {
+  background: #fef2f2;
+}
+
+.proforma-print-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.proforma-print-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 48rem) {
+  .proforma-content {
+    grid-template-columns: 1fr;
+  }
+
+  .proforma-item {
+    grid-template-columns: 2.5rem 1fr auto;
+    gap: 0.75rem;
+  }
+}
