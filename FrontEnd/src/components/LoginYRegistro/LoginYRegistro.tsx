@@ -4,14 +4,20 @@ import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link, Link as RouterLink } from 'react-router-dom'
 import { validateEmail, validatePassword } from '../../utils/validation'
-import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
 
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, register } = useAuth()
+
+  const routeForRole = (role?: string) => {
+    if (role === 'Administrador' || role === 'Admin') return '/admin'
+    if (role === 'Productor' || role === 'Vendedor') return '/productor'
+    if (role === 'Repartidor' || role === 'DRIVER') return '/driver'
+    return '/'
+  }
 
   // Estado del formulario de inicio de sesión
   const [loginEmail, setLoginEmail] = useState('')
@@ -55,25 +61,14 @@ const Auth: React.FC = () => {
       const result = await login(loginEmail, loginPassword)
 
       if (result.success) {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
+        await Swal.fire({
           icon: 'success',
-          title: 'Sesión iniciada correctamente',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true
-        }).then(() => {
-          if (result.role === 'Administrador' || result.role === 'Admin') {
-            navigate('/admin')
-          } else if (result.role === 'Productor' || result.role === 'Vendedor') {
-            navigate('/productor')
-          } else if (result.role === 'Repartidor' || result.role === 'DRIVER') {
-            navigate('/driver')
-          } else {
-            navigate('/')
-          }
+          title: 'Éxito',
+          text: 'Sesión iniciada correctamente.',
+          confirmButtonText: 'OK',
+          confirmButtonColor: 'var(--verde-claro)',
         })
+        window.location.replace(routeForRole(result.role))
       } else {
         Swal.fire({
           icon: 'error',
@@ -143,46 +138,27 @@ const Auth: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${ENDPOINTS.authRegister}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: trimmedName,
-          email: trimmedEmail,
-          password: trimmedPassword,
-          role: 'Usuario',
-          status: 'Activo'
-        }),
-        credentials: 'include'
+      const result = await register({
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
       })
 
-      if (response.ok) {
-        const autoLogin = await login(trimmedEmail, trimmedPassword)
-
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
+      if (result.success) {
+        await Swal.fire({
           icon: 'success',
-          title: '¡Cuenta creada! Bienvenido/a a AgroMap',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        }).then(() => {
-          if (autoLogin.success) {
-            if (autoLogin.role === 'Administrador' || autoLogin.role === 'Admin') {
-              navigate('/admin')
-            } else if (autoLogin.role === 'Productor' || autoLogin.role === 'Vendedor') {
-              navigate('/productor')
-            } else if (autoLogin.role === 'Repartidor' || autoLogin.role === 'DRIVER') {
-              navigate('/driver')
-            } else {
-              navigate('/')
-            }
-          } else {
-            setIsLogin(true)
-          }
+          title: '¡Cuenta creada!',
+          text: 'Ahora iniciá sesión con tu correo y contraseña.',
+          confirmButtonColor: 'var(--verde-claro)',
         })
-      } else if (response.status === 409) {
+        setLoginEmail(trimmedEmail)
+        setLoginPassword('')
+        setRegName('')
+        setRegEmail('')
+        setRegPassword('')
+        setRegConfirm('')
+        setIsLogin(true)
+      } else if (result.status === 409) {
         Swal.fire({
           icon: 'error',
           title: 'Correo en uso',
@@ -190,11 +166,10 @@ const Auth: React.FC = () => {
           confirmButtonColor: 'var(--verde-claro)',
         })
       } else {
-        const errorData = await response.json();
         Swal.fire({
           icon: 'error',
           title: 'Error de registro',
-          text: errorData.error || 'Hubo un problema al registrar la cuenta.',
+          text: result.message || 'Hubo un problema al registrar la cuenta.',
           confirmButtonColor: 'var(--verde-claro)',
         })
       }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { ENDPOINTS } from '../services/api.config'
@@ -15,6 +16,8 @@ const ResetPassword: React.FC = () => {
 
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   if (!token) {
@@ -82,23 +85,45 @@ const ResetPassword: React.FC = () => {
         </p>
         <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
           <label style={labelStyle}>Nueva contraseña</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            style={inputStyle}
-          />
+          <div style={passwordInputWrap}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              style={passwordInputStyle}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              style={toggleButtonStyle}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           <label style={{ ...labelStyle, marginTop: '1rem' }}>Confirmar contraseña</label>
-          <input
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            placeholder="••••••••"
-            required
-            style={inputStyle}
-          />
+          <div style={passwordInputWrap}>
+            <input
+              type={showConfirm ? 'text' : 'password'}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="••••••••"
+              required
+              style={passwordInputStyle}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm((current) => !current)}
+              aria-label={showConfirm ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              title={showConfirm ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              style={toggleButtonStyle}
+            >
+              {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           <button
             type="submit"
             disabled={submitting}
@@ -129,6 +154,19 @@ const labelStyle: React.CSSProperties = { display: 'block', fontWeight: 600, mar
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '0.75rem 1rem', borderRadius: 8,
   border: '1px solid #d1d5db', fontSize: '1rem', boxSizing: 'border-box',
+}
+const passwordInputWrap: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', width: '100%', borderRadius: 8,
+  border: '1px solid #d1d5db', boxSizing: 'border-box', background: '#fff',
+}
+const passwordInputStyle: React.CSSProperties = {
+  ...inputStyle, border: 'none', outline: 'none', flex: 1, minWidth: 0,
+  paddingRight: '0.5rem',
+}
+const toggleButtonStyle: React.CSSProperties = {
+  width: 44, height: 44, display: 'inline-flex', alignItems: 'center',
+  justifyContent: 'center', border: 'none', background: 'transparent',
+  color: '#374151', cursor: 'pointer', flex: '0 0 44px',
 }
 const linkStyle: React.CSSProperties = {
   display: 'inline-block', marginTop: '1rem', color: '#2d8a42',

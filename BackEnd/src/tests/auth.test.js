@@ -2,6 +2,7 @@
 require('./setup');
 
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn().mockImplementation((plain, hashed) => Promise.resolve(plain === hashed)),
@@ -190,4 +191,38 @@ describe('GET /auth/me', () => {
   // cubiertos en middleware.auth.test.js (que prueba el verifyToken real con
   // jest.requireActual). Acá no podemos verificarlos porque setup.js mockea
   // verifyToken con un stub permisivo para no estorbar los tests de controlador.
+});
+
+describe('POST /auth/reset-password', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  const resetToken = (passwordHash = 'old_hash') =>
+    jwt.sign({
+      id: 1,
+      purpose: 'password-reset',
+      pwd: crypto.createHash('sha256').update(passwordHash).digest('hex'),
+    }, process.env.JWT_SECRET, { expiresIn: '5m' });
+
+  test('200 - actualiza password con token valido', async () => {
+    const update = jest.fn().mockResolvedValue();
+    Usuario.findByPk.mockResolvedValue({ id: 1, password: 'old_hash', update });
+
+    const res = await request(app)
+      .post('/auth/reset-password')
+      .send({ token: resetToken(), newPassword: 'password123' });
+
+    expect(res.status).toBe(200);
+    expect(update).toHaveBeenCalledWith({ password: 'hashed_pass' });
+  });
+
+  test('400 - rechaza reutilizar token despues de cambiar password', async () => {
+    Usuario.findByPk.mockResolvedValue({ id: 1, password: 'hashed_pass', update: jest.fn() });
+
+    const res = await request(app)
+      .post('/auth/reset-password')
+      .send({ token: resetToken(), newPassword: 'password456' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/utilizado|nuevo/i);
+  });
 });

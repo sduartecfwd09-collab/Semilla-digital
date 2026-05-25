@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { ENDPOINTS, API_BASE_URL } from '../../services/api.config'
 
 interface User {
@@ -16,9 +16,17 @@ interface User {
   }
 }
 
+interface AuthResult {
+  success: boolean
+  role?: string
+  status?: number
+  message?: string
+}
+
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<{ success: boolean; role?: string }>
+  login: (email: string, password: string) => Promise<AuthResult>
+  register: (data: { name: string; email: string; password: string }) => Promise<AuthResult>
   logout: () => void
   updateUserInContext: (updatedUser: Partial<User>) => void
   isAuthenticated: boolean
@@ -43,7 +51,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
@@ -56,48 +63,84 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false)
   }, [])
 
+  const storeAuthenticatedUser = (authenticatedUser: any): AuthResult => {
+    if (!authenticatedUser) return { success: false }
 
+    const userToStore: User = {
+      id: String(authenticatedUser.id),
+      email: authenticatedUser.email,
+      role: authenticatedUser.role,
+      name: authenticatedUser.name || authenticatedUser.nombre,
+      nombre: authenticatedUser.nombre || authenticatedUser.name,
+      status: authenticatedUser.status || 'Activo',
+      avatar: authenticatedUser.avatar,
+      feriaId: authenticatedUser.feriaId,
+      puestoInfo: authenticatedUser.puestoInfo,
+    }
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
+    setUser(userToStore)
+    localStorage.setItem('user', JSON.stringify(userToStore))
+    return { success: true, role: userToStore.role }
+  }
+
+  const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      setIsLoading(true);
-      const targetEmail = email.toLowerCase().trim()
-      const targetPassword = password.trim()
-
+      setIsLoading(true)
       const response = await fetch(ENDPOINTS.authLogin, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // necesario para que el navegador acepte la cookie httpOnly
-        body: JSON.stringify({ email: targetEmail, password: targetPassword })
-      });
+        credentials: 'include',
+        body: JSON.stringify({
+          email: email.toLowerCase().trim(),
+          password: password.trim(),
+        }),
+      })
 
-      if (!response.ok) return { success: false }
+      if (!response.ok) return { success: false, status: response.status }
 
       const authData = await response.json()
-      const authenticatedUser = authData.data?.user || authData.user;
-      if (authenticatedUser) {
-        // Guardamos solo info no sensible del usuario en localStorage para
-        // poder hidratar la UI al recargar la app. El token NUNCA se guarda
-        // aquí — vive solo en la cookie httpOnly que el backend seteó.
-        const userToStore: User = {
-          id: String(authenticatedUser.id),
-          email: authenticatedUser.email,
-          role: authenticatedUser.role,
-          name: authenticatedUser.name || authenticatedUser.nombre,
-          nombre: authenticatedUser.nombre || authenticatedUser.name,
-          status: authenticatedUser.status || 'Activo',
-          avatar: authenticatedUser.avatar,
-          feriaId: authenticatedUser.feriaId,
-          puestoInfo: authenticatedUser.puestoInfo,
-        }
-        setUser(userToStore)
-        localStorage.setItem('user', JSON.stringify(userToStore))
-        return { success: true, role: authenticatedUser.role }
-      }
-      return { success: false }
+      return storeAuthenticatedUser(authData.data?.user || authData.user)
     } catch (error) {
-      console.error('Error en login:', error);
-      return { success: false };
+      console.error('Error en login:', error)
+      return { success: false }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const register = async (data: { name: string; email: string; password: string }): Promise<AuthResult> => {
+    try {
+      setIsLoading(true)
+      const response = await fetch(ENDPOINTS.authRegister, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: data.name.trim(),
+          email: data.email.toLowerCase().trim(),
+          password: data.password.trim(),
+        }),
+      })
+
+      const authData = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        return {
+          success: false,
+          status: response.status,
+          message: authData.message || authData.error,
+        }
+      }
+
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      }).catch(() => { /* silently ignore */ })
+      setUser(null)
+      localStorage.removeItem('user')
+      return { success: true }
+    } catch (error) {
+      console.error('Error en registro:', error)
+      return { success: false }
     } finally {
       setIsLoading(false)
     }
@@ -113,16 +156,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('user')
-    // Invalidamos la cookie httpOnly llamando al backend. No esperamos el resultado
-    // (fire-and-forget) porque la UI ya está fuera de sesión y un fallo de red no
-    // debe bloquearla. Tampoco necesitamos token para esto: el endpoint solo borra
-    // la cookie con res.clearCookie.
     fetch(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     }).catch(() => { /* silently ignore */ })
 
-    // Limpiezas por compatibilidad con flujos viejos
     localStorage.removeItem('token')
     localStorage.removeItem('agromap_password_temp')
   }
@@ -130,6 +168,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value = {
     user,
     login,
+    register,
     logout,
     updateUserInContext,
     isAuthenticated: !!user,
