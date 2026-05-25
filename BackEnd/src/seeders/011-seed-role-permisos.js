@@ -70,7 +70,16 @@ module.exports = {
       });
     });
 
-    await queryInterface.bulkInsert('role_permiso', asignaciones, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT role_id, permiso_id FROM `role_permiso`",
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
+    const existingKeys = new Set(existing.map(rp => `${rp.role_id}-${rp.permiso_id}`));
+    const toInsert = asignaciones.filter(a => !existingKeys.has(`${a.role_id}-${a.permiso_id}`));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('role_permiso', toInsert, {});
+    }
   },
 
   async down(queryInterface) {

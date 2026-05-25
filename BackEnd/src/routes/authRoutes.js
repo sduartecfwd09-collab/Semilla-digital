@@ -6,13 +6,13 @@ const rateLimit = require('express-rate-limit');
 
 const loginLimiter = rateLimit({ 
   windowMs: 15 * 60 * 1000, 
-  max: 10, 
+  max: process.env.NODE_ENV === 'production' ? 10 : 100, 
   message: { error: 'Demasiados intentos. Reintenta en 15 minutos.' } 
 });
 
 const registerLimiter = rateLimit({ 
   windowMs: 60 * 60 * 1000, 
-  max: 5 
+  max: process.env.NODE_ENV === 'production' ? 5 : 50 
 });
 
 // POST /auth/login    → credenciales → devuelve { token, user } y setea cookie httpOnly

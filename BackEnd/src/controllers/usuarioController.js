@@ -190,6 +190,22 @@ const changePassword = async (req, res) => {
   }
 };
 
+const updateAvatar = async (req, res) => {
+  try {
+    const avatarUrl = req.body.avatar_url;
+    if (!avatarUrl) {
+      return res.status(400).json({ success: false, message: 'No se recibió la imagen subida.' });
+    }
+    const data = await usuarioService.update(req.params.id, { avatar: avatarUrl });
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error.message.includes('no encontrad')) {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
@@ -201,4 +217,5 @@ module.exports = {
   register,
   getProfile,
   changePassword,
+  updateAvatar,
 };

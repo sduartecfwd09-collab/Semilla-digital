@@ -23,7 +23,16 @@ module.exports = {
       });
     }
 
-    await queryInterface.bulkInsert('distritos', distritos, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM distritos",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(d => d.id);
+    const toInsert = distritos.filter(d => !existingIds.includes(d.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('distritos', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {

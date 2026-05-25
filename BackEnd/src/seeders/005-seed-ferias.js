@@ -33,7 +33,16 @@ module.exports = {
       }
     ];
 
-    await queryInterface.bulkInsert('ferias', ferias, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM ferias",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(f => f.id);
+    const toInsert = ferias.filter(f => !existingIds.includes(f.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('ferias', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {

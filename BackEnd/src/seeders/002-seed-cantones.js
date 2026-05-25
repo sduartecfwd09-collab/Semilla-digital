@@ -33,7 +33,16 @@ module.exports = {
       { id: 21, nombre: 'Siquirres', provincia_id: 7, created_at: new Date(), updated_at: new Date() },
     ];
 
-    await queryInterface.bulkInsert('cantones', cantones, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM cantones",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(c => c.id);
+    const toInsert = cantones.filter(c => !existingIds.includes(c.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('cantones', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {
