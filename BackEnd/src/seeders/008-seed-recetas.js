@@ -28,7 +28,16 @@ module.exports = {
       }
     ];
 
-    await queryInterface.bulkInsert('recetas', recetas, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM recetas",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(r => r.id);
+    const toInsert = recetas.filter(r => !existingIds.includes(r.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('recetas', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {

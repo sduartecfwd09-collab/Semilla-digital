@@ -3,6 +3,8 @@ const ctrl = require('../controllers/usuarioController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
+const { handleCloudinaryUpload } = require('../middlewares/cloudinaryMiddleware');
+
 // Solo permite continuar si el usuario autenticado es el dueño del recurso
 // (`req.params.id === req.user.id`) o si es Administrador.
 const ownerOrAdmin = (req, res, next) => {
@@ -40,6 +42,8 @@ router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove)
 // PUT  /api/usuarios/:id            → Actualizar (autenticado)
 // PATCH /api/usuarios/:id           → Actualizar parcial (autenticado)
 // PATCH /api/usuarios/:id/password  → Cambiar contraseña validando la actual
+// PATCH /api/usuarios/:id/avatar    → Actualizar avatar subiendo a Cloudinary
+router.patch('/:id/avatar', verifyToken, ownerOrAdmin, handleCloudinaryUpload('avatar', 'avatars', true), ctrl.updateAvatar);
 router.get('/:id', verifyToken, ownerOrAdmin, ctrl.getById);
 router.put('/:id', verifyToken, ownerOrAdmin, ctrl.update);
 router.patch('/:id/password', verifyToken, ctrl.changePassword); // ya valida ownership internamente

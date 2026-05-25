@@ -36,7 +36,7 @@ export const authFetch = async (url: string, options: RequestInit = {}) => {
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(url, { ...options, headers, credentials: 'include' });
+  const response = await fetch(url, { cache: 'no-store', ...options, headers, credentials: 'include' });
 
   if (response.status === 401) {
     if (!window.location.pathname.includes('/auth')) {

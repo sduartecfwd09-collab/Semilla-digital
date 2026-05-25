@@ -138,7 +138,8 @@ const AdminSolicitudes: React.FC = () => {
       if (nuevoEstado === 'Aprobada' && solicitud.usuarioId) {
         try {
           const puestosRes = await authFetch(ENDPOINTS.puestosProductor);
-          const puestos = (await unwrap(puestosRes)) || [];
+          const puestosRaw = (await unwrap(puestosRes));
+          const puestos = Array.isArray(puestosRaw) ? puestosRaw : (puestosRaw?.rows || []);
           const miPuesto = puestos.find((p: any) => String(p.usuarioId) === String(solicitud.usuarioId));
 
           if (miPuesto && miPuesto.feriaId) {
@@ -169,7 +170,8 @@ const AdminSolicitudes: React.FC = () => {
         }
       });
       const res = await authFetch(`${ENDPOINTS.puestosProductor}`);
-      const puestos = (await unwrap(res)) || [];
+      const resRaw = (await unwrap(res));
+      const puestos = Array.isArray(resRaw) ? resRaw : (resRaw?.rows || []);
       const puestoUsuario = puestos.filter((p: any) => String(p.usuarioId) === String(solicitud.usuarioId)).pop();
 
       if (!puestoUsuario) {

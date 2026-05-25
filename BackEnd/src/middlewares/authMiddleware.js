@@ -35,6 +35,7 @@ const verifyToken = (req, res, next) => {
     req.user = jwt.verify(token, process.env.JWT_SECRET);
     next();
   } catch (error) {
+    console.error('[verifyToken] Verification failed:', error.message, error);
     if (error.name === 'TokenExpiredError') {
       return respondUnauthorized(res, 'Sesión expirada. El token ha expirado.');
     }

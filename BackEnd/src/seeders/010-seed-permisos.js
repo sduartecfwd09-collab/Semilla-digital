@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface) {
-    await queryInterface.bulkInsert('permisos', [
+  async up(queryInterface, Sequelize) {
+    const permisos = [
       // ── Módulo: Usuarios (modulo_id: 1) ─────────────────────
       { id: 1,  clave: 'usuarios.ver',            nombre: 'Ver usuarios',              descripcion: 'Ver listado de todos los usuarios',             modulo_id: 1, created_at: new Date(), updated_at: new Date() },
       { id: 2,  clave: 'usuarios.crear',           nombre: 'Crear usuarios',            descripcion: 'Crear nuevos usuarios manualmente',              modulo_id: 1, created_at: new Date(), updated_at: new Date() },
@@ -54,7 +54,18 @@ module.exports = {
 
       // ── Módulo: Configuración (modulo_id: 11) ──────────────
       { id: 30, clave: 'configuracion.gestionar',  nombre: 'Gestionar configuración',   descripcion: 'Modificar configuración del sistema',            modulo_id: 11, created_at: new Date(), updated_at: new Date() },
-    ], {});
+    ];
+
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM `permisos`",
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(p => p.id);
+    const toInsert = permisos.filter(p => !existingIds.includes(p.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('permisos', toInsert, {});
+    }
   },
 
   async down(queryInterface) {

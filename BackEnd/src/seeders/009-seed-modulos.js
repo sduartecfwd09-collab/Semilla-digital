@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert('modulos', [
+    const modulos = [
       { id: 1,  clave: 'usuarios',      nombre: 'Gestión de Usuarios',       descripcion: 'CRUD y administración de cuentas de usuario',     icono: '👥', orden: 1, created_at: new Date(), updated_at: new Date() },
       { id: 2,  clave: 'roles',          nombre: 'Gestión de Roles',          descripcion: 'Crear, editar y asignar roles y permisos',        icono: '🛡️', orden: 2, created_at: new Date(), updated_at: new Date() },
       { id: 3,  clave: 'productos',      nombre: 'Gestión de Productos',      descripcion: 'CRUD de productos agrícolas',                     icono: '🥬', orden: 3, created_at: new Date(), updated_at: new Date() },
@@ -14,7 +14,18 @@ module.exports = {
       { id: 9,  clave: 'mensajes',       nombre: 'Mensajes de Contacto',      descripcion: 'Gestión de mensajes del formulario de contacto',   icono: '✉️', orden: 9, created_at: new Date(), updated_at: new Date() },
       { id: 10, clave: 'auditoria',      nombre: 'Auditoría',                 descripcion: 'Visualización de logs de auditoría del sistema',   icono: '📊', orden: 10, created_at: new Date(), updated_at: new Date() },
       { id: 11, clave: 'configuracion',  nombre: 'Configuración del Sistema', descripcion: 'Parámetros generales del sistema',                 icono: '⚙️', orden: 11, created_at: new Date(), updated_at: new Date() },
-    ], {});
+    ];
+
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM modulos",
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(m => m.id);
+    const toInsert = modulos.filter(m => !existingIds.includes(m.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('modulos', toInsert, {});
+    }
   },
 
   async down(queryInterface) {

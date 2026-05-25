@@ -40,7 +40,16 @@ module.exports = {
       }
     ];
 
-    await queryInterface.bulkInsert('direcciones', direcciones, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM direcciones",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(d => d.id);
+    const toInsert = direcciones.filter(d => !existingIds.includes(d.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('direcciones', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {
