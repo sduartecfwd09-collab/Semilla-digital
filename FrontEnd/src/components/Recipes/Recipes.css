@@ -95,46 +95,6 @@
   top: 5.5rem;
 }
 
-.pn-recipes-aside-card {
-  background: var(--pn-surface-container-lowest);
-  border-radius: var(--pn-radius);
-  padding: 1.25rem;
-  box-shadow: var(--pn-shadow-card);
-  border: 1px solid var(--pn-outline-variant);
-}
-
-.pn-recipes-aside-title {
-  font-family: var(--pn-font-display);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--pn-on-surface);
-  margin: 0 0 1rem;
-}
-
-.pn-recipes-category-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.625rem 0.875rem;
-  border-radius: var(--pn-radius-sm);
-  font-weight: 500;
-  font-size: 0.9375rem;
-  color: var(--pn-on-surface-variant);
-  cursor: default;
-}
-
-.pn-recipes-category-row.active {
-  background: var(--pn-secondary-container);
-  color: var(--pn-on-secondary-container);
-  font-weight: 700;
-}
-
-.pn-recipes-category-count {
-  font-size: 0.8125rem;
-  color: inherit;
-  opacity: 0.85;
-}
-
 /* ── Tip del Chef (card oscura) ───────────────────────────── */
 .pn-recipes-tip-card {
   background: var(--pn-primary-container);
@@ -344,7 +304,6 @@
     flex-direction: row;
     gap: 1rem;
   }
-  .pn-recipes-aside-card,
   .pn-recipes-tip-card {
     flex: 1;
   }

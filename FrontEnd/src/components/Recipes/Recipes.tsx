@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Clock, ShoppingBasket, ChefHat, ArrowRight } from 'lucide-react'
 import './Recipes.css'
@@ -38,8 +38,6 @@ const Recipes: React.FC = () => {
         setLoading(false)
       })
   }, [])
-
-  const total = useMemo(() => recipes.length, [recipes])
 
   const handleViewRecipe = (recipe: Recipe) => {
     const ingredients = recipe.ingredients || []
@@ -104,14 +102,6 @@ const Recipes: React.FC = () => {
       {/* Layout 2 columnas */}
       <div className="pn-recipes-layout">
         <aside className="pn-recipes-aside">
-          <div className="pn-recipes-aside-card">
-            <h3 className="pn-recipes-aside-title">Categorías</h3>
-            <div className="pn-recipes-category-row active">
-              <span className="pn-recipes-category-label">Todas</span>
-              <span className="pn-recipes-category-count">{total}</span>
-            </div>
-          </div>
-
           <div className="pn-recipes-tip-card">
             <div className="pn-recipes-tip-icon">
               <ChefHat size={20} strokeWidth={2} />

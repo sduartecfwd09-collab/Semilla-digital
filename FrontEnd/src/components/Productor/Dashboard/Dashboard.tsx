@@ -9,7 +9,7 @@ import ProductorSidebar from '../../adminProductor/ProductorSidebar'
 import AdminHeader from '../../adminProductor/ProductorHeader'
 import AdminStats from '../../adminProductor/ProductorStats'
 import { getProductosByUser, Producto } from '../../../services/ProductService'
-import { getPuestoByUserId } from '../../../services/ProductorServices'
+import { getPuestoByUserId } from '../../../services/productorService'
 import { API_BASE_URL } from '../../../services/api.config'
 import './Dashboard.css'
 

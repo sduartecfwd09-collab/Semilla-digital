@@ -3,7 +3,7 @@ const ctrl = require('../controllers/puestoProductorController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-// ── PÚBLICAS ────────────────────────────────────────────────
+// ── PROTEGIDAS (verifyToken aplicado en index.js al montar /puestos) ───────
 // GET  /api/puestos                       → Listar todos
 // GET  /api/puestos/usuario/:usuarioId    → Por usuario (1:1)
 // GET  /api/puestos/feria/:feriaId        → Por feria
