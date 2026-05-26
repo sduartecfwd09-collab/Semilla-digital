@@ -21,4 +21,11 @@ router.post('/', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administra
 router.put('/:id', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.update);
 router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
 
+// ── Gestión de puesto_ferias (solo admin) ───────────────────────
+// POST   /api/puestos/:id/ferias              body: { feriaId }
+// DELETE /api/puestos/:id/ferias/:feriaId
+// La feria principal del puesto NO se puede quitar por aquí (409).
+router.post('/:id/ferias', verifyToken, authorizeRoles('Administrador'), ctrl.addFeria);
+router.delete('/:id/ferias/:feriaId', verifyToken, authorizeRoles('Administrador'), ctrl.removeFeria);
+
 module.exports = router;

@@ -6,11 +6,15 @@ import './AdminProductores.css'
 
 const AdminProductores = () => {
     const [productores, setProductores] = useState<any[]>([])
+    const [allFerias, setAllFerias] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [selectedProductor, setSelectedProductor] = useState<any>(null)
+    // Estado local del sub-formulario "agregar feria autorizada" en el modal de
+    // detalles. No vive en el productor para no obligar a re-render al tipear.
+    const [feriaToAdd, setFeriaToAdd] = useState<string>('')
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -38,6 +42,7 @@ const AdminProductores = () => {
             const puestosList = puestosRaw.data ?? puestosRaw ?? []
             const productsList = allProductsRaw.data ?? allProductsRaw ?? []
             const feriasList = allFeriasRaw.data ?? allFeriasRaw ?? []
+            setAllFerias(feriasList)
 
             // Solo mostrar productores aprobados (role === 'Productor')
             const agros = usersList
@@ -228,12 +233,72 @@ const AdminProductores = () => {
 
     const handleVerDetalles = (agro: any) => {
         setSelectedDetailAgro(agro)
+        setFeriaToAdd('')
         setShowDetailsModal(true)
     }
 
     const handleCloseDetails = () => {
         setShowDetailsModal(false)
         setSelectedDetailAgro(null)
+        setFeriaToAdd('')
+    }
+
+    // Tras add/remove la API devuelve el puesto actualizado con su lista de
+    // ferias completa. Refrescamos tanto el modal abierto como el item en la
+    // lista para mantener consistencia sin re-fetch del backend.
+    const replacePuestoEnProductores = (productorId: string | number, nuevoPuesto: any) => {
+        setProductores(prev =>
+            prev.map(a => (String(a.id) === String(productorId) ? { ...a, puesto: nuevoPuesto } : a))
+        )
+        setSelectedDetailAgro((prev: any) =>
+            prev && String(prev.id) === String(productorId) ? { ...prev, puesto: nuevoPuesto } : prev
+        )
+    }
+
+    const handleAddFeria = async (puestoId: number | string, productorId: string | number) => {
+        if (!feriaToAdd) {
+            Swal.fire('Seleccioná una feria', 'Elegí la feria que querés autorizar.', 'warning')
+            return
+        }
+        try {
+            const updated: any = await api.request(`/puestos/${puestoId}/ferias`, {
+                method: 'POST',
+                body: JSON.stringify({ feriaId: Number(feriaToAdd) })
+            })
+            replacePuestoEnProductores(productorId, updated)
+            setFeriaToAdd('')
+            Swal.fire({ icon: 'success', title: 'Feria autorizada', timer: 1500, showConfirmButton: false })
+        } catch (error: any) {
+            const msg = error?.message || 'No se pudo agregar la feria'
+            Swal.fire('Error', msg, 'error')
+        }
+    }
+
+    const handleRemoveFeria = async (puestoId: number | string, feriaId: number | string, productorId: string | number) => {
+        const result = await Swal.fire({
+            title: '¿Quitar autorización?',
+            text: 'El productor dejará de poder vender en esta feria.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, quitar',
+            cancelButtonText: 'Cancelar',
+        })
+        if (!result.isConfirmed) return
+
+        try {
+            const updated: any = await api.request(`/puestos/${puestoId}/ferias/${feriaId}`, {
+                method: 'DELETE',
+            })
+            replacePuestoEnProductores(productorId, updated)
+            Swal.fire({ icon: 'success', title: 'Feria removida', timer: 1500, showConfirmButton: false })
+        } catch (error: any) {
+            // El backend devuelve 409 con mensaje específico cuando se intenta
+            // quitar la feria principal. Mostramos ese mensaje al admin tal cual.
+            const msg = error?.message || 'No se pudo quitar la feria'
+            Swal.fire('No se puede quitar', msg, 'warning')
+        }
     }
 
     const filteredProductores = productores.filter(a => 
@@ -355,6 +420,78 @@ const AdminProductores = () => {
                                             <p style={{ color: '#64748b', fontStyle: 'italic' }}>Este productor aún no ha sido vinculado a una feria específica del catálogo.</p>
                                         )}
                                     </div>
+
+                                    {/* ── Gestión de ferias autorizadas (puesto_ferias) ──
+                                        Solo visible si el productor tiene puesto. La feria principal
+                                        viene marcada y no se puede quitar (backend devuelve 409). */}
+                                    {selectedDetailAgro.puesto && (
+                                        <>
+                                            <h3 style={{ color: '#052e16', fontSize: '1.2rem', fontWeight: 800, margin: '2rem 0 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <span style={{ background: '#3B9C3A15', padding: '8px', borderRadius: '10px' }}>✅</span> Ferias autorizadas para vender
+                                            </h3>
+                                            <div style={{ background: '#ffffff', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                                {(selectedDetailAgro.puesto.ferias || []).length === 0 ? (
+                                                    <p style={{ color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>Este puesto aún no tiene ferias autorizadas.</p>
+                                                ) : (
+                                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                                        {(selectedDetailAgro.puesto.ferias || []).map((f: any) => {
+                                                            const esPrincipal = Number(f.id) === Number(selectedDetailAgro.puesto.feriaId)
+                                                            return (
+                                                                <li key={f.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.8rem', background: esPrincipal ? '#dcfce7' : '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                                                    <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                                                                        {f.nombre}
+                                                                        {esPrincipal && <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', background: '#166534', color: '#fff', padding: '2px 8px', borderRadius: '50px', fontWeight: 700 }}>PRINCIPAL</span>}
+                                                                    </span>
+                                                                    {!esPrincipal && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => handleRemoveFeria(selectedDetailAgro.puesto.id, f.id, selectedDetailAgro.id)}
+                                                                            title="Quitar autorización"
+                                                                            style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem' }}
+                                                                        >
+                                                                            ✕
+                                                                        </button>
+                                                                    )}
+                                                                </li>
+                                                            )
+                                                        })}
+                                                    </ul>
+                                                )}
+
+                                                {/* Sub-form: agregar feria nueva */}
+                                                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                                                    <select
+                                                        value={feriaToAdd}
+                                                        onChange={(e) => setFeriaToAdd(e.target.value)}
+                                                        style={{ flex: 1, padding: '0.6rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#fff' }}
+                                                    >
+                                                        <option value="">— Agregar otra feria —</option>
+                                                        {allFerias
+                                                            .filter(f => !(selectedDetailAgro.puesto.ferias || []).some((pf: any) => Number(pf.id) === Number(f.id)))
+                                                            .map(f => (
+                                                                <option key={f.id} value={f.id}>{f.nombre}</option>
+                                                            ))}
+                                                    </select>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddFeria(selectedDetailAgro.puesto.id, selectedDetailAgro.id)}
+                                                        disabled={!feriaToAdd}
+                                                        style={{
+                                                            padding: '0.6rem 1rem',
+                                                            background: feriaToAdd ? '#166534' : '#cbd5e1',
+                                                            color: '#fff',
+                                                            border: 'none',
+                                                            borderRadius: '8px',
+                                                            cursor: feriaToAdd ? 'pointer' : 'not-allowed',
+                                                            fontWeight: 700,
+                                                        }}
+                                                    >
+                                                        Autorizar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
 
                                 {/* Columna Derecha: Información del Puesto */}

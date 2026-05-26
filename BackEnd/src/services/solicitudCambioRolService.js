@@ -3,7 +3,7 @@
 // Descripción: Lógica de negocio para solicitudes de cambio
 //              de rol (flujo de aprobación admin)
 // ============================================================
-const { SolicitudCambioRol, Usuario, DeliveryDriver, Role } = require('../models');
+const { sequelize, SolicitudCambioRol, Usuario, DeliveryDriver, Role, PuestoProductor, PuestoFeria } = require('../models');
 const fs = require('fs');
 const path = require('path');
 
@@ -218,29 +218,63 @@ const approve = async (id, data = {}) => {
     throw new Error('Solo se pueden aprobar solicitudes pendientes');
   }
 
-  // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
   const role = await Role.findOne({ where: { nombre: solicitud.rol_solicitado } });
-  if (role && solicitud.usuario) {
-    await solicitud.usuario.update({ roleId: role.id });
-  }
 
-  // Si el rol solicitado es DRIVER, creamos el repartidor correspondiente
-  if (solicitud.rol_solicitado === 'DRIVER') {
-    await DeliveryDriver.findOrCreate({
-      where: { usuario_id: solicitud.usuario_id },
-      defaults: {
-        vehicle_type: solicitud.vehicle_type,
-        license_plate: solicitud.license_plate,
-        status: 'inactive',
+  // Toda la aprobación (cambio de rol + creación de entidad asociada + cierre
+  // de la solicitud) ocurre en una transacción. Garantiza el invariante
+  // "Productor implica al menos un puesto" y "DRIVER implica un DeliveryDriver".
+  const approved = await sequelize.transaction(async (t) => {
+    if (role && solicitud.usuario) {
+      await solicitud.usuario.update({ roleId: role.id }, { transaction: t });
+    }
+
+    if (solicitud.rol_solicitado === 'DRIVER') {
+      await DeliveryDriver.findOrCreate({
+        where: { usuario_id: solicitud.usuario_id },
+        defaults: {
+          vehicle_type: solicitud.vehicle_type,
+          license_plate: solicitud.license_plate,
+          status: 'inactive',
+        },
+        transaction: t,
+      });
+    }
+
+    if (solicitud.rol_solicitado === 'Productor') {
+      // Un usuario solo puede tener un puesto (unique en puestos_productor.usuario_id),
+      // así que usamos findOrCreate para ser idempotentes ante reaprobaciones o
+      // reintentos. La feria principal sale del usuario; si no la tiene, queda null
+      // y el productor debe completarla luego desde su panel.
+      const [puesto] = await PuestoProductor.findOrCreate({
+        where: { usuario_id: solicitud.usuario_id },
+        defaults: {
+          usuario_id: solicitud.usuario_id,
+          feria_id: solicitud.usuario?.feriaId || null,
+          nombre_puesto: solicitud.nombre_del_puesto
+            || `Puesto de ${solicitud.usuario?.name || solicitud.nombre_usuario || 'productor'}`,
+          descripcion: 'Puesto creado al aprobar la solicitud de productor.',
+          fecha_registro: new Date(),
+        },
+        transaction: t,
+      });
+
+      // Autorización inicial: el puesto queda habilitado en su feria principal vía
+      // puesto_ferias, que es la fuente de verdad consultada por productoService
+      // para validar que el productor pueda crear ofertas en una feria dada.
+      if (puesto.feria_id) {
+        await PuestoFeria.findOrCreate({
+          where: { puesto_id: puesto.id, feria_id: puesto.feria_id },
+          defaults: { puesto_id: puesto.id, feria_id: puesto.feria_id },
+          transaction: t,
+        });
       }
-    });
-  }
+    }
 
-  // Actualizar la solicitud
-  const approved = await solicitud.update({
-    estado: 'Aprobada',
-    motivo_respuesta: data.motivo_respuesta || 'Solicitud aprobada',
-    fecha_respuesta: new Date(),
+    return await solicitud.update({
+      estado: 'Aprobada',
+      motivo_respuesta: data.motivo_respuesta || 'Solicitud aprobada',
+      fecha_respuesta: new Date(),
+    }, { transaction: t });
   });
 
   return mapSolicitudParaFrontend(approved);

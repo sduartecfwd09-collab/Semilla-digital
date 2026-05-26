@@ -33,6 +33,11 @@ jest.mock('../models', () => {
       // de transacción dummy. Permite que productoService.create/update con
       // transacciones funcionen contra los mocks sin BD real.
       transaction: jest.fn().mockImplementation(async (cb) => cb({})),
+      // sequelize.query lo usa assertAutorizadoEnFeria en productoService.
+      // Por defecto devuelve una fila → productor autorizado en la feria.
+      // Los tests de "no autorizado" deben overridear este mock con [] para
+      // simular ausencia de puesto_ferias.
+      query: jest.fn().mockResolvedValue([{ '1': 1 }]),
     },
     Producto: {
       findAll:  jest.fn(),
@@ -141,6 +146,44 @@ describe('POST /productos', () => {
     const res = await request(app).post('/productos').send({ descripcion: 'Solo descripción' });
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error');
+  });
+
+  test('403 - rechaza oferta en feria no autorizada (puesto_ferias vacío)', async () => {
+    // Override del mock global de sequelize.query para simular ausencia
+    // de fila (puesto, feria) en puesto_ferias → productor no autorizado.
+    const { sequelize } = require('../models');
+    sequelize.query.mockResolvedValueOnce([]);
+
+    const res = await request(app)
+      .post('/productos')
+      .send({
+        userId: 2, nombre: 'Tomate', emoji: '🍅', categoria: 'Verduras',
+        disponible: true, unidad: 'Kilogramo',
+        precios: [{ feriaId: 99, feriaNombre: 'Feria X', provincia: 'Cartago', precio: 600 }],
+      });
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toMatch(/autorizad/i);
+    // No debe haber llegado a crear ni el producto ni la oferta
+    expect(Producto.create).not.toHaveBeenCalled();
+    expect(OfertaProducto.create).not.toHaveBeenCalled();
+  });
+
+  test('403 - bloquea también al admin cuando el productor no está autorizado', async () => {
+    // El invariante es de negocio, no del actor. Admin pasa req.body.userId pero
+    // si ese productor no tiene la feria en puesto_ferias, la oferta se rechaza.
+    const { sequelize } = require('../models');
+    sequelize.query.mockResolvedValueOnce([]);
+
+    const res = await request(app)
+      .post('/productos')
+      .send({
+        userId: 5, nombre: 'Papa', categoria: 'Verduras', unidad: 'Kg',
+        precios: [{ feriaId: 7, precio: 500 }],
+      });
+
+    expect(res.status).toBe(403);
   });
 });
 

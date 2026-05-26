@@ -25,7 +25,17 @@ export const api = {
             headers,
             credentials: 'include',
         });
-        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        if (!response.ok) {
+            // Intentamos extraer el mensaje del backend ({ success: false, message: '...' })
+            // para que el caller pueda mostrarlo al usuario. Si el body no es JSON
+            // (ej. 502 detrás de un proxy), caemos al statusText.
+            let backendMsg: string | null = null;
+            try {
+                const body = await response.json();
+                backendMsg = body?.message || body?.error || null;
+            } catch { /* no JSON */ }
+            throw new Error(backendMsg || `API Error: ${response.statusText}`);
+        }
         const json = await response.json();
         // Si la respuesta viene envuelta en { success: true, data: [...] }, extraemos data
         return (json && json.success && json.data !== undefined) ? json.data : json;

@@ -46,7 +46,7 @@ const create = async (req, res) => {
     return res.status(201).json({ success: true, data });
   } catch (error) {
     console.error('[ProductoController.create]', error);
-    return res.status(400).json({ success: false, message: error.message });
+    return res.status(error.status || 400).json({ success: false, message: error.message });
   }
 };
 
@@ -68,7 +68,7 @@ const update = async (req, res) => {
     if (error.message.includes('no encontrad')) {
       return res.status(404).json({ success: false, message: error.message });
     }
-    return res.status(400).json({ success: false, message: error.message });
+    return res.status(error.status || 400).json({ success: false, message: error.message });
   }
 };
 

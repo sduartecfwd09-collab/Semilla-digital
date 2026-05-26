@@ -80,4 +80,30 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove };
+// POST /puestos/:id/ferias  body { feriaId }
+const addFeria = async (req, res) => {
+  try {
+    const { feriaId } = req.body;
+    if (!feriaId) {
+      return res.status(400).json({ success: false, message: 'feriaId es requerido' });
+    }
+    const data = await puestoService.addFeria(req.params.id, feriaId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error('[PuestoController.addFeria]', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message });
+  }
+};
+
+// DELETE /puestos/:id/ferias/:feriaId
+const removeFeria = async (req, res) => {
+  try {
+    const data = await puestoService.removeFeria(req.params.id, req.params.feriaId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error('[PuestoController.removeFeria]', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, addFeria, removeFeria };

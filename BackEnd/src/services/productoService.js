@@ -2,7 +2,30 @@
 // Service: Producto
 // Descripción: Lógica de negocio para productos agrícolas
 // ============================================================
+const { QueryTypes } = require('sequelize');
 const { sequelize, Producto, Usuario, OfertaProducto, Feria, Direccion, Provincia } = require('../models');
+
+// Valida que el productor (usuario_id) tenga su puesto autorizado en la feria
+// objetivo. La fuente de verdad es puesto_ferias (Enfoque B), no
+// puestos_productor.feria_id (que es solo la feria principal de display).
+// Aplica también al admin: el invariante es de negocio, no de actor — si el
+// admin necesita habilitar al productor en otra feria, primero debe agregarla
+// a puesto_ferias.
+const assertAutorizadoEnFeria = async (userId, feriaId, transaction) => {
+  const rows = await sequelize.query(
+    `SELECT 1
+       FROM puestos_productor p
+       JOIN puesto_ferias pf ON pf.puesto_id = p.id
+      WHERE p.usuario_id = :userId AND pf.feria_id = :feriaId
+      LIMIT 1`,
+    { replacements: { userId, feriaId }, type: QueryTypes.SELECT, transaction }
+  );
+  if (rows.length === 0) {
+    const err = new Error('El productor no está autorizado a vender en esta feria');
+    err.status = 403;
+    throw err;
+  }
+};
 
 const feriaInclude = {
   model: Feria,
@@ -20,12 +43,17 @@ const derivarProvincia = (nombreFeria) => {
 // Función auxiliar para mapear el resultado de la base de datos a lo que espera el frontend
 const mapProductoParaFrontend = (producto) => {
   const plain = producto.get ? producto.get({ plain: true }) : producto;
+  // El nombre del productor lo necesita la UI del comparador para que el comprador
+  // pueda elegir explícitamente a quién atribuir la venta cuando varios productores
+  // ofertan el mismo producto en la misma feria.
+  const productorNombre = plain.usuario?.name || plain.usuario?.nombre || 'Productor';
   // Convertir ofertas a la estructura "precios" esperada
   if (plain.ofertas) {
     plain.precios = plain.ofertas.map(o => ({
       ofertaProductoId: o.id,
       productoId: plain.id,
       productorId: plain.user_id,
+      productorNombre,
       feriaId: o.feria_id,
       feriaNombre: o.feria ? o.feria.nombre : 'Feria',
       provincia: (o.feria?.direccion?.provincia?.nombre) || derivarProvincia(o.feria?.nombre),
@@ -130,15 +158,23 @@ const create = async (data) => {
   }
 
   // Producto + ofertas en una transacción para no dejar productos huérfanos
-  // si falla la inserción de alguna oferta.
+  // si falla la inserción de alguna oferta. Validamos autorización y feriaId
+  // ANTES de crear el producto: así un 403 no genera un Producto.create que
+  // tendría que ser revertido vía rollback.
   const nuevoProducto = await sequelize.transaction(async (t) => {
-    const creado = await Producto.create(payload, { transaction: t });
-
     if (data.precios && Array.isArray(data.precios)) {
       for (const precio of data.precios) {
         if (!precio.feriaId) {
           throw new Error('Cada precio debe incluir feriaId');
         }
+        await assertAutorizadoEnFeria(payload.user_id, precio.feriaId, t);
+      }
+    }
+
+    const creado = await Producto.create(payload, { transaction: t });
+
+    if (data.precios && Array.isArray(data.precios)) {
+      for (const precio of data.precios) {
         await OfertaProducto.create({
           producto_id: creado.id,
           feria_id: precio.feriaId,
@@ -165,13 +201,23 @@ const update = async (id, data) => {
   // Si hay reemplazo de precios, envolvemos producto + ofertas en una transacción
   // para que un fallo a mitad no deje el producto sin precios.
   if (data.precios && Array.isArray(data.precios)) {
+    // La autorización se valida contra el dueño del producto, no contra quien
+    // dispara la request. Si fuera admin actuando sobre un productor X, el
+    // invariante es "X debe estar autorizado en esa feria". Validamos antes
+    // de cualquier mutación para que un 403 no deje cambios parcialmente
+    // aplicados que dependan del rollback.
+    const productorId = payload.user_id || producto.user_id;
     await sequelize.transaction(async (t) => {
-      await producto.update(payload, { transaction: t });
-      await OfertaProducto.destroy({ where: { producto_id: id }, transaction: t });
       for (const precio of data.precios) {
         if (!precio.feriaId) {
           throw new Error('Cada precio debe incluir feriaId');
         }
+        await assertAutorizadoEnFeria(productorId, precio.feriaId, t);
+      }
+
+      await producto.update(payload, { transaction: t });
+      await OfertaProducto.destroy({ where: { producto_id: id }, transaction: t });
+      for (const precio of data.precios) {
         await OfertaProducto.create({
           producto_id: id,
           feria_id: precio.feriaId,

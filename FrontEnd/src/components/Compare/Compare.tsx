@@ -26,7 +26,7 @@ interface APIProducto {
   disponible?: boolean
   lowestPrice?: string
   rows?: ComparisonRow[]
-  precios?: Array<{ ofertaProductoId?: number; productoId?: number; productorId?: number; feriaNombre?: string; provincia?: string; precio?: number; feriaId?: number }>
+  precios?: Array<{ ofertaProductoId?: number; productoId?: number; productorId?: number; productorNombre?: string; feriaNombre?: string; provincia?: string; precio?: number; feriaId?: number }>
 }
 
 const Compare: React.FC = () => {
@@ -35,14 +35,14 @@ const Compare: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProvince, setSelectedProvince] = useState('Todas las provincias')
   const [sortOrder, setSortOrder] = useState('menor')
-  const [selectedProduct, setSelectedProduct] = useState<ProductComparisonData | null>(null)
-  
+  const [selectedContext, setSelectedContext] = useState<{ product: ProductComparisonData; feriaId: number } | null>(null)
+
   const [activeCategory, setActiveCategory] = useState<string>('Todos')
 
   const navigate = useNavigate()
   const { user } = useAuth()
 
-  const handleSelectProduct = (product: ProductComparisonData) => {
+  const handleSelectFeria = (product: ProductComparisonData, feriaId: number) => {
     if (!user) {
       Swal.fire({
         icon: 'warning',
@@ -59,7 +59,7 @@ const Compare: React.FC = () => {
       })
       return
     }
-    setSelectedProduct(product)
+    setSelectedContext({ product, feriaId })
   }
 
   useEffect(() => {
@@ -119,13 +119,14 @@ const Compare: React.FC = () => {
               return {
                 feriaName: feriaName,
                 feriaLocation: `${province}${p.direccionPuesto ? ` - ${p.direccionPuesto}` : ''}`,
+                feriaId: pr.feriaId,
                 province: province,
                 price: `₡${(pr.precio ?? 0).toLocaleString()}`,
                 priceNumeric: pr.precio ?? 0,
-                barWidth: 100, // El ancho se recalcula en el componente Card
                 ofertaProductoId: pr.ofertaProductoId,
                 productoId: pr.productoId || (p as any).id,
                 productorId: pr.productorId,
+                productorNombre: pr.productorNombre,
               };
             })
           }
@@ -141,12 +142,15 @@ const Compare: React.FC = () => {
           const catalogEntry = findInCatalog(product.name)
           const existing = groupedMap.get(key)
           if (existing) {
-            // Concatenar rows (ferias/precios) del producto duplicado
+            // Concatenar rows (ofertas) del producto duplicado
             existing.rows = [...existing.rows, ...product.rows]
-            // Deduplicar rows con misma feria + ubicación + precio
+            // Deduplicar solo por ofertaProductoId (identidad única en BD).
+            // NO deduplicar por feria+precio: dos productores pueden ofertar el
+            // mismo producto, en la misma feria, al mismo precio, y ambos son
+            // ofertas legítimas que el comprador debe poder ver y elegir.
             const seen = new Set<string>()
             existing.rows = existing.rows.filter(r => {
-              const id = `${r.feriaName}-${r.feriaLocation}-${r.priceNumeric}`
+              const id = String(r.ofertaProductoId ?? `${r.productorId}-${r.feriaId}-${r.priceNumeric}`)
               if (seen.has(id)) return false
               seen.add(id)
               return true
@@ -340,8 +344,11 @@ const Compare: React.FC = () => {
           {filteredProducts.length > 0 ? (
             <div className="filtered-products-list">
               {filteredProducts.map((product: ProductComparisonData, index: number) => (
-                <div key={product.name + index} onClick={() => handleSelectProduct(product)} style={{ cursor: 'pointer' }}>
-                  <ProductComparisonCard product={product} onSelect={() => handleSelectProduct(product)} />
+                <div key={product.name + index}>
+                  <ProductComparisonCard
+                    product={product}
+                    onSelectFeria={(feriaId) => handleSelectFeria(product, feriaId)}
+                  />
                 </div>
               ))}
             </div>
@@ -356,10 +363,11 @@ const Compare: React.FC = () => {
         </div>
       </div>
 
-      {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
+      {selectedContext && (
+        <ProductModal
+          product={selectedContext.product}
+          feriaId={selectedContext.feriaId}
+          onClose={() => setSelectedContext(null)}
         />
       )}
 

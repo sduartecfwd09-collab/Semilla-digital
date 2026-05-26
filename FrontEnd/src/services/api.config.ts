@@ -20,6 +20,10 @@ export const ENDPOINTS = {
   authForgotPassword: `${API_BASE_URL}/auth/forgot-password`,
   authResetPassword: `${API_BASE_URL}/auth/reset-password`,
   ventasMine: `${API_BASE_URL}/ventas/me`,
+  // Solo las ferias donde el productor logueado tiene puesto autorizado.
+  // Lo consume AdminProductForm para que el dropdown de feria no muestre
+  // opciones que el backend rechazaría con 403 al crear la oferta.
+  productorMisFerias: `${API_BASE_URL}/productores/me/ferias`,
   ventasByProductor: (id: string | number) => `${API_BASE_URL}/ventas/${id}`,
   platformSettings: `${API_BASE_URL}/platform-settings`,
   liquidaciones: `${API_BASE_URL}/liquidaciones`,

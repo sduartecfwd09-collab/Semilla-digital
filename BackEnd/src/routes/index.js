@@ -24,6 +24,11 @@ router.use('/puestos',
   require('./puestoProductorRoutes')
 );
 
+router.use('/productores',
+  verifyToken,
+  require('./productorRoutes')
+);
+
 router.use('/solicitudes',
   verifyToken,
   require('./solicitudCambioRolRoutes')
