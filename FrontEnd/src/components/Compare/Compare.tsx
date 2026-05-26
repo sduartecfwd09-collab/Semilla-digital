@@ -26,7 +26,7 @@ interface APIProducto {
   disponible?: boolean
   lowestPrice?: string
   rows?: ComparisonRow[]
-  precios?: Array<{ feriaNombre?: string; provincia?: string; precio?: number }>
+  precios?: Array<{ ofertaProductoId?: number; productoId?: number; productorId?: number; feriaNombre?: string; provincia?: string; precio?: number; feriaId?: number }>
 }
 
 const Compare: React.FC = () => {
@@ -122,7 +122,10 @@ const Compare: React.FC = () => {
                 province: province,
                 price: `₡${(pr.precio ?? 0).toLocaleString()}`,
                 priceNumeric: pr.precio ?? 0,
-                barWidth: 100 // El ancho se recalcula en el componente Card
+                barWidth: 100, // El ancho se recalcula en el componente Card
+                ofertaProductoId: pr.ofertaProductoId,
+                productoId: pr.productoId || (p as any).id,
+                productorId: pr.productorId,
               };
             })
           }

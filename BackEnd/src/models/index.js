@@ -49,6 +49,10 @@ const models = {
   DeliveryApplicationDocument: require('./DeliveryApplicationDocument')(sequelize),
   DeliverySetting: require('./DeliverySetting')(sequelize),
   DriverEarnings: require('./DriverEarnings')(sequelize),
+  // ── Ganancias productores ────────────────────────────────
+  ProformaItem: require('./ProformaItem')(sequelize),
+  ProducerEarning: require('./ProducerEarning')(sequelize),
+  PlatformSetting: require('./PlatformSetting')(sequelize),
 };
 
 // Inicialización de asociaciones

@@ -19,6 +19,11 @@ export const ENDPOINTS = {
   delivery: `${API_BASE_URL}/delivery`,
   authForgotPassword: `${API_BASE_URL}/auth/forgot-password`,
   authResetPassword: `${API_BASE_URL}/auth/reset-password`,
+  ventasMine: `${API_BASE_URL}/ventas/me`,
+  ventasByProductor: (id: string | number) => `${API_BASE_URL}/ventas/${id}`,
+  platformSettings: `${API_BASE_URL}/platform-settings`,
+  liquidaciones: `${API_BASE_URL}/liquidaciones`,
+  liquidacionesBatch: (productorId: string | number) => `${API_BASE_URL}/liquidaciones/batch/${productorId}`,
 };
 
 export const authFetch = async (url: string, options: RequestInit = {}) => {

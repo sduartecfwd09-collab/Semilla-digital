@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BarChart3, Calculator, PieChart } from "lucide-react";
+import { BarChart3, Calculator, PieChart, TrendingUp } from "lucide-react";
 import ReactECharts from "echarts-for-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -9,6 +9,7 @@ import ProductorSidebar from "../../adminProductor/ProductorSidebar";
 import AdminHeader from "../../adminProductor/ProductorHeader";
 import Navbar from "../../Navbar/Navbar";
 import Footer from "../../Footer/Footer";
+import VentasReales from "./VentasReales";
 import "./Ganancias.css";
 
 interface CostosData {
@@ -34,6 +35,7 @@ const currencyFormatter = new Intl.NumberFormat("es-CR", {
 
 const Ganancias: React.FC = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'proyeccion' | 'ventas'>('ventas');
   const [productos, setProductos] = useState<Producto[]>([]);
   const [costos, setCostos] = useState<CostosData>({});
   const [loading, setLoading] = useState(true);
@@ -195,7 +197,37 @@ const Ganancias: React.FC = () => {
             subtitle="Analizá la rentabilidad de tus productos"
           />
           <div className="admin-content">
-            {loading ? (
+            {/* ── Tabs ── */}
+            <div style={{ display: 'flex', gap: '0', marginBottom: '1.5rem', borderBottom: '2px solid #e2e8f0' }}>
+              <button
+                onClick={() => setActiveTab('ventas')}
+                style={{
+                  padding: '10px 22px', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer',
+                  background: activeTab === 'ventas' ? '#fff' : 'transparent',
+                  color: activeTab === 'ventas' ? '#2f8f46' : '#64748b',
+                  borderBottom: activeTab === 'ventas' ? '2px solid #2f8f46' : '2px solid transparent',
+                  marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
+                }}
+              >
+                <TrendingUp size={16} /> Ventas reales
+              </button>
+              <button
+                onClick={() => setActiveTab('proyeccion')}
+                style={{
+                  padding: '10px 22px', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer',
+                  background: activeTab === 'proyeccion' ? '#fff' : 'transparent',
+                  color: activeTab === 'proyeccion' ? '#2f8f46' : '#64748b',
+                  borderBottom: activeTab === 'proyeccion' ? '2px solid #2f8f46' : '2px solid transparent',
+                  marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
+                }}
+              >
+                <Calculator size={16} /> Proyección
+              </button>
+            </div>
+
+            {activeTab === 'ventas' && <VentasReales />}
+
+            {activeTab === 'proyeccion' && (loading ? (
               <p>Cargando datos...</p>
             ) : productos.length === 0 ? (
               <p>
@@ -567,7 +599,7 @@ const Ganancias: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>

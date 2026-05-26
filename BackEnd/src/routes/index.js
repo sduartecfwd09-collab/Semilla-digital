@@ -63,4 +63,20 @@ router.use('/delivery',
   require('./deliveryRoutes')
 );
 
+// ── Ganancias productores ────────────────────────────────────────────────
+router.use('/ventas',
+  verifyToken,
+  require('./ventaProductorRoutes')
+);
+
+router.use('/platform-settings',
+  verifyToken,
+  require('./platformSettingsRoutes')
+);
+
+router.use('/liquidaciones',
+  verifyToken,
+  require('./liquidacionRoutes')
+);
+
 module.exports = router;

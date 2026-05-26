@@ -55,7 +55,7 @@ const { Usuario } = require('../models');
 describe('POST /auth/register', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  test('201 - registro exitoso devuelve token y usuario sin password', async () => {
+  test('201 - registro exitoso devuelve usuario sin password (sin token: requiere login posterior)', async () => {
     Usuario.findOne.mockResolvedValue(null); // email no existe
     Usuario.create.mockResolvedValue({
       id: 10, name: 'Nuevo User', email: 'nuevo@test.cr',
@@ -68,10 +68,11 @@ describe('POST /auth/register', () => {
       .send({ name: 'Nuevo User', email: 'nuevo@test.cr', password: 'password123' });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('token');
-    expect(res.body).toHaveProperty('user');
-    expect(res.body.user).not.toHaveProperty('password'); // nunca devuelve password
-    expect(res.body.user.email).toBe('nuevo@test.cr');
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveProperty('user');
+    expect(res.body.data).not.toHaveProperty('token'); // ya no auto-loguea
+    expect(res.body.data.user).not.toHaveProperty('password');
+    expect(res.body.data.user.email).toBe('nuevo@test.cr');
   });
 
   test('400 - faltan campos obligatorios', async () => {
@@ -80,7 +81,8 @@ describe('POST /auth/register', () => {
       .send({ email: 'x@x.cr' }); // sin name ni password
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('error');
+    expect(res.body.success).toBe(false);
+    expect(res.body).toHaveProperty('message');
   });
 
   test('409 - email ya registrado', async () => {
@@ -91,7 +93,7 @@ describe('POST /auth/register', () => {
       .send({ name: 'Dup', email: 'ya@existe.cr', password: 'password123' });
 
     expect(res.status).toBe(409);
-    expect(res.body.error).toMatch(/ya existe/i);
+    expect(res.body.message).toMatch(/ya existe/i);
   });
 });
 
@@ -116,12 +118,13 @@ describe('POST /auth/login', () => {
       .send({ email: 'admin@test.cr', password: 'admin123' });
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('token');
-    expect(res.body.user).not.toHaveProperty('password');
-    expect(res.body.user.role).toBe('Administrador');
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveProperty('token');
+    expect(res.body.data.user).not.toHaveProperty('password');
+    expect(res.body.data.user.role).toBe('Administrador');
 
     // El token debe ser verificable
-    const decoded = jwt.verify(res.body.token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(res.body.data.token, process.env.JWT_SECRET);
     expect(decoded.id).toBe(1);
     expect(decoded.role).toBe('Administrador');
   });
@@ -137,7 +140,7 @@ describe('POST /auth/login', () => {
       .post('/auth/login')
       .send({ email: 'noexiste@test.cr', password: '123' });
     expect(res.status).toBe(401);
-    expect(res.body.error).toMatch(/credenciales/i);
+    expect(res.body.message).toMatch(/credenciales/i);
   });
 
   test('401 - contraseña incorrecta', async () => {
@@ -160,7 +163,7 @@ describe('POST /auth/login', () => {
       .post('/auth/login')
       .send({ email: 'inactivo@test.cr', password: 'pass' });
     expect(res.status).toBe(403);
-    expect(res.body.error).toMatch(/inactiva/i);
+    expect(res.body.message).toMatch(/inactiva/i);
   });
 });
 
@@ -182,8 +185,9 @@ describe('GET /auth/me', () => {
       .set('Authorization', `Bearer ${validToken()}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).not.toHaveProperty('password');
-    expect(res.body.id).toBe(1);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).not.toHaveProperty('password');
+    expect(res.body.data.id).toBe(1);
   });
 
   // NOTA: los tests "401 sin token / token malformado / token expirado" están

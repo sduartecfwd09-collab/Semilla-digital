@@ -12,6 +12,9 @@ export interface ComparisonRow {
   barWidth: number
   barColor?: string
   province?: string
+  ofertaProductoId?: number
+  productoId?: number
+  productorId?: number
 }
 
 export interface ProductComparisonData {

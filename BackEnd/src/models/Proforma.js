@@ -51,6 +51,8 @@ module.exports = (sequelize) => {
   Proforma.associate = (models) => {
     Proforma.belongsTo(models.Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
     Proforma.belongsTo(models.Direccion, { foreignKey: 'direccion_id', as: 'direccion' });
+    Proforma.hasMany(models.ProformaItem, { foreignKey: 'proforma_id', as: 'proformaItems' });
+    Proforma.hasMany(models.ProducerEarning, { foreignKey: 'proforma_id', as: 'earnings' });
   };
 
   return Proforma;

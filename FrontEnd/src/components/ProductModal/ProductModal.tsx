@@ -59,6 +59,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
       unidad: product.unit || 'Unidad',
       descripcion: hasDelivery ? `${product.description || ''} (Incluye Delivery)` : product.description,
       categoria: product.category,
+      producto_id: row.productoId,
+      oferta_producto_id: row.ofertaProductoId,
+      productor_id: row.productorId,
     }, qty)
     setAddedIndex(index)
     setTimeout(() => setAddedIndex(null), 1500)

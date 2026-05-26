@@ -133,24 +133,9 @@ const register = async (req, res) => {
       puestoInfo: puestoInfo || null,
     });
 
-    const token = await signToken(usuario, roleName);
-
-    // Configurar cookie httpOnly (ver nota en login)
-    res.cookie('agromap_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 8 * 60 * 60 * 1000
-    });
-
-    const responseData = { user: safeUser(usuario, roleName) };
-    if (process.env.NODE_ENV === 'test') {
-      responseData.token = token;
-    }
-
     return res.status(201).json({
       success: true,
-      data: responseData,
+      data: { user: safeUser(usuario, roleName) },
     });
   } catch (error) {
     console.error('[AuthController.register]', error);

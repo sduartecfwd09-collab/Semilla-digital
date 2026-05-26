@@ -37,7 +37,8 @@ const getByUsuario = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const data = await proformaService.create(req.body);
+    const userId = req.user?.id || null;
+    const data = await proformaService.create(req.body, userId);
     return res.status(201).json({ success: true, data });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });

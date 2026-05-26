@@ -63,17 +63,17 @@ const Auth: React.FC = () => {
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true
-        }).then(() => {
-          if (result.role === 'Administrador' || result.role === 'Admin') {
-            navigate('/admin')
-          } else if (result.role === 'Productor' || result.role === 'Vendedor') {
-            navigate('/productor')
-          } else if (result.role === 'Repartidor' || result.role === 'DRIVER') {
-            navigate('/driver')
-          } else {
-            navigate('/')
-          }
         })
+
+        if (result.role === 'Administrador' || result.role === 'Admin') {
+          navigate('/admin')
+        } else if (result.role === 'Productor' || result.role === 'Vendedor') {
+          navigate('/productor')
+        } else if (result.role === 'Repartidor' || result.role === 'DRIVER') {
+          navigate('/driver')
+        } else {
+          navigate('/')
+        }
       } else {
         Swal.fire({
           icon: 'error',
@@ -157,31 +157,23 @@ const Auth: React.FC = () => {
       })
 
       if (response.ok) {
-        const autoLogin = await login(trimmedEmail, trimmedPassword)
-
         Swal.fire({
           toast: true,
           position: 'top-end',
           icon: 'success',
-          title: '¡Cuenta creada! Bienvenido/a a AgroMap',
+          title: '¡Cuenta creada! Iniciá sesión para continuar',
           showConfirmButton: false,
-          timer: 2000,
+          timer: 2500,
           timerProgressBar: true,
-        }).then(() => {
-          if (autoLogin.success) {
-            if (autoLogin.role === 'Administrador' || autoLogin.role === 'Admin') {
-              navigate('/admin')
-            } else if (autoLogin.role === 'Productor' || autoLogin.role === 'Vendedor') {
-              navigate('/productor')
-            } else if (autoLogin.role === 'Repartidor' || autoLogin.role === 'DRIVER') {
-              navigate('/driver')
-            } else {
-              navigate('/')
-            }
-          } else {
-            setIsLogin(true)
-          }
         })
+
+        setLoginEmail(trimmedEmail)
+        setRegName('')
+        setRegEmail('')
+        setRegPassword('')
+        setRegConfirm('')
+
+        setIsLogin(true)
       } else if (response.status === 409) {
         Swal.fire({
           icon: 'error',
