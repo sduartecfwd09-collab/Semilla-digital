@@ -28,7 +28,7 @@ const AdminProductos = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true)
-            const res = await fetch(`${API_BASE_URL}/productos`)
+            const res = await fetch(`${API_BASE_URL}/productos`, { cache: 'no-store' })
             const json = await res.json()
             setProducts(json.success ? json.data : json)
         } catch (error) {

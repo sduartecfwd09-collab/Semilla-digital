@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../Navbar'
-import HeroSection from '../HeroSection'
+import Carousel from '../Carousel'
 import StatsBar from '../StatsBar'
 import FeaturesSection from '../FeaturesSection'
 import Footer from '../Footer'
@@ -9,7 +9,7 @@ const HomeLayout: React.FC = () => {
   return (
     <div className="home-page">
       <Navbar />
-      <HeroSection />
+      <Carousel variant="hero" />
       <StatsBar />
       <FeaturesSection />
       <Footer />

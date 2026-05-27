@@ -73,6 +73,22 @@ module.exports = (sequelize) => {
       type: DataTypes.JSON,
       allowNull: true,
     },
+    marca_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    modelo_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    anio_vehiculo: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    confirmaciones: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   }, {
     tableName: 'solicitudes_cambio_rol',
     timestamps: true,

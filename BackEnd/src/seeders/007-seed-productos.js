@@ -69,7 +69,16 @@ module.exports = {
       }
     ];
 
-    await queryInterface.bulkInsert('productos', productos, {});
+    const existing = await queryInterface.sequelize.query(
+      "SELECT id FROM productos",
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const existingIds = existing.map(p => p.id);
+    const toInsert = productos.filter(p => !existingIds.includes(p.id));
+
+    if (toInsert.length > 0) {
+      await queryInterface.bulkInsert('productos', toInsert, {});
+    }
   },
 
   async down(queryInterface, Sequelize) {

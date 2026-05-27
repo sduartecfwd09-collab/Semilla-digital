@@ -39,7 +39,7 @@ const AdminProductores = () => {
             ]) as any[]
 
             const usersList = usersRaw.data ?? usersRaw ?? []
-            const puestosList = puestosRaw.data ?? puestosRaw ?? []
+            const puestosList = Array.isArray(puestosRaw) ? puestosRaw : (puestosRaw?.rows ?? puestosRaw?.data ?? [])
             const productsList = allProductsRaw.data ?? allProductsRaw ?? []
             const feriasList = allFeriasRaw.data ?? allFeriasRaw ?? []
             setAllFerias(feriasList)
