@@ -63,30 +63,12 @@ const Auth: React.FC = () => {
       if (result.success) {
         await Swal.fire({
           icon: 'success',
-<<<<<<< HEAD
           title: 'Sesión iniciada correctamente',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true
         })
-
-        if (result.role === 'Administrador' || result.role === 'Admin') {
-          navigate('/admin')
-        } else if (result.role === 'Productor' || result.role === 'Vendedor') {
-          navigate('/productor')
-        } else if (result.role === 'Repartidor' || result.role === 'DRIVER') {
-          navigate('/driver')
-        } else {
-          navigate('/')
-        }
-=======
-          title: 'Éxito',
-          text: 'Sesión iniciada correctamente.',
-          confirmButtonText: 'OK',
-          confirmButtonColor: 'var(--verde-claro)',
-        })
-        window.location.replace(routeForRole(result.role))
->>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
+        navigate(routeForRole(result.role))
       } else {
         Swal.fire({
           icon: 'error',
@@ -162,8 +144,7 @@ const Auth: React.FC = () => {
         password: trimmedPassword,
       })
 
-<<<<<<< HEAD
-      if (response.ok) {
+      if (result.success) {
         Swal.fire({
           toast: true,
           position: 'top-end',
@@ -175,29 +156,13 @@ const Auth: React.FC = () => {
         })
 
         setLoginEmail(trimmedEmail)
-=======
-      if (result.success) {
-        await Swal.fire({
-          icon: 'success',
-          title: '¡Cuenta creada!',
-          text: 'Ahora iniciá sesión con tu correo y contraseña.',
-          confirmButtonColor: 'var(--verde-claro)',
-        })
-        setLoginEmail(trimmedEmail)
         setLoginPassword('')
->>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
         setRegName('')
         setRegEmail('')
         setRegPassword('')
         setRegConfirm('')
-<<<<<<< HEAD
-
-        setIsLogin(true)
-      } else if (response.status === 409) {
-=======
         setIsLogin(true)
       } else if (result.status === 409) {
->>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
         Swal.fire({
           icon: 'error',
           title: 'Correo en uso',

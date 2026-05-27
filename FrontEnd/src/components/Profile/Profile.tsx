@@ -260,51 +260,17 @@ const Profile: React.FC = () => {
       Swal.fire('Error', 'Por favor selecciona una imagen válida.', 'error');
       return;
     }
-<<<<<<< HEAD
-    if (file.size > 2 * 1024 * 1024) {
-      Swal.fire('Error', 'La imagen es demasiado grande. Máximo 2MB.', 'error');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Image = event.target?.result as string;
-      try {
-        setUserData(prev => ({ ...prev, avatar: base64Image }));
-        updateUserInContext({ avatar: base64Image });
-
-        await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ avatar: base64Image })
-        });
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Foto actualizada',
-          text: 'Tu foto de perfil se ha guardado correctamente.',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        console.error('Error updating avatar:', error);
-        Swal.fire('Error', 'No se pudo guardar la foto de perfil.', 'error');
-=======
-
-    // Aumentamos el límite de tamaño a 10MB ya que Multer y Cloudinary lo soportan
     if (file.size > 10 * 1024 * 1024) {
       Swal.fire('Error', 'La imagen es demasiado grande. Máximo 10MB.', 'error');
       return;
     }
 
-    // Mostrar alerta interactiva de carga
     Swal.fire({
       title: 'Subiendo imagen...',
       text: 'Por favor espera un momento mientras guardamos tu foto de perfil en la nube.',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
->>>>>>> 02f7d7cba47043f5734d9066316b7bf147b068b3
       }
     });
 
