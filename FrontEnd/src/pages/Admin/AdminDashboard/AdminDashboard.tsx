@@ -4,6 +4,7 @@ import { api } from '../../../services/api'
 import { ENDPOINTS, authFetch } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
 import { normalizeProductName } from '../../../utils/productCatalog'
+import Carousel from '../../../components/Carousel'
 import './AdminDashboard.css'
 
 const AdminDashboard = () => {
@@ -97,7 +98,9 @@ const AdminDashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <header className="dashboard-header">
+            <Carousel variant="compact" />
+
+            <header className="dashboard-header" style={{ marginBottom: '1.5rem', paddingTop: '0' }}>
                 <h1>AgroMap Admin</h1>
                 <p>Bienvenido al Centro de Control de AgroMap</p>
             </header>

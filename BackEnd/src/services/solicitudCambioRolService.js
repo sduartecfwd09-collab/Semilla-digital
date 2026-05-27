@@ -6,6 +6,7 @@
 const { SolicitudCambioRol, Usuario, DeliveryDriver, Role } = require('../models');
 const fs = require('fs');
 const path = require('path');
+const { uploadFromPath } = require('./cloudinaryService');
 
 const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
   if (!documentosBase64 || Object.keys(documentosBase64).length === 0) return null;
@@ -219,21 +220,113 @@ const approve = async (id, data = {}) => {
   }
 
   // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
-  const role = await Role.findOne({ where: { nombre: solicitud.rol_solicitado } });
+  const role = await Role.findOne({ 
+    where: { 
+      nombre: solicitud.rol_solicitado === 'DRIVER' ? ['Repartidor', 'DRIVER'] : solicitud.rol_solicitado 
+    } 
+  });
   if (role && solicitud.usuario) {
     await solicitud.usuario.update({ roleId: role.id });
   }
 
   // Si el rol solicitado es DRIVER, creamos el repartidor correspondiente
   if (solicitud.rol_solicitado === 'DRIVER') {
-    await DeliveryDriver.findOrCreate({
-      where: { usuario_id: solicitud.usuario_id },
+    // ── SUBIDA A CLOUDINARY ──────────────────────────────────
+    // Subir selfie a Cloudinary si existe y no es ya una URL de Cloudinary
+    let selfieCloudinaryUrl = solicitud.selfie_verificacion_url;
+    if (selfieCloudinaryUrl && !selfieCloudinaryUrl.includes('cloudinary.com')) {
+      const absoluteSelfiePath = path.join(__dirname, '../../', selfieCloudinaryUrl);
+      if (fs.existsSync(absoluteSelfiePath)) {
+        try {
+          const res = await uploadFromPath(absoluteSelfiePath, 'delivery_selfies', false);
+          selfieCloudinaryUrl = res.secure_url;
+        } catch (err) {
+          console.error('[Cloudinary approve upload] Error uploading selfie:', err);
+        }
+      }
+    }
+
+    // Subir documentos a Cloudinary si existen y no son ya URLs de Cloudinary
+    let docsCloudinary = { ...(solicitud.documentos_rutas || {}) };
+    for (const [key, relativePath] of Object.entries(docsCloudinary)) {
+      if (relativePath && typeof relativePath === 'string' && !relativePath.includes('cloudinary.com')) {
+        const absoluteDocPath = path.join(__dirname, '../../', relativePath);
+        if (fs.existsSync(absoluteDocPath)) {
+          try {
+            const res = await uploadFromPath(absoluteDocPath, 'delivery_documents', false);
+            docsCloudinary[key] = res.secure_url;
+          } catch (err) {
+            console.error(`[Cloudinary approve upload] Error uploading doc ${key}:`, err);
+          }
+        }
+      }
+    }
+
+    // Actualizar la solicitud con las nuevas URLs de Cloudinary
+    await solicitud.update({
+      selfie_verificacion_url: selfieCloudinaryUrl,
+      documentos_rutas: docsCloudinary
+    });
+
+    // Buscar o crear el repartidor vinculándolo de forma correcta a user_id
+    const [driverRecord, created] = await DeliveryDriver.findOrCreate({
+      where: { user_id: solicitud.usuario_id },
       defaults: {
         vehicle_type: solicitud.vehicle_type,
         license_plate: solicitud.license_plate,
-        status: 'inactive',
+        marca_vehiculo: solicitud.marca_vehiculo,
+        modelo_vehiculo: solicitud.modelo_vehiculo,
+        anio_vehiculo: solicitud.anio_vehiculo,
+        confirmaciones: solicitud.confirmaciones,
+        selfie_verificacion_url: selfieCloudinaryUrl,
+        documentos_rutas: docsCloudinary,
+        status: 'OFFLINE',
+        
+        // Campos explícitos solicitados
+        full_name: solicitud.nombre_usuario,
+        email: solicitud.correo_usuario,
+        phone: solicitud.usuario ? (solicitud.usuario.puesto_info?.telefono || solicitud.usuario.phone || null) : null,
+        plate_number: solicitud.license_plate,
+        brand: solicitud.marca_vehiculo,
+        model: solicitud.modelo_vehiculo,
+        identity_document_url: docsCloudinary.cedula || docsCloudinary.cedulaPasaporte || docsCloudinary.cedulaBici || null,
+        criminal_record_url: docsCloudinary.hojaDelincuencia || docsCloudinary.hojaDelincuenciaBM || docsCloudinary.antecedentesBici || null,
+        license_url: docsCloudinary.licenciaConducir || docsCloudinary.licenciaMoto || docsCloudinary.licenciaBM || null,
+        property_card_url: docsCloudinary.tarjetaPropiedad || null,
+        riteve_url: docsCloudinary.revisionTecnica || docsCloudinary.revisionTecnicaMoto || docsCloudinary.riteveBM || null,
+        marchamo_url: docsCloudinary.marchamo || docsCloudinary.marchamoMoto || docsCloudinary.marchamoBM || null,
+        selfie_verification_url: selfieCloudinaryUrl,
       }
     });
+
+    // Si ya existía, lo actualizamos con los nuevos datos cargados
+    if (!created) {
+      await driverRecord.update({
+        vehicle_type: solicitud.vehicle_type,
+        license_plate: solicitud.license_plate,
+        marca_vehiculo: solicitud.marca_vehiculo,
+        modelo_vehiculo: solicitud.modelo_vehiculo,
+        anio_vehiculo: solicitud.anio_vehiculo,
+        confirmaciones: solicitud.confirmaciones,
+        selfie_verificacion_url: selfieCloudinaryUrl,
+        documentos_rutas: docsCloudinary,
+        
+        // Campos explícitos solicitados
+        full_name: solicitud.nombre_usuario,
+        email: solicitud.correo_usuario,
+        phone: solicitud.usuario ? (solicitud.usuario.puesto_info?.telefono || solicitud.usuario.phone || null) : null,
+        plate_number: solicitud.license_plate,
+        brand: solicitud.marca_vehiculo,
+        model: solicitud.modelo_vehiculo,
+        identity_document_url: docsCloudinary.cedula || docsCloudinary.cedulaPasaporte || docsCloudinary.cedulaBici || null,
+        criminal_record_url: docsCloudinary.hojaDelincuencia || docsCloudinary.hojaDelincuenciaBM || docsCloudinary.antecedentesBici || null,
+        license_url: docsCloudinary.licenciaConducir || docsCloudinary.licenciaMoto || docsCloudinary.licenciaBM || null,
+        property_card_url: docsCloudinary.tarjetaPropiedad || null,
+        riteve_url: docsCloudinary.revisionTecnica || docsCloudinary.revisionTecnicaMoto || docsCloudinary.riteveBM || null,
+        marchamo_url: docsCloudinary.marchamo || docsCloudinary.marchamoMoto || docsCloudinary.marchamoBM || null,
+        selfie_verification_url: selfieCloudinaryUrl,
+      });
+    }
   }
 
   // Actualizar la solicitud
