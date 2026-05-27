@@ -63,7 +63,7 @@ interface CarouselProps {
   autoplaySpeed?: number
 }
 
-const Carousel: React.FC<CarouselProps> = ({ variant = 'hero', autoplaySpeed = 3500 }) => {
+const Carousel: React.FC<CarouselProps> = ({ variant = 'hero', autoplaySpeed = 6500 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)

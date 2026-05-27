@@ -9,6 +9,7 @@ import { validateEmail } from '../../utils/validation';
 import CategoryIcon from '../CategoryIcon/CategoryIcon';
 import { useFerias } from '../../hooks/useFerias';
 import DocUploadField from './DocUploadField';
+import CustomDatePicker from '../CustomDatePicker/CustomDatePicker';
 import {
   TIPOS_PRODUCTO,
   PROVINCIAS_CR,
@@ -547,9 +548,12 @@ const RegistroProductor: React.FC = () => {
                 </div>
                 <div className="input-group">
                   <label>Fecha de nacimiento *</label>
-                  <div className="input-box">
-                    <input type="date" value={p.fechaNacimiento} onChange={(e) => patchSection('personal', { fechaNacimiento: e.target.value })} />
-                  </div>
+                  <CustomDatePicker
+                    value={p.fechaNacimiento}
+                    onChange={(val) => patchSection('personal', { fechaNacimiento: val })}
+                    minYear={new Date().getFullYear() - 100}
+                    maxYear={new Date().getFullYear()}
+                  />
                   {edad !== null && <p className="edad-display">Edad: {edad} años</p>}
                 </div>
                 <div className="input-group">
@@ -691,8 +695,24 @@ const RegistroProductor: React.FC = () => {
                 <h3 className="form-section-title">Registro MAG / Feriante</h3>
                 <div className="input-group"><label>N.º registro MAG</label><div className="input-box"><input value={mag.numeroRegistroMag} onChange={(e) => patchSection('mag', { numeroRegistroMag: e.target.value })} /></div></div>
                 <div className="input-group"><label>Carnet feriante</label><div className="input-box"><input value={mag.carnetFeriante} onChange={(e) => patchSection('mag', { carnetFeriante: e.target.value })} /></div></div>
-                <div className="input-group"><label>Fecha emisión MAG</label><div className="input-box"><input type="date" value={mag.fechaEmisionMag} onChange={(e) => patchSection('mag', { fechaEmisionMag: e.target.value })} /></div></div>
-                <div className="input-group"><label>Fecha vencimiento MAG</label><div className="input-box"><input type="date" value={mag.fechaVencimientoMag} onChange={(e) => patchSection('mag', { fechaVencimientoMag: e.target.value })} /></div></div>
+                <div className="input-group">
+                  <label>Fecha emisión MAG</label>
+                  <CustomDatePicker
+                    value={mag.fechaEmisionMag}
+                    onChange={(val) => patchSection('mag', { fechaEmisionMag: val })}
+                    minYear={new Date().getFullYear() - 15}
+                    maxYear={new Date().getFullYear() + 20}
+                  />
+                </div>
+                <div className="input-group">
+                  <label>Fecha vencimiento MAG</label>
+                  <CustomDatePicker
+                    value={mag.fechaVencimientoMag}
+                    onChange={(val) => patchSection('mag', { fechaVencimientoMag: val })}
+                    minYear={new Date().getFullYear() - 15}
+                    maxYear={new Date().getFullYear() + 20}
+                  />
+                </div>
                 <div className="input-group full-width"><label>Comité de feria asociada</label><div className="input-box"><input value={mag.comiteFeriaAsociada} onChange={(e) => patchSection('mag', { comiteFeriaAsociada: e.target.value })} /></div></div>
                 <div className="doc-upload-grid full-width">
                   <DocUploadField docKey="foto_carnet_mag" label="Foto carnet MAG" fileData={docUploads.foto_carnet_mag || null} existingName={docExistentes.foto_carnet_mag} onChange={handleDocChange} onRemoveExisting={(k) => setDocExistentes((prev) => { const n = { ...prev }; delete n[k]; return n; })} compress={compressImage} />
@@ -710,8 +730,24 @@ const RegistroProductor: React.FC = () => {
                 {san.tieneManipulacionAlimentos && (
                   <>
                     <div className="input-group"><label>N.º carné manipulación</label><div className="input-box"><input value={san.numeroCarnetManipulacion} onChange={(e) => patchSection('sanitario', { numeroCarnetManipulacion: e.target.value })} /></div></div>
-                    <div className="input-group"><label>Fecha emisión</label><div className="input-box"><input type="date" value={san.fechaEmisionManipulacion} onChange={(e) => patchSection('sanitario', { fechaEmisionManipulacion: e.target.value })} /></div></div>
-                    <div className="input-group"><label>Fecha vencimiento</label><div className="input-box"><input type="date" value={san.fechaVencimientoManipulacion} onChange={(e) => patchSection('sanitario', { fechaVencimientoManipulacion: e.target.value })} /></div></div>
+                    <div className="input-group">
+                      <label>Fecha emisión</label>
+                      <CustomDatePicker
+                        value={san.fechaEmisionManipulacion}
+                        onChange={(val) => patchSection('sanitario', { fechaEmisionManipulacion: val })}
+                        minYear={new Date().getFullYear() - 15}
+                        maxYear={new Date().getFullYear() + 20}
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label>Fecha vencimiento</label>
+                      <CustomDatePicker
+                        value={san.fechaVencimientoManipulacion}
+                        onChange={(val) => patchSection('sanitario', { fechaVencimientoManipulacion: val })}
+                        minYear={new Date().getFullYear() - 15}
+                        maxYear={new Date().getFullYear() + 20}
+                      />
+                    </div>
                     <div className="input-group full-width"><label>Institución emisora</label><div className="input-box"><input value={san.institucionEmisora} onChange={(e) => patchSection('sanitario', { institucionEmisora: e.target.value })} /></div></div>
                     <DocUploadField docKey="carnet_manipulacion" label="Carné manipulación" fileData={docUploads.carnet_manipulacion || null} existingName={docExistentes.carnet_manipulacion} onChange={handleDocChange} onRemoveExisting={(k) => setDocExistentes((prev) => { const n = { ...prev }; delete n[k]; return n; })} compress={compressImage} />
                   </>

@@ -254,7 +254,62 @@
 .registro-productor-actions {
   display: flex;
   gap: 0.9375rem;
-  margin-top: 0.625rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.registro-productor-actions .save-btn {
+  background: var(--verde-claro, #2d8a42);
+  color: white;
+  border: none;
+  padding: 0.85rem 2.2rem;
+  border-radius: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(45, 138, 66, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.registro-productor-actions .save-btn:hover:not(:disabled) {
+  background: var(--verde, #1a5c2a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(45, 138, 66, 0.35);
+}
+
+.registro-productor-actions .save-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.registro-productor-actions .save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.registro-productor-actions .cancel-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 0.85rem 2.2rem;
+  border-radius: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.registro-productor-actions .cancel-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+  border-color: #cbd5e1;
 }
 
 /* Banner de estado de solicitud */
