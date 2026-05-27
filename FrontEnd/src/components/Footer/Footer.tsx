@@ -13,9 +13,9 @@ const Footer: React.FC = () => {
       <div className="pn-footer-inner">
         {/* Brand */}
         <div className="pn-footer-brand">
-          <Link to="/" className="pn-footer-logo" onClick={handleScrollToTop}>
-            <Tractor size={20} strokeWidth={2.2} />
-            <span>AgroMap</span>
+          <Link to="/" className="pn-navbar-logo" onClick={handleScrollToTop}>
+            <span className="pn-navbar-logo-agro">Agro</span>
+            <span className="pn-navbar-logo-map">Map</span>
           </Link>
           <p className="pn-footer-tagline">
             La plataforma oficial para comparar precios y apoyar la producción
