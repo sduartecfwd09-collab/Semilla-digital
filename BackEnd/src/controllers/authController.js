@@ -1,6 +1,7 @@
 'use strict';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const { Usuario, Role } = require('../models');
 const { Op } = require('sequelize');
 const permisoService = require('../services/permisoService');
@@ -9,6 +10,10 @@ const { sendMail } = require('../services/emailService');
 
 const JWT_SECRET  = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '8h';
+const RESET_PASSWORD_EXPIRES = '5m';
+
+const passwordResetFingerprint = (passwordHash) =>
+  crypto.createHash('sha256').update(String(passwordHash || '')).digest('hex');
 
 // Helper: genera el token firmado
 // Helper: genera el token firmado con permisos incluidos
@@ -175,7 +180,7 @@ const logout = (_req, res) => {
 
 // ── POST /auth/forgot-password ───────────────────────────────────────────────
 // Recibe un email. Si existe el usuario, genera un JWT con `purpose:'password-reset'`
-// (válido 30 min) y envía un link al correo. Si no hay SMTP configurado, el link
+// (válido 5 min) y envía un link al correo. Si no hay SMTP configurado, el link
 // se imprime en la consola del backend (modo dev).
 //
 // IMPORTANTE: respondemos siempre 200 con el mismo mensaje, exista o no el email,
@@ -183,6 +188,7 @@ const logout = (_req, res) => {
 const forgotPassword = async (req, res) => {
   try {
     const email = (req.body.email || '').toLowerCase().trim();
+    let devResetUrl = null;
     if (!email) {
       return res.status(400).json({ success: false, message: 'El email es requerido.' });
     }
@@ -190,9 +196,13 @@ const forgotPassword = async (req, res) => {
     const usuario = await Usuario.findOne({ where: { email } });
     if (usuario) {
       const token = jwt.sign(
-        { id: usuario.id, purpose: 'password-reset' },
+        {
+          id: usuario.id,
+          purpose: 'password-reset',
+          pwd: passwordResetFingerprint(usuario.password),
+        },
         process.env.JWT_SECRET,
-        { expiresIn: '30m' }
+        { expiresIn: RESET_PASSWORD_EXPIRES }
       );
       const frontend = process.env.FRONTEND_URL || 'http://localhost:5173';
       const resetUrl = `${frontend}/reset-password?token=${encodeURIComponent(token)}`;
@@ -203,7 +213,7 @@ const forgotPassword = async (req, res) => {
           <h2 style="color: #166534;">Recuperación de contraseña</h2>
           <p>Hola${usuario.name ? ` <strong>${usuario.name}</strong>` : ''},</p>
           <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en AgroMap.
-             Si fuiste vos, hacé clic en el botón. El enlace expira en 30 minutos.</p>
+             Si fuiste vos, hacé clic en el botón. El enlace expira en 5 minutos.</p>
           <p style="margin: 28px 0;">
             <a href="${resetUrl}"
                style="background:#2d8a42;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;">
@@ -219,13 +229,24 @@ const forgotPassword = async (req, res) => {
           </p>
         </div>
       `;
-      const text = `Para restablecer tu contraseña en AgroMap, abrí este enlace (válido 30 min):\n${resetUrl}\nSi no fuiste vos, ignorá este mensaje.`;
+      const text = `Para restablecer tu contraseña en AgroMap, abrí este enlace (válido 5 min):\n${resetUrl}\nSi no fuiste vos, ignorá este mensaje.`;
 
       try {
-        await sendMail({ to: usuario.email, subject, html, text });
+        const mailResult = await sendMail({ to: usuario.email, subject, html, text });
+        if (mailResult && mailResult.dev && process.env.NODE_ENV !== 'production') {
+          devResetUrl = resetUrl;
+        }
       } catch (mailErr) {
         console.error('[Auth] forgotPassword sendMail:', mailErr.message);
       }
+    }
+
+    if (devResetUrl) {
+      return res.json({
+        success: true,
+        message: 'Si el correo está registrado, te enviamos un enlace para restablecer la contraseña.',
+        devResetUrl,
+      });
     }
 
     return res.json({
@@ -262,13 +283,17 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: msg });
     }
 
-    if (payload.purpose !== 'password-reset' || !payload.id) {
+    if (payload.purpose !== 'password-reset' || !payload.id || !payload.pwd) {
       return res.status(400).json({ success: false, message: 'El enlace no es válido.' });
     }
 
     const usuario = await Usuario.findByPk(payload.id);
     if (!usuario) {
       return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
+    }
+
+    if (payload.pwd !== passwordResetFingerprint(usuario.password)) {
+      return res.status(400).json({ success: false, message: 'El enlace ya fue utilizado o no es válido. Solicitá uno nuevo.' });
     }
 
     const hashed = await bcrypt.hash(newPassword.trim(), 10);

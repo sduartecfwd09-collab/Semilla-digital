@@ -1,5 +1,4 @@
-const { Usuario, Provincia } = require('./src/models');
-const sequelize = require('./src/config/database');
+const { sequelize, Usuario, Provincia } = require('./src/models');
 
 async function check() {
   try {

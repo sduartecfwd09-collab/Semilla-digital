@@ -570,12 +570,6 @@ const RegistroProductor: React.FC = () => {
                   </div>
                 </div>
                 <div className="input-group">
-                  <label>Teléfono secundario</label>
-                  <div className="input-box">
-                    <input type="tel" value={p.telefonoSecundario} onChange={(e) => patchSection('personal', { telefonoSecundario: e.target.value.replace(/[^0-9]/g, '').slice(0, 8) })} maxLength={8} />
-                  </div>
-                </div>
-                <div className="input-group">
                   <label>Provincia *</label>
                   <div className="input-box">
                     <select value={p.provincia} onChange={(e) => patchSection('personal', { provincia: e.target.value })}>
@@ -596,12 +590,6 @@ const RegistroProductor: React.FC = () => {
                   <label>Distrito</label>
                   <div className="input-box">
                     <input value={p.distrito} onChange={(e) => patchSection('personal', { distrito: e.target.value })} />
-                  </div>
-                </div>
-                <div className="input-group full-width">
-                  <label>Dirección exacta *</label>
-                  <div className="input-box">
-                    <textarea value={p.direccionExacta} onChange={(e) => patchSection('personal', { direccionExacta: e.target.value })} placeholder="Dirección completa" />
                   </div>
                 </div>
               </div>

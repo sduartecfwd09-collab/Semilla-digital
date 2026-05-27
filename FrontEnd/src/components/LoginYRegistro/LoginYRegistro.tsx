@@ -4,14 +4,20 @@ import Swal from 'sweetalert2'
 import './LoginYRegistro.css'
 import { useNavigate, Link, Link as RouterLink } from 'react-router-dom'
 import { validateEmail, validatePassword } from '../../utils/validation'
-import { ENDPOINTS } from '../../services/api.config'
 import { useAuth } from '../context/AuthContext'
 
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, register } = useAuth()
+
+  const routeForRole = (role?: string) => {
+    if (role === 'Administrador' || role === 'Admin') return '/admin'
+    if (role === 'Productor' || role === 'Vendedor') return '/productor'
+    if (role === 'Repartidor' || role === 'DRIVER') return '/driver'
+    return '/'
+  }
 
   // Estado del formulario de inicio de sesión
   const [loginEmail, setLoginEmail] = useState('')
@@ -55,10 +61,9 @@ const Auth: React.FC = () => {
       const result = await login(loginEmail, loginPassword)
 
       if (result.success) {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
+        await Swal.fire({
           icon: 'success',
+<<<<<<< HEAD
           title: 'Sesión iniciada correctamente',
           showConfirmButton: false,
           timer: 2000,
@@ -74,6 +79,14 @@ const Auth: React.FC = () => {
         } else {
           navigate('/')
         }
+=======
+          title: 'Éxito',
+          text: 'Sesión iniciada correctamente.',
+          confirmButtonText: 'OK',
+          confirmButtonColor: 'var(--verde-claro)',
+        })
+        window.location.replace(routeForRole(result.role))
+>>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
       } else {
         Swal.fire({
           icon: 'error',
@@ -143,19 +156,13 @@ const Auth: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${ENDPOINTS.authRegister}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: trimmedName,
-          email: trimmedEmail,
-          password: trimmedPassword,
-          role: 'Usuario',
-          status: 'Activo'
-        }),
-        credentials: 'include'
+      const result = await register({
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
       })
 
+<<<<<<< HEAD
       if (response.ok) {
         Swal.fire({
           toast: true,
@@ -168,13 +175,29 @@ const Auth: React.FC = () => {
         })
 
         setLoginEmail(trimmedEmail)
+=======
+      if (result.success) {
+        await Swal.fire({
+          icon: 'success',
+          title: '¡Cuenta creada!',
+          text: 'Ahora iniciá sesión con tu correo y contraseña.',
+          confirmButtonColor: 'var(--verde-claro)',
+        })
+        setLoginEmail(trimmedEmail)
+        setLoginPassword('')
+>>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
         setRegName('')
         setRegEmail('')
         setRegPassword('')
         setRegConfirm('')
+<<<<<<< HEAD
 
         setIsLogin(true)
       } else if (response.status === 409) {
+=======
+        setIsLogin(true)
+      } else if (result.status === 409) {
+>>>>>>> d296f61ba32126b0998862d60eb75c7b981941b7
         Swal.fire({
           icon: 'error',
           title: 'Correo en uso',
@@ -182,11 +205,10 @@ const Auth: React.FC = () => {
           confirmButtonColor: 'var(--verde-claro)',
         })
       } else {
-        const errorData = await response.json();
         Swal.fire({
           icon: 'error',
           title: 'Error de registro',
-          text: errorData.error || 'Hubo un problema al registrar la cuenta.',
+          text: result.message || 'Hubo un problema al registrar la cuenta.',
           confirmButtonColor: 'var(--verde-claro)',
         })
       }

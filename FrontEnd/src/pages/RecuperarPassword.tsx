@@ -30,8 +30,17 @@ const RecuperarPassword: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: trimmed }),
       })
+      const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error('http')
       setSent(true)
+      if (json.devResetUrl) {
+        await Swal.fire({
+          icon: 'info',
+          title: 'Modo desarrollo',
+          html: `SMTP no esta configurado. <a href="${json.devResetUrl}">Abrir enlace de recuperacion</a>.`,
+          confirmButtonColor: '#2d8a42',
+        })
+      }
     } catch {
       Swal.fire({
         icon: 'error',

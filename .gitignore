@@ -23,6 +23,11 @@ coverage/
 !.vscode/extensions.json
 .idea/
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 Thumbs.db
 *.swp
 *.swo
@@ -34,3 +39,4 @@ respaldo_*.sql
 
 # Metadata local de herramientas (Claude Code, etc.)
 .claude/
+

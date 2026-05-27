@@ -18,16 +18,21 @@ const nodemailer = require('nodemailer');
 let cachedTransporter = null;
 
 const getTransporter = () => {
-  if (!process.env.SMTP_HOST) return null;
+  const smtpHost = (process.env.SMTP_HOST || '').trim();
+  const smtpUser = (process.env.SMTP_USER || '').trim();
+  const rawPass = (process.env.SMTP_PASS || '').trim();
+  const smtpPass = smtpHost.includes('gmail.com') ? rawPass.replace(/\s+/g, '') : rawPass;
+
+  if (!smtpHost || !smtpUser || !smtpPass) return null;
   if (cachedTransporter) return cachedTransporter;
   cachedTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+    host: smtpHost,
     port: Number(process.env.SMTP_PORT) || 587,
     secure: String(process.env.SMTP_SECURE).toLowerCase() === 'true',
-    auth: process.env.SMTP_USER ? {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    } : undefined,
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    },
   });
   return cachedTransporter;
 };
@@ -48,7 +53,7 @@ const sendMail = async ({ to, bcc, subject, html, text }) => {
     return { dev: true };
   }
   return transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    from: process.env.SMTP_FROM || `AgroMap <${process.env.SMTP_USER}>`,
     to,
     bcc,
     subject,
