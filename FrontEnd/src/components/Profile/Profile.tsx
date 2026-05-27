@@ -529,7 +529,11 @@ const Profile: React.FC = () => {
   const statusLabel = (userData.status || 'Activo').toUpperCase();
   const statusClass = (userData.status || 'Activo').toLowerCase();
   const isUsuarioRole = userData.role && userData.role.toLowerCase() === 'usuario';
-  const canRequestDriver = !userData.role || (userData.role.toLowerCase() !== 'driver' && userData.role.toLowerCase() !== 'administrador');
+  const canRequestDriver = !userData.role || (
+    userData.role.toLowerCase() !== 'driver' && 
+    userData.role.toLowerCase() !== 'repartidor' && 
+    userData.role.toLowerCase() !== 'administrador'
+  );
 
   if (loading) {
     return (

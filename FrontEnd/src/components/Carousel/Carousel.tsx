@@ -63,7 +63,7 @@ interface CarouselProps {
   autoplaySpeed?: number
 }
 
-const Carousel: React.FC<CarouselProps> = ({ variant = 'hero', autoplaySpeed = 3500 }) => {
+const Carousel: React.FC<CarouselProps> = ({ variant = 'hero', autoplaySpeed = 6500 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -230,13 +230,18 @@ const Carousel: React.FC<CarouselProps> = ({ variant = 'hero', autoplaySpeed = 3
                 </div>
               </div>
 
-              {/* Card on the Right inside the slide so it transitions and moves with it! */}
-              <div className="carousel-floating-card">
-                <ActiveFeriasCard />
-              </div>
+              {/* Marcador de posición invisible para preservar la rejilla (grid) de layout */}
+              <div className="carousel-card-placeholder" />
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Tarjeta estática flotante que permanece fija y funcional */}
+      <div className="carousel-static-card-container">
+        <div className="carousel-static-card-wrapper">
+          <ActiveFeriasCard />
+        </div>
       </div>
 
       {/* Discrete Controls */}
