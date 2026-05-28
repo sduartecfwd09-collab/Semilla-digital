@@ -5,7 +5,7 @@ node_modules/
 .env
 .env.local
 .env.*.local
-
+automatizacion.md
 # Logs
 *.log
 npm-debug.log*

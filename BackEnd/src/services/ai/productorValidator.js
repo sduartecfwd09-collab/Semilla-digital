@@ -75,11 +75,11 @@ const preCheck = ({ solicitud, puesto }) => {
   if (!Array.isArray(puesto.tiposProducto) || puesto.tiposProducto.length === 0) {
     faltantes.push('Al menos un tipo de producto');
   }
-  if (!Array.isArray(puesto.fotosBase64) || puesto.fotosBase64.length === 0) {
+  /*if (!Array.isArray(puesto.fotosBase64) || puesto.fotosBase64.length === 0) {
     if (!Array.isArray(puesto.fotosNombres) || puesto.fotosNombres.length === 0) {
       faltantes.push('Al menos una foto del puesto');
     }
-  }
+  }*/
   if (!puesto.telefono || !TEL_CR_RE.test(String(puesto.telefono).trim())) {
     faltantes.push('Teléfono CR de 8 dígitos');
   }
@@ -149,6 +149,24 @@ const armarPayloadParaIA = ({ solicitud, puesto }) => {
     solicitudFeria: datos.solicitudFeria || {},
     calidad: datos.calidad || {},
     documentos_subidos: docsPresentes,
+    // Lista de aspectos que la capa determinista (preCheck) YA validó.
+    // El LLM debe deferir a esto y NO re-cuestionar formato/presencia.
+    _ya_validados_formalmente: [
+      'cedula_formato',
+      'telefono_formato_8_digitos',
+      'email_formato',
+      'edad_minima_18',
+      'provincia_costa_rica',
+      'direccion_exacta_presente',
+      'nombre_y_apellido_presentes',
+      'nombre_puesto_presente',
+      'descripcion_minimo_10_caracteres',
+      'feria_asociada',
+      'al_menos_un_tipo_producto',
+      'aceptaciones_legales',
+      'carnet_mag_o_certificacion_productor_presente',
+      'constancia_tributaria_presente',
+    ],
   };
 };
 
@@ -182,7 +200,17 @@ FORMATO DE SALIDA OBLIGATORIO (JSON estricto, sin texto adicional, sin markdown)
 
 NO escribas explicaciones fuera del JSON. NO uses markdown. NO inventes campos. Si dudas, RECHAZA.
 
-REGLA CRÍTICA ANTI-ALUCINACIÓN: NO inventes requisitos. Tus motivos de rechazo deben corresponder estrictamente a los criterios 1-9 listados arriba. Si pensás en un requisito que no está en esa lista (ej. seguros, certificaciones de comercio justo, registros municipales, pólizas, permisos extra, etc.), NO lo agregues.`;
+REGLA CRÍTICA ANTI-ALUCINACIÓN: NO inventes requisitos. Tus motivos de rechazo deben corresponder estrictamente a los criterios 1-9 listados arriba. Si pensás en un requisito que no está en esa lista (ej. seguros, certificaciones de comercio justo, registros municipales, pólizas, permisos extra, etc.), NO lo agregues.
+
+REGLA DE DEFERENCIA AL PRE-CHECK: El payload del usuario incluye un campo \`_ya_validados_formalmente\` con una lista de aspectos que una capa determinista PREVIA al LLM ya validó. Está PROHIBIDO que tus motivos de rechazo cuestionen el FORMATO o la PRESENCIA de esos campos. Ejemplos PROHIBIDOS:
+- "El teléfono debe tener 8 dígitos" → ya validado, NO escribir.
+- "Falta confirmar la constancia tributaria" → ya validada, NO escribir.
+- "El email no tiene formato válido" → ya validado, NO escribir.
+- "Falta aceptación del reglamento" → ya validada, NO escribir.
+SÍ podés mencionar estos campos SOLAMENTE si detectás INCOHERENCIA SEMÁNTICA explícita, no errores de formato. Ejemplos PERMITIDOS:
+- "El nombre 'Pepito Mentirilla' parece falso" (incoherencia semántica, no formato).
+- "La dirección 'casa' es genérica, no es una dirección exacta real" (semántica, criterio 2).
+- "La descripción habla de electrónica, no de actividad agrícola" (criterio 3, coherencia).`;
 
 const armarUserPrompt = (payload) =>
   `Revisa esta solicitud de Productor y responde SOLO con el JSON especificado:\n\n${JSON.stringify(payload, null, 2)}`;
@@ -225,7 +253,20 @@ const filtrarMotivosAlucinados = (decision, puesto) => {
   const tipos = puesto?.tiposProducto || puesto?.tipos_producto || [];
   const requiereSanitario = tipos.some((t) => TIPOS_SANITARIO_EXTRA.includes(t));
 
-  if (requiereSanitario) return decision;
+  // Patrones que SIEMPRE son alucinación cuando aparecen como motivo
+  // de rechazo, porque `preCheck` ya validó formato/presencia de forma
+  // determinista (si llegamos a este filtro, preCheck devolvió []).
+  // Atacamos motivos del LLM que cuestionan el FORMATO de campos ya
+  // verificados — no la coherencia semántica, que sigue siendo legítima.
+  const PATRONES_PRECHECK_VALIDADOS = [
+    /tel[eé]fono[^.]{0,40}(8\s*d[ií]gitos|formato|inv[aá]lid|no\s+v[aá]lid|debe\s+(ser|tener))/i,
+    /email[^.]{0,40}(formato|inv[aá]lid|no\s+v[aá]lid|debe\s+(ser|tener))/i,
+    /c[eé]dula[^.]{0,40}(formato|inv[aá]lid|no\s+v[aá]lid|debe\s+(ser|tener))/i,
+    /(mayor[ií]a\s+de\s+edad|edad\s+m[ií]nima|menor\s+de\s+edad)/i,
+    /constancia\s+tributaria[^.]{0,60}(no\s+(se\s+)?(menciona|confirma|aprueba|presenta|adjunta|sube)|falta|ausencia)/i,
+    /(carnet\s+mag|certificaci[oó]n\s+de\s+productor)[^.]{0,60}(no\s+(se\s+)?(menciona|confirma|presenta|adjunta|sube)|falta|ausencia)/i,
+    /(reglamento|derecho\s+de\s+piso)[^.]{0,60}(no\s+(se\s+)?(acept|menciona|confirma|aprueba)|falta\s+(la\s+)?(aceptaci[oó]n|confirmaci[oó]n))/i,
+  ];
 
   // Patrones para detectar motivos de naturaleza sanitaria/alimentaria
   // que el LLM puede reformular para evadir un solo regex. Cubrimos:
@@ -246,10 +287,16 @@ const filtrarMotivosAlucinados = (decision, puesto) => {
     /carn[eé]\s+sanitario/i,
     /documentos?\s+sanitar/i,
   ];
-  const esSanitario = (motivo) => PATRONES_SANITARIOS.some((re) => re.test(motivo));
+
+  const esAlucinacionConocida = (motivo) => {
+    if (PATRONES_PRECHECK_VALIDADOS.some((re) => re.test(motivo))) return true;
+    if (!requiereSanitario && PATRONES_SANITARIOS.some((re) => re.test(motivo))) return true;
+    return false;
+  };
+
   const descartados = [];
   const faltantesLimpios = decision.faltantes.filter((m) => {
-    if (esSanitario(m)) {
+    if (esAlucinacionConocida(m)) {
       descartados.push(m);
       return false;
     }
@@ -259,7 +306,7 @@ const filtrarMotivosAlucinados = (decision, puesto) => {
   if (descartados.length === 0) return decision;
 
   console.warn(
-    `[productorValidator] motivos descartados (no aplica sanitario para tipos=${JSON.stringify(tipos)}):`,
+    `[productorValidator] motivos descartados (tipos=${JSON.stringify(tipos)}, requiereSanitario=${requiereSanitario}):`,
     descartados
   );
 
