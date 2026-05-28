@@ -205,7 +205,7 @@ const RegistroDelivery: React.FC = () => {
     const userStr = localStorage.getItem('user');
     if (!userStr) { navigate('/auth'); return; }
     const cachedUser = JSON.parse(userStr);
-    if (cachedUser.role !== 'Cliente' && cachedUser.role !== 'Usuario' && cachedUser.role !== 'DRIVER') {
+    if (cachedUser.role !== 'Usuario' && cachedUser.role !== 'Repartidor') {
       navigate('/perfil'); return;
     }
     setRole(cachedUser.role);
@@ -222,7 +222,7 @@ const RegistroDelivery: React.FC = () => {
         const todas = raw.data || raw;
         const mias = todas.filter(
           (s: any) => String(s.usuario_id ?? s.usuarioId) === String(cachedUser.id) &&
-            (s.rol_solicitado ?? s.rolSolicitado) === 'DRIVER' &&
+            (s.rol_solicitado ?? s.rolSolicitado) === 'Repartidor' &&
             s.estado === 'Pendiente'
         );
         if (mias.length > 0) {
@@ -528,7 +528,7 @@ const RegistroDelivery: React.FC = () => {
         usuario_id: userId,
         nombre_usuario: nombre.trim(),
         correo_usuario: email.trim(),
-        rol_solicitado: 'DRIVER',
+        rol_solicitado: 'Repartidor',
         vehicle_type: vehicleType,
         license_plate: licensePlate.trim(),
         estado: 'Pendiente',
@@ -621,7 +621,7 @@ const RegistroDelivery: React.FC = () => {
           {/* Header */}
           <div className="profile-header">
             <div className="header-info">
-              <h1>{role === 'DRIVER' ? 'Información de Repartidor' : 'Registro de Repartidor'}</h1>
+              <h1>{role === 'Repartidor' ? 'Información de Repartidor' : 'Registro de Repartidor'}</h1>
               <p>Completá los datos de tu vehículo, documentos e información personal para que un administrador revise tu solicitud.</p>
             </div>
           </div>

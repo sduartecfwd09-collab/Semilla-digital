@@ -14,6 +14,7 @@ module.exports = {
       { id: 9,  clave: 'mensajes',       nombre: 'Mensajes de Contacto',      descripcion: 'Gestión de mensajes del formulario de contacto',   icono: '✉️', orden: 9, created_at: new Date(), updated_at: new Date() },
       { id: 10, clave: 'auditoria',      nombre: 'Auditoría',                 descripcion: 'Visualización de logs de auditoría del sistema',   icono: '📊', orden: 10, created_at: new Date(), updated_at: new Date() },
       { id: 11, clave: 'configuracion',  nombre: 'Configuración del Sistema', descripcion: 'Parámetros generales del sistema',                 icono: '⚙️', orden: 11, created_at: new Date(), updated_at: new Date() },
+      { id: 12, clave: 'delivery',       nombre: 'Delivery (Repartidores)',    descripcion: 'Operaciones del repartidor: perfil, órdenes, ubicación y ganancias', icono: '🛵', orden: 12, created_at: new Date(), updated_at: new Date() },
     ];
 
     const existing = await queryInterface.sequelize.query(

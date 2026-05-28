@@ -232,7 +232,7 @@ const Navbar: React.FC = () => {
           </li>
         )}
 
-        {(user?.role === "DRIVER" || user?.role === "Repartidor") && (
+        {user?.role === "Repartidor" && (
           <li>
             <Link
               to="/driver"

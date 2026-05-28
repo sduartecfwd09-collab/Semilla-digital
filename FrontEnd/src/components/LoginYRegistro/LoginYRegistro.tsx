@@ -13,9 +13,9 @@ const Auth: React.FC = () => {
   const { login, register } = useAuth()
 
   const routeForRole = (role?: string) => {
-    if (role === 'Administrador' || role === 'Admin') return '/admin'
-    if (role === 'Productor' || role === 'Vendedor') return '/productor'
-    if (role === 'Repartidor' || role === 'DRIVER') return '/driver'
+    if (role === 'Administrador') return '/admin'
+    if (role === 'Productor') return '/productor'
+    if (role === 'Repartidor') return '/driver'
     return '/'
   }
 

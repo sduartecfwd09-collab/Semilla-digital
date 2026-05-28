@@ -141,7 +141,7 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
-  if (data.rol_solicitado === 'DRIVER' && !data.selfie_verificacion_url) {
+  if (data.rol_solicitado === 'Repartidor' && !data.selfie_verificacion_url) {
     throw new Error('La selfie de verificación es obligatoria');
   }
 
@@ -219,18 +219,15 @@ const approve = async (id, data = {}) => {
     throw new Error('Solo se pueden aprobar solicitudes pendientes');
   }
 
-  // Mapeo DRIVER → nombre de rol en BD (puede llamarse 'Repartidor')
   const role = await Role.findOne({
-    where: {
-      nombre: solicitud.rol_solicitado === 'DRIVER' ? ['Repartidor', 'DRIVER'] : solicitud.rol_solicitado,
-    },
+    where: { nombre: solicitud.rol_solicitado },
   });
 
-  // Subidas a Cloudinary para DRIVER fuera de la TX (I/O externo no debe bloquear la transacción)
+  // Subidas a Cloudinary para Repartidor fuera de la TX (I/O externo no debe bloquear la transacción)
   let selfieCloudinaryUrl = solicitud.selfie_verificacion_url;
   let docsCloudinary = { ...(solicitud.documentos_rutas || {}) };
 
-  if (solicitud.rol_solicitado === 'DRIVER') {
+  if (solicitud.rol_solicitado === 'Repartidor') {
     if (selfieCloudinaryUrl && !selfieCloudinaryUrl.includes('cloudinary.com')) {
       const absoluteSelfiePath = path.join(__dirname, '../../', selfieCloudinaryUrl);
       if (fs.existsSync(absoluteSelfiePath)) {
@@ -263,7 +260,7 @@ const approve = async (id, data = {}) => {
       await solicitud.usuario.update({ roleId: role.id }, { transaction: t });
     }
 
-    if (solicitud.rol_solicitado === 'DRIVER') {
+    if (solicitud.rol_solicitado === 'Repartidor') {
       const driverDefaults = {
         vehicle_type: solicitud.vehicle_type,
         license_plate: solicitud.license_plate,

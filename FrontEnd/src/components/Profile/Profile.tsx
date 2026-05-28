@@ -88,7 +88,7 @@ const Profile: React.FC = () => {
             setProductorRequest(activeRequest);
           }
 
-          const drRequests = userRequests.filter((r: any) => r.rol_solicitado === 'DRIVER' || r.rolSolicitado === 'DRIVER')
+          const drRequests = userRequests.filter((r: any) => r.rol_solicitado === 'Repartidor' || r.rolSolicitado === 'Repartidor')
             .sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fechaSolicitud).getTime() - new Date(a.fecha_solicitud || a.fechaSolicitud).getTime());
           if (drRequests.length > 0) {
             setDriverRequest(drRequests[0]);
@@ -455,7 +455,7 @@ const Profile: React.FC = () => {
       await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'DRIVER' })
+        body: JSON.stringify({ role: 'Repartidor' })
       });
 
       const updatedUserRes = await authFetch(`${ENDPOINTS.usuarios}/${userData.id}`);
@@ -530,8 +530,7 @@ const Profile: React.FC = () => {
   const statusClass = (userData.status || 'Activo').toLowerCase();
   const isUsuarioRole = userData.role && userData.role.toLowerCase() === 'usuario';
   const canRequestDriver = !userData.role || (
-    userData.role.toLowerCase() !== 'driver' && 
-    userData.role.toLowerCase() !== 'repartidor' && 
+    userData.role.toLowerCase() !== 'repartidor' &&
     userData.role.toLowerCase() !== 'administrador'
   );
 

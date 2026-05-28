@@ -3,7 +3,7 @@
   name: string;
   email: string;
   password?: string;
-  role: 'Vendedor' | 'Administrador' | 'Comprador' | string;
+  role: 'Administrador' | 'Productor' | 'Usuario' | 'Repartidor';
   status: 'Activo' | 'Inactivo' | string;
   avatar?: string;
   feriaId?: string;

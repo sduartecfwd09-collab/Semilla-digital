@@ -113,17 +113,17 @@ const Routing: React.FC = () => {
         <Route 
           path="/registro-delivery" 
           element={
-            <ProtectedRoute allowedRoles={['Usuario', 'Cliente']}>
+            <ProtectedRoute allowedRoles={['Usuario']}>
               <RegistroDelivery />
             </ProtectedRoute>
           } 
         />
 
-        {/* Rutas de Repartidor (Protegido por rol 'DRIVER' o 'Repartidor') */}
-        <Route 
-          path="/driver" 
+        {/* Rutas de Repartidor */}
+        <Route
+          path="/driver"
           element={
-            <ProtectedRoute allowedRoles={['DRIVER', 'Repartidor']}>
+            <ProtectedRoute allowedRoles={['Repartidor']}>
               <DriverLayout />
             </ProtectedRoute>
           } 

@@ -17,7 +17,8 @@ build/
 dist-ssr/
 coverage/
 .vite/
-
+auditoria-literales-codigo-muerto.md
+claude.md
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json

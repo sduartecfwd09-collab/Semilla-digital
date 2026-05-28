@@ -152,7 +152,7 @@ describe('productorAutoReviewer.review', () => {
   test('no procesa si la solicitud no es de rol Productor', async () => {
     mockSolicitudService.findById.mockResolvedValue({
       ...solicitudPendienteProductor,
-      rolSolicitado: 'DRIVER',
+      rolSolicitado: 'Repartidor',
     });
 
     const result = await reviewer.review(42);
