@@ -7,6 +7,7 @@ const { sequelize, SolicitudCambioRol, Usuario, DeliveryDriver, Role, PuestoProd
 const fs = require('fs');
 const path = require('path');
 const { uploadFromPath } = require('./cloudinaryService');
+const { VEHICLE_TYPES, isValidVehicleType } = require('../constants/vehicleTypes');
 
 const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
   if (!documentosBase64 || Object.keys(documentosBase64).length === 0) return null;
@@ -145,6 +146,10 @@ const create = async (data) => {
     throw new Error('La selfie de verificación es obligatoria');
   }
 
+  if (data.vehicle_type != null && data.vehicle_type !== '' && !isValidVehicleType(data.vehicle_type)) {
+    throw new Error(`vehicle_type inválido. Valores permitidos: ${VEHICLE_TYPES.join(', ')}`);
+  }
+
   if (data.documentos_base64 && data.vehicle_type) {
     const savedPaths = saveBase64Documents(data.usuario_id, data.vehicle_type, data.documentos_base64);
     if (savedPaths) data.documentos_rutas = savedPaths;
@@ -191,6 +196,10 @@ const update = async (id, data) => {
   if (data.nombreDelPuesto !== undefined) updateData.nombre_del_puesto = data.nombreDelPuesto;
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
   if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
+
+  if (data.vehicle_type != null && data.vehicle_type !== '' && !isValidVehicleType(data.vehicle_type)) {
+    throw new Error(`vehicle_type inválido. Valores permitidos: ${VEHICLE_TYPES.join(', ')}`);
+  }
 
   if (data.documentos_base64) {
     const vType = data.vehicle_type || solicitud.vehicle_type;

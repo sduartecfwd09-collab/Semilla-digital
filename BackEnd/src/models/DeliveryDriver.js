@@ -1,5 +1,6 @@
 'use strict';
 const { DataTypes } = require('sequelize');
+const { VEHICLE_TYPES } = require('../constants/vehicleTypes');
 
 module.exports = (sequelize) => {
   const DeliveryDriver = sequelize.define('DeliveryDriver', {
@@ -57,7 +58,13 @@ module.exports = (sequelize) => {
     },
     vehicle_type: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: true,
+      validate: {
+        isIn: {
+          args: [VEHICLE_TYPES],
+          msg: `vehicle_type debe ser uno de: ${VEHICLE_TYPES.join(', ')}`,
+        },
+      },
     },
     license_plate: {
       type: DataTypes.STRING(50),
