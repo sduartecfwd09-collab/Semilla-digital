@@ -165,7 +165,10 @@ CRITERIOS DE VALIDACIÓN OBLIGATORIOS:
 3. Puesto: nombre claro, descripción coherente con actividad agrícola (NO debe ser gibberish, texto aleatorio, palabras sueltas, ni descripción de un negocio NO agrícola como tienda de ropa, electrónica, etc.).
 4. Tipos de producto: al menos uno y debe ser coherente con la descripción y el nombre de la finca.
 5. Contacto: teléfono CR de 8 dígitos y email con formato válido.
-6. Documentos: carnet MAG o certificación de productor + constancia tributaria. Si vende lácteos/carnes/mariscos/embutidos/miel/procesados → carnet manipulación alimentos OBLIGATORIO.
+6. Documentos requeridos según tipo de producto:
+   - Carnet MAG O certificación de productor (al menos uno) — siempre obligatorio.
+   - Constancia tributaria — siempre obligatorio.
+   - Carnet de manipulación de alimentos — SOLO si tipos_producto incluye al menos uno de: Lácteos, Carnes, Mariscos, Embutidos, Miel, Productos procesados. Si tipos_producto NO incluye ninguno de esos, NO menciones el carnet de manipulación como motivo de rechazo.
 7. Aceptaciones legales: reglamento y derecho de piso aceptados (true).
 8. Coherencia general: provincia declarada vs dirección, tipo de producto vs descripción, finca vs producción.
 9. Detección de fraude: descripciones idénticas a placeholders ("test", "asdf", "prueba", "xxx"), nombres falsos obvios, datos contradictorios → RECHAZAR.
@@ -177,7 +180,9 @@ FORMATO DE SALIDA OBLIGATORIO (JSON estricto, sin texto adicional, sin markdown)
   "resumen": "una oración corta y profesional en español explicando la decisión"
 }
 
-NO escribas explicaciones fuera del JSON. NO uses markdown. NO inventes campos. Si dudas, RECHAZA.`;
+NO escribas explicaciones fuera del JSON. NO uses markdown. NO inventes campos. Si dudas, RECHAZA.
+
+REGLA CRÍTICA ANTI-ALUCINACIÓN: NO inventes requisitos. Tus motivos de rechazo deben corresponder estrictamente a los criterios 1-9 listados arriba. Si pensás en un requisito que no está en esa lista (ej. seguros, certificaciones de comercio justo, registros municipales, pólizas, permisos extra, etc.), NO lo agregues.`;
 
 const armarUserPrompt = (payload) =>
   `Revisa esta solicitud de Productor y responde SOLO con el JSON especificado:\n\n${JSON.stringify(payload, null, 2)}`;
@@ -207,6 +212,72 @@ const parsearRespuestaIA = (raw) => {
 };
 
 /**
+ * Defensa en profundidad contra alucinaciones del LLM.
+ * Descarta motivos que el modelo agregó violando las reglas duras
+ * codificadas (p. ej. exigir carné sanitario cuando los tipos
+ * declarados no lo requieren). Mantiene una sola fuente de verdad:
+ * `TIPOS_SANITARIO_EXTRA` decide cuándo el carné es obligatorio,
+ * tanto en preCheck como aquí.
+ */
+const filtrarMotivosAlucinados = (decision, puesto) => {
+  if (decision.aprobado || !Array.isArray(decision.faltantes)) return decision;
+
+  const tipos = puesto?.tiposProducto || puesto?.tipos_producto || [];
+  const requiereSanitario = tipos.some((t) => TIPOS_SANITARIO_EXTRA.includes(t));
+
+  if (requiereSanitario) return decision;
+
+  // Patrones para detectar motivos de naturaleza sanitaria/alimentaria
+  // que el LLM puede reformular para evadir un solo regex. Cubrimos:
+  //   - "carnet/carné de manipulación …"
+  //   - "manipulación de alimentos …"
+  //   - "registro sanitario …"
+  //   - "permiso del Ministerio de Salud / del Min. de Salud"
+  //   - "registro SENASA"
+  // En el dominio agrícola estos motivos solo aplican cuando los tipos
+  // están en TIPOS_SANITARIO_EXTRA. Sin `\b` (los acentos rompen la
+  // frontera de palabra en JS sin flag /u).
+  const PATRONES_SANITARIOS = [
+    /(carnet|carn[eé])[^.]{0,40}manipulaci[oó]n/i,
+    /manipulaci[oó]n[^.]{0,40}aliment/i,
+    /registro\s+sanitario/i,
+    /permiso[^.]{0,30}(ministerio\s+de\s+)?salud/i,
+    /registro\s+senasa/i,
+    /carn[eé]\s+sanitario/i,
+    /documentos?\s+sanitar/i,
+  ];
+  const esSanitario = (motivo) => PATRONES_SANITARIOS.some((re) => re.test(motivo));
+  const descartados = [];
+  const faltantesLimpios = decision.faltantes.filter((m) => {
+    if (esSanitario(m)) {
+      descartados.push(m);
+      return false;
+    }
+    return true;
+  });
+
+  if (descartados.length === 0) return decision;
+
+  console.warn(
+    `[productorValidator] motivos descartados (no aplica sanitario para tipos=${JSON.stringify(tipos)}):`,
+    descartados
+  );
+
+  if (faltantesLimpios.length === 0) {
+    // No aprobamos auto si el único motivo era alucinado: la IA podría haber
+    // simplificado todos los rechazos legítimos a uno solo. Marcamos para
+    // revisión manual con un motivo honesto.
+    return {
+      aprobado: false,
+      faltantes: ['Validación automática inconclusa — requiere revisión manual'],
+      resumen: 'La validación automática solo detectó motivos no aplicables; se requiere revisión humana.',
+    };
+  }
+
+  return { ...decision, faltantes: faltantesLimpios };
+};
+
+/**
  * Pipeline completo: pre-check determinista + IA.
  * Si el pre-check falla, rechaza sin invocar la IA (ahorra cuota).
  */
@@ -231,14 +302,16 @@ const revisarCompleto = async ({ solicitud, puesto }) => {
     temperature: 0,
     maxTokens: 800,
   });
-  const decision = parsearRespuestaIA(content);
-  return { ...decision, origen: 'ia' };
+  const decisionCruda = parsearRespuestaIA(content);
+  const decisionFiltrada = filtrarMotivosAlucinados(decisionCruda, puesto);
+  return { ...decisionFiltrada, origen: 'ia' };
 };
 
 module.exports = {
   preCheck,
   armarPayloadParaIA,
   parsearRespuestaIA,
+  filtrarMotivosAlucinados,
   revisarCompleto,
   SYSTEM_PROMPT,
 };
