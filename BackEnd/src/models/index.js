@@ -45,8 +45,6 @@ const models = {
   DeliveryOrder: require('./DeliveryOrder')(sequelize),
   DriverLocation: require('./DriverLocation')(sequelize),
   DeliveryRating: require('./DeliveryRating')(sequelize),
-  DeliveryApplication: require('./DeliveryApplication')(sequelize),
-  DeliveryApplicationDocument: require('./DeliveryApplicationDocument')(sequelize),
   DeliverySetting: require('./DeliverySetting')(sequelize),
   DriverEarnings: require('./DriverEarnings')(sequelize),
   // ── Ganancias productores ────────────────────────────────
