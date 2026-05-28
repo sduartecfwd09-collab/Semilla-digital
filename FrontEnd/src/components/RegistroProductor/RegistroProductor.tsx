@@ -153,7 +153,6 @@ const RegistroProductor: React.FC = () => {
     }
     const cachedUser = JSON.parse(userStr);
     if (
-      cachedUser.role !== 'Cliente' &&
       cachedUser.role !== 'Usuario' &&
       cachedUser.role !== 'Productor'
     ) {
