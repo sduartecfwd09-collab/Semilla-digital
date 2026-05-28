@@ -63,12 +63,10 @@ const Auth: React.FC = () => {
       if (result.success) {
         navigate(routeForRole(result.role))
         Swal.fire({
-          toast: true,
-          position: 'top-end',
           icon: 'success',
           title: 'Sesión iniciada correctamente',
           showConfirmButton: false,
-          timer: 2000,
+          timer: 1500,
           timerProgressBar: true
         })
       } else {
