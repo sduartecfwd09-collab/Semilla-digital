@@ -4,7 +4,31 @@ import { api } from '../../../services/api'
 import { ENDPOINTS, authFetch } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
 import { normalizeProductName } from '../../../utils/productCatalog'
+import adminBg from '../../../assets/admin/admin-bg.png'
+import bgPattern from '../../../assets/admin/bg-pattern.png'
+import farmerPortrait from '../../../assets/admin/farmer-portrait.png'
 import './AdminDashboard.css'
+
+const dashboardSlides = [
+    {
+        image: adminBg,
+        tag: 'Control operativo',
+        title: 'Gestión centralizada de AgroMap',
+        description: 'Monitoreá usuarios, productores, solicitudes y contenido desde un solo panel.'
+    },
+    {
+        image: farmerPortrait,
+        tag: 'Productores',
+        title: 'Seguimiento de productores activos',
+        description: 'Revisá perfiles, solicitudes y estado administrativo de la red agrícola.'
+    },
+    {
+        image: bgPattern,
+        tag: 'Contenido',
+        title: 'Catálogo, recetas y mensajes al día',
+        description: 'Mantené actualizada la información visible para usuarios y visitantes.'
+    }
+]
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
@@ -18,9 +42,18 @@ const AdminDashboard = () => {
         pendingContactos: 0
     })
     const [loading, setLoading] = useState(true)
+    const [activeSlide, setActiveSlide] = useState(0)
 
     useEffect(() => {
         fetchStats()
+    }, [])
+
+    useEffect(() => {
+        const timer = window.setInterval(() => {
+            setActiveSlide((current) => (current + 1) % dashboardSlides.length)
+        }, 5000)
+
+        return () => window.clearInterval(timer)
     }, [])
 
     const fetchStats = async () => {
@@ -95,23 +128,44 @@ const AdminDashboard = () => {
         { title: 'Mensajes de contacto', value: loading ? '...' : stats.contactos, icon: '✉️', trend: stats.pendingContactos > 0 ? `${stats.pendingContactos} pendientes` : 'Al día', color: '#e84393', bgColor: '#ffeef8', path: '/admin/contactos' },
     ]
 
+    const activeDashboardSlide = dashboardSlides[activeSlide]
+
     return (
-        <div className="dashboard-container">
-            <header className="dashboard-header">
+        <div className="admin-dashboard-page">
+            <header className="admin-dashboard-header">
                 <h1>AgroMap Admin</h1>
                 <p>Bienvenido al Centro de Control de AgroMap</p>
             </header>
 
-            <div className="stats-grid">
+            <section className="admin-dashboard-carousel" aria-label="Resumen del panel administrativo">
+                <img src={activeDashboardSlide.image} alt="" className="admin-dashboard-carousel-image" />
+                <div className="admin-dashboard-carousel-overlay" />
+                <div className="admin-dashboard-carousel-content">
+                    <span>{activeDashboardSlide.tag}</span>
+                    <h2>{activeDashboardSlide.title}</h2>
+                    <p>{activeDashboardSlide.description}</p>
+                </div>
+                <div className="admin-dashboard-carousel-dots" aria-label="Controles del carrusel">
+                    {dashboardSlides.map((slide, index) => (
+                        <button
+                            key={slide.title}
+                            type="button"
+                            className={index === activeSlide ? 'active' : ''}
+                            aria-label={`Ver ${slide.title}`}
+                            onClick={() => setActiveSlide(index)}
+                        />
+                    ))}
+                </div>
+            </section>
+
+            <div className="admin-dashboard-stats-grid">
                 {statCards.map((card) => (
-                    <Link to={card.path} className="stat-card" key={card.title} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div className="stat-card-top">
-                            <div className="card-icon" style={{ backgroundColor: card.bgColor, color: card.color }}>
+                    <Link to={card.path} className="admin-dashboard-stat-card" key={card.title}>
+                        <div className="admin-dashboard-stat-icon" style={{ backgroundColor: card.bgColor, color: card.color }}>
                                 {card.icon}
-                            </div>
                         </div>
-                        <span className="trend">{card.trend}</span>
-                        <div className="card-content">
+                        <span className="admin-dashboard-stat-trend">{card.trend}</span>
+                        <div className="admin-dashboard-stat-content">
                             <h3>{card.value}</h3>
                             <p>{card.title}</p>
                         </div>

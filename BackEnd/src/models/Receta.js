@@ -20,6 +20,10 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    image_url: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     ingredients: {
       type: DataTypes.JSON,
       allowNull: true,

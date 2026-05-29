@@ -107,6 +107,45 @@ describe('POST /recetas', () => {
     expect(res.status).toBe(201);
   });
 
+  test('201 - acepta imagen subida por Cloudinary e ignora campos extra', async () => {
+    Receta.create.mockResolvedValue(Receta._mock({ id: 7 }));
+
+    const res = await request(app)
+      .post('/recetas')
+      .send({
+        title: 'Receta QA',
+        description: 'Prueba',
+        ingredients: ['tomate'],
+        steps: ['lavar'],
+        difficulty: 'FÃ¡cil',
+        time: '12',
+        image_url: 'https://res.cloudinary.com/demo/image/upload/recetas/imagen.jpg',
+        campo_inexistente: 'no debe guardarse',
+      });
+
+    expect(res.status).toBe(201);
+    expect(Receta.create.mock.calls[0][0]).toHaveProperty('image_url', 'https://res.cloudinary.com/demo/image/upload/recetas/imagen.jpg');
+    expect(Receta.create.mock.calls[0][0]).not.toHaveProperty('campo_inexistente');
+  });
+
+  test('201 - acepta titulo como alias de title', async () => {
+    Receta.create.mockResolvedValue(Receta._mock({ id: 8 }));
+
+    const res = await request(app)
+      .post('/recetas')
+      .send({
+        titulo: 'Receta con alias',
+        description: 'Prueba',
+        ingredients: ['tomate'],
+        steps: ['lavar'],
+        difficulty: 'FÃ¡cil',
+        time: '12',
+      });
+
+    expect(res.status).toBe(201);
+    expect(Receta.create.mock.calls[0][0]).toHaveProperty('title', 'Receta con alias');
+  });
+
   test('400 - campos obligatorios faltantes', async () => {
     const res = await request(app)
       .post('/recetas')

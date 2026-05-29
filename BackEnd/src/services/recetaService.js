@@ -4,6 +4,23 @@
 // ============================================================
 const { Receta, Producto, RecetaIngrediente } = require('../models');
 
+const getRecipeTitle = (data) =>
+  String(data.title ?? data.titulo ?? data.nombre ?? data.name ?? '').trim();
+
+const getRecipeImageUrl = (data) =>
+  String(data.image_url ?? data.imageUrl ?? data.imagen ?? '').trim();
+
+const validateRecipeImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  const isCloudinaryUrl = /^https:\/\/res\.cloudinary\.com\//.test(imageUrl);
+  const isLocalFallback = /^\/storage\/cloudinary-fallback\//.test(imageUrl)
+    || /^https?:\/\/[^/]+\/storage\/cloudinary-fallback\//.test(imageUrl);
+  if (!isCloudinaryUrl && !isLocalFallback) {
+    throw new Error('La imagen de la receta debe subirse desde el formulario');
+  }
+  return imageUrl;
+};
+
 const findAll = async (query = {}) => {
   const where = {};
 
@@ -55,7 +72,8 @@ const findByProducto = async (productoId) => {
 };
 
 const create = async (data) => {
-  if (!data.title) {
+  const title = getRecipeTitle(data);
+  if (!title) {
     throw new Error('El título de la receta es requerido');
   }
   if (!data.ingredients || (Array.isArray(data.ingredients) && data.ingredients.length === 0)) {
@@ -87,7 +105,10 @@ const create = async (data) => {
   }
 
   return await Receta.create({
-    ...data,
+    title,
+    description: data.description,
+    image_url: validateRecipeImageUrl(getRecipeImageUrl(data)),
+    difficulty: data.difficulty,
     ingredients,
     steps,
     time
@@ -119,10 +140,18 @@ const update = async (id, data) => {
     processed.time = time;
   }
 
-  return await receta.update({
-    ...data,
-    ...processed
+  const allowed = {};
+  ['description', 'difficulty'].forEach((field) => {
+    if (data[field] !== undefined) allowed[field] = data[field];
   });
+  const title = getRecipeTitle(data);
+  if (title) allowed.title = title;
+  const imageUrl = getRecipeImageUrl(data);
+  if (imageUrl || data.image_url === '' || data.imageUrl === '' || data.imagen === '') {
+    allowed.image_url = validateRecipeImageUrl(imageUrl);
+  }
+
+  return await receta.update({ ...allowed, ...processed });
 };
 
 const remove = async (id) => {

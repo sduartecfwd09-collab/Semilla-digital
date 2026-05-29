@@ -2,6 +2,7 @@ const router = require('express').Router();
 const ctrl = require('../controllers/puestoProductorController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
+const { handleCloudinaryUpload } = require('../middlewares/cloudinaryMiddleware');
 
 // ── PÚBLICAS ────────────────────────────────────────────────
 // GET  /api/puestos                       → Listar todos
@@ -17,6 +18,8 @@ router.get('/:id', ctrl.getById);
 // POST   /api/puestos       → Crear puesto (aplica también a Usuario en proceso de solicitud Productor)
 // PUT    /api/puestos/:id   → Actualizar puesto (idem)
 // DELETE /api/puestos/:id   → Eliminar puesto (solo Admin)
+router.post('/uploads', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), handleCloudinaryUpload('file', 'productores', true), ctrl.uploadAsset);
+router.delete('/uploads', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.deleteAsset);
 router.post('/', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.create);
 router.put('/:id', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.update);
 router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);

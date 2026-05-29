@@ -11,21 +11,12 @@ const {
   Canton,
   Distrito,
 } = require('../models');
+const { validateProductorApplication } = require('../validators/productorApplicationValidator');
 
 const mapPuestoParaFrontend = (p) => {
   if (!p) return null;
   const raw = p.toJSON ? p.toJSON() : p;
   
-  // Mapear fotos base64
-  let fotosBase64 = raw.fotos_base64;
-  if (typeof fotosBase64 === 'string') {
-    try {
-      fotosBase64 = JSON.parse(fotosBase64);
-    } catch (e) {
-      fotosBase64 = [];
-    }
-  }
-
   // Mapear fotos nombres
   let fotosNombres = raw.fotos_nombres;
   if (typeof fotosNombres === 'string') {
@@ -50,7 +41,7 @@ const mapPuestoParaFrontend = (p) => {
     tiposProducto: raw.tipos_producto,
     metodosCultivo: raw.metodos_cultivo,
     redesSociales: raw.redes_sociales,
-    fotosBase64: fotosBase64 || [],
+    fotosCloudinary: raw.datos_extendidos?.documentation?.documents?.filter((doc) => doc.key === 'foto_puesto') || [],
     fotosNombres: fotosNombres || [],
     datosExtendidos: raw.datos_extendidos || null,
     fechaRegistro: raw.fecha_registro,
@@ -166,7 +157,6 @@ const create = async (data) => {
     feria_id = feria_id ? Number(feria_id) : null;
   }
 
-  const fotos_base64 = data.fotos_base64 || data.fotosBase64;
   const fotos_nombres = data.fotos_nombres || data.fotosNombres;
 
   const createData = { ...data };
@@ -178,13 +168,16 @@ const create = async (data) => {
   delete createData.datosExtendidos;
 
   const datos_extendidos = data.datos_extendidos ?? data.datosExtendidos ?? null;
+  const validationErrors = validateProductorApplication(datos_extendidos);
+  if (validationErrors.length) {
+    throw new Error(`Solicitud de productor invalida: ${validationErrors.join(', ')}`);
+  }
 
   const created = await PuestoProductor.create({
     ...createData,
     usuario_id,
     nombre_puesto,
     feria_id,
-    fotos_base64,
     fotos_nombres,
     datos_extendidos,
     fecha_registro: new Date(),
@@ -212,11 +205,14 @@ const update = async (id, data) => {
   if (data.datos_extendidos !== undefined || data.datosExtendidos !== undefined) {
     updateData.datos_extendidos = data.datos_extendidos ?? data.datosExtendidos;
   }
+  const validationErrors = validateProductorApplication(updateData.datos_extendidos);
+  if (validationErrors.length) {
+    throw new Error(`Solicitud de productor invalida: ${validationErrors.join(', ')}`);
+  }
 
   // Mapear camelCase a snake_case de forma segura
   if (data.usuarioId) updateData.usuario_id = data.usuarioId;
   if (data.nombrePuesto) updateData.nombre_puesto = data.nombrePuesto;
-  if (data.fotosBase64 !== undefined) updateData.fotos_base64 = data.fotosBase64;
   if (data.fotosNombres !== undefined) updateData.fotos_nombres = data.fotosNombres;
 
   let feria_id = data.feriaId || data.feria_id;

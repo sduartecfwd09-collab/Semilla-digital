@@ -1,9 +1,10 @@
-.dashboard-container {
+.admin-dashboard-page {
     padding: 0;
     max-width: 93.75rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+    gap: 1.75rem;
     animation: fadeIn 0.4s ease-out;
 }
 
@@ -12,14 +13,18 @@
     to { opacity: 1; }
 }
 
-.dashboard-header {
+.admin-dashboard-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: 2.5rem;
-    padding-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    background: #ffffff;
+    border: 1px solid #e8f3ec;
+    border-radius: 1.25rem;
+    box-shadow: 0 0.75rem 2rem rgba(15, 61, 33, 0.06);
 }
 
-.dashboard-header h1 {
+.admin-dashboard-header h1 {
     font-size: 2rem;
     font-weight: 900;
     color: #052e16;
@@ -27,7 +32,7 @@
     font-family: 'Playfair Display', serif;
 }
 
-.dashboard-header p {
+.admin-dashboard-header p {
     color: #64748b;
     font-size: 0.95rem;
     font-weight: 500;
@@ -54,91 +59,177 @@
     box-shadow: 0 0.5rem 1.25rem rgba(82, 183, 136, 0.4);
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1.5rem;
+.admin-dashboard-carousel {
+    position: relative;
+    min-height: 13rem;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid rgba(15, 61, 33, 0.08);
+    box-shadow: 0 0.75rem 2rem rgba(15, 61, 33, 0.08);
+    background: #052e16;
 }
 
-.stat-card {
-    background: #ffffff;
-    padding: 2rem 1.8rem;
-    border-radius: 1.5rem;
-    border: 0.0625rem solid rgba(0, 0, 0, 0.03);
+.admin-dashboard-carousel-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.admin-dashboard-carousel-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(5, 46, 22, 0.88), rgba(5, 46, 22, 0.52), rgba(5, 46, 22, 0.18));
+}
+
+.admin-dashboard-carousel-content {
+    position: relative;
+    z-index: 1;
+    max-width: 40rem;
+    padding: 2rem;
+    color: #ffffff;
+}
+
+.admin-dashboard-carousel-content span {
+    display: inline-flex;
+    margin-bottom: 0.65rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04rem;
+}
+
+.admin-dashboard-carousel-content h2 {
+    margin: 0;
+    font-size: 1.85rem;
+    line-height: 1.1;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+}
+
+.admin-dashboard-carousel-content p {
+    max-width: 34rem;
+    margin: 0.7rem 0 0;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.98rem;
+    line-height: 1.45;
+}
+
+.admin-dashboard-carousel-dots {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.15rem;
+    z-index: 2;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
-    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.08);
+    gap: 0.45rem;
+}
+
+.admin-dashboard-carousel-dots button {
+    width: 0.62rem;
+    height: 0.62rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+.admin-dashboard-carousel-dots button.active {
+    width: 1.7rem;
+    background: #ffffff;
+}
+
+.admin-dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.admin-dashboard-stat-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 0.0625rem solid #e8f3ec;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    min-height: 8.5rem;
+    box-shadow: 0 0.75rem 2rem rgba(15, 61, 33, 0.07);
     position: relative;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    grid-column: span 2;
+    min-width: 0;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Sin reglas especiales para nth-child, las 6 cards se acomodan en 2 filas de 3 */
-
-.stat-card::before {
+.admin-dashboard-stat-card::before {
     content: '';
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
-    background: linear-gradient(135deg, rgba(82, 183, 136, 0.08), transparent);
+    background: linear-gradient(135deg, rgba(82, 183, 136, 0.1), transparent 55%);
     opacity: 0;
     transition: opacity 0.4s ease;
 }
 
-.stat-card:hover {
+.admin-dashboard-stat-card:hover {
     transform: translateY(-0.3125rem);
     box-shadow: 0 1.25rem 2.5rem rgba(59, 156, 58, 0.15);
     border-color: rgba(59, 156, 58, 0.3);
 }
 
-.stat-card:hover::before {
+.admin-dashboard-stat-card:hover::before {
     opacity: 1;
 }
 
-.stat-card-top {
+.admin-dashboard-stat-icon {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex: 0 0 auto;
     z-index: 1;
-}
-
-.card-icon {
     width: 3.25rem;
     height: 3.25rem;
     border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 1.8rem;
     box-shadow: inset 0 0.125rem 0.625rem rgba(0, 0, 0, 0.08);
 }
 
-.trend {
+.admin-dashboard-stat-trend {
     position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-size: 0.85rem;
+    top: 1rem;
+    right: 1rem;
+    max-width: 45%;
+    font-size: 0.78rem;
     font-weight: 700;
-    padding: 0.35rem 0.85rem;
+    padding: 0.3rem 0.7rem;
     background: #f0fdf4;
     border-radius: 1.25rem;
     color: #059669;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 1;
 }
 
-.card-content {
+.admin-dashboard-stat-content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     z-index: 1;
     flex-grow: 1;
+    min-width: 0;
 }
 
-.card-content h3 {
-    font-size: 2rem;
+.admin-dashboard-stat-content h3 {
+    font-size: 2.15rem;
     margin: 0;
     color: #052e16;
     line-height: 1;
@@ -146,11 +237,50 @@
     letter-spacing: -0.0625rem;
 }
 
-.card-content p {
+.admin-dashboard-stat-content p {
     color: #64748b;
     margin-top: 0.4rem;
     font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03125rem;
+}
+
+@media (max-width: 75rem) {
+    .admin-dashboard-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 42rem) {
+    .admin-dashboard-page {
+        gap: 1rem;
+    }
+
+    .admin-dashboard-header {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .admin-dashboard-carousel {
+        min-height: 12rem;
+    }
+
+    .admin-dashboard-carousel-content {
+        padding: 1.25rem;
+    }
+
+    .admin-dashboard-carousel-content h2 {
+        font-size: 1.45rem;
+    }
+
+    .admin-dashboard-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .admin-dashboard-stat-card {
+        padding: 1.25rem;
+        min-height: 7.5rem;
+    }
 }

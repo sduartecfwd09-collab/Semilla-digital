@@ -4,6 +4,7 @@
 //              de productor
 // ============================================================
 const puestoService = require('../services/puestoProductorService');
+const { deleteAsset: deleteCloudinaryAsset } = require('../services/cloudinaryService');
 
 const getAll = async (req, res) => {
   try {
@@ -80,4 +81,24 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove };
+const uploadAsset = async (req, res) => {
+  if (!req.cloudinaryUpload) {
+    return res.status(400).json({ success: false, message: 'No se recibio archivo para subir' });
+  }
+  return res.status(201).json({ success: true, data: req.cloudinaryUpload });
+};
+
+const deleteAsset = async (req, res) => {
+  try {
+    const { publicId, resourceType } = req.body || {};
+    if (!publicId) {
+      return res.status(400).json({ success: false, message: 'publicId es requerido' });
+    }
+    await deleteCloudinaryAsset(publicId, resourceType);
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, uploadAsset, deleteAsset };

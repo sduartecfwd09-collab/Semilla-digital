@@ -7,6 +7,8 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "seed": "npx sequelize-cli db:seed:all",
+    "seed:productores": "node scripts/seedProductores.ts",
+    "reset:qa": "node scripts/seedProductores.ts",
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "test:coverage": "jest --runInBand --forceExit --detectOpenHandles --coverage"
   },

@@ -25,8 +25,8 @@ export const api = {
             headers,
             credentials: 'include',
         });
-        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
         const json = await response.json();
+        if (!response.ok) throw new Error(json?.message || json?.error || `API Error: ${response.statusText}`);
         // Si la respuesta viene envuelta en { success: true, data: [...] }, extraemos data
         return (json && json.success && json.data !== undefined) ? json.data : json;
     },

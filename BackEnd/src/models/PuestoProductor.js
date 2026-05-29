@@ -32,7 +32,6 @@ module.exports = (sequelize) => {
     tipos_producto: { type: DataTypes.JSON, allowNull: true },
     metodos_cultivo: { type: DataTypes.TEXT, allowNull: true },
     redes_sociales: { type: DataTypes.STRING, allowNull: true },
-    fotos_base64: { type: DataTypes.JSON, allowNull: true },
     fotos_nombres: { type: DataTypes.JSON, allowNull: true },
     datos_extendidos: { type: DataTypes.JSON, allowNull: true },
     fecha_registro: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
