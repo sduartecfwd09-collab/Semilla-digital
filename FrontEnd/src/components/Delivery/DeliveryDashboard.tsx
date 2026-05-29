@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import {
   Truck, MapPin, CheckCircle, Navigation, Star, TrendingUp,
-  Package, XCircle, DollarSign, Weight, Camera, PenTool, X, Upload, Wallet
+  Package, XCircle, DollarSign, Weight, Camera, PenTool, X, Upload, Wallet, Bell
 } from 'lucide-react';
 import { deliveryService, DeliveryOrder, DriverProfile, DriverStats, calculateDriverEarnings, EarningsParams } from '../../services/deliveryService';
 import { API_BASE_URL } from '../../services/api.config';
@@ -398,70 +398,167 @@ const DeliveryDashboard: React.FC = () => {
 
   return (
     <div className="delivery-dashboard">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div>
-          <h1 className="greeting">Hola, {profile?.usuario?.name || 'Repartidor'}</h1>
-          <p className="subtitle">Aquí tienes el resumen de tu actividad de hoy.</p>
+      {/* Brand Header */}
+      <div className="brand-header">
+        <div className="brand-logo">
+          <svg className="logo-tractor-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 16a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
+            <path d="M15 16a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
+            <path d="M6 16v-2h9v2" />
+            <path d="M9 10h6V8h-6V6H7v8" />
+            <path d="M15 8h4l2 3v3h-6Z" />
+          </svg>
+          <span className="logo-text">AgroMap</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div className="status-toggle-container">
-            <span className="status-label">{profile?.status === 'OFFLINE' ? 'Desconectado' : 'Conectado'}</span>
-            <label className="switch">
-              <input type="checkbox" checked={profile?.status !== 'OFFLINE'} onChange={toggleDriverStatus} />
-              <span className="slider round"></span>
-            </label>
+        <button className="notification-btn" aria-label="Notificaciones">
+          <Bell size={20} />
+        </button>
+      </div>
+
+      {/* Welcome Banner Card */}
+      <div className="welcome-banner-card">
+        <div className="banner-badge">
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+            <path d="M3 16a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
+            <path d="M15 16a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
+            <path d="M6 16v-2h9v2" />
+            <path d="M9 10h6V8h-6V6H7v8" />
+            <path d="M15 8h4l2 3v3h-6Z" />
+          </svg>
+          AGROMAP CONDUCTOR
+        </div>
+        <h2 className="banner-title">Bienvenido al Panel de Control</h2>
+        <p className="banner-subtitle">Conectando la frescura del campo directamente con el consumidor final.</p>
+        
+        <div className="banner-footer">
+          <div className="banner-indicators">
+            <span className="dot active"></span>
+            <span className="dot"></span>
+            <span className="dot"></span>
+          </div>
+          <div className="banner-download-badge">
+            <span className="dl-text">DOWNLOAD NOW</span>
           </div>
         </div>
-      </header>
+      </div>
+
+      {/* Driver Profile */}
+      <div className="driver-profile-card">
+        <div className="driver-avatar-wrapper">
+          <img src="/assets/driver_avatar.png" alt="Carlos" className="driver-avatar-img" />
+        </div>
+        <div className="driver-profile-info">
+          <h2>Hola, {profile?.usuario?.name || 'Carlos'}</h2>
+          <p>Conductor Verificado - AgroExpress</p>
+        </div>
+      </div>
+
+      {/* Connectivity Status Card */}
+      <div className="status-toggle-card">
+        <span className="status-text">{profile?.status === 'OFFLINE' ? 'Desconectado' : 'Conectado'}</span>
+        <label className="switch">
+          <input type="checkbox" checked={profile?.status !== 'OFFLINE'} onChange={toggleDriverStatus} />
+          <span className="slider round"></span>
+        </label>
+      </div>
 
       {/* Stats Grid */}
       <section className="stats-grid">
+        {/* Entregas Card */}
         <div className="stat-card">
-          <div className="stat-icon-wrapper blue"><Package size={24} /></div>
-          <div className="stat-info">
-            <h3>{stats?.deliveredToday || 0}</h3>
-            <p>Entregas Hoy</p>
+          <div className="stat-card-header">
+            <span className="stat-label">ENTREGAS HOY</span>
+            <Package size={20} className="stat-card-icon green" />
+          </div>
+          <h3 className="stat-value">{stats?.deliveredToday || 0}</h3>
+          <div className="stat-card-footer">
+            <TrendingUp size={14} className="trend-icon" />
+            <span>Próximo envío en espera</span>
           </div>
         </div>
+
+        {/* Ganancias Card */}
         <div className="stat-card">
-          <div className="stat-icon-wrapper green"><TrendingUp size={24} /></div>
-          <div className="stat-info">
-            <h3>₡{(stats?.earningsToday || 0).toLocaleString()}</h3>
-            <p>Ganancias Hoy</p>
+          <div className="stat-card-header">
+            <span className="stat-label">GANANCIAS HOY</span>
+            <Wallet size={20} className="stat-card-icon yellow" />
+          </div>
+          <h3 className="stat-value">₡{(stats?.earningsToday || 0).toLocaleString()}</h3>
+          <div className="stat-card-footer">
+            <span>Meta diaria: ₡15.000</span>
           </div>
         </div>
+
+        {/* Calificación Card */}
         <div className="stat-card">
-          <div className="stat-icon-wrapper yellow"><Star size={24} /></div>
-          <div className="stat-info">
-            <h3>{(stats?.rating || 5.0).toFixed(1)}</h3>
-            <p>Calificación</p>
+          <div className="stat-card-header">
+            <span className="stat-label">CALIFICACIÓN</span>
+            <Star size={20} className="stat-card-icon yellow star" />
           </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon-wrapper purple"><Wallet size={24} /></div>
-          <div className="stat-info">
-            <h3>₡{(profile?.accumulated_balance || 0).toLocaleString()}</h3>
-            <p>Saldo Acumulado</p>
+          <h3 className="stat-value">{Number(stats?.rating || 5.0).toFixed(1)}</h3>
+          <div className="stat-card-footer">
+            <span>Basado en 42 entregas</span>
           </div>
         </div>
       </section>
 
+      {/* Saldo Acumulado Card */}
+      <div className="accumulated-balance-card">
+        <div className="balance-info">
+          <span className="balance-label">SALDO ACUMULADO</span>
+          <h3 className="balance-value">₡{Number(profile?.accumulated_balance || 0).toFixed(2)}</h3>
+          <p className="balance-desc">Disponible para retiro inmediato</p>
+        </div>
+        <button className="withdraw-btn" onClick={() => {
+          Swal.fire({
+            title: 'Retirar Fondos',
+            text: '¿Deseas transferir tus fondos a tu cuenta bancaria registrada?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, retirar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#36EB60',
+            background: '#0f2018',
+            color: '#fff'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Retiro en proceso',
+                text: 'Tu solicitud de retiro ha sido procesada con éxito.',
+                icon: 'success',
+                confirmButtonColor: '#36EB60',
+                background: '#0f2018',
+                color: '#fff'
+              });
+            }
+          });
+        }}>
+          <Wallet size={18} />
+          <span>Retirar Fondos</span>
+        </button>
+      </div>
+
       {/* Active Orders */}
       <section className="active-orders-section">
         <div className="section-header">
-          <h2>Pedidos Activos</h2>
-          {profile?.status === 'OFFLINE' && orders.length === 0 && (
-            <span className="offline-warning">Conéctate para recibir pedidos</span>
-          )}
+          <h2>Entregas Activas</h2>
+          <span className="last-updated">Actualizado hace 1 min</span>
         </div>
 
         <div className="orders-list">
           {orders.length === 0 ? (
-            <div className="empty-state">
-              <Truck size={64} />
-              <p>No tienes pedidos activos en este momento.</p>
-              {profile?.status !== 'OFFLINE' && <div className="radar-pulse-small"></div>}
+            <div className="empty-state-card">
+              <div className="empty-illustration-container">
+                <img src="/assets/delivery_truck.png" alt="Sin entregas" className="empty-truck-img" />
+              </div>
+              <h3>Sin entregas activas</h3>
+              <p>Conéctate para empezar a recibir solicitudes de fincas locales y distribuidores.</p>
+              <button 
+                className={`start-shift-btn ${profile?.status !== 'OFFLINE' ? 'active' : ''}`}
+                onClick={toggleDriverStatus}
+              >
+                {profile?.status === 'OFFLINE' ? 'Empezar Turno' : 'Terminar Turno'}
+              </button>
             </div>
           ) : (
             orders.map(order => (
@@ -516,7 +613,7 @@ const DeliveryDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Earnings Breakdown (shown when ASSIGNED so driver can decide) */}
+                {/* Earnings Breakdown */}
                 {(order.status === 'ASSIGNED' || order.status === 'ACCEPTED') && (
                   <EarningsBreakdown order={order} />
                 )}
@@ -563,6 +660,39 @@ const DeliveryDashboard: React.FC = () => {
           onClose={() => setProofOrder(null)}
         />
       )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="mobile-bottom-nav">
+        <button className="bottom-nav-item active">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => { window.location.href = '/driver/orders'; }}>
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <span>Orders</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => { window.location.href = '/driver/earnings'; }}>
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+            <line x1="12" y1="18" x2="12" y2="18.01" />
+          </svg>
+          <span>Earnings</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => { window.location.href = '/perfil'; }}>
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span>Profile</span>
+        </button>
+      </nav>
     </div>
   );
 };

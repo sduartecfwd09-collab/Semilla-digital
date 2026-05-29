@@ -5,7 +5,7 @@ node_modules/
 .env
 .env.local
 .env.*.local
-
+automatizacion.md
 # Logs
 *.log
 npm-debug.log*
@@ -19,7 +19,7 @@ coverage/
 .vite/
 auditoria-literales-codigo-muerto.md
 claude.md
-# Editor / OS
+# Editor / OS 
 .vscode/*
 !.vscode/extensions.json
 .idea/
