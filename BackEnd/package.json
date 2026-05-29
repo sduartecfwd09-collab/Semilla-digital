@@ -30,6 +30,8 @@
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@aduh95/viz.js": "^3.7.0",
+    "@resvg/resvg-js": "^2.6.2",
     "jest": "^29.7.0",
     "sequelize-cli": "^6.6.5",
     "supertest": "^7.0.0"
