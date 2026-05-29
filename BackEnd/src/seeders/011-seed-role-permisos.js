@@ -1,6 +1,6 @@
 'use strict';
 
-// Roles: 1=Administrador, 2=Productor, 3=Usuario
+// Roles: 1=Administrador, 2=Productor, 3=Usuario, 4=Repartidor
 // Permisos: ver catálogo en 010-seed-permisos.js
 
 module.exports = {
@@ -9,9 +9,9 @@ module.exports = {
     const asignaciones = [];
 
     // ═══════════════════════════════════════════════════════════
-    // ADMINISTRADOR (role_id: 1) — TODOS los permisos (1-30)
+    // ADMINISTRADOR (role_id: 1) — TODOS los permisos (1-37)
     // ═══════════════════════════════════════════════════════════
-    for (let permisoId = 1; permisoId <= 30; permisoId++) {
+    for (let permisoId = 1; permisoId <= 37; permisoId++) {
       asignaciones.push({
         role_id: 1,
         permiso_id: permisoId,
@@ -63,6 +63,29 @@ module.exports = {
     permisosUsuario.forEach((permisoId) => {
       asignaciones.push({
         role_id: 3,
+        permiso_id: permisoId,
+        otorgado: true,
+        created_at: now,
+        updated_at: now,
+      });
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // REPARTIDOR (role_id: 4)
+    // ═══════════════════════════════════════════════════════════
+    const permisosRepartidor = [
+      31, // delivery.ver_mi_perfil
+      32, // delivery.actualizar_status
+      33, // delivery.ver_mis_ordenes
+      34, // delivery.aceptar_orden
+      35, // delivery.rechazar_orden
+      36, // delivery.actualizar_ubicacion
+      37, // delivery.ver_mis_ganancias
+    ];
+
+    permisosRepartidor.forEach((permisoId) => {
+      asignaciones.push({
+        role_id: 4,
         permiso_id: permisoId,
         otorgado: true,
         created_at: now,

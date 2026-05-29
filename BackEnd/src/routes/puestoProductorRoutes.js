@@ -4,7 +4,7 @@ const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
 const { handleCloudinaryUpload } = require('../middlewares/cloudinaryMiddleware');
 
-// ── PÚBLICAS ────────────────────────────────────────────────
+// ── PROTEGIDAS (verifyToken aplicado en index.js al montar /puestos) ───────
 // GET  /api/puestos                       → Listar todos
 // GET  /api/puestos/usuario/:usuarioId    → Por usuario (1:1)
 // GET  /api/puestos/feria/:feriaId        → Por feria
@@ -23,5 +23,12 @@ router.delete('/uploads', verifyToken, authorizeRoles('Usuario', 'Productor', 'A
 router.post('/', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.create);
 router.put('/:id', verifyToken, authorizeRoles('Usuario', 'Productor', 'Administrador'), ctrl.update);
 router.delete('/:id', verifyToken, authorizeRoles('Administrador'), ctrl.remove);
+
+// ── Gestión de puesto_ferias (solo admin) ───────────────────────
+// POST   /api/puestos/:id/ferias              body: { feriaId }
+// DELETE /api/puestos/:id/ferias/:feriaId
+// La feria principal del puesto NO se puede quitar por aquí (409).
+router.post('/:id/ferias', verifyToken, authorizeRoles('Administrador'), ctrl.addFeria);
+router.delete('/:id/ferias/:feriaId', verifyToken, authorizeRoles('Administrador'), ctrl.removeFeria);
 
 module.exports = router;

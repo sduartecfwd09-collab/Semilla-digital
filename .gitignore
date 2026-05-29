@@ -17,12 +17,18 @@ build/
 dist-ssr/
 coverage/
 .vite/
-
+auditoria-literales-codigo-muerto.md
+claude.md
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea/
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 Thumbs.db
 *.swp
 *.swo
@@ -32,5 +38,10 @@ Thumbs.db
 respaldo_*.sql
 *.sql
 
+# package.json/lock accidentales en la raíz (las dependencias van en BackEnd/ y FrontEnd/)
+/package.json
+/package-lock.json
+
 # Metadata local de herramientas (Claude Code, etc.)
 .claude/
+

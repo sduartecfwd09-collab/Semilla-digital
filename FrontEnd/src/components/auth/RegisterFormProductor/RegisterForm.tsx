@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { register, checkEmailExists } from '../../../services/AuthService'
-import { getFerias } from '../../../services/ProductorServices'
+import { getFerias } from '../../../services/productorService'
 import { useAuth } from '../../context/AuthContext'
 import { validatePassword } from '../../../utils/validation'
 import './RegisterForm.css'
@@ -33,7 +33,18 @@ const RegisterForm: React.FC = () => {
     const fetchFerias = async () => {
       try {
         const data = await getFerias()
-        setFerias(data)
+        const mapped: Feria[] = data.map((f: any) => {
+          const distrito = (f.direccion as any)?.distrito?.nombre
+          const canton = (f.direccion as any)?.canton?.nombre
+          const ubicacion =
+            distrito && canton
+              ? `${distrito}, ${canton}`
+              : typeof f.direccion === 'string'
+              ? f.direccion
+              : 'Ubicación no disponible'
+          return { id: f.id, nombre: f.nombre, ubicacion }
+        })
+        setFerias(mapped)
       } catch (err) {
         console.error('Error al cargar ferias:', err)
       }

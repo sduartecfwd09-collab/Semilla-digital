@@ -33,7 +33,15 @@ jest.mock('../models', () => {
   });
 
   return {
-    sequelize: { authenticate: jest.fn().mockResolvedValue(), sync: jest.fn().mockResolvedValue() },
+    sequelize: {
+      authenticate: jest.fn().mockResolvedValue(),
+      sync: jest.fn().mockResolvedValue(),
+      // approve() en solicitudCambioRolService usa una transacción explícita
+      // para cambiar rol + crear PuestoProductor + crear PuestoFeria + cerrar
+      // la solicitud atómicamente. El mock ejecuta el callback con un objeto
+      // dummy como transacción.
+      transaction: jest.fn().mockImplementation(async (cb) => cb({})),
+    },
     MensajeContacto: {
       findAll:  jest.fn(),
       findByPk: jest.fn(),
@@ -52,6 +60,17 @@ jest.mock('../models', () => {
     },
     Role: {
       findOne: jest.fn().mockResolvedValue({ id: 2, nombre: 'Productor' }),
+    },
+    // Mocks añadidos por la implementación de 3b (autorización por feria):
+    // approve() crea el puesto y la fila puesto_ferias del productor recién aprobado.
+    PuestoProductor: {
+      findOrCreate: jest.fn().mockResolvedValue([{ id: 1, feria_id: 1 }, true]),
+    },
+    PuestoFeria: {
+      findOrCreate: jest.fn().mockResolvedValue([{ id: 1, puesto_id: 1, feria_id: 1 }, true]),
+    },
+    DeliveryDriver: {
+      findOrCreate: jest.fn().mockResolvedValue([{ id: 1 }, true]),
     },
   };
 });
@@ -198,8 +217,50 @@ describe('PATCH /solicitudes/:id/aprobar', () => {
       .send({ motivoRespuesta: 'Cumple los requisitos.' });
 
     expect(res.status).toBe(200);
+    // approve() ahora envuelve la mutación en una transacción, así que update
+    // recibe (data, { transaction }). Validamos solo los campos de negocio.
     expect(sol.update).toHaveBeenCalledWith(
-      expect.objectContaining({ estado: 'Aprobada' })
+      expect.objectContaining({ estado: 'Aprobada' }),
+      expect.objectContaining({ transaction: expect.anything() })
+    );
+  });
+
+  test('200 - aprobar Productor crea PuestoProductor y PuestoFeria en transacción', async () => {
+    // El mock de SolicitudCambioRol expone propiedades camelCase, pero approve()
+    // lee snake_case (rol_solicitado, usuario_id), por lo que el bloque
+    // Productor SOLO se dispara si la solicitud trae esas claves.
+    const sol = SolicitudCambioRol._mock({
+      id: 7,
+      rol_solicitado: 'Productor',
+      usuario_id: 4,
+      nombre_del_puesto: 'Puesto Lechuga',
+      // approve() llama solicitud.usuario.update(...) cuando hay role válido,
+      // así que el usuario embebido debe exponer update como jest.fn().
+      usuario: { name: 'Luis', feriaId: 2, update: jest.fn().mockResolvedValue() },
+    });
+    SolicitudCambioRol.findByPk.mockResolvedValue(sol);
+
+    const { PuestoProductor, PuestoFeria } = require('../models');
+
+    const res = await request(app)
+      .patch('/solicitudes/7/aprobar')
+      .set(authH())
+      .send({ motivoRespuesta: 'OK' });
+
+    expect(res.status).toBe(200);
+    expect(PuestoProductor.findOrCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { usuario_id: 4 },
+        defaults: expect.objectContaining({ usuario_id: 4, feria_id: 2 }),
+      })
+    );
+    // PuestoFeria sólo se crea si el puesto trae feria; el mock devuelve feria_id: 1
+    // por defecto, así que findOrCreate debe haberse llamado para autorizar al
+    // productor en su feria principal.
+    expect(PuestoFeria.findOrCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ puesto_id: 1, feria_id: 1 }),
+      })
     );
   });
 

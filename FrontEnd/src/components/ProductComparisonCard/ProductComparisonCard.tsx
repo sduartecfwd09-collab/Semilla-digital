@@ -7,11 +7,14 @@ import { Producto } from '../../services/ProductService'
 export interface ComparisonRow {
   feriaName: string
   feriaLocation: string
+  feriaId?: number
   price: string
   priceNumeric: number
-  barWidth: number
-  barColor?: string
   province?: string
+  ofertaProductoId?: number
+  productoId?: number
+  productorId?: number
+  productorNombre?: string
 }
 
 export interface ProductComparisonData {
@@ -26,20 +29,24 @@ export interface ProductComparisonData {
 
 interface ProductComparisonCardProps {
   product: ProductComparisonData
-  onSelect?: () => void
+  onSelectFeria?: (feriaId: number) => void
 }
 
-const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product, onSelect }) => {
-  // Guard: si no hay filas de precios, Math.min/max sobre array vacío retorna ±Infinity
-  // y rompe el cálculo de barras y badges. Caemos a 0 en ese caso.
-  const numericPrices = product.rows.map((r: ComparisonRow) => r.priceNumeric)
-  const lowestPriceNumeric = numericPrices.length > 0 ? Math.min(...numericPrices) : 0
-  const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 0
-
+const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product, onSelectFeria }) => {
   // Eliminar cualquier '· Por ...' embebido en la descripción que contradiga la unidad real
   const cleanDescription = product.description
     ? product.description.replace(/\s*[·•]\s*[Pp]or\s+\w+/g, '').trim()
     : ''
+
+  // Agrupar ofertas por feria: cada feria debe aparecer una sola vez en el card.
+  // La selección entre productores de una misma feria pasa al modal.
+  const feriasUnicas: ComparisonRow[] = Array.from(
+    new Map(
+      product.rows
+        .filter(r => r.feriaId != null)
+        .map(r => [r.feriaId as number, r])
+    ).values()
+  )
 
   return (
     <div className="product-comp-card">
@@ -65,76 +72,36 @@ const ProductComparisonCard: React.FC<ProductComparisonCardProps> = ({ product, 
           </div>
           <div className="product-comp-desc">{cleanDescription}</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginLeft: 'auto', flexWrap: 'wrap' }}>
-          <div className="product-comp-price-summary">
-            <div className="product-comp-price-label">Precio más bajo por {product.unit.toLowerCase()}</div>
-            <div className="product-comp-min-price">{product.lowestPrice}</div>
-          </div>
-          {onSelect && (
-            <button 
-              className="product-comp-select-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelect();
-              }}
-            >
-              🛒 Seleccionar
-            </button>
-          )}
-        </div>
       </div>
 
-      {/* Comparison table */}
+      {/* Lista de ferias disponibles */}
       <div className="product-comp-table">
         <div className="product-comp-table-header">
-          <span>Feria</span>
-          <span>Precio Aproximado</span>
-          <span>Diferencias</span>
-          
+          <span>Feria disponible</span>
+          <span></span>
         </div>
 
-        {product.rows.map((row, index) => {
-          const isBest = row.priceNumeric === lowestPriceNumeric
-          const isExpensive = row.priceNumeric === maxPrice && !isBest
-          const diff = row.priceNumeric - lowestPriceNumeric
-          const barWidthPct = maxPrice > 0 ? Math.round((row.priceNumeric / maxPrice) * 100) : 0
-          const barColor = isBest ? '#3B9C3A' : '#e2e8f0'
-
-          return (
-            <div key={`${row.feriaName}-${row.priceNumeric}-${index}`} className={`product-comp-row ${isBest ? 'best' : ''}`}>
-              {/* Feria info */}
-              <div>
-                <div className="product-comp-feria-name">{row.feriaName}</div>
-                <div className="product-comp-feria-location">📍 {row.feriaLocation}</div>
-              </div>
-
-              {/* Price */}
-              <div className={`product-comp-price ${isBest ? 'best' : isExpensive ? 'expensive' : ''}`}>
-                {row.price}
-              </div>
-
-              {/* Bar */}
-              <div className="product-comp-bar-container">
-                <div
-                  className="product-comp-bar"
-                  style={{
-                    background: barColor,
-                    width: `${barWidthPct}%`,
-                  }}
-                />
-              </div>
-
-              {/* Badge */}
-              <div>
-                {isBest ? (
-                  <span className="product-comp-badge-best">Mejor</span>
-                ) : (
-                  <span className="product-comp-badge-diff">+₡{diff}</span>
-                )}
-              </div>
+        {feriasUnicas.map((row) => (
+          <div key={`feria-${row.feriaId}`} className="product-comp-row">
+            <div>
+              <div className="product-comp-feria-name">{row.feriaName}</div>
+              <div className="product-comp-feria-location">📍 {row.feriaLocation}</div>
             </div>
-          )
-        })}
+            <div>
+              {onSelectFeria && row.feriaId != null && (
+                <button
+                  className="product-comp-select-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectFeria(row.feriaId as number);
+                  }}
+                >
+                  🛒 Seleccionar
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

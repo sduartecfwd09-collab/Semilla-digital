@@ -4,6 +4,7 @@
 // ============================================================
 const {
   PuestoProductor,
+  PuestoFeria,
   Usuario,
   Feria,
   Direccion,
@@ -249,4 +250,63 @@ const remove = async (id) => {
   return true;
 };
 
-module.exports = { findAll, findById, findByUsuario, findByFeria, create, update, remove };
+// ── Gestión de puesto_ferias (autorización por feria, Enfoque B) ─────────────
+
+// Autoriza al puesto a vender en una feria. Idempotente: si la fila ya existe,
+// devuelve el puesto actualizado sin error. Retorna el puesto mapeado con su
+// nueva lista de ferias.
+const addFeria = async (puestoId, feriaId) => {
+  const puesto = await PuestoProductor.findByPk(puestoId);
+  if (!puesto) {
+    const err = new Error('Puesto no encontrado');
+    err.status = 404;
+    throw err;
+  }
+
+  const feria = await Feria.findByPk(feriaId);
+  if (!feria) {
+    const err = new Error('Feria no encontrada');
+    err.status = 404;
+    throw err;
+  }
+
+  await PuestoFeria.findOrCreate({
+    where: { puesto_id: puesto.id, feria_id: feria.id },
+    defaults: { puesto_id: puesto.id, feria_id: feria.id },
+  });
+
+  return findById(puestoId);
+};
+
+// Desautoriza al puesto en una feria. Bloquea borrar la feria principal:
+// `puestos_productor.feria_id` se usa como display + atribución de ventas.
+// Si admin necesita quitarla, primero debe cambiar la feria principal del puesto.
+const removeFeria = async (puestoId, feriaId) => {
+  const puesto = await PuestoProductor.findByPk(puestoId);
+  if (!puesto) {
+    const err = new Error('Puesto no encontrado');
+    err.status = 404;
+    throw err;
+  }
+
+  if (Number(puesto.feria_id) === Number(feriaId)) {
+    const err = new Error(
+      'No podés quitar la feria principal del puesto. Cambiá la feria principal primero.'
+    );
+    err.status = 409;
+    throw err;
+  }
+
+  const deleted = await PuestoFeria.destroy({
+    where: { puesto_id: puesto.id, feria_id: feriaId },
+  });
+  if (deleted === 0) {
+    const err = new Error('La feria no estaba autorizada para este puesto');
+    err.status = 404;
+    throw err;
+  }
+
+  return findById(puestoId);
+};
+
+module.exports = { findAll, findById, findByUsuario, findByFeria, create, update, remove, addFeria, removeFeria };

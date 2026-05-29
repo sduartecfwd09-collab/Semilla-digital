@@ -81,6 +81,7 @@ const remove = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 const uploadAsset = async (req, res) => {
   if (!req.cloudinaryUpload) {
     return res.status(400).json({ success: false, message: 'No se recibio archivo para subir' });
@@ -102,3 +103,32 @@ const deleteAsset = async (req, res) => {
 };
 
 module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, uploadAsset, deleteAsset };
+=======
+// POST /puestos/:id/ferias  body { feriaId }
+const addFeria = async (req, res) => {
+  try {
+    const { feriaId } = req.body;
+    if (!feriaId) {
+      return res.status(400).json({ success: false, message: 'feriaId es requerido' });
+    }
+    const data = await puestoService.addFeria(req.params.id, feriaId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error('[PuestoController.addFeria]', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message });
+  }
+};
+
+// DELETE /puestos/:id/ferias/:feriaId
+const removeFeria = async (req, res) => {
+  try {
+    const data = await puestoService.removeFeria(req.params.id, req.params.feriaId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error('[PuestoController.removeFeria]', error);
+    return res.status(error.status || 500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, addFeria, removeFeria };
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200

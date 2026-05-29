@@ -24,6 +24,7 @@ import AdminRecetas from '../pages/Admin/AdminRecetas';
 import AdminConfiguracion from '../pages/Admin/AdminConfiguracion';
 import AdminContactos from '../pages/Admin/AdminContactos/AdminContactos';
 import AdminRepartidores from '../pages/Admin/AdminRepartidores/AdminRepartidores';
+import AdminLiquidaciones from '../pages/Admin/AdminLiquidaciones/AdminLiquidaciones';
 import AdminLayout from '../components/admin/AdminLayout';
 
 // Páginas de Productor (Unidas desde el merge)
@@ -80,6 +81,7 @@ const Routing: React.FC = () => {
           <Route path="configuracion" element={<AdminConfiguracion />} />
           <Route path="contactos" element={<AdminContactos />} />
           <Route path="repartidores" element={<AdminRepartidores />} />
+          <Route path="liquidaciones" element={<AdminLiquidaciones />} />
         </Route>
 
         {/* Rutas de Productor (Protegido por rol 'Productor') */}
@@ -111,17 +113,17 @@ const Routing: React.FC = () => {
         <Route 
           path="/registro-delivery" 
           element={
-            <ProtectedRoute allowedRoles={['Usuario', 'Cliente']}>
+            <ProtectedRoute allowedRoles={['Usuario']}>
               <RegistroDelivery />
             </ProtectedRoute>
           } 
         />
 
-        {/* Rutas de Repartidor (Protegido por rol 'DRIVER' o 'Repartidor') */}
-        <Route 
-          path="/driver" 
+        {/* Rutas de Repartidor */}
+        <Route
+          path="/driver"
           element={
-            <ProtectedRoute allowedRoles={['DRIVER', 'Repartidor']}>
+            <ProtectedRoute allowedRoles={['Repartidor']}>
               <DriverLayout />
             </ProtectedRoute>
           } 

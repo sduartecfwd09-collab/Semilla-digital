@@ -45,9 +45,9 @@ const AdminRepartidores: React.FC = () => {
         userMap[String(u.id)] = u;
       });
 
-      // Filtrar solicitudes para DRIVER
+      // Filtrar solicitudes para Repartidor
       const deliverySolicitudes = (Array.isArray(solList) ? solList : []).filter(
-        (s: any) => (s.rol_solicitado ?? s.rolSolicitado) === 'DRIVER'
+        (s: any) => (s.rol_solicitado ?? s.rolSolicitado) === 'Repartidor'
       );
 
       // Usaremos la solicitud más reciente por usuario si hay duplicados,

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFerias } from '../../hooks/useFerias';
+import { isFeriaOpenNow, isFeriaToday } from '../../utils/feriaSchedule';
 import './ActiveFeriasCard.css';
 
 const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -10,20 +11,13 @@ const ActiveFeriasCard: React.FC = () => {
   
   const todayName = daysOfWeek[new Date().getDay()];
 
-  // Filtrar ferias que están activas hoy o mostrar una selección interesante
   const activeToday = useMemo(() => {
     if (!allFerias.length) return [];
-    
-    // Buscar coincidencia exacta o contener el día (ej: "Sábados" incluye "Sábado")
-    const filtered = allFerias.filter(f => 
-       f.dias.toLowerCase().includes(todayName.toLowerCase()) ||
-       (todayName === 'Sábado' && f.dias.toLowerCase().includes('sábados')) ||
-       (todayName === 'Domingo' && f.dias.toLowerCase().includes('domingos'))
-    );
 
-    // Si no hay hoy, mostramos las próximas 3
+    const filtered = allFerias.filter(f => isFeriaToday(f));
+
     return (filtered.length > 0 ? filtered : allFerias).slice(0, 3);
-  }, [allFerias, todayName]);
+  }, [allFerias]);
 
   const navigate = useNavigate();
   
@@ -50,14 +44,14 @@ const ActiveFeriasCard: React.FC = () => {
       </div>
       
       <p className="active-ferias-subtitle">
-        {activeToday.length > 0 && activeToday[0].dias.toLowerCase().includes(todayName.toLowerCase()) 
+        {activeToday.length > 0 && isFeriaToday(activeToday[0])
           ? `Hoy hay ${activeToday.length} ferias activas en Costa Rica`
           : "¡Prepárate! Estas son las próximas ferias a visitar"}
       </p>
 
       <div className="active-ferias-list">
         {activeToday.map((feria) => {
-          const isOpenNow = feria.dias.toLowerCase().includes(todayName.toLowerCase());
+          const isOpenNow = isFeriaOpenNow(feria);
           
           return (
             <div key={feria.id} className="active-feria-item">

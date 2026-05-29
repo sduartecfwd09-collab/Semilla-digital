@@ -59,6 +59,7 @@
     box-shadow: 0 0.5rem 1.25rem rgba(82, 183, 136, 0.4);
 }
 
+<<<<<<< HEAD
 .admin-dashboard-carousel {
     position: relative;
     min-height: 13rem;
@@ -162,15 +163,43 @@
     gap: 1rem;
     min-height: 8.5rem;
     box-shadow: 0 0.75rem 2rem rgba(15, 61, 33, 0.07);
+=======
+.dashboard-container .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.dashboard-container .stat-card {
+    background: #ffffff;
+    padding: 2rem 1.8rem;
+    border-radius: 1.5rem;
+    border: 0.0625rem solid rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.08);
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     position: relative;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
+<<<<<<< HEAD
     min-width: 0;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .admin-dashboard-stat-card::before {
+=======
+    grid-column: span 1;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Sin reglas especiales para nth-child, las 6 cards se acomodan en 2 filas de 3 */
+
+.dashboard-container .stat-card::before {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     content: '';
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
@@ -179,30 +208,54 @@
     transition: opacity 0.4s ease;
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-card:hover {
+=======
+.dashboard-container .stat-card:hover {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     transform: translateY(-0.3125rem);
     box-shadow: 0 1.25rem 2.5rem rgba(59, 156, 58, 0.15);
     border-color: rgba(59, 156, 58, 0.3);
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-card:hover::before {
     opacity: 1;
 }
 
 .admin-dashboard-stat-icon {
+=======
+.dashboard-container .stat-card:hover::before {
+    opacity: 1;
+}
+
+.dashboard-container .stat-card-top {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     display: flex;
     justify-content: center;
     align-items: center;
     flex: 0 0 auto;
     z-index: 1;
+<<<<<<< HEAD
+=======
+    flex-shrink: 0;
+}
+
+.dashboard-container .card-icon {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     width: 3.25rem;
     height: 3.25rem;
     border-radius: 1rem;
     font-size: 1.8rem;
     box-shadow: inset 0 0.125rem 0.625rem rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-trend {
+=======
+.dashboard-container .trend {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -219,7 +272,11 @@
     z-index: 1;
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-content {
+=======
+.dashboard-container .card-content {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -228,8 +285,13 @@
     min-width: 0;
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-content h3 {
     font-size: 2.15rem;
+=======
+.dashboard-container .card-content h3 {
+    font-size: 2rem;
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     margin: 0;
     color: #052e16;
     line-height: 1;
@@ -237,7 +299,11 @@
     letter-spacing: -0.0625rem;
 }
 
+<<<<<<< HEAD
 .admin-dashboard-stat-content p {
+=======
+.dashboard-container .card-content p {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     color: #64748b;
     margin-top: 0.4rem;
     font-size: 0.85rem;
@@ -246,6 +312,7 @@
     letter-spacing: 0.03125rem;
 }
 
+<<<<<<< HEAD
 @media (max-width: 75rem) {
     .admin-dashboard-stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -284,3 +351,52 @@
         min-height: 7.5rem;
     }
 }
+=======
+/* ==============================================
+   Responsive layout for Admin Dashboard cards
+   ============================================== */
+@media (max-width: 75rem) {
+    .dashboard-container .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+    }
+    .dashboard-container .stat-card {
+        grid-column: span 1;
+        padding: 1.75rem 1.5rem;
+    }
+}
+
+@media (max-width: 64rem) {
+    .dashboard-container .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .dashboard-container .stat-card {
+        grid-column: span 1;
+        padding: 1.5rem 1.25rem;
+    }
+}
+
+@media (max-width: 48rem) {
+    .dashboard-container .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .dashboard-container .stat-card {
+        grid-column: span 1;
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
+}
+
+@media (max-width: 30rem) {
+    .dashboard-container .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .dashboard-container .stat-card {
+        grid-column: span 1;
+        padding: 1rem;
+    }
+}
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200

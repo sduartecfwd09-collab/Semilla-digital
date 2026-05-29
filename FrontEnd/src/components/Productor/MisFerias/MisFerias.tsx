@@ -5,9 +5,8 @@ import Navbar from '../../Navbar/Navbar'
 import AdminSidebar from '../../adminProductor/ProductorSidebar'
 import AdminHeader from '../../adminProductor/ProductorHeader'
 import Footer from '../../Footer/Footer'
-import { getPuestoByUserId, getProductos } from '../../../services/ProductorServices'
+import { getPuestoByUserId } from '../../../services/productorService'
 import './MisFerias.css'
-import { Producto } from '../../../services/ProductService'
 
 interface Puesto {
   id: string | number
@@ -28,7 +27,6 @@ interface Puesto {
 const MisFerias: React.FC = () => {
   const { user } = useAuth()
   const [puesto, setPuesto] = useState<Puesto | null>(null)
-  const [productosFeria, setProductosFeria] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -36,16 +34,8 @@ const MisFerias: React.FC = () => {
       if (!user) return
       try {
         setLoading(true)
-        const dataPuesto = await getPuestoByUserId(user.id) as Puesto
+        const dataPuesto = await getPuestoByUserId(user.id) as Puesto | null
         if (dataPuesto) setPuesto(dataPuesto)
-
-        if (user.feriaId) {
-          const allProductos = await getProductos() as Producto[]
-          const productosDeFeria = allProductos.filter((p: Producto) =>
-            p.precios?.some((precio) => String(precio.feriaId) === String(user.feriaId))
-          )
-          setProductosFeria(productosDeFeria)
-        }
       } catch (error) {
         console.error('Error al cargar datos:', error)
       } finally {

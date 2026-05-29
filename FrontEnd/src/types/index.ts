@@ -3,7 +3,7 @@
   name: string;
   email: string;
   password?: string;
-  role: 'Vendedor' | 'Administrador' | 'Comprador' | string;
+  role: 'Administrador' | 'Productor' | 'Usuario' | 'Repartidor';
   status: 'Activo' | 'Inactivo' | string;
   avatar?: string;
   feriaId?: string;
@@ -26,13 +26,6 @@ export interface Fair {
   schedule: string;
 }
 
-export interface Price {
-  id: string;
-  productId: string | null;
-  fair: string;
-  price: number;
-}
-
 export interface Recipe {
   id: string;
   title: string;
@@ -42,6 +35,7 @@ export interface Recipe {
   steps: string[];
   difficulty: string;
   time: string;
+  image_url?: string | null;
 }
 
 export interface PuestoProductor {

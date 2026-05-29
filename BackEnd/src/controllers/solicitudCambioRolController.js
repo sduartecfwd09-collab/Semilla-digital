@@ -50,7 +50,7 @@ const getByUsuario = async (req, res) => {
 const create = async (req, res) => {
   try {
     const body = parseBody(req);
-    if (body.rol_solicitado === 'DRIVER' && !req.file) {
+    if (body.rol_solicitado === 'Repartidor' && !req.file) {
       return res.status(400).json({ success: false, message: 'La selfie de verificación es obligatoria' });
     }
     if (req.file) {

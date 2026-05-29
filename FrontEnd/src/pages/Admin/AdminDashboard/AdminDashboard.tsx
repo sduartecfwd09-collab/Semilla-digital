@@ -4,9 +4,13 @@ import { api } from '../../../services/api'
 import { ENDPOINTS, authFetch } from '../../../services/api.config'
 import UserModal from '../../../components/admin/UserModal/UserModal'
 import { normalizeProductName } from '../../../utils/productCatalog'
+<<<<<<< HEAD
 import adminBg from '../../../assets/admin/admin-bg.png'
 import bgPattern from '../../../assets/admin/bg-pattern.png'
 import farmerPortrait from '../../../assets/admin/farmer-portrait.png'
+=======
+import Carousel from '../../../components/Carousel'
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
 import './AdminDashboard.css'
 
 const dashboardSlides = [
@@ -131,8 +135,15 @@ const AdminDashboard = () => {
     const activeDashboardSlide = dashboardSlides[activeSlide]
 
     return (
+<<<<<<< HEAD
         <div className="admin-dashboard-page">
             <header className="admin-dashboard-header">
+=======
+        <div className="dashboard-container">
+            <Carousel variant="compact" />
+
+            <header className="dashboard-header" style={{ marginBottom: '1.5rem', paddingTop: '0' }}>
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
                 <h1>AgroMap Admin</h1>
                 <p>Bienvenido al Centro de Control de AgroMap</p>
             </header>

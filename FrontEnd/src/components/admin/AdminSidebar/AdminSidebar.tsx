@@ -68,6 +68,9 @@ const AdminSidebar = () => {
                 <NavLink to="/admin/repartidores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     🛵 Repartidores
                 </NavLink>
+                <NavLink to="/admin/liquidaciones" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                    💰 Liquidaciones
+                </NavLink>
             </nav>
         </aside>
     )

@@ -6,7 +6,7 @@ import { Producto, CATEGORIAS } from '../../../services/ProductService'
 import { getCategoryIcon } from '../../../utils/categoryIcons'
 import { PRODUCTOS_CATALOGO, getCategoriasDelCatalogo } from '../../../utils/productCatalog'
 import CategoryIcon from '../../CategoryIcon/CategoryIcon'
-import { getFerias } from '../../../services/ProductorServices'
+import { getFerias, getMisFerias } from '../../../services/productorService'
 import { useAuth } from '../../context/AuthContext'
 import './AdminProductForm.css'
 import { Feria } from '../../../types/feria.types'
@@ -58,23 +58,38 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   useEffect(() => {
     const fetchFerias = async () => {
       try {
-        const data = await getFerias()
-        setFerias(data)
+        // El productor ve solo las ferias donde está autorizado (puesto_ferias).
+        // El admin sigue viendo todas — el backend valida igual el invariante
+        // al crear/actualizar la oferta, así que admin puede ver opciones que
+        // el productor objetivo no esté habilitado para vender.
+        const data = user?.role === 'Productor'
+          ? await getMisFerias()
+          : await getFerias()
+        setFerias(data as Feria[])
+
+        // Acepta ambos shapes: backend real ({direccion:{provincia:{nombre}}})
+        // y legacy json-server ({provincia: 'San José'}). Soporta a admin y
+        // productor sin ramificar.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const provinciaDe = (f: any): string | undefined =>
+          f?.direccion?.provincia?.nombre || f?.provincia || undefined;
 
         let initialProvincia = 'San José';
         if (producto && producto.precios && producto.precios.length > 0) {
           const pFeriaId = String(producto.precios[0].feriaId);
-          const pFeria = data.find((f: any) => String(f.id) === pFeriaId);
-          initialProvincia = pFeria?.provincia || producto.precios[0].provincia || 'San José';
-          
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const pFeria = (data as any[]).find(f => String(f.id) === pFeriaId);
+          initialProvincia = provinciaDe(pFeria) || producto.precios[0].provincia || 'San José';
+
           setSelectedFeriaId(pFeriaId)
           setPrecio(producto.precios[0].precio.toString())
         } else if (user?.feriaId) {
-          const uFeria = data.find((f: any) => String(f.id) === String(user.feriaId));
-          initialProvincia = uFeria?.provincia || 'San José';
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const uFeria = (data as any[]).find(f => String(f.id) === String(user.feriaId));
+          initialProvincia = provinciaDe(uFeria) || 'San José';
           setSelectedFeriaId(String(user.feriaId))
         }
-        
+
         setFormData(prev => ({
           ...prev,
           ...(producto || {}),
@@ -86,7 +101,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     }
 
     fetchFerias()
-  }, [producto, userId])
+  }, [producto, userId, user?.role, user?.feriaId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -128,20 +143,30 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       return;
     }
 
-    // Intentamos obtener la feria seleccionada o la del usuario como fallback
-    const finalFeriaId = selectedFeriaId || String(user?.feriaId || '');
-    const selectedFeria = ferias.find(f => String(f.id) === finalFeriaId);
+    // La feria debe ser elegida explícitamente por el productor. Antes había un
+    // fallback silencioso a feriaId=1 ('Feria Local'), que mandaba productos a
+    // una feria que el productor nunca seleccionó. Bloqueamos el submit aquí.
+    if (!selectedFeriaId) {
+      Swal.fire('Feria requerida', 'Seleccioná la feria donde vas a vender este producto.', 'warning');
+      return;
+    }
+    const selectedFeria = ferias.find(f => String(f.id) === selectedFeriaId);
+    if (!selectedFeria) {
+      Swal.fire('Error', 'La feria seleccionada no es válida. Refrescá la página e intentá de nuevo.', 'error');
+      return;
+    }
 
-    // Creamos el arreglo de precios. Si no hay feria, usamos la provincia seleccionada en el form
-    const precios = selectedFeria ? [{
+    const feriaProvincia =
+      (selectedFeria as { provincia?: string }).provincia ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (selectedFeria as any).direccion?.provincia?.nombre ||
+      formData.provincia ||
+      'N/A';
+
+    const precios = [{
       feriaId: selectedFeria.id,
       feriaNombre: selectedFeria.nombre,
-      provincia: selectedFeria.provincia,
-      precio: numericPrice || 0
-    }] : [{
-      feriaId: 1, // ID genérico para feria local
-      feriaNombre: 'Feria Local',
-      provincia: formData.provincia || 'N/A',
+      provincia: feriaProvincia,
       precio: numericPrice || 0
     }];
 

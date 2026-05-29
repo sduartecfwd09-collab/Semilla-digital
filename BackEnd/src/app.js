@@ -39,10 +39,15 @@ io.on('connection', (client) => {
     if (!client.user) return;
     client.join(`order_${orderId}`);
   });
-  
+
   client.on('joinDriver', (driverId) => {
     if (!client.user) return;
     client.join(`driver_${driverId}`);
+  });
+
+  client.on('joinProducer', (productorId) => {
+    if (!client.user) return;
+    client.join(`producer_${productorId}`);
   });
 
   client.on('disconnect', () => {
@@ -58,10 +63,16 @@ const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http:
   .map(o => o.trim())
   .filter(Boolean);
 
+// En desarrollo aceptamos cualquier puerto de localhost/127.0.0.1 porque Vite
+// salta de puerto cuando el 5173 está ocupado. En producción la whitelist es estricta.
+const isDev = process.env.NODE_ENV !== 'production';
+const devLocalhostRegex = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
+
 app.use(cors({
   origin: (origin, cb) => {
     // Permitir peticiones sin Origin (curl, Postman, server-to-server)
     if (!origin) return cb(null, true);
+    if (isDev && devLocalhostRegex.test(origin)) return cb(null, true);
     if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS: origen no permitido (${origin})`));
   },
@@ -136,6 +147,34 @@ if (process.env.NODE_ENV !== 'test') {
       process.exit(1);
     }
   })();
+
+  // ── Graceful shutdown ───────────────────────────────────────────────────────
+  // Libera el puerto cuando nodemon reinicia o se recibe Ctrl+C. Sin esto,
+  // Socket.IO mantiene conexiones TCP abiertas y deja el proceso huérfano.
+  const shutdown = async (signal) => {
+    console.log(`\n${signal} recibido. Cerrando servidor...`);
+    // Cinturón de seguridad: si algo se cuelga, mata el proceso en 5s.
+    const failSafe = setTimeout(() => {
+      console.error('Shutdown excedió 5s, forzando salida.');
+      process.exit(1);
+    }, 5000).unref();
+    try {
+      io.close();
+      await new Promise((resolve, reject) =>
+        server.close((err) => (err ? reject(err) : resolve()))
+      );
+      await sequelize.close();
+      clearTimeout(failSafe);
+      console.log('✅ Servidor cerrado correctamente');
+      process.exit(0);
+    } catch (err) {
+      console.error('Error durante shutdown:', err);
+      process.exit(1);
+    }
+  };
+  ['SIGINT', 'SIGTERM', 'SIGUSR2'].forEach((sig) =>
+    process.once(sig, () => shutdown(sig))
+  );
 }
 
 module.exports = app;

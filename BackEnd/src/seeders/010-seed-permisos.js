@@ -54,6 +54,15 @@ module.exports = {
 
       // ── Módulo: Configuración (modulo_id: 11) ──────────────
       { id: 30, clave: 'configuracion.gestionar',  nombre: 'Gestionar configuración',   descripcion: 'Modificar configuración del sistema',            modulo_id: 11, created_at: new Date(), updated_at: new Date() },
+
+      // ── Módulo: Delivery (modulo_id: 12) ───────────────────
+      { id: 31, clave: 'delivery.ver_mi_perfil',        nombre: 'Ver mi perfil de repartidor',  descripcion: 'Ver datos del perfil propio de repartidor',         modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 32, clave: 'delivery.actualizar_status',    nombre: 'Actualizar status repartidor', descripcion: 'Cambiar disponibilidad (en línea / fuera de línea)', modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 33, clave: 'delivery.ver_mis_ordenes',      nombre: 'Ver mis órdenes',              descripcion: 'Listar órdenes asignadas al repartidor',             modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 34, clave: 'delivery.aceptar_orden',        nombre: 'Aceptar orden',                descripcion: 'Aceptar una orden de entrega ofrecida',              modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 35, clave: 'delivery.rechazar_orden',       nombre: 'Rechazar orden',               descripcion: 'Rechazar una orden de entrega ofrecida',             modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 36, clave: 'delivery.actualizar_ubicacion', nombre: 'Actualizar ubicación',         descripcion: 'Reportar ubicación GPS del repartidor',              modulo_id: 12, created_at: new Date(), updated_at: new Date() },
+      { id: 37, clave: 'delivery.ver_mis_ganancias',    nombre: 'Ver mis ganancias',            descripcion: 'Ver ganancias acumuladas del repartidor',            modulo_id: 12, created_at: new Date(), updated_at: new Date() },
     ];
 
     const existing = await queryInterface.sequelize.query(

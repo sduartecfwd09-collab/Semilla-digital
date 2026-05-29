@@ -3,9 +3,11 @@
 // Descripción: Lógica de negocio para solicitudes de cambio
 //              de rol (flujo de aprobación admin)
 // ============================================================
-const { SolicitudCambioRol, Usuario, DeliveryDriver, Role } = require('../models');
+const { sequelize, SolicitudCambioRol, Usuario, DeliveryDriver, Role, PuestoProductor, PuestoFeria } = require('../models');
 const fs = require('fs');
 const path = require('path');
+const { uploadFromPath } = require('./cloudinaryService');
+const { VEHICLE_TYPES, isValidVehicleType } = require('../constants/vehicleTypes');
 
 const saveBase64Documents = (userId, vehicleType, documentosBase64) => {
   if (!documentosBase64 || Object.keys(documentosBase64).length === 0) return null;
@@ -140,8 +142,12 @@ const create = async (data) => {
     throw new Error('Ya existe una solicitud pendiente para este usuario');
   }
 
-  if (data.rol_solicitado === 'DRIVER' && !data.selfie_verificacion_url) {
+  if (data.rol_solicitado === 'Repartidor' && !data.selfie_verificacion_url) {
     throw new Error('La selfie de verificación es obligatoria');
+  }
+
+  if (data.vehicle_type != null && data.vehicle_type !== '' && !isValidVehicleType(data.vehicle_type)) {
+    throw new Error(`vehicle_type inválido. Valores permitidos: ${VEHICLE_TYPES.join(', ')}`);
   }
 
   if (data.documentos_base64 && data.vehicle_type) {
@@ -191,6 +197,10 @@ const update = async (id, data) => {
   if (data.correoUsuario !== undefined) updateData.correo_usuario = data.correoUsuario;
   if (data.rolSolicitado !== undefined) updateData.rol_solicitado = data.rolSolicitado;
 
+  if (data.vehicle_type != null && data.vehicle_type !== '' && !isValidVehicleType(data.vehicle_type)) {
+    throw new Error(`vehicle_type inválido. Valores permitidos: ${VEHICLE_TYPES.join(', ')}`);
+  }
+
   if (data.documentos_base64) {
     const vType = data.vehicle_type || solicitud.vehicle_type;
     const uId = data.usuario_id || solicitud.usuario_id;
@@ -218,29 +228,119 @@ const approve = async (id, data = {}) => {
     throw new Error('Solo se pueden aprobar solicitudes pendientes');
   }
 
-  // Actualizar el rol del usuario utilizando roleId (RBAC) de forma segura
-  const role = await Role.findOne({ where: { nombre: solicitud.rol_solicitado } });
-  if (role && solicitud.usuario) {
-    await solicitud.usuario.update({ roleId: role.id });
+  const role = await Role.findOne({
+    where: { nombre: solicitud.rol_solicitado },
+  });
+
+  // Subidas a Cloudinary para Repartidor fuera de la TX (I/O externo no debe bloquear la transacción)
+  let selfieCloudinaryUrl = solicitud.selfie_verificacion_url;
+  let docsCloudinary = { ...(solicitud.documentos_rutas || {}) };
+
+  if (solicitud.rol_solicitado === 'Repartidor') {
+    if (selfieCloudinaryUrl && !selfieCloudinaryUrl.includes('cloudinary.com')) {
+      const absoluteSelfiePath = path.join(__dirname, '../../', selfieCloudinaryUrl);
+      if (fs.existsSync(absoluteSelfiePath)) {
+        try {
+          const res = await uploadFromPath(absoluteSelfiePath, 'delivery_selfies', false);
+          selfieCloudinaryUrl = res.secure_url;
+        } catch (err) {
+          console.error('[Cloudinary approve] Error uploading selfie:', err);
+        }
+      }
+    }
+    for (const [key, relativePath] of Object.entries(docsCloudinary)) {
+      if (relativePath && typeof relativePath === 'string' && !relativePath.includes('cloudinary.com')) {
+        const absoluteDocPath = path.join(__dirname, '../../', relativePath);
+        if (fs.existsSync(absoluteDocPath)) {
+          try {
+            const res = await uploadFromPath(absoluteDocPath, 'delivery_documents', false);
+            docsCloudinary[key] = res.secure_url;
+          } catch (err) {
+            console.error(`[Cloudinary approve] Error uploading doc ${key}:`, err);
+          }
+        }
+      }
+    }
   }
 
-  // Si el rol solicitado es DRIVER, creamos el repartidor correspondiente
-  if (solicitud.rol_solicitado === 'DRIVER') {
-    await DeliveryDriver.findOrCreate({
-      where: { usuario_id: solicitud.usuario_id },
-      defaults: {
+  // Toda la aprobación (cambio de rol + entidad asociada + cierre) en una sola TX.
+  const approved = await sequelize.transaction(async (t) => {
+    if (role && solicitud.usuario) {
+      await solicitud.usuario.update({ roleId: role.id }, { transaction: t });
+    }
+
+    if (solicitud.rol_solicitado === 'Repartidor') {
+      const driverDefaults = {
         vehicle_type: solicitud.vehicle_type,
         license_plate: solicitud.license_plate,
-        status: 'inactive',
-      }
-    });
-  }
+        marca_vehiculo: solicitud.marca_vehiculo,
+        modelo_vehiculo: solicitud.modelo_vehiculo,
+        anio_vehiculo: solicitud.anio_vehiculo,
+        confirmaciones: solicitud.confirmaciones,
+        selfie_verificacion_url: selfieCloudinaryUrl,
+        documentos_rutas: docsCloudinary,
+        status: 'OFFLINE',
+        full_name: solicitud.nombre_usuario,
+        email: solicitud.correo_usuario,
+        phone: solicitud.usuario?.phone || null,
+        plate_number: solicitud.license_plate,
+        brand: solicitud.marca_vehiculo,
+        model: solicitud.modelo_vehiculo,
+        identity_document_url: docsCloudinary.cedula || docsCloudinary.cedulaPasaporte || docsCloudinary.cedulaBici || null,
+        criminal_record_url: docsCloudinary.hojaDelincuencia || docsCloudinary.hojaDelincuenciaBM || docsCloudinary.antecedentesBici || null,
+        license_url: docsCloudinary.licenciaConducir || docsCloudinary.licenciaMoto || docsCloudinary.licenciaBM || null,
+        property_card_url: docsCloudinary.tarjetaPropiedad || null,
+        riteve_url: docsCloudinary.revisionTecnica || docsCloudinary.revisionTecnicaMoto || docsCloudinary.riteveBM || null,
+        marchamo_url: docsCloudinary.marchamo || docsCloudinary.marchamoMoto || docsCloudinary.marchamoBM || null,
+        selfie_verification_url: selfieCloudinaryUrl,
+      };
 
-  // Actualizar la solicitud
-  const approved = await solicitud.update({
-    estado: 'Aprobada',
-    motivo_respuesta: data.motivo_respuesta || 'Solicitud aprobada',
-    fecha_respuesta: new Date(),
+      const [driverRecord, created] = await DeliveryDriver.findOrCreate({
+        where: { user_id: solicitud.usuario_id },
+        defaults: driverDefaults,
+        transaction: t,
+      });
+
+      if (!created) {
+        await driverRecord.update(driverDefaults, { transaction: t });
+      }
+
+      // Actualizar solicitud con URLs finales de Cloudinary
+      await solicitud.update(
+        { selfie_verificacion_url: selfieCloudinaryUrl, documentos_rutas: docsCloudinary },
+        { transaction: t }
+      );
+    }
+
+    if (solicitud.rol_solicitado === 'Productor') {
+      const [puesto] = await PuestoProductor.findOrCreate({
+        where: { usuario_id: solicitud.usuario_id },
+        defaults: {
+          usuario_id: solicitud.usuario_id,
+          feria_id: solicitud.usuario?.feriaId || null,
+          nombre_puesto: solicitud.nombre_del_puesto
+            || `Puesto de ${solicitud.usuario?.name || solicitud.nombre_usuario || 'productor'}`,
+          descripcion: 'Puesto creado al aprobar la solicitud de productor.',
+          fecha_registro: new Date(),
+        },
+        transaction: t,
+      });
+
+      // Autorización inicial en puesto_ferias (fuente de verdad para productoService)
+      if (puesto.feria_id) {
+        await PuestoFeria.findOrCreate({
+          where: { puesto_id: puesto.id, feria_id: puesto.feria_id },
+          defaults: { puesto_id: puesto.id, feria_id: puesto.feria_id },
+          transaction: t,
+        });
+      }
+    }
+
+    return await solicitud.update({
+      estado: 'Aprobada',
+      motivo_respuesta: data.motivo_respuesta || 'Solicitud aprobada',
+      fecha_respuesta: new Date(),
+    }, { transaction: t });
   });
 
   return mapSolicitudParaFrontend(approved);

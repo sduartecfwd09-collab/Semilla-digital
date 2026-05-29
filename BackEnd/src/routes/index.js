@@ -24,6 +24,11 @@ router.use('/puestos',
   require('./puestoProductorRoutes')
 );
 
+router.use('/productores',
+  verifyToken,
+  require('./productorRoutes')
+);
+
 router.use('/solicitudes',
   verifyToken,
   require('./solicitudCambioRolRoutes')
@@ -61,6 +66,22 @@ router.use('/auditoria',
 router.use('/delivery',
   verifyToken,
   require('./deliveryRoutes')
+);
+
+// ── Ganancias productores ────────────────────────────────────────────────
+router.use('/ventas',
+  verifyToken,
+  require('./ventaProductorRoutes')
+);
+
+router.use('/platform-settings',
+  verifyToken,
+  require('./platformSettingsRoutes')
+);
+
+router.use('/liquidaciones',
+  verifyToken,
+  require('./liquidacionRoutes')
 );
 
 module.exports = router;

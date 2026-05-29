@@ -138,7 +138,7 @@ export function calculateDriverEarnings(params: EarningsParams): DriverEarningsD
 }
 
 export const deliveryService = {
-  // DRIVER ENDPOINTS
+  // REPARTIDOR ENDPOINTS
   getMyProfile: async (): Promise<DriverProfile> => {
     const res = await authFetch(`${ENDPOINTS.delivery}/drivers/me`);
     if (!res.ok) throw new Error('Error al obtener perfil de driver');

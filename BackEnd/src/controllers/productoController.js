@@ -39,16 +39,28 @@ const getByUser = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const data = await productoService.create(req.body);
+    const isAdmin = req.user?.role === 'Administrador';
+    // Productor solo puede crear bajo su propio ID; Admin puede especificar cualquiera
+    const userId = isAdmin ? (req.body.userId || req.user.id) : req.user.id;
+    const data = await productoService.create({ ...req.body, userId });
     return res.status(201).json({ success: true, data });
   } catch (error) {
     console.error('[ProductoController.create]', error);
-    return res.status(400).json({ success: false, message: error.message });
+    return res.status(error.status || 400).json({ success: false, message: error.message });
   }
 };
 
 const update = async (req, res) => {
   try {
+    const isAdmin = req.user?.role === 'Administrador';
+    if (!isAdmin) {
+      // Productor solo puede editar sus propios productos
+      const existing = await productoService.findById(req.params.id);
+      if (!existing) return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+      if (String(existing.user_id) !== String(req.user.id)) {
+        return res.status(403).json({ success: false, message: 'No autorizado para modificar este producto' });
+      }
+    }
     const data = await productoService.update(req.params.id, req.body);
     return res.status(200).json({ success: true, data });
   } catch (error) {
@@ -56,7 +68,7 @@ const update = async (req, res) => {
     if (error.message.includes('no encontrad')) {
       return res.status(404).json({ success: false, message: error.message });
     }
-    return res.status(400).json({ success: false, message: error.message });
+    return res.status(error.status || 400).json({ success: false, message: error.message });
   }
 };
 

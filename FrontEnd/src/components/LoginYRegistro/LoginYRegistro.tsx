@@ -13,9 +13,9 @@ const Auth: React.FC = () => {
   const { login, register } = useAuth()
 
   const routeForRole = (role?: string) => {
-    if (role === 'Administrador' || role === 'Admin') return '/admin'
-    if (role === 'Productor' || role === 'Vendedor') return '/productor'
-    if (role === 'Repartidor' || role === 'DRIVER') return '/driver'
+    if (role === 'Administrador') return '/admin'
+    if (role === 'Productor') return '/productor'
+    if (role === 'Repartidor') return '/driver'
     return '/'
   }
 
@@ -61,14 +61,14 @@ const Auth: React.FC = () => {
       const result = await login(loginEmail, loginPassword)
 
       if (result.success) {
-        await Swal.fire({
+        navigate(routeForRole(result.role))
+        Swal.fire({
           icon: 'success',
-          title: 'Éxito',
-          text: 'Sesión iniciada correctamente.',
-          confirmButtonText: 'OK',
-          confirmButtonColor: 'var(--verde-claro)',
+          title: 'Sesión iniciada correctamente',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
         })
-        window.location.replace(routeForRole(result.role))
       } else {
         Swal.fire({
           icon: 'error',
@@ -145,12 +145,16 @@ const Auth: React.FC = () => {
       })
 
       if (result.success) {
-        await Swal.fire({
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
           icon: 'success',
-          title: '¡Cuenta creada!',
-          text: 'Ahora iniciá sesión con tu correo y contraseña.',
-          confirmButtonColor: 'var(--verde-claro)',
+          title: '¡Cuenta creada! Iniciá sesión para continuar',
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
         })
+
         setLoginEmail(trimmedEmail)
         setLoginPassword('')
         setRegName('')

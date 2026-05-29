@@ -13,6 +13,9 @@ export interface CartItem {
   cantidad: number
   descripcion?: string
   categoria?: string
+  producto_id?: number
+  oferta_producto_id?: number
+  productor_id?: number
 }
 
 export interface DeliveryInfo {
@@ -161,6 +164,9 @@ const CartProviderInner: React.FC<CartProviderProps> = ({ children }) => {
         cantidad: item.cantidad,
         descripcion: item.descripcion || '',
         categoria: item.categoria || '',
+        producto_id: item.producto_id || null,
+        oferta_producto_id: item.oferta_producto_id || null,
+        productor_id: item.productor_id || null,
       })),
       direccion_id: null,
     };

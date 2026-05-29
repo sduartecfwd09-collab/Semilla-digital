@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { io, Socket } from 'socket.io-client'
+import Swal from 'sweetalert2'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../Navbar/Navbar'
 import Footer from '../../Footer/Footer'
@@ -7,7 +9,8 @@ import ProductorSidebar from '../../adminProductor/ProductorSidebar'
 import AdminHeader from '../../adminProductor/ProductorHeader'
 import AdminStats from '../../adminProductor/ProductorStats'
 import { getProductosByUser, Producto } from '../../../services/ProductService'
-import { getPuestoByUserId } from '../../../services/ProductorServices'
+import { getPuestoByUserId } from '../../../services/productorService'
+import { API_BASE_URL } from '../../../services/api.config'
 import './Dashboard.css'
 
 interface PuestoData {
@@ -27,11 +30,43 @@ interface PuestoData {
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
-  
+  const socketRef = useRef<Socket | null>(null)
+
   const [puesto, setPuesto] = useState<PuestoData | null>(null)
   const [stats, setStats] = useState({ totalProductos: 0, productosActivos: 0 })
   const [recentProducts, setRecentProducts] = useState<Producto[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Suscripción a notificaciones de ventas en tiempo real
+  useEffect(() => {
+    if (!user?.id) return
+    const sock = io(API_BASE_URL, { withCredentials: true, transports: ['websocket', 'polling'] })
+    socketRef.current = sock
+
+    sock.on('connect', () => {
+      sock.emit('joinProducer', user.id)
+    })
+
+    sock.on('nuevaVenta', (data: { nombreProducto: string; cantidad: number; montoNeto: number }) => {
+      const fmt = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 0 })
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '¡Nueva venta!',
+        html: `<b>${data.nombreProducto}</b> × ${data.cantidad}<br/>Ganancia neta: ${fmt.format(data.montoNeto)}`,
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+      })
+    })
+
+    sock.on('connect_error', () => {
+      // Silencioso: la notificación socket es fire-and-forget, no bloquea el panel
+    })
+
+    return () => { sock.disconnect() }
+  }, [user?.id])
 
   useEffect(() => {
     const fetchData = async () => {

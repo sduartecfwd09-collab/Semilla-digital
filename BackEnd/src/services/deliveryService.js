@@ -7,8 +7,6 @@ const {
   DriverLocation,
   DeliveryRating,
   DeliverySetting,
-  DeliveryApplication,
-  DeliveryApplicationDocument,
   Usuario,
   Proforma,
 } = require('../models');

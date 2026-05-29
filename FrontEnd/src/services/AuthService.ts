@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../services/api.config'
+import { API_BASE_URL, authFetch } from '../services/api.config'
 
 const BASE_URL = API_BASE_URL
 
@@ -70,7 +70,7 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
  * Actualiza información del usuario
  */
 export const updateUser = async (userId: string | number, updates: Partial<User>): Promise<User> => {
-  const response = await fetch(`${BASE_URL}/usuarios/${userId}`, {
+  const response = await authFetch(`${BASE_URL}/usuarios/${userId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),

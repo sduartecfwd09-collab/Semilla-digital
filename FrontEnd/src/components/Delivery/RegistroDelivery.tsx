@@ -205,7 +205,7 @@ const RegistroDelivery: React.FC = () => {
     const userStr = localStorage.getItem('user');
     if (!userStr) { navigate('/auth'); return; }
     const cachedUser = JSON.parse(userStr);
-    if (cachedUser.role !== 'Cliente' && cachedUser.role !== 'Usuario' && cachedUser.role !== 'DRIVER') {
+    if (cachedUser.role !== 'Usuario' && cachedUser.role !== 'Repartidor') {
       navigate('/perfil'); return;
     }
     setRole(cachedUser.role);
@@ -222,7 +222,7 @@ const RegistroDelivery: React.FC = () => {
         const todas = raw.data || raw;
         const mias = todas.filter(
           (s: any) => String(s.usuario_id ?? s.usuarioId) === String(cachedUser.id) &&
-            (s.rol_solicitado ?? s.rolSolicitado) === 'DRIVER' &&
+            (s.rol_solicitado ?? s.rolSolicitado) === 'Repartidor' &&
             s.estado === 'Pendiente'
         );
         if (mias.length > 0) {
@@ -383,6 +383,102 @@ const RegistroDelivery: React.FC = () => {
     return true;
   };
 
+  /* ── Intermediate Step Validations ── */
+  const validateStep1 = (): boolean => {
+    if (!vehicleType) {
+      Swal.fire({ icon: 'warning', title: 'Seleccioná un vehículo', text: 'Elegí el tipo de vehículo con el que harás entregas.', confirmButtonColor: 'var(--verde-claro)' });
+      return false;
+    }
+    if (vehicleType === 'Carro') {
+      if (!licensePlate.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Placa requerida', text: 'Ingresá el número de placa del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      if (!anioValido) {
+        Swal.fire({ icon: 'warning', title: 'Año inválido', text: `El año debe ser entre 2000 y ${currentYear}.`, confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      if (!marca.trim() || !modelo.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Marca y modelo requeridos', text: 'Ingresá la marca y el modelo del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      const unchecked = CARRO_CONFIRMATIONS.filter(c => !confirmations[c.key]);
+      if (unchecked.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      const missingEvidences = CARRO_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+      if (missingEvidences.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+    }
+    if (vehicleType === 'Moto') {
+      if (!licensePlate.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Placa requerida', text: 'Ingresá el número de placa de la motocicleta.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      if (!marca.trim() || !modelo.trim()) {
+        Swal.fire({ icon: 'warning', title: 'Marca y modelo requeridos', text: 'Ingresá la marca y el modelo de la motocicleta.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+    }
+    if (vehicleType === 'BiciMoto') {
+      const unchecked = BICIMOTO_CONFIRMATIONS.filter(c => !confirmations[c.key]);
+      if (unchecked.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos del vehículo.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      const missingEvidences = BICIMOTO_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+      if (missingEvidences.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+    }
+    if (vehicleType === 'Bicicleta') {
+      const unchecked = BICI_CONFIRMATIONS.filter(c => !confirmations[c.key]);
+      if (unchecked.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Confirmaciones pendientes', text: 'Debés confirmar todos los requisitos.', confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+      const missingEvidences = BICI_CONFIRMATIONS.filter(c => confirmations[c.key] && (!confirmationEvidences[c.key] || confirmationEvidences[c.key]?.status === 'error'));
+      if (missingEvidences.length > 0) {
+        Swal.fire({ icon: 'warning', title: 'Evidencia faltante', text: `Subí una foto de evidencia para: ${missingEvidences.map(c => c.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const validateStep2 = (): boolean => {
+    let relevantDocs: { key: string; label: string; emoji: string }[] = [];
+    if (vehicleType === 'Carro') relevantDocs = CARRO_DOCUMENTS;
+    else if (vehicleType === 'Moto') relevantDocs = MOTO_DOCUMENTS;
+    else if (vehicleType === 'BiciMoto') relevantDocs = BICIMOTO_DOCUMENTS;
+    else if (vehicleType === 'Bicicleta') relevantDocs = BICI_DOCUMENTS;
+
+    const missingDocs = relevantDocs.filter(d => !documents[d.key] || documents[d.key]?.status === 'error');
+    if (missingDocs.length > 0) {
+      Swal.fire({ icon: 'warning', title: 'Documentos incompletos', text: `Falta subir: ${missingDocs.map(d => d.label).join(', ')}.`, confirmButtonColor: 'var(--verde-claro)' });
+      return false;
+    }
+    return true;
+  };
+
+  const handleGoToStep2 = () => {
+    if (validateStep1()) {
+      setStep(2);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handleGoToStep3 = () => {
+    if (validateStep2()) {
+      setStep(3);
+      window.scrollTo(0, 0);
+    }
+  };
+
   /* ── Submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -432,7 +528,7 @@ const RegistroDelivery: React.FC = () => {
         usuario_id: userId,
         nombre_usuario: nombre.trim(),
         correo_usuario: email.trim(),
-        rol_solicitado: 'DRIVER',
+        rol_solicitado: 'Repartidor',
         vehicle_type: vehicleType,
         license_plate: licensePlate.trim(),
         estado: 'Pendiente',
@@ -525,7 +621,7 @@ const RegistroDelivery: React.FC = () => {
           {/* Header */}
           <div className="profile-header">
             <div className="header-info">
-              <h1>{role === 'DRIVER' ? 'Información de Repartidor' : 'Registro de Repartidor'}</h1>
+              <h1>{role === 'Repartidor' ? 'Información de Repartidor' : 'Registro de Repartidor'}</h1>
               <p>Completá los datos de tu vehículo, documentos e información personal para que un administrador revise tu solicitud.</p>
             </div>
           </div>
@@ -534,12 +630,19 @@ const RegistroDelivery: React.FC = () => {
           <div className="delivery-stepper">
             <div className={`stepper-step ${step >= 1 ? 'active' : ''} ${step > 1 ? 'completed' : ''}`}>
               <div className="stepper-circle">{step > 1 ? '✓' : '1'}</div>
-              <span className="stepper-label">Vehículo</span>
+              <span className="stepper-label">Detalles del Vehículo</span>
             </div>
             <div className={`stepper-line ${step > 1 ? 'completed' : ''}`} />
-            <div className={`stepper-step ${step >= 2 ? 'active' : ''}`}>
-              <div className="stepper-circle">2</div>
-              <span className="stepper-label">Formulario</span>
+            
+            <div className={`stepper-step ${step >= 2 ? 'active' : ''} ${step > 2 ? 'completed' : ''}`}>
+              <div className="stepper-circle">{step > 2 ? '✓' : '2'}</div>
+              <span className="stepper-label">Documentos requeridos</span>
+            </div>
+            <div className={`stepper-line ${step > 2 ? 'completed' : ''}`} />
+            
+            <div className={`stepper-step ${step >= 3 ? 'active' : ''}`}>
+              <div className="stepper-circle">3</div>
+              <span className="stepper-label">Verificación y Contacto</span>
             </div>
           </div>
 
@@ -554,414 +657,436 @@ const RegistroDelivery: React.FC = () => {
             </div>
           )}
 
-          {/* ══════ STEP 1: Vehicle selection ══════ */}
-          {step === 1 && (
-            <div className="vehicle-selection-section">
-              <h2>¿Con qué vehículo realizarás las entregas?</h2>
-              <div className="vehicle-cards-grid">
-                {VEHICLE_TYPES.map(vt => (
-                  <div
-                    key={vt.value}
-                    className={`vehicle-card ${vehicleType === vt.value ? 'selected' : ''}`}
-                    onClick={() => setVehicleType(vt.value)}
-                  >
-                    <div className="vehicle-card-check">✓</div>
-                    <div className="vehicle-card-emoji">{vt.emoji}</div>
-                    <div className="vehicle-card-label">{vt.label}</div>
-                  </div>
-                ))}
-              </div>
-              <button type="button" className="vehicle-continue-btn" disabled={!vehicleType} onClick={handleContinue}>
-                Continuar →
-              </button>
-            </div>
-          )}
+          <form onSubmit={handleSubmit} className="registro-delivery-form">
+            <div className="registro-delivery-grid">
 
-          {/* ══════ STEP 2: Form ══════ */}
-          {step === 2 && (
-            <form onSubmit={handleSubmit} className="registro-delivery-form">
-              <div className="registro-delivery-grid">
+              {/* ── STEP 1: Detalles del Vehículo (Paso 1/3) ── */}
+              {step === 1 && (
+                <>
+                  <h3 className="form-section-title">
+                    <span className="section-icon">🚗</span> Detalles del Vehículo (Paso 1/3)
+                  </h3>
 
-                {/* ── Vehicle details ── */}
-                <h3 className="form-section-title">
-                  <span className="section-icon">🚗</span> Detalles del Vehículo — {VEHICLE_TYPES.find(v => v.value === vehicleType)?.label}
-                </h3>
-
-                {/* Placa — for Carro & Moto */}
-                {(vehicleType === 'Carro' || vehicleType === 'Moto') && (
-                  <div className="input-group">
-                    <label>Número de Placa *</label>
-                    <div className="input-box">
-                      <span className="input-icon">🔢</span>
-                      <input type="text" placeholder="Ej: ABC-123" value={licensePlate}
-                        onChange={e => setLicensePlate(e.target.value.toUpperCase())} />
-                    </div>
-                  </div>
-                )}
-
-                {/* Placa — BiciMoto (optional) */}
-                {vehicleType === 'BiciMoto' && (
-                  <div className="input-group full-width">
-                    <label>Número de Placa (opcional, si aplica)</label>
-                    <div className="input-box">
-                      <span className="input-icon">🔢</span>
-                      <input type="text" placeholder="Dejar vacío si no aplica" value={licensePlate}
-                        onChange={e => setLicensePlate(e.target.value.toUpperCase())} />
-                    </div>
-                    <span className="input-hint">Si tu ciclomotor no requiere placa, podés dejar este campo vacío.</span>
-                  </div>
-                )}
-
-                {/* Carro-specific fields */}
-                {vehicleType === 'Carro' && (
-                  <>
-                    <div className="input-group">
-                      <label>Año del vehículo *</label>
-                      <div className="input-box">
-                        <span className="input-icon">📅</span>
-                        <input type="number" placeholder="Ej: 2018" min={2000} max={currentYear}
-                          value={anioVehiculo}
-                          onChange={e => setAnioVehiculo(e.target.value.slice(0, 4))} />
-                      </div>
-                      {anioVehiculo && !anioValido && <span className="input-error">El año debe ser del 2000 en adelante y no mayor a {currentYear}.</span>}
-                    </div>
-                    <div className="input-group">
-                      <label>Marca *</label>
-                      <div className="input-box">
-                        <span className="input-icon">🏭</span>
-                        <input type="text" placeholder="Ej: Toyota" value={marca}
-                          onChange={e => setMarca(e.target.value)} />
-                      </div>
-                    </div>
-                    <div className="input-group">
-                      <label>Modelo *</label>
-                      <div className="input-box">
-                        <span className="input-icon">🚘</span>
-                        <input type="text" placeholder="Ej: Corolla" value={modelo}
-                          onChange={e => setModelo(e.target.value)} />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Moto-specific fields */}
-                {vehicleType === 'Moto' && (
-                  <>
-                    <div className="input-group">
-                      <label>Marca *</label>
-                      <div className="input-box">
-                        <span className="input-icon">🏭</span>
-                        <input type="text" placeholder="Ej: Yamaha" value={marca}
-                          onChange={e => setMarca(e.target.value)} />
-                      </div>
-                    </div>
-                    <div className="input-group">
-                      <label>Modelo *</label>
-                      <div className="input-box">
-                        <span className="input-icon">🏍️</span>
-                        <input type="text" placeholder="Ej: FZ 250" value={modelo}
-                          onChange={e => setModelo(e.target.value)} />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Documents (Carro) ── */}
-                {vehicleType === 'Carro' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">📂</span> Documentos requeridos
-                    </h3>
-                    <div className="input-group full-width">
-                      <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
-                      <div className="documents-upload-grid">
-                        {CARRO_DOCUMENTS.map(doc => (
-                          <DocumentUploader
-                            key={doc.key}
-                            docKey={doc.key}
-                            label={doc.label}
-                            emoji={doc.emoji}
-                            fileData={documents[doc.key]}
-                            onFileChange={updateDocument}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Documents (Moto) ── */}
-                {vehicleType === 'Moto' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">📂</span> Documentos requeridos
-                    </h3>
-                    <div className="input-group full-width">
-                      <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
-                      <div className="documents-upload-grid">
-                        {MOTO_DOCUMENTS.map(doc => (
-                          <DocumentUploader
-                            key={doc.key}
-                            docKey={doc.key}
-                            label={doc.label}
-                            emoji={doc.emoji}
-                            fileData={documents[doc.key]}
-                            onFileChange={updateDocument}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Documents (BiciMoto) ── */}
-                {vehicleType === 'BiciMoto' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">📂</span> Documentos requeridos
-                    </h3>
-                    <div className="input-group full-width">
-                      <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
-                      <div className="documents-upload-grid">
-                        {BICIMOTO_DOCUMENTS.map(doc => (
-                          <DocumentUploader
-                            key={doc.key}
-                            docKey={doc.key}
-                            label={doc.label}
-                            emoji={doc.emoji}
-                            fileData={documents[doc.key]}
-                            onFileChange={updateDocument}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Documents (Bicicleta) ── */}
-                {vehicleType === 'Bicicleta' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">📂</span> Documentos requeridos
-                    </h3>
-                    <div className="input-group full-width">
-                      <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
-                      <div className="documents-upload-grid">
-                        {BICI_DOCUMENTS.map(doc => (
-                          <DocumentUploader
-                            key={doc.key}
-                            docKey={doc.key}
-                            label={doc.label}
-                            emoji={doc.emoji}
-                            fileData={documents[doc.key]}
-                            onFileChange={updateDocument}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Confirmations (Carro) ── */}
-                {vehicleType === 'Carro' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">✅</span> Confirmaciones del vehículo
-                    </h3>
-                    <div className="input-group full-width">
-                      <div className="confirmations-grid">
-                        {CARRO_CONFIRMATIONS.map(conf => (
-                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label
-                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                              <input type="checkbox" checked={confirmations[conf.key]}
-                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                              <span className="confirm-check-box"><CheckSvg /></span>
-                              <span className="confirm-emoji">{conf.emoji}</span>
-                              <span className="confirm-label">{conf.label}</span>
-                            </label>
-                            {confirmations[conf.key] && (
-                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
-                                <DocumentUploader
-                                  docKey={`evidencia_${conf.key}`}
-                                  label={`Evidencia: ${conf.label}`}
-                                  emoji="📸"
-                                  fileData={confirmationEvidences[conf.key] || null}
-                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Confirmations (BiciMoto) ── */}
-                {vehicleType === 'BiciMoto' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">✅</span> Confirmaciones del vehículo
-                    </h3>
-                    <div className="input-group full-width">
-                      <div className="confirmations-grid">
-                        {BICIMOTO_CONFIRMATIONS.map(conf => (
-                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label
-                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                              <input type="checkbox" checked={confirmations[conf.key]}
-                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                              <span className="confirm-check-box"><CheckSvg /></span>
-                              <span className="confirm-emoji">{conf.emoji}</span>
-                              <span className="confirm-label">{conf.label}</span>
-                            </label>
-                            {confirmations[conf.key] && (
-                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
-                                <DocumentUploader
-                                  docKey={`evidencia_${conf.key}`}
-                                  label={`Evidencia: ${conf.label}`}
-                                  emoji="📸"
-                                  fileData={confirmationEvidences[conf.key] || null}
-                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Confirmations (Bicicleta) ── */}
-                {vehicleType === 'Bicicleta' && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">✅</span> Confirmaciones de la bicicleta
-                    </h3>
-                    <div className="input-group full-width">
-                      <div className="confirmations-grid">
-                        {BICI_CONFIRMATIONS.map(conf => (
-                          <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label
-                              className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
-                              <input type="checkbox" checked={confirmations[conf.key]}
-                                onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
-                              <span className="confirm-check-box"><CheckSvg /></span>
-                              <span className="confirm-emoji">{conf.emoji}</span>
-                              <span className="confirm-label">{conf.label}</span>
-                            </label>
-                            {confirmations[conf.key] && (
-                              <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
-                                <DocumentUploader
-                                  docKey={`evidencia_${conf.key}`}
-                                  label={`Evidencia: ${conf.label}`}
-                                  emoji="📸"
-                                  fileData={confirmationEvidences[conf.key] || null}
-                                  onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* ── Bolso oficial (Carro, Moto & BiciMoto) ── */}
-                {(vehicleType === 'Carro' || vehicleType === 'Moto' || vehicleType === 'BiciMoto') && (
-                  <>
-                    <h3 className="form-section-title">
-                      <span className="section-icon">🎒</span> Bolso oficial de entregas
-                    </h3>
-                    <div className="input-group full-width bolso-section">
-                      <label className={`confirmation-chip ${bolsoConfirm ? 'checked' : ''}`}>
-                        <input type="checkbox" checked={bolsoConfirm}
-                          onChange={() => setBolsoConfirm(!bolsoConfirm)} />
-                        <span className="confirm-check-box"><CheckSvg /></span>
-                        <span className="confirm-emoji">🎒</span>
-                        <span className="confirm-label">Confirmo que cuento con el bolso oficial para realizar entregas</span>
-                      </label>
-
-                      {bolsoConfirm && (
-                        <div className="documents-upload-grid" style={{ marginTop: '1rem', gridTemplateColumns: '1fr' }}>
-                          <DocumentUploader
-                            docKey="bolsoFoto"
-                            label="Foto del bolso oficial"
-                            emoji="📷"
-                            fileData={bolsoFoto}
-                            onFileChange={(k, v) => setBolsoFoto(v)}
-                          />
+                  <div className="full-width vehicle-selection-subsection" style={{ marginBottom: '2rem', marginTop: '1rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#374151', marginBottom: '1.25rem', textAlign: 'center' }}>
+                      ¿Con qué vehículo realizarás las entregas?
+                    </h4>
+                    <div className="vehicle-cards-grid">
+                      {VEHICLE_TYPES.map(vt => (
+                        <div
+                          key={vt.value}
+                          className={`vehicle-card ${vehicleType === vt.value ? 'selected' : ''}`}
+                          onClick={() => setVehicleType(vt.value)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <div className="vehicle-card-check">✓</div>
+                          <div className="vehicle-card-emoji">{vt.emoji}</div>
+                          <div className="vehicle-card-label">{vt.label}</div>
                         </div>
-                      )}
+                      ))}
                     </div>
+                  </div>
+
+                  {vehicleType && (
+                    <>
+                      <h4 className="full-width" style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.5rem', marginBottom: '0.5rem', marginTop: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <span>📋</span> Especificaciones de {VEHICLE_TYPES.find(v => v.value === vehicleType)?.label}
+                      </h4>
+
+
+                    {/* Placa — for Carro & Moto */}
+                    {(vehicleType === 'Carro' || vehicleType === 'Moto') && (
+                      <div className="input-group">
+                        <label>Número de Placa *</label>
+                        <div className="input-box">
+                          <span className="input-icon">🔢</span>
+                          <input type="text" placeholder="Ej: ABC-123" value={licensePlate}
+                            onChange={e => setLicensePlate(e.target.value.toUpperCase())} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Placa — BiciMoto (optional) */}
+                    {vehicleType === 'BiciMoto' && (
+                      <div className="input-group full-width">
+                        <label>Número de Placa (opcional, si aplica)</label>
+                        <div className="input-box">
+                          <span className="input-icon">🔢</span>
+                          <input type="text" placeholder="Dejar vacío si no aplica" value={licensePlate}
+                            onChange={e => setLicensePlate(e.target.value.toUpperCase())} />
+                        </div>
+                        <span className="input-hint">Si tu ciclomotor no requiere placa, podés dejar este campo vacío.</span>
+                      </div>
+                    )}
+
+                    {/* Carro-specific fields */}
+                    {vehicleType === 'Carro' && (
+                      <>
+                        <div className="input-group">
+                          <label>Año del vehículo *</label>
+                          <div className="input-box">
+                            <span className="input-icon">📅</span>
+                            <input type="number" placeholder="Ej: 2018" min={2000} max={currentYear}
+                              value={anioVehiculo}
+                              onChange={e => setAnioVehiculo(e.target.value.slice(0, 4))} />
+                          </div>
+                          {anioVehiculo && !anioValido && <span className="input-error">El año debe ser del 2000 en adelante y no mayor a {currentYear}.</span>}
+                        </div>
+                        <div className="input-group">
+                          <label>Marca *</label>
+                          <div className="input-box">
+                            <span className="input-icon">🏭</span>
+                            <input type="text" placeholder="Ej: Toyota" value={marca}
+                              onChange={e => setMarca(e.target.value)} />
+                          </div>
+                        </div>
+                        <div className="input-group">
+                          <label>Modelo *</label>
+                          <div className="input-box">
+                            <span className="input-icon">🚘</span>
+                            <input type="text" placeholder="Ej: Corolla" value={modelo}
+                              onChange={e => setModelo(e.target.value)} />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Moto-specific fields */}
+                    {vehicleType === 'Moto' && (
+                      <>
+                        <div className="input-group">
+                          <label>Marca *</label>
+                          <div className="input-box">
+                            <span className="input-icon">🏭</span>
+                            <input type="text" placeholder="Ej: Yamaha" value={marca}
+                              onChange={e => setMarca(e.target.value)} />
+                          </div>
+                        </div>
+                        <div className="input-group">
+                          <label>Modelo *</label>
+                          <div className="input-box">
+                            <span className="input-icon">🏍️</span>
+                            <input type="text" placeholder="Ej: FZ 250" value={modelo}
+                              onChange={e => setModelo(e.target.value)} />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Confirmaciones (Carro) */}
+                    {vehicleType === 'Carro' && (
+                      <>
+                        <h3 className="form-section-title">
+                          <span className="section-icon">✅</span> Confirmaciones del vehículo
+                        </h3>
+                        <div className="input-group full-width">
+                          <div className="confirmations-grid">
+                            {CARRO_CONFIRMATIONS.map(conf => (
+                              <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <label
+                                  className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                                  <input type="checkbox" checked={confirmations[conf.key]}
+                                    onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                                  <span className="confirm-check-box"><CheckSvg /></span>
+                                  <span className="confirm-emoji">{conf.emoji}</span>
+                                  <span className="confirm-label">{conf.label}</span>
+                                </label>
+                                {confirmations[conf.key] && (
+                                  <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                    <DocumentUploader
+                                      docKey={`evidencia_${conf.key}`}
+                                      label={`Evidencia: ${conf.label}`}
+                                      emoji="📸"
+                                      fileData={confirmationEvidences[conf.key] || null}
+                                      onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Confirmaciones (BiciMoto) */}
+                    {vehicleType === 'BiciMoto' && (
+                      <>
+                        <h3 className="form-section-title">
+                          <span className="section-icon">✅</span> Confirmaciones del vehículo
+                        </h3>
+                        <div className="input-group full-width">
+                          <div className="confirmations-grid">
+                            {BICIMOTO_CONFIRMATIONS.map(conf => (
+                              <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <label
+                                  className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                                  <input type="checkbox" checked={confirmations[conf.key]}
+                                    onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                                  <span className="confirm-check-box"><CheckSvg /></span>
+                                  <span className="confirm-emoji">{conf.emoji}</span>
+                                  <span className="confirm-label">{conf.label}</span>
+                                </label>
+                                {confirmations[conf.key] && (
+                                  <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                    <DocumentUploader
+                                      docKey={`evidencia_${conf.key}`}
+                                      label={`Evidencia: ${conf.label}`}
+                                      emoji="📸"
+                                      fileData={confirmationEvidences[conf.key] || null}
+                                      onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Confirmaciones (Bicicleta) */}
+                    {vehicleType === 'Bicicleta' && (
+                      <>
+                        <h3 className="form-section-title">
+                          <span className="section-icon">✅</span> Confirmaciones de la bicicleta
+                        </h3>
+                        <div className="input-group full-width">
+                          <div className="confirmations-grid">
+                            {BICI_CONFIRMATIONS.map(conf => (
+                              <div key={conf.key} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <label
+                                  className={`confirmation-chip ${confirmations[conf.key] ? 'checked' : ''}`}>
+                                  <input type="checkbox" checked={confirmations[conf.key]}
+                                    onChange={() => setConfirmations(prev => ({ ...prev, [conf.key]: !prev[conf.key] }))} />
+                                  <span className="confirm-check-box"><CheckSvg /></span>
+                                  <span className="confirm-emoji">{conf.emoji}</span>
+                                  <span className="confirm-label">{conf.label}</span>
+                                </label>
+                                {confirmations[conf.key] && (
+                                  <div className="documents-upload-grid" style={{ gridTemplateColumns: '1fr', marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+                                    <DocumentUploader
+                                      docKey={`evidencia_${conf.key}`}
+                                      label={`Evidencia: ${conf.label}`}
+                                      emoji="📸"
+                                      fileData={confirmationEvidences[conf.key] || null}
+                                      onFileChange={(k, v) => setConfirmationEvidences(prev => ({ ...prev, [conf.key]: v }))}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                    </>
+                  )}
+                  </>
+                )}
+                </>
+              )}
+
+                {/* ── STEP 2: Documentos Requeridos ── */}
+                {step === 2 && (
+                  <>
+                    <h3 className="form-section-title">
+                      <span className="section-icon">📂</span> Documentos Requeridos (Paso 2/3)
+                    </h3>
+
+                    {/* Documents (Carro) */}
+                    {vehicleType === 'Carro' && (
+                      <div className="input-group full-width">
+                        <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
+                        <div className="documents-upload-grid">
+                          {CARRO_DOCUMENTS.map(doc => (
+                            <DocumentUploader
+                              key={doc.key}
+                              docKey={doc.key}
+                              label={doc.label}
+                              emoji={doc.emoji}
+                              fileData={documents[doc.key]}
+                              onFileChange={updateDocument}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Documents (Moto) */}
+                    {vehicleType === 'Moto' && (
+                      <div className="input-group full-width">
+                        <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
+                        <div className="documents-upload-grid">
+                          {MOTO_DOCUMENTS.map(doc => (
+                            <DocumentUploader
+                              key={doc.key}
+                              docKey={doc.key}
+                              label={doc.label}
+                              emoji={doc.emoji}
+                              fileData={documents[doc.key]}
+                              onFileChange={updateDocument}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Documents (BiciMoto) */}
+                    {vehicleType === 'BiciMoto' && (
+                      <div className="input-group full-width">
+                        <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
+                        <div className="documents-upload-grid">
+                          {BICIMOTO_DOCUMENTS.map(doc => (
+                            <DocumentUploader
+                              key={doc.key}
+                              docKey={doc.key}
+                              label={doc.label}
+                              emoji={doc.emoji}
+                              fileData={documents[doc.key]}
+                              onFileChange={updateDocument}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Documents (Bicicleta) */}
+                    {vehicleType === 'Bicicleta' && (
+                      <div className="input-group full-width">
+                        <label>Subí cada documento en formato JPG, PNG, WebP o PDF</label>
+                        <div className="documents-upload-grid">
+                          {BICI_DOCUMENTS.map(doc => (
+                            <DocumentUploader
+                              key={doc.key}
+                              docKey={doc.key}
+                              label={doc.label}
+                              emoji={doc.emoji}
+                              fileData={documents[doc.key]}
+                              onFileChange={updateDocument}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
 
-                {/* ── Identity verification (live camera only) ── */}
-                <h3 className="form-section-title">
-                  <span className="section-icon">🤳</span> Verificación de identidad
-                </h3>
-                <div className="input-group full-width identity-selfie-section">
-                  <CameraCapture
-                    label="Selfie de verificación"
-                    fileData={identitySelfie}
-                    onPhotoCaptured={setIdentitySelfie}
-                  />
-                </div>
+                {/* ── STEP 3: Bolso, Identidad y Contacto ── */}
+                {step === 3 && (
+                  <>
+                    <h3 className="form-section-title">
+                      <span className="section-icon">🎒</span> Bolso oficial, Identidad y Contacto (Paso 3/3)
+                    </h3>
 
-                {/* ── Contact info ── */}
-                <h3 className="form-section-title">
-                  <span className="section-icon">👤</span> Información de Contacto
-                </h3>
+                    {/* Bolso oficial (Carro, Moto & BiciMoto) */}
+                    {(vehicleType === 'Carro' || vehicleType === 'Moto' || vehicleType === 'BiciMoto') && (
+                      <div className="input-group full-width bolso-section">
+                        <label className={`confirmation-chip ${bolsoConfirm ? 'checked' : ''}`}>
+                          <input type="checkbox" checked={bolsoConfirm}
+                            onChange={() => setBolsoConfirm(!bolsoConfirm)} />
+                          <span className="confirm-check-box"><CheckSvg /></span>
+                          <span className="confirm-emoji">🎒</span>
+                          <span className="confirm-label">Confirmo que cuento con el bolso oficial para realizar entregas</span>
+                        </label>
 
-                <div className="input-group">
-                  <label>Nombre Completo *</label>
-                  <div className="input-box">
-                    <span className="input-icon">👤</span>
-                    <input type="text" placeholder="Tu nombre" value={nombre}
-                      onChange={e => setNombre(e.target.value)} />
-                  </div>
-                </div>
+                        {bolsoConfirm && (
+                          <div className="documents-upload-grid" style={{ marginTop: '1rem', gridTemplateColumns: '1fr' }}>
+                            <DocumentUploader
+                              docKey="bolsoFoto"
+                              label="Foto del bolso oficial"
+                              emoji="📷"
+                              fileData={bolsoFoto}
+                              onFileChange={(k, v) => setBolsoFoto(v)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                <div className="input-group">
-                  <label>Teléfono (8 dígitos) *</label>
-                  <div className="input-box">
-                    <span className="input-icon">📞</span>
-                    <input type="tel" placeholder="Ej: 88888888" value={telefono}
-                      onChange={e => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
-                      maxLength={8} />
-                  </div>
-                </div>
+                    {/* Identity verification */}
+                    <div className="input-group full-width identity-selfie-section">
+                      <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>Escanear tu Selfie de Identidad</h4>
+                      <CameraCapture
+                        label="Selfie de verificación"
+                        fileData={identitySelfie}
+                        onPhotoCaptured={setIdentitySelfie}
+                      />
+                    </div>
 
-                <div className="input-group full-width">
-                  <label>Correo Electrónico *</label>
-                  <div className="input-box">
-                    <span className="input-icon">✉️</span>
-                    <input type="email" placeholder="tucorreo@ejemplo.com" value={email}
-                      onChange={e => setEmail(e.target.value)} />
-                  </div>
-                </div>
+                    {/* Contact info */}
+                    <h3 className="form-section-title">
+                      <span className="section-icon">👤</span> Información de Contacto
+                    </h3>
+
+                    <div className="input-group">
+                      <label>Nombre Completo *</label>
+                      <div className="input-box">
+                        <span className="input-icon">👤</span>
+                        <input type="text" placeholder="Tu nombre" value={nombre}
+                          onChange={e => setNombre(e.target.value)} />
+                      </div>
+                    </div>
+
+                    <div className="input-group">
+                      <label>Teléfono (8 dígitos) *</label>
+                      <div className="input-box">
+                        <span className="input-icon">📞</span>
+                        <input type="tel" placeholder="Ej: 88888888" value={telefono}
+                          onChange={e => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
+                          maxLength={8} />
+                      </div>
+                    </div>
+
+                    <div className="input-group full-width">
+                      <label>Correo Electrónico *</label>
+                      <div className="input-box">
+                        <span className="input-icon">✉️</span>
+                        <input type="email" placeholder="tucorreo@ejemplo.com" value={email}
+                          onChange={e => setEmail(e.target.value)} />
+                      </div>
+                    </div>
+                  </>
+                )}
 
               </div>
 
               {/* Actions */}
               <div className="registro-delivery-actions">
-                <button type="button" className="back-step-btn" onClick={() => setStep(1)}>
-                  ← Cambiar vehículo
-                </button>
-                <button type="submit" className="save-btn" disabled={submitting}
-                  style={submitting ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>
-                  {submitting ? 'Guardando...' : solicitudEnviada ? 'Actualizar solicitud' : 'Enviar solicitud de Repartidor'}
-                </button>
+                {step === 1 && (
+                  <>
+                    <button type="button" className="save-btn" disabled={!vehicleType} onClick={handleGoToStep2}>
+                      Continuar a Documentos →
+                    </button>
+                  </>
+                )}
+
+                {step === 2 && (
+                  <>
+                    <button type="button" className="back-step-btn" onClick={() => setStep(1)}>
+                      ← Atrás (Detalles)
+                    </button>
+                    <button type="button" className="save-btn" onClick={handleGoToStep3}>
+                      Continuar a Verificación →
+                    </button>
+                  </>
+                )}
+
+                {step === 3 && (
+                  <>
+                    <button type="button" className="back-step-btn" onClick={() => setStep(2)}>
+                      ← Atrás (Documentos)
+                    </button>
+                    <button type="submit" className="save-btn" disabled={submitting}
+                      style={submitting ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>
+                      {submitting ? 'Guardando...' : solicitudEnviada ? 'Actualizar solicitud' : 'Enviar solicitud de Repartidor'}
+                    </button>
+                  </>
+                )}
+
                 <button type="button" className="cancel-btn" onClick={() => navigate('/perfil')}>
                   Volver al perfil
                 </button>
               </div>
             </form>
-          )}
 
         </div>
       </main>

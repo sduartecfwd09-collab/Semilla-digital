@@ -56,7 +56,7 @@ const { Usuario } = require('../models');
 describe('POST /auth/register', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  test('201 - registro exitoso devuelve token y usuario sin password', async () => {
+  test('201 - registro exitoso devuelve usuario sin password (sin token: requiere login posterior)', async () => {
     Usuario.findOne.mockResolvedValue(null); // email no existe
     Usuario.create.mockResolvedValue({
       id: 10, name: 'Nuevo User', email: 'nuevo@test.cr',
@@ -69,9 +69,9 @@ describe('POST /auth/register', () => {
       .send({ name: 'Nuevo User', email: 'nuevo@test.cr', password: 'password123' });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('token');
     expect(res.body).toHaveProperty('user');
-    expect(res.body.user).not.toHaveProperty('password'); // nunca devuelve password
+    expect(res.body).not.toHaveProperty('token'); // ya no auto-loguea
+    expect(res.body.user).not.toHaveProperty('password');
     expect(res.body.user.email).toBe('nuevo@test.cr');
   });
 
@@ -81,7 +81,8 @@ describe('POST /auth/register', () => {
       .send({ email: 'x@x.cr' }); // sin name ni password
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('error');
+    expect(res.body.success).toBe(false);
+    expect(res.body).toHaveProperty('message');
   });
 
   test('409 - email ya registrado', async () => {
@@ -92,7 +93,7 @@ describe('POST /auth/register', () => {
       .send({ name: 'Dup', email: 'ya@existe.cr', password: 'password123' });
 
     expect(res.status).toBe(409);
-    expect(res.body.error).toMatch(/ya existe/i);
+    expect(res.body.message).toMatch(/ya existe/i);
   });
 });
 
@@ -138,7 +139,7 @@ describe('POST /auth/login', () => {
       .post('/auth/login')
       .send({ email: 'noexiste@test.cr', password: '123' });
     expect(res.status).toBe(401);
-    expect(res.body.error).toMatch(/credenciales/i);
+    expect(res.body.message).toMatch(/credenciales/i);
   });
 
   test('401 - contraseña incorrecta', async () => {
@@ -161,7 +162,7 @@ describe('POST /auth/login', () => {
       .post('/auth/login')
       .send({ email: 'inactivo@test.cr', password: 'pass' });
     expect(res.status).toBe(403);
-    expect(res.body.error).toMatch(/inactiva/i);
+    expect(res.body.message).toMatch(/inactiva/i);
   });
 });
 

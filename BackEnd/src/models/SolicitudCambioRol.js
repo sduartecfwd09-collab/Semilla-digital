@@ -4,6 +4,7 @@
 // Descripción: Solicitudes de usuarios para cambiar de rol
 // ============================================================
 const { DataTypes } = require('sequelize');
+const { VEHICLE_TYPES } = require('../constants/vehicleTypes');
 
 module.exports = (sequelize) => {
   const SolicitudCambioRol = sequelize.define('SolicitudCambioRol', {
@@ -39,6 +40,12 @@ module.exports = (sequelize) => {
     vehicle_type: {
       type: DataTypes.STRING(50),
       allowNull: true,
+      validate: {
+        isIn: {
+          args: [VEHICLE_TYPES],
+          msg: `vehicle_type debe ser uno de: ${VEHICLE_TYPES.join(', ')}`,
+        },
+      },
     },
     license_plate: {
       type: DataTypes.STRING(20),
@@ -70,6 +77,22 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     documentos_rutas: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    marca_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    modelo_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    anio_vehiculo: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    confirmaciones: {
       type: DataTypes.JSON,
       allowNull: true,
     },

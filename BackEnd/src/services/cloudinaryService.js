@@ -1,8 +1,8 @@
 'use strict';
 // ============================================================
-// Service: Cloudinary
-// Configuración y métodos auxiliares para gestionar subidas
-// de archivos a Cloudinary.
+// Servicio: Cloudinary
+// Wrapper para subir y eliminar imágenes en Cloudinary.
+// Usa las credenciales de .env (CLOUDINARY_*).
 // ============================================================
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
@@ -16,31 +16,36 @@ const hasCloudinaryConfig = Boolean(
     process.env.CLOUDINARY_API_SECRET)
 );
 
-// Configuración con variables de entorno
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
 });
 
 /**
- * Sube un buffer de archivo directamente a Cloudinary.
- * Útil cuando se usa multer.memoryStorage() para evitar escribir a disco local.
- * @param {Buffer} fileBuffer - Buffer del archivo en memoria.
- * @param {string} folder - Nombre de la carpeta destino en Cloudinary.
- * @returns {Promise<Object>} Resultado de la subida con la URL segura.
+ * Sube un buffer (multer memoryStorage) a Cloudinary.
+ * @param {Buffer} buffer
+ * @param {object} options { folder, public_id? }
  */
+<<<<<<< HEAD
 const uploadFromBuffer = (fileBuffer, folder = 'agromap', originalName = 'asset.bin') => {
   if (!hasCloudinaryConfig) {
     return Promise.resolve(saveBufferLocally(fileBuffer, folder, originalName));
   }
+=======
+function uploadBuffer(buffer, options = {}) {
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
+    const stream = cloudinary.uploader.upload_stream(
       {
-        folder: folder,
-        resource_type: 'auto', // Detecta automáticamente si es imagen, pdf, etc.
+        folder: options.folder || 'agromap',
+        resource_type: 'image',
+        public_id: options.public_id,
+        overwrite: true,
       },
       (error, result) => {
+<<<<<<< HEAD
         if (error) {
           const message = String(error.message || error.http_code || '');
           if (/timeout/i.test(message)) {
@@ -49,21 +54,30 @@ const uploadFromBuffer = (fileBuffer, folder = 'agromap', originalName = 'asset.
           return reject(error);
         }
         resolve(result);
+=======
+        if (error) return reject(error);
+        if (!result) return reject(new Error('Cloudinary upload returned no result'));
+        resolve({ secure_url: result.secure_url, public_id: result.public_id });
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
       }
     );
-
-    // Escribe el buffer en el stream
-    uploadStream.end(fileBuffer);
+    stream.end(buffer);
   });
-};
+}
 
 /**
- * Sube un archivo local desde su ruta física a Cloudinary y opcionalmente
- * elimina el archivo local después de la subida.
- * @param {string} localPath - Ruta física absoluta o relativa del archivo.
- * @param {string} folder - Nombre de la carpeta destino en Cloudinary.
- * @param {boolean} autoDeleteLocal - Si true, borra el archivo temporal local.
- * @returns {Promise<Object>} Resultado de la subida con la URL segura.
+ * Alias de uploadBuffer para compatibilidad con cloudinaryMiddleware.
+ * @param {Buffer} fileBuffer
+ * @param {string} folder
+ */
+const uploadFromBuffer = (fileBuffer, folder = 'agromap') =>
+  uploadBuffer(fileBuffer, { folder });
+
+/**
+ * Sube un archivo desde ruta física a Cloudinary y opcionalmente lo borra del disco.
+ * @param {string} localPath
+ * @param {string} folder
+ * @param {boolean} autoDeleteLocal
  */
 const uploadFromPath = async (localPath, folder = 'agromap', autoDeleteLocal = true) => {
   try {
@@ -73,14 +87,10 @@ const uploadFromPath = async (localPath, folder = 'agromap', autoDeleteLocal = t
       return result;
     }
     const result = await cloudinary.uploader.upload(localPath, {
-      folder: folder,
+      folder,
       resource_type: 'auto',
     });
-
-    if (autoDeleteLocal && fs.existsSync(localPath)) {
-      fs.unlinkSync(localPath); // Elimina el archivo local temporal
-    }
-
+    if (autoDeleteLocal && fs.existsSync(localPath)) fs.unlinkSync(localPath);
     return result;
   } catch (error) {
     if (autoDeleteLocal && fs.existsSync(localPath)) {
@@ -90,6 +100,7 @@ const uploadFromPath = async (localPath, folder = 'agromap', autoDeleteLocal = t
   }
 };
 
+<<<<<<< HEAD
 const saveBufferLocally = (fileBuffer, folder = 'agromap', originalName = 'asset.bin') => {
   const safeFolder = String(folder).replace(/[^a-zA-Z0-9/_-]/g, '_');
   const outputDir = path.join(__dirname, '..', 'storage', 'cloudinary-fallback', safeFolder);
@@ -138,3 +149,31 @@ module.exports = {
   toAssetMetadata,
   deleteAsset,
 };
+=======
+/**
+ * Elimina un asset por public_id (silencioso si no existe).
+ * @param {string} publicId
+ */
+async function destroy(publicId) {
+  if (!publicId) return null;
+  try {
+    return await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+  } catch (err) {
+    console.warn('[cloudinaryService] destroy error:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Extrae el public_id de una URL Cloudinary.
+ * @param {string} url
+ * @returns {string|null}
+ */
+function extractPublicId(url) {
+  if (!url || typeof url !== 'string') return null;
+  const match = url.match(/\/upload\/(?:v\d+\/)?([^.]+)\./);
+  return match ? match[1] : null;
+}
+
+module.exports = { cloudinary, uploadBuffer, uploadFromBuffer, uploadFromPath, destroy, extractPublicId };
+>>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200

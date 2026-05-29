@@ -1,0 +1,600 @@
+/* ==========================================================================
+   🌿 CAROUSEL PREMIUM ARTESANAL & RESPONSIVE
+   ========================================================================== */
+
+/* 1. CONTAINER HERO (HOME PÚBLICO) */
+.carousel-hero-container {
+    position: relative;
+    width: 100%;
+    height: clamp(38rem, 85vh, 48rem);
+    background: #0d2818;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    padding: 0 4.5rem;
+    gap: 4rem;
+    user-select: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.carousel-slides-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* 2. COMPACT CAROUSEL (ADMIN PANEL) */
+.carousel-compact {
+    position: relative;
+    width: 100%;
+    height: 18rem;
+    background: #0d2818;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 3.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2.5rem;
+    user-select: none;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.carousel-compact .carousel-overlay {
+    background: linear-gradient(90deg, rgba(13, 40, 24, 0.75) 0%, rgba(5, 46, 22, 0.45) 100%);
+}
+
+.compact-content {
+    position: relative;
+    z-index: 5;
+    max-width: 38rem;
+    color: #ffffff;
+}
+
+.compact-tag {
+    display: inline-block;
+    background: rgba(82, 183, 136, 0.18);
+    border: 1px solid rgba(82, 183, 136, 0.35);
+    color: #a7f3d0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.compact-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.compact-desc {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    font-weight: 400;
+}
+
+/* 3. SLIDES & TRANSITIONS */
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+
+/* Ken Burns Effect (Zoom Cinemático Lento) */
+.slide-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1);
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.carousel-slide.active .slide-image {
+    animation: kenBurns 10s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurns {
+    0% {
+        transform: scale(1.01) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.08) translate(-1%, -0.5%);
+    }
+}
+
+.carousel-compact .carousel-slide.active .slide-image {
+    animation: kenBurnsSimple 12s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurnsSimple {
+    0% { transform: scale(1.02); }
+    100% { transform: scale(1.07); }
+}
+
+/* Dark Gradient Overlay */
+.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(13, 40, 24, 0.82) 0%, rgba(13, 40, 24, 0.6) 50%, rgba(5, 46, 22, 0.3) 100%);
+    z-index: 2;
+}
+
+/* 4. FOREGROUND GRID LAYOUT (CONTENT SIDE) */
+.slide-content-container {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    align-items: center;
+    padding: 0 5.5rem;
+    gap: 3rem;
+}
+
+.slide-text-side {
+    max-width: 36rem;
+    color: #ffffff;
+    z-index: 4;
+}
+
+/* 5. SLIDE TEXT ANIMATIONS (FADE + SLIDE DISPLACEMENT) */
+.slide-tag {
+    display: inline-flex;
+    background: rgba(82, 183, 136, 0.15);
+    border: 1px solid rgba(82, 183, 136, 0.3);
+    color: #a7f3d0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.95rem;
+    border-radius: 1.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.2s, 
+                opacity 0.8s ease 0.2s;
+}
+
+.slide-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    line-height: 1.15;
+    color: #ffffff;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.9s cubic-bezier(0.25, 1, 0.5, 1) 0.35s, 
+                opacity 0.9s ease 0.35s;
+}
+
+.slide-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: #52b788;
+    display: block;
+    font-family: 'Playfair Display', serif;
+}
+
+.slide-description {
+    color: #e2e8f0;
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    line-height: 1.65;
+    margin-bottom: 2.25rem;
+    max-width: 32rem;
+    font-weight: 400;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.5s, 
+                opacity 0.8s ease 0.5s;
+}
+
+.slide-buttons {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.65s, 
+                opacity 0.8s ease 0.65s;
+}
+
+/* Trigger transitions on active slide */
+.carousel-slide.active .slide-tag,
+.carousel-slide.active .slide-title,
+.carousel-slide.active .slide-description,
+.carousel-slide.active .slide-buttons {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Primary CTA Button (Rustic Elegant) */
+.slide-btn-primary {
+    background: linear-gradient(90deg, #1b4332, #52b788);
+    color: #ffffff;
+    padding: 0.9rem 2.2rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    display: inline-block;
+    box-shadow: 0 6px 20px rgba(82, 183, 136, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(82, 183, 136, 0.4);
+    background: linear-gradient(90deg, #2d6a4f, #74c69d);
+}
+
+/* 6. STATIC CARD CONTAINER (OVERLAID OVER CAROUSEL) */
+.carousel-static-card-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none; /* Permite clicks en los botones del carrusel detrás si es necesario */
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    align-items: center;
+    padding: 0 5.5rem;
+    gap: 3rem;
+}
+
+.carousel-static-card-wrapper {
+    grid-column: 2;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.carousel-static-card-container .active-ferias-card {
+    pointer-events: auto; /* Reactiva los clicks en la tarjeta */
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 25rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-static-card-container .active-ferias-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Marcador de posición invisible para preservar la rejilla (grid) de layout */
+.carousel-card-placeholder {
+    width: 100%;
+    max-width: 25rem;
+    height: 24rem; /* Altura estimada de la tarjeta de ferias */
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 7. CONTROLS & NAVIGATION */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-btn:hover {
+    background: rgba(82, 183, 136, 0.25);
+    border-color: rgba(82, 183, 136, 0.6);
+    color: #a7f3d0;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.btn-prev {
+    left: 1.5rem;
+}
+
+.btn-next {
+    right: 1.5rem;
+}
+
+/* 8. MINIMAL PROGRESSIVE INDICATORS */
+.carousel-indicators {
+    position: absolute;
+    bottom: 2rem;
+    left: 4.5rem;
+    display: flex;
+    gap: 0.6rem;
+    z-index: 10;
+}
+
+.indicator-bar {
+    position: relative;
+    width: 2.2rem;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 2px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    overflow: hidden;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.indicator-bar.active {
+    width: 3.5rem;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.indicator-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: #52b788;
+    border-radius: 2px;
+    animation: progressFill linear forwards;
+}
+
+@keyframes progressFill {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.carousel-compact .carousel-indicators {
+    left: 3.5rem;
+    bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   📱 MEDIA QUERIES (RESPONSIVO TOTAL)
+   ========================================================================== */
+
+/* LAPTOP / SMALL DESKTOP (960px - 1180px) */
+@media (max-width: 74rem) {
+    .carousel-hero-container {
+        padding: 0 3rem;
+        gap: 2.5rem;
+    }
+    
+    .slide-content-container {
+        grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .carousel-static-card-container {
+        grid-template-columns: 1.1fr 0.9fr;
+        padding: 0 3rem;
+        gap: 2.5rem;
+    }
+    
+    .carousel-static-card-container .active-ferias-card {
+        max-width: 22rem;
+    }
+    
+    .carousel-indicators {
+        left: 3rem;
+    }
+}
+
+/* TABLET (768px - 960px) */
+@media (max-width: 60rem) {
+    .carousel-hero-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 40rem;
+        padding: 3rem 2rem 4rem;
+        gap: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .carousel-slides-wrapper {
+        position: absolute;
+    }
+
+    .slide-content-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding: 0 1.5rem;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .slide-text-side {
+        max-width: 100%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .slide-description {
+        max-width: 35rem;
+    }
+
+    .carousel-static-card-container {
+        grid-template-columns: 1fr;
+        height: 100%;
+        padding: 3rem 2rem 4rem; /* coincide con la hero container */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .carousel-static-card-wrapper {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+
+    .carousel-static-card-container .active-ferias-card {
+        max-width: 100%;
+    }
+
+    .carousel-card-placeholder {
+        max-width: 100%;
+        height: 22rem;
+    }
+
+    /* Adjust arrow control positioning */
+    .carousel-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    .btn-prev { left: 0.8rem; }
+    .btn-next { right: 0.8rem; }
+
+    /* Center indicators below */
+    .carousel-indicators {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 1.5rem;
+    }
+}
+
+/* MOBILE (480px - 768px) */
+@media (max-width: 48rem) {
+    .carousel-hero-container {
+        min-height: 34rem;
+        padding: 2.5rem 1.5rem 3.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .slide-title {
+        font-size: 2.2rem;
+    }
+
+    .slide-description {
+        font-size: 0.95rem;
+        line-height: 1.55;
+        margin-bottom: 1.75rem;
+    }
+
+    .slide-btn-primary {
+        padding: 0.8rem 1.8rem;
+        font-size: 0.9rem;
+    }
+
+    .carousel-card-placeholder {
+        height: 20rem;
+    }
+
+    /* Ocultar botones de flechas en móviles y confiar en swipe/indicadores */
+    .carousel-btn {
+        display: none;
+    }
+
+    /* Admin compact view styling for mobile */
+    .carousel-compact {
+        height: 15rem;
+        padding: 0 1.5rem;
+        justify-content: center;
+    }
+
+    .compact-content {
+        text-align: center;
+    }
+
+    .compact-title {
+        font-size: 1.5rem;
+    }
+
+    .compact-desc {
+        font-size: 0.85rem;
+    }
+}
+
+/* SMALL MOBILE (< 480px) */
+@media (max-width: 30rem) {
+    .carousel-hero-container {
+        min-height: 31rem;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .slide-tag {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .slide-title {
+        font-size: 1.85rem;
+    }
+
+    .slide-description {
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .carousel-card-placeholder {
+        height: 18rem;
+    }
+
+    .carousel-compact {
+        height: 13.5rem;
+        padding: 0 1rem;
+    }
+
+    .compact-title {
+        font-size: 1.3rem;
+    }
+}

@@ -3,9 +3,9 @@ const ctrl = require('../controllers/proformaController');
 const { verifyToken } = require('../middlewares/authMiddleware');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
 
-// ── PÚBLICA ─────────────────────────────────────────────────
-// POST /api/proformas → Crear proforma (público, no requiere login)
-router.post('/', ctrl.create);
+// ── USUARIO AUTENTICADO ─────────────────────────────────────
+// POST /api/proformas → Crear proforma (requiere login para registrar ganancia al productor)
+router.post('/', verifyToken, ctrl.create);
 
 // ── ADMIN ───────────────────────────────────────────────────
 // GET    /api/proformas              → Listar todas (Admin)

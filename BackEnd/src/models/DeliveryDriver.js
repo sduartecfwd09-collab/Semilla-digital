@@ -1,5 +1,6 @@
 'use strict';
 const { DataTypes } = require('sequelize');
+const { VEHICLE_TYPES } = require('../constants/vehicleTypes');
 
 module.exports = (sequelize) => {
   const DeliveryDriver = sequelize.define('DeliveryDriver', {
@@ -53,6 +54,96 @@ module.exports = (sequelize) => {
     },
     last_assigned_at: {
       type: DataTypes.DATE,
+      allowNull: true
+    },
+    vehicle_type: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      validate: {
+        isIn: {
+          args: [VEHICLE_TYPES],
+          msg: `vehicle_type debe ser uno de: ${VEHICLE_TYPES.join(', ')}`,
+        },
+      },
+    },
+    license_plate: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    selfie_verificacion_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    documentos_rutas: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
+    marca_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    modelo_vehiculo: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    anio_vehiculo: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    confirmaciones: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
+    full_name: {
+      type: DataTypes.STRING(150),
+      allowNull: true
+    },
+    email: {
+      type: DataTypes.STRING(200),
+      allowNull: true
+    },
+    phone: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    plate_number: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    brand: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    model: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    identity_document_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    criminal_record_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    license_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    property_card_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    riteve_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    marchamo_url: {
+      type: DataTypes.STRING(500),
+      allowNull: true
+    },
+    selfie_verification_url: {
+      type: DataTypes.STRING(500),
       allowNull: true
     }
   }, {

@@ -1,0 +1,91 @@
+/* Selector de Fechas Segmentado Premium */
+.custom-date-picker-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  height: 2.85rem;
+  box-sizing: border-box;
+}
+
+.custom-date-picker-container:focus-within {
+  border-color: #2d8a42; /* Coincide con var(--verde-claro) */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(45, 138, 66, 0.1);
+}
+
+.custom-date-picker-segment {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 0.5rem 0 0.85rem;
+}
+
+.custom-date-picker-segment:not(:last-child) {
+  border-right: 1px solid #cbd5e1; /* Línea de división vertical en la maqueta */
+}
+
+.custom-date-picker-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #334155;
+  cursor: pointer;
+  padding-right: 1.5rem; /* Espacio para que el texto no tape el chevron */
+}
+
+/* Estilo para los ítems seleccionables en el menú del browser */
+.custom-date-picker-select option {
+  background-color: #ffffff;
+  color: #1e293b;
+  font-size: 0.95rem;
+  padding: 0.5rem;
+}
+
+.custom-date-picker-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  opacity: 0.75;
+  transition: color 0.2s ease;
+}
+
+.custom-date-picker-segment:focus-within .custom-date-picker-chevron {
+  color: #2d8a42; /* El chevron se colorea con el acento activo al enfocar */
+  opacity: 1;
+}
+
+/* Soporte de tema oscuro si el input-group lo requiere */
+.dark-theme .custom-date-picker-container {
+  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .custom-date-picker-segment:not(:last-child) {
+  border-right-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark-theme .custom-date-picker-select {
+  color: #f1f5f9;
+}
+
+.dark-theme .custom-date-picker-select option {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
