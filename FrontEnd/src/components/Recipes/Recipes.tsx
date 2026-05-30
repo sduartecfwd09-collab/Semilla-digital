@@ -9,12 +9,11 @@ interface Recipe {
   id: string
   title: string
   description: string
-  image_url?: string
+  image_url?: string | null
   ingredients: string[]
   steps: string[]
   difficulty: string
   time: string
-  image_url?: string | null
 }
 
 // Imagen subida a Cloudinary como public_id fijo `agromap/recetas/placeholder`.

@@ -1,4 +1,4 @@
-﻿export interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -30,12 +30,11 @@ export interface Recipe {
   id: string;
   title: string;
   description: string;
-  image_url?: string;
+  image_url?: string | null;
   ingredients: string[];
   steps: string[];
   difficulty: string;
   time: string;
-  image_url?: string | null;
 }
 
 export interface PuestoProductor {

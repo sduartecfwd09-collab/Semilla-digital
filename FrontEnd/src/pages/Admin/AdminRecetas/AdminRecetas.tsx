@@ -12,10 +12,7 @@ const AdminRecetas = () => {
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
-    const [saving, setSaving] = useState(false)
     const [selectedRecipe, setSelectedRecipe] = useState<any>(null)
-    const [imageFile, setImageFile] = useState<File | null>(null)
-    const [uploadProgress, setUploadProgress] = useState(0)
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -49,7 +46,6 @@ const AdminRecetas = () => {
     const handleEditClick = (recipe: Recipe) => {
         setSelectedRecipe(recipe)
         setImageFile(null)
-        setUploadProgress(0)
         setFormData({
             ...recipe,
             time: recipe.time ? recipe.time.replace(' min', '') : '',
@@ -64,33 +60,7 @@ const AdminRecetas = () => {
         setShowModal(true)
     }
 
-<<<<<<< HEAD
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null
-        if (!file) {
-            setImageFile(null)
-            return
-        }
 
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-        if (!allowedTypes.includes(file.type)) {
-            e.target.value = ''
-            Swal.fire('Archivo no válido', 'Solo se aceptan imágenes JPG, PNG o WebP.', 'warning')
-            return
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            e.target.value = ''
-            Swal.fire('Archivo muy grande', 'La imagen no puede superar los 5MB.', 'warning')
-            return
-        }
-
-        setImageFile(file)
-    }
-
-    // Mostrar confirmación para eliminar una receta
-=======
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     const handleDeleteClick = async (recipe: any) => {
         const result = await Swal.fire({
             title: '¿Eliminar Receta?',
@@ -149,36 +119,11 @@ const AdminRecetas = () => {
         const difficulty = String(form.get('difficulty') ?? formData.difficulty).trim()
         const timeText = String(form.get('time') ?? formData.time).trim()
 
-<<<<<<< HEAD
-        // Validación: No permitir campos vacíos o que solo contengan espacios
-        if (!title || !description || !ingredientsText || !stepsText || !timeText) {
-=======
         if (!formData.title.trim() || !formData.description.trim() || !formData.ingredients.trim() || !formData.steps.trim() || !formData.time.trim()) {
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
             Swal.fire('Información Faltante', 'Todos los campos son obligatorios. Por favor, evita dejar vacíos.', 'warning')
             return
         }
 
-<<<<<<< HEAD
-        try {
-            setSaving(true)
-            let imageUrl = formData.image_url
-            if (imageFile) {
-                const uploaded = await uploadImage(imageFile, { folder: 'recetas', onProgress: setUploadProgress })
-                imageUrl = uploaded.secureUrl
-            }
-
-            const recipeData = {
-                title,
-                description,
-                image_url: imageUrl,
-                difficulty,
-                time: `${timeText} min`,
-                ingredients: ingredientsText.split(',').map(i => i.trim()).filter(i => i !== ''),
-                steps: stepsText.split('\n').map(s => s.trim()).filter(s => s !== '')
-            }
-
-=======
         const ingredients = formData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
         const steps = formData.steps.split('\n').map(s => s.trim()).filter(Boolean)
 
@@ -204,7 +149,6 @@ const AdminRecetas = () => {
                 throw new Error(json?.message || `Error HTTP ${res.status}`)
             }
             const saved = json?.success && json.data !== undefined ? json.data : json
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
             if (isEditing && selectedRecipe) {
                 setRecipes(recipes.map(r => (r.id === selectedRecipe.id ? saved : r)))
             } else {
@@ -214,15 +158,9 @@ const AdminRecetas = () => {
             Swal.fire('Éxito', `Receta ${isEditing ? 'actualizada' : 'creada'} correctamente.`, 'success')
         } catch (error: any) {
             console.error(error)
-<<<<<<< HEAD
-            Swal.fire('Error', error instanceof Error ? error.message : 'Hubo un error al guardar la receta', 'error')
-        } finally {
-            setSaving(false)
-=======
             Swal.fire('Error', error?.message || 'Hubo un error al guardar la receta', 'error')
         } finally {
             setSubmitting(false)
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
         }
     }
 
@@ -230,16 +168,10 @@ const AdminRecetas = () => {
         setShowModal(false)
         setIsEditing(false)
         setSelectedRecipe(null)
-<<<<<<< HEAD
-        setImageFile(null)
-        setUploadProgress(0)
         setFormData({ title: '', description: '', image_url: '', ingredients: '', steps: '', difficulty: 'Fácil', time: '' })
-=======
-        setFormData({ title: '', description: '', ingredients: '', steps: '', difficulty: 'Fácil', time: '' })
         setImageFile(null)
         setImagePreview(null)
         setRemoveImage(false)
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
     }
 
     return (
@@ -325,15 +257,6 @@ const AdminRecetas = () => {
                                         />
                                     </div>
                                     <div className="form-field full-width">
-<<<<<<< HEAD
-                                        <label>Imagen de la receta</label>
-                                        <input
-                                            type="file"
-                                            accept="image/jpeg,image/png,image/webp"
-                                            onChange={handleImageChange}
-                                        />
-                                        {uploadProgress > 0 && uploadProgress < 100 && <small>Subiendo imagen: {uploadProgress}%</small>}
-=======
                                         <label>Imagen (máx. 3MB, JPG/PNG/WebP)</label>
                                         <input
                                             type="file"
@@ -357,7 +280,6 @@ const AdminRecetas = () => {
                                                 </button>
                                             </div>
                                         )}
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
                                     </div>
                                 </div>
                             </div>
@@ -419,15 +341,9 @@ const AdminRecetas = () => {
                             </div>
 
                             <div className="modal-actions" style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-<<<<<<< HEAD
-                                <button type="button" className="btn-cancel" onClick={closeModal}>Cancelar</button>
-                                <button type="submit" className="btn-save" disabled={saving}>
-                                    {saving ? 'Guardando...' : isEditing ? 'Guardar Cambios' : 'Crear Receta'}
-=======
                                 <button type="button" className="btn-cancel" onClick={closeModal} disabled={submitting}>Cancelar</button>
                                 <button type="submit" className="btn-save" disabled={submitting}>
                                     {submitting ? 'Guardando...' : (isEditing ? 'Guardar Cambios' : 'Crear Receta')}
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
                                 </button>
                             </div>
                         </form>
