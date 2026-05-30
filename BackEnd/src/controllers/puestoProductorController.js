@@ -81,7 +81,6 @@ const remove = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 const uploadAsset = async (req, res) => {
   if (!req.cloudinaryUpload) {
     return res.status(400).json({ success: false, message: 'No se recibio archivo para subir' });
@@ -102,8 +101,6 @@ const deleteAsset = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, uploadAsset, deleteAsset };
-=======
 // POST /puestos/:id/ferias  body { feriaId }
 const addFeria = async (req, res) => {
   try {
@@ -130,5 +127,16 @@ const removeFeria = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, getByUsuario, getByFeria, create, update, remove, addFeria, removeFeria };
->>>>>>> f5e3bfe5da07b0797f4bc1c01256d2a2bd6fb200
+module.exports = {
+  getAll,
+  getById,
+  getByUsuario,
+  getByFeria,
+  create,
+  update,
+  remove,
+  uploadAsset,
+  deleteAsset,
+  addFeria,
+  removeFeria
+};
