@@ -1,0 +1,1991 @@
+{
+  "info": {
+    "_postman_id": "a3f1c9d2-7e44-4b21-9c6a-0a1b2c3d4e5f",
+    "name": "AgroMap API - QA Suite",
+    "description": "Colección de pruebas automatizadas para la API de AgroMap (Node + Express + Sequelize).\n\nArquitectura de pruebas:\n- Asserts globales (responseTime < 5000ms y Content-Type application/json) a nivel de colección.\n- Pre-request global que inicializa `baseUrl` si no existe.\n- Carpetas numeradas que reflejan el orden recomendado de ejecución.\n- Encadenamiento dinámico de tokens e IDs vía variables de entorno (sin edición manual).\n- Pruebas negativas explícitas (401 / 403 / 400).\n\nAutenticación: el backend emite una cookie httpOnly `agromap_token` y también acepta `Authorization: Bearer <token>`. Los scripts de login capturan el token desde el body (modo test), la cookie y el header Set-Cookie, y lo guardan por rol (`adminToken`, `productorToken`, `usuarioToken`). Postman además reenvía la cookie automáticamente como respaldo.\n\nBase URL por defecto: http://localhost:3002 (las rutas se montan en la raíz, sin prefijo /api).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// ── Pre-request global ──────────────────────────────────────────────",
+          "// Garantiza que baseUrl exista; si no, la inicializa al valor local.",
+          "var hasEnv = pm.environment.get('baseUrl');",
+          "var hasVar = pm.variables.get('baseUrl');",
+          "if (!hasEnv && !hasVar) {",
+          "  pm.environment.set('baseUrl', 'http://localhost:3002');",
+          "  console.log('[pre-request] baseUrl inicializada a http://localhost:3002');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// ── Asserts globales (se ejecutan tras CADA petición) ───────────────",
+          "pm.test('Tiempo de respuesta < 5000 ms', function () {",
+          "  pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "var rawBody = pm.response.text();",
+          "if (rawBody && rawBody.length > 0) {",
+          "  pm.test('Content-Type incluye application/json', function () {",
+          "    var ct = pm.response.headers.get('Content-Type') || '';",
+          "    pm.expect(ct.toLowerCase()).to.include('application/json');",
+          "  });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3002",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Health",
+      "item": [
+        {
+          "name": "GET / - Estado del servidor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Devuelve mensaje de bienvenida', function () {",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json.message).to.be.a('string');",
+                  "});",
+                  "pm.test('Expone version y catálogo de endpoints', function () {",
+                  "  pm.expect(json).to.have.property('version');",
+                  "  pm.expect(json).to.have.property('endpoints');",
+                  "  pm.expect(json.endpoints).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Verifica que la API esté arriba. Responde con un objeto { message, version, endpoints }."
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - Autenticación",
+      "item": [
+        {
+          "name": "POST /auth/login - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Login exitoso (success=true)', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json).to.have.property('data');",
+                  "});",
+                  "pm.test('Devuelve el usuario con rol Administrador', function () {",
+                  "  pm.expect(json.data).to.have.property('user');",
+                  "  pm.expect(json.data.user).to.have.property('id');",
+                  "  pm.expect(json.data.user).to.have.property('email');",
+                  "  pm.expect(json.data.user.role).to.eql('Administrador');",
+                  "});",
+                  "",
+                  "// ── Captura robusta del token (body modo test / cookie / Set-Cookie) ──",
+                  "var data = json.data || {};",
+                  "var token = data.token || null;",
+                  "if (!token) { try { token = pm.cookies.get('agromap_token'); } catch (e) {} }",
+                  "if (!token) {",
+                  "  var sc = pm.response.headers.get('Set-Cookie');",
+                  "  if (sc) { var m = String(sc).match(/agromap_token=([^;]+)/); if (m) { token = m[1]; } }",
+                  "}",
+                  "if (token) {",
+                  "  pm.environment.set('adminToken', token);",
+                  "  console.log('[auth] adminToken capturado');",
+                  "} else {",
+                  "  console.warn('[auth] No se pudo capturar adminToken; se usará la cookie automática de Postman.');",
+                  "}",
+                  "if (data.user && data.user.id != null) { pm.environment.set('adminId', data.user.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Inicia sesión como Administrador y guarda adminToken + adminId en el entorno."
+          }
+        },
+        {
+          "name": "POST /auth/login - Productor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve usuario con rol Productor', function () {",
+                  "  pm.expect(json.data.user.role).to.eql('Productor');",
+                  "});",
+                  "",
+                  "var data = json.data || {};",
+                  "var token = data.token || null;",
+                  "if (!token) { try { token = pm.cookies.get('agromap_token'); } catch (e) {} }",
+                  "if (!token) {",
+                  "  var sc = pm.response.headers.get('Set-Cookie');",
+                  "  if (sc) { var m = String(sc).match(/agromap_token=([^;]+)/); if (m) { token = m[1]; } }",
+                  "}",
+                  "if (token) { pm.environment.set('productorToken', token); }",
+                  "if (data.user && data.user.id != null) { pm.environment.set('productorId', data.user.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{productorEmail}}\",\n  \"password\": \"{{productorPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Inicia sesión como Productor y guarda productorToken + productorId."
+          }
+        },
+        {
+          "name": "POST /auth/login - Usuario (Cliente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve usuario con rol Usuario', function () {",
+                  "  pm.expect(json.data.user.role).to.eql('Usuario');",
+                  "});",
+                  "",
+                  "var data = json.data || {};",
+                  "var token = data.token || null;",
+                  "if (!token) { try { token = pm.cookies.get('agromap_token'); } catch (e) {} }",
+                  "if (!token) {",
+                  "  var sc = pm.response.headers.get('Set-Cookie');",
+                  "  if (sc) { var m = String(sc).match(/agromap_token=([^;]+)/); if (m) { token = m[1]; } }",
+                  "}",
+                  "if (token) { pm.environment.set('usuarioToken', token); }",
+                  "if (data.user && data.user.id != null) { pm.environment.set('usuarioId', data.user.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{usuarioEmail}}\",\n  \"password\": \"{{usuarioPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Inicia sesión como Usuario/Cliente y guarda usuarioToken + usuarioId."
+          }
+        },
+        {
+          "name": "POST /auth/register - Nuevo usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creado)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve el usuario creado con rol Usuario', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('user');",
+                  "  pm.expect(json.data.user).to.have.property('id');",
+                  "  pm.expect(json.data.user.role).to.eql('Usuario');",
+                  "});",
+                  "pm.test('La respuesta NO expone el password', function () {",
+                  "  pm.expect(json.data.user).to.not.have.property('password');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{$randomFullName}}\",\n  \"email\": \"qa_{{$timestamp}}@agromap.test\",\n  \"password\": \"secret123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Registra un usuario nuevo con email único (timestamp). El backend siempre asigna el rol 'Usuario'."
+          }
+        },
+        {
+          "name": "GET /auth/me - Perfil autenticado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve el perfil del Administrador', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('email');",
+                  "  pm.expect(json.data).to.have.property('role', 'Administrador');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Devuelve el perfil del usuario autenticado (usa adminToken)."
+          }
+        },
+        {
+          "name": "[NEG] POST /auth/login - Credenciales inválidas (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 (no autorizado)', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false con mensaje de credenciales', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json.message.toLowerCase()).to.include('credenciales');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"password-incorrecto\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Prueba negativa: contraseña incorrecta debe devolver 401."
+          }
+        },
+        {
+          "name": "[NEG] POST /auth/login - Campos faltantes (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 (bad request)', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false e indica campos obligatorios', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json.message.toLowerCase()).to.include('obligator');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Prueba negativa: falta el password → 400."
+          }
+        },
+        {
+          "name": "[NEG] GET /usuarios - Sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 (no autenticado)', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false con mensaje de token', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            },
+            "description": "Prueba negativa: ruta protegida sin Authorization ni cookie → 401. (No envía cabecera de auth)."
+          }
+        },
+        {
+          "name": "POST /auth/logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=true', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Limpia la cookie httpOnly agromap_token. Ejecutar al final del flujo de auth si se desea cerrar sesión."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Ferias",
+      "item": [
+        {
+          "name": "GET /ferias - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Encadenamiento: guarda el primer feriaId disponible",
+                  "if (json.data.length > 0) {",
+                  "  pm.environment.set('feriaId', json.data[0].id);",
+                  "  pm.test('Cada feria tiene id y nombre', function () {",
+                  "    pm.expect(json.data[0]).to.have.property('id');",
+                  "    pm.expect(json.data[0]).to.have.property('nombre');",
+                  "  });",
+                  "} else {",
+                  "  console.warn('[ferias] La lista está vacía; feriaId no se actualizó.');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ferias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias"]
+            },
+            "description": "Lista pública de ferias. Captura el primer feriaId para encadenar."
+          }
+        },
+        {
+          "name": "GET /ferias/:id - Obtener por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve la feria solicitada', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('object');",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(String(json.data.id)).to.eql(String(pm.environment.get('feriaId')));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ferias/{{feriaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias", "{{feriaId}}"]
+            },
+            "description": "Obtiene la feria cuyo id se capturó en la petición anterior."
+          }
+        },
+        {
+          "name": "POST /ferias - Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creada)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve la feria creada con id', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('nombre');",
+                  "});",
+                  "",
+                  "pm.environment.set('createdFeriaId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Feria QA Automation {{$timestamp}}\",\n  \"dias\": \"Sábado\",\n  \"horario\": \"06:00 - 12:00\",\n  \"source\": \"qa-postman\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ferias",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias"]
+            },
+            "description": "Crea una feria (endpoint público, idempotente por nombre). Guarda createdFeriaId."
+          }
+        },
+        {
+          "name": "PUT /ferias/:id - Actualizar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('La feria refleja el nuevo horario', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('horario', '07:00 - 13:00');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"horario\": \"07:00 - 13:00\",\n  \"dias\": \"Sábado y Domingo\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ferias/{{createdFeriaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias", "{{createdFeriaId}}"]
+            },
+            "description": "Actualiza la feria creada. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "[NEG] DELETE /ferias/:id - Sin rol Admin (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403 (prohibido)', function () {",
+                  "  pm.response.to.have.status(403);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false (sin permisos)', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{usuarioToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ferias/{{createdFeriaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias", "{{createdFeriaId}}"]
+            },
+            "description": "Prueba negativa: un Usuario no puede eliminar ferias → 403."
+          }
+        },
+        {
+          "name": "DELETE /ferias/:id - Eliminar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Confirma eliminación', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ferias/{{createdFeriaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ferias", "{{createdFeriaId}}"]
+            },
+            "description": "Elimina la feria creada. Requiere rol Administrador."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Productos",
+      "item": [
+        {
+          "name": "GET /productos - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "if (json.data.length > 0) {",
+                  "  pm.environment.set('productoId', json.data[0].id);",
+                  "  pm.test('Cada producto tiene id y nombre', function () {",
+                  "    pm.expect(json.data[0]).to.have.property('id');",
+                  "    pm.expect(json.data[0]).to.have.property('nombre');",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            },
+            "description": "Lista pública de productos. Captura el primer productoId."
+          }
+        },
+        {
+          "name": "GET /productos/:id - Obtener por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve el producto con sus precios', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('nombre');",
+                  "  pm.expect(json.data).to.have.property('precios');",
+                  "  pm.expect(json.data.precios).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{productoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{productoId}}"]
+            },
+            "description": "Obtiene el producto capturado anteriormente."
+          }
+        },
+        {
+          "name": "GET /productos/categoria/:categoria - Por categoría",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "pm.test('Todos los productos son de la categoría Verduras', function () {",
+                  "  json.data.forEach(function (p) {",
+                  "    pm.expect(p.categoria).to.eql('Verduras');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productos/categoria/Verduras",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "categoria", "Verduras"]
+            },
+            "description": "Filtra productos por categoría (valores válidos: Verduras, Frutas, Hierbas, Tubérculos, Granos, Proteína, Lácteos)."
+          }
+        },
+        {
+          "name": "POST /productos - Crear (Productor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creado)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve el producto creado', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('nombre', 'Tomate QA');",
+                  "  pm.expect(json.data).to.have.property('categoria', 'Verduras');",
+                  "});",
+                  "",
+                  "pm.environment.set('createdProductoId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{productorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tomate QA\",\n  \"categoria\": \"Verduras\",\n  \"descripcion\": \"Tomate de prueba creado por Postman\",\n  \"unidad\": \"kg\",\n  \"emoji\": \"🍅\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            },
+            "description": "Crea un producto como Productor (el user_id se toma del token). Guarda createdProductoId."
+          }
+        },
+        {
+          "name": "PUT /productos/:id - Actualizar (Productor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('El producto refleja la nueva descripción', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('descripcion', 'Tomate orgánico actualizado por QA');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{productorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Tomate orgánico actualizado por QA\",\n  \"unidad\": \"kg\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{createdProductoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{createdProductoId}}"]
+            },
+            "description": "Actualiza el producto creado. El Productor solo puede editar sus propios productos."
+          }
+        },
+        {
+          "name": "PATCH /productos/:id/disponible - Toggle disponibilidad",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve el producto con flag disponible booleano', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('disponible');",
+                  "  pm.expect(json.data.disponible).to.be.a('boolean');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{productorToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{createdProductoId}}/disponible",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{createdProductoId}}", "disponible"]
+            },
+            "description": "Invierte el flag de disponibilidad del producto creado."
+          }
+        },
+        {
+          "name": "[NEG] POST /productos - Sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401 (no autenticado)', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto sin auth\",\n  \"categoria\": \"Frutas\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            },
+            "description": "Prueba negativa: crear producto sin token → 401 (no envía Authorization)."
+          }
+        },
+        {
+          "name": "[NEG] POST /productos - Categoría inválida (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 (validación)', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false con mensaje de error', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{productorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto categoría inválida\",\n  \"categoria\": \"CategoriaQueNoExiste\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            },
+            "description": "Prueba negativa: categoría fuera del enum permitido → 400 (validación Sequelize)."
+          }
+        },
+        {
+          "name": "DELETE /productos/:id - Eliminar (Productor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Confirma eliminación', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{productorToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{createdProductoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{createdProductoId}}"]
+            },
+            "description": "Elimina el producto creado. El Productor solo puede borrar los suyos."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Recetas",
+      "item": [
+        {
+          "name": "GET /recetas - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "if (json.data.length > 0) {",
+                  "  pm.environment.set('recetaId', json.data[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recetas",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas"]
+            },
+            "description": "Lista pública de recetas. Captura el primer recetaId."
+          }
+        },
+        {
+          "name": "GET /recetas/:id - Obtener por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve la receta con título', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('title');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recetas/{{recetaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas", "{{recetaId}}"]
+            },
+            "description": "Obtiene la receta capturada anteriormente."
+          }
+        },
+        {
+          "name": "POST /recetas - Crear (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creada)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve la receta creada', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('title', 'Ensalada QA');",
+                  "});",
+                  "",
+                  "pm.environment.set('createdRecetaId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ensalada QA\",\n  \"description\": \"Ensalada fresca de prueba\",\n  \"difficulty\": \"Fácil\",\n  \"time\": \"15\",\n  \"ingredients\": [\"Lechuga\", \"Tomate\", \"Pepino\"],\n  \"steps\": [\"Lavar los vegetales\", \"Cortar en trozos\", \"Mezclar y servir\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recetas",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas"]
+            },
+            "description": "Crea una receta (solo Administrador). Sin imagen para evitar la validación de Cloudinary. Guarda createdRecetaId."
+          }
+        },
+        {
+          "name": "PUT /recetas/:id - Actualizar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('La receta refleja la nueva dificultad', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('difficulty', 'Media');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"difficulty\": \"Media\",\n  \"time\": \"20\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recetas/{{createdRecetaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas", "{{createdRecetaId}}"]
+            },
+            "description": "Actualiza la receta creada. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "[NEG] POST /recetas - Campos faltantes (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 (validación)', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false con mensaje de requerido', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json.message.toLowerCase()).to.include('requer');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Receta incompleta\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recetas",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas"]
+            },
+            "description": "Prueba negativa: faltan ingredients/steps/difficulty/time → 400."
+          }
+        },
+        {
+          "name": "DELETE /recetas/:id - Eliminar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('Confirma eliminación', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recetas/{{createdRecetaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recetas", "{{createdRecetaId}}"]
+            },
+            "description": "Elimina la receta creada. Requiere rol Administrador."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Geografía (Provincias / Cantones / Distritos)",
+      "item": [
+        {
+          "name": "GET /provincias - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "if (json.data.length > 0) {",
+                  "  pm.environment.set('provinciaId', json.data[0].id);",
+                  "  pm.test('Cada provincia tiene id y nombre', function () {",
+                  "    pm.expect(json.data[0]).to.have.property('id');",
+                  "    pm.expect(json.data[0]).to.have.property('nombre');",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/provincias",
+              "host": ["{{baseUrl}}"],
+              "path": ["provincias"]
+            },
+            "description": "Lista pública de provincias. Captura el primer provinciaId."
+          }
+        },
+        {
+          "name": "GET /provincias/:id - Obtener por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve la provincia solicitada', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('nombre');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/provincias/{{provinciaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["provincias", "{{provinciaId}}"]
+            },
+            "description": "Obtiene la provincia capturada anteriormente."
+          }
+        },
+        {
+          "name": "GET /cantones - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cantones",
+              "host": ["{{baseUrl}}"],
+              "path": ["cantones"]
+            },
+            "description": "Lista pública de cantones."
+          }
+        },
+        {
+          "name": "GET /distritos - Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/distritos",
+              "host": ["{{baseUrl}}"],
+              "path": ["distritos"]
+            },
+            "description": "Lista pública de distritos."
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Usuarios",
+      "item": [
+        {
+          "name": "GET /usuarios - Listar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array de usuarios', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "pm.test('Los usuarios no exponen su password', function () {",
+                  "  if (json.data.length > 0) {",
+                  "    pm.expect(json.data[0]).to.not.have.property('password');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            },
+            "description": "Lista todos los usuarios. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "GET /usuarios/profile - Mi perfil (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve el perfil propio', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('email');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "profile"]
+            },
+            "description": "Obtiene el perfil del usuario autenticado (cualquier rol)."
+          }
+        },
+        {
+          "name": "GET /usuarios/:id - Obtener por ID (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Devuelve el usuario solicitado', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(String(json.data.id)).to.eql(String(pm.environment.get('usuarioId')));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "{{usuarioId}}"]
+            },
+            "description": "Obtiene un usuario por ID (Admin o el propio dueño del recurso)."
+          }
+        },
+        {
+          "name": "PUT /usuarios/:id - Actualizar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('success=true', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Lopez (QA)\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "{{usuarioId}}"]
+            },
+            "description": "Actualiza el nombre del usuario. Admin o dueño del recurso."
+          }
+        },
+        {
+          "name": "[NEG] GET /usuarios - Rol no Admin (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403 (prohibido)', function () {",
+                  "  pm.response.to.have.status(403);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false (sin permisos de admin)', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{usuarioToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            },
+            "description": "Prueba negativa: un Usuario autenticado no puede listar todos los usuarios → 403."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Mensajes de Contacto",
+      "item": [
+        {
+          "name": "POST /mensajes - Enviar (Público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creado)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve el mensaje creado', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('estado', 'Pendiente');",
+                  "});",
+                  "",
+                  "pm.environment.set('createdMensajeId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Maria Lopez\",\n  \"correo\": \"{{usuarioEmail}}\",\n  \"telefono\": \"8888-8888\",\n  \"mensaje\": \"Consulta de prueba enviada por Postman QA\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mensajes",
+              "host": ["{{baseUrl}}"],
+              "path": ["mensajes"]
+            },
+            "description": "Envía un mensaje de contacto (público). Usa el correo del usuario para que aparezca en /mensajes/mios."
+          }
+        },
+        {
+          "name": "GET /mensajes - Listar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mensajes",
+              "host": ["{{baseUrl}}"],
+              "path": ["mensajes"]
+            },
+            "description": "Lista todos los mensajes de contacto. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "GET /mensajes/mios - Mi buzón (Usuario)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array (solo mis mensajes)', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{usuarioToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mensajes/mios",
+              "host": ["{{baseUrl}}"],
+              "path": ["mensajes", "mios"]
+            },
+            "description": "Devuelve solo los mensajes cuyo correo coincide con el del usuario autenticado."
+          }
+        },
+        {
+          "name": "PATCH /mensajes/:id/responder - Responder (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('El mensaje queda como Respondido', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('estado', 'Respondido');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"respuesta\": \"Gracias por contactarnos, atenderemos tu consulta a la brevedad.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mensajes/{{createdMensajeId}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["mensajes", "{{createdMensajeId}}", "responder"]
+            },
+            "description": "Responde el mensaje creado. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "[NEG] POST /mensajes - Campos faltantes (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 (validación)', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sin correo ni mensaje\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mensajes",
+              "host": ["{{baseUrl}}"],
+              "path": ["mensajes"]
+            },
+            "description": "Prueba negativa: faltan correo y mensaje (requeridos / NOT NULL) → 400."
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - Solicitudes de Cambio de Rol",
+      "item": [
+        {
+          "name": "POST /solicitudes - Crear (Usuario)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 201 (creada)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Devuelve la solicitud en estado Pendiente', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.have.property('id');",
+                  "  pm.expect(json.data).to.have.property('rolSolicitado', 'Productor');",
+                  "  pm.expect(json.data).to.have.property('estado', 'Pendiente');",
+                  "});",
+                  "",
+                  "pm.environment.set('createdSolicitudId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{usuarioToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": {{usuarioId}},\n  \"rol_solicitado\": \"Productor\",\n  \"nombre_del_puesto\": \"Puesto QA de Maria\",\n  \"descripcion_puesto\": \"Solicitud de prueba generada por Postman\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/solicitudes",
+              "host": ["{{baseUrl}}"],
+              "path": ["solicitudes"]
+            },
+            "description": "Crea una solicitud para convertirse en Productor. Guarda createdSolicitudId."
+          }
+        },
+        {
+          "name": "GET /solicitudes - Listar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/solicitudes",
+              "host": ["{{baseUrl}}"],
+              "path": ["solicitudes"]
+            },
+            "description": "Lista todas las solicitudes. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "GET /solicitudes/pendientes - Pendientes (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('data es un array', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/solicitudes/pendientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["solicitudes", "pendientes"]
+            },
+            "description": "Lista las solicitudes pendientes. Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "PATCH /solicitudes/:id/rechazar - Rechazar (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('success=true', function () {",
+                  "  pm.expect(json).to.have.property('success', true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo_respuesta\": \"Solicitud de prueba rechazada por QA\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/solicitudes/{{createdSolicitudId}}/rechazar",
+              "host": ["{{baseUrl}}"],
+              "path": ["solicitudes", "{{createdSolicitudId}}", "rechazar"]
+            },
+            "description": "Rechaza la solicitud creada (cleanup). Requiere rol Administrador."
+          }
+        },
+        {
+          "name": "[NEG] POST /solicitudes - rol_solicitado faltante (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 (validación)', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.test('success=false con mensaje sobre el rol requerido', function () {",
+                  "  pm.expect(json).to.have.property('success', false);",
+                  "  pm.expect(json).to.have.property('message');",
+                  "  pm.expect(json.message.toLowerCase()).to.include('rol');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{usuarioToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": {{usuarioId}}\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/solicitudes",
+              "host": ["{{baseUrl}}"],
+              "path": ["solicitudes"]
+            },
+            "description": "Prueba negativa: falta rol_solicitado → el servicio lanza 'El rol solicitado es requerido' → 400."
+          }
+        }
+      ]
+    }
+  ]
+}
